@@ -766,6 +766,14 @@ select option { background: var(--surf-2); }
       <div class="progress-label">Synthesis — all outputs running in parallel</div>
       <div class="module-progress-grid" id="modProgGrid"></div>
     </div>
+
+    <div class="progress-block" id="finalizeBlock" style="display:none">
+      <div class="progress-label">Finalizing</div>
+      <div class="log-line active" id="log-finalize">
+        <div class="log-dot"></div>
+        <span>Rendering outputs — almost there…</span>
+      </div>
+    </div>
   </div><!-- /phase-generating -->
 
   <!-- ── PHASE: OUTPUTS ── -->
@@ -1858,6 +1866,7 @@ async function generate() {
 
   document.getElementById('generateBtn').disabled = true;
   document.getElementById('genAccount').textContent = ctx.account;
+  document.getElementById('finalizeBlock').style.display = 'none';
   buildModProgressUI();
   showPhase('generating');
 
@@ -1928,6 +1937,9 @@ async function generate() {
     // ── RENDER ───────────────────────────────────────────────────────
     const successful = state.selectedModules.filter(id => state.outputs[id]);
     if (!successful.length) throw new Error('All synthesis passes failed. Check your API key and try again.');
+
+    document.getElementById('finalizeBlock').style.display = 'block';
+    await new Promise(r => setTimeout(r, 400));
 
     renderOutputs(successful, ctx);
     showPhase('outputs');
