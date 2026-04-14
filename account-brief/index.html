@@ -1313,7 +1313,7 @@ input[type=checkbox].chip-check{display:none;}
         </div>
       </div>
       <div class="output-actions">
-        <button class="btn-pdf" onclick="saveBrief()" style="background:var(--gold-dim);border-color:var(--gold-dim);color:var(--gold);">
+        <button class="btn-pdf" onclick="saveBrief()" style="background:var(--gold-dim);border-color:var(--gold-dim);color:var(--gold);display:none;">
           💾 Save Brief
         </button>
         <button class="btn-primary" onclick="exportWord()" style="padding:9px 18px;font-size:13px;">
@@ -1737,6 +1737,7 @@ async function startResearch() {
     await runResearch(company);
     renderOutput();
     showScreen(3);
+    saveBrief();
   } catch(err) {
     const errBox = document.getElementById('research-error');
     errBox.textContent = 'Something went wrong: ' + err.message + '. Please check your API key and try again.';
@@ -3253,7 +3254,7 @@ function renderSavedBriefsList() {
   if (!container) return;
   const briefs = getSavedBriefs();
   if (!briefs.length) {
-    container.innerHTML = '<div style="text-align:center;padding:32px;font-size:13px;color:var(--white-dim);opacity:0.6;">No saved briefs yet. Build a brief and click 💾 Save Brief.</div>';
+    container.innerHTML = '<div style="text-align:center;padding:32px;font-size:13px;color:var(--white-dim);opacity:0.6;">No saved briefs yet. Build a brief and it will be saved automatically.</div>';
     return;
   }
   container.innerHTML = briefs.map(b => `
