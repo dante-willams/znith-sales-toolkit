@@ -1941,7 +1941,7 @@ async function generate() {
     if (!successful.length) throw new Error('All synthesis passes failed. Check your API key and try again.');
 
     document.getElementById('finalizeBlock').style.display = 'block';
-    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    await new Promise(r => setTimeout(r, 50));
 
     renderOutputs(successful, ctx);
     showPhase('outputs');
