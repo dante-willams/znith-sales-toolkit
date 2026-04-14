@@ -1,0 +1,3064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conga Sales Hub</title>
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAB6UlEQVR4AeyUv0scQRTH35vZ27uQHJjGgHdFEtJFxECakEsgnEVikvK6eDEpxP9AsbpGrbSwUFBQ9ETwShsVPBbESrQRtdHiOkHFK/x17o95zggLFhY3gz+aHXg89sGb72e+82YZPPGKACIHIgciB4wdOF/73+SX//67XMn/qTqdDab/MyMA1+lsjdeuthHcSRu8YjLwN0+XOxpNIIwAMPBHGIqXBECASAyDtwmLeh8F4KLcnZKCGSI4CSjR7BFrJwUC4uejANjs9AOqYyOfj7dN7SbaZpeIWIUBvimVclwXguk2iABT8sQgALfCXkI8lCZYnyBth7V6szYAIiSlGDASZ6HI0cWrX7XY61Q6N1wLa/VmbQAgJBkgpO+hSNPvoePnXwcOUA5kWKs3awMgE1VAAESWhntY2gBEduXmCkDkyClYisGR+Wol309U0N5Pu8Fiz9blFdSk262B2Fvwyh29mWDfscDvc1cr7xWQTmgD4LfRM0JeVCJI9IORP8hAZNQ396hFZZ3QBlCbc/tFj0C+IV0AOXggR0K+Tj7BG+Il0FxGAPhlrMob3312IdbuA+TP/ViLnS124cdxT1MfjACUCDYX3ER2ZtHOzhWT36d3VM0kjAFMxO7qiQAiByIHHtyBu57e7do1AAAA//+e1Cu/AAAABklEQVQDAOkQmkGLRtU6AAAAAElFTkSuQmCC">
+<link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAz0lEQVR4AdzQMQuCQBQH8HfvUhsiaI4IoqUP0aC4Bu5ZS2sNfYW+QptTITQ6B+katAZNRp+gtUQzX7Y1eMLREHTcweMd/9/wR/jy/DsQBZP2PRg3y2oSdvDw7b4KUahBGsa7UU+ECAHEzAZi84zYElk2kAaIWOtJfE+IHnDlKA0AEAGmimq4B0VfbaUBRuzMAaaxb1tJMJxJAylWnDxkKSzzOGEjnwuvsETNWJ9uWOskBF1uuovCdL4UAvkf1HXnWjU3l/cseqWAKPS5/z3wAgAA//+nOuS0AAAABklEQVQDAD7XNyHyPncjAAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── ZNITH DESIGN SYSTEM v1.0 ────────────────────────────────────────────── */
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui:    'Barlow', sans-serif;
+  --f-mono:  'IBM Plex Mono', monospace;
+
+  /* Amber — system color: nav, footer, CTAs, metric values */
+  --amber:       #B8860B;
+  --amber-glow:  rgba(184,134,11,0.28);
+  --amber-muted: rgba(184,134,11,0.12);
+
+  /* Module accent colors — used sparingly on borders, badges, pips only */
+  --c-account:       #0D9488; --c-account-glow:  rgba(13,148,136,0.28);  --c-account-muted:  rgba(13,148,136,0.12);
+  --c-valuemap:      #8B5CF6; --c-valuemap-glow: rgba(139,92,246,0.28);  --c-valuemap-muted: rgba(139,92,246,0.12);
+  --c-demo:          #EA580C; --c-demo-glow:     rgba(234,88,12,0.28);   --c-demo-muted:     rgba(234,88,12,0.12);
+  --c-qualify:       #16A34A; --c-qualify-glow:  rgba(22,163,74,0.28);   --c-qualify-muted:  rgba(22,163,74,0.12);
+
+  /* Base palette */
+  --bg:     #0e0d0b;
+  --surf:   #181714;
+  --surf-2: #222018;
+  --border: rgba(255,255,255,0.07);
+  --text:   rgba(255,255,255,0.85);
+  --tmuted: rgba(255,255,255,0.45);
+  --tfaint: rgba(255,255,255,0.20);
+
+  --transition: 220ms cubic-bezier(0.4,0,0.2,1);
+  --spring:     400ms cubic-bezier(0.34,1.56,0.64,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-ui);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── CHAMFER UTILITIES ───────────────────────────────────────────────────── */
+.c-lg { clip-path: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px); }
+.c-sm { clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px); }
+
+/* ── HEADER ──────────────────────────────────────────────────────────────── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(14,13,11,0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+}
+.header-logo { display: flex; align-items: center; gap: 12px; }
+.logo-mark { width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; }
+.logo-mark svg { width: 30px; height: 30px; }
+.logo-divider { width: 1px; height: 20px; background: var(--border); }
+.logo-text {
+  font-family: var(--f-ui); font-size: 12px; font-weight: 600;
+  color: var(--text); letter-spacing: 0.06em; text-transform: uppercase;
+}
+.logo-text span { color: var(--amber); font-weight: 400; }
+.header-right { display: flex; align-items: center; gap: 10px; }
+.api-key-status {
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.08em;
+  color: var(--tfaint); white-space: nowrap;
+}
+.api-key-status.valid   { color: var(--c-qualify); }
+.api-key-status.invalid { color: #E11D48; }
+.api-key-input {
+  background: var(--surf-2); border: 1px solid var(--border);
+  color: var(--text); font-family: var(--f-mono); font-size: 11px;
+  padding: 7px 12px; width: 220px; outline: none;
+  transition: border-color var(--transition);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.api-key-input:focus { border-color: var(--amber); }
+.api-key-input::placeholder { color: var(--tfaint); }
+
+/* ── LAYOUT ──────────────────────────────────────────────────────────────── */
+main { max-width: 860px; margin: 0 auto; padding: 40px 24px 100px; }
+
+/* ── PHASES ──────────────────────────────────────────────────────────────── */
+.phase { display: none; }
+.phase.active { display: block; animation: fadeUp 0.35s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── PAGE HERO ───────────────────────────────────────────────────────────── */
+.hero-eyebrow {
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--amber); margin-bottom: 8px;
+}
+.hero-title {
+  font-family: var(--f-brand); font-size: 30px; font-weight: 800;
+  color: #fff; letter-spacing: -0.02em; margin-bottom: 6px;
+}
+.hero-sub { font-size: 13px; color: var(--tmuted); margin-bottom: 32px; }
+
+/* ── CARDS ───────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surf); border: 1px solid var(--border);
+  padding: 22px 24px; margin-bottom: 14px;
+  clip-path: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+}
+.card-label {
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--amber); margin-bottom: 16px;
+}
+
+/* ── FORM FIELDS ─────────────────────────────────────────────────────────── */
+.field-grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+@media (max-width: 600px) { .field-grid, .field-grid-3 { grid-template-columns: 1fr; } }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-label {
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--tfaint);
+}
+.field-label .req { color: var(--amber); margin-left: 2px; }
+input[type="text"], input[type="password"], textarea, select {
+  background: var(--surf-2); border: 1px solid var(--border);
+  color: var(--text); font-family: var(--f-ui); font-size: 13px;
+  padding: 9px 12px; outline: none; width: 100%;
+  transition: border-color var(--transition);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+input:focus, textarea:focus, select:focus { border-color: var(--amber); }
+input::placeholder, textarea::placeholder { color: var(--tfaint); }
+textarea { resize: vertical; min-height: 76px; line-height: 1.5; }
+select {
+  appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8860B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px;
+}
+select option { background: var(--surf-2); }
+
+/* ── ADVANCED DRAWER ─────────────────────────────────────────────────────── */
+.adv-toggle {
+  display: flex; align-items: center; gap: 8px; cursor: pointer;
+  background: none; border: none; padding: 8px 0;
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--tmuted); transition: color var(--transition); width: 100%; text-align: left;
+}
+.adv-toggle:hover { color: var(--amber); }
+.adv-arrow { display: inline-block; transition: transform 0.2s ease; }
+.adv-toggle.open .adv-arrow { transform: rotate(90deg); }
+.adv-body { display: none; padding-top: 16px; }
+.adv-body.open { display: block; }
+
+/* ── UPLOAD ZONE ─────────────────────────────────────────────────────────── */
+.upload-zone {
+  border: 1px dashed rgba(184,134,11,0.3); padding: 18px;
+  text-align: center; cursor: pointer; transition: all var(--transition);
+  clip-path: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  margin-top: 14px;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--amber); background: var(--amber-muted);
+}
+.upload-icon { font-size: 18px; margin-bottom: 5px; opacity: 0.45; }
+.upload-text { font-size: 12px; color: var(--tmuted); }
+.upload-hint { font-family: var(--f-mono); font-size: 9px; color: var(--tfaint); letter-spacing: 0.06em; margin-top: 3px; }
+.file-list { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+.file-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 11px; background: var(--surf-2); border: 1px solid var(--border);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.file-name { font-size: 11px; color: var(--text); }
+.file-remove { font-size: 15px; cursor: pointer; color: var(--tfaint); padding: 0 3px; line-height: 1; }
+.file-remove:hover { color: #E11D48; }
+
+/* ── MODULE GRID ─────────────────────────────────────────────────────────── */
+.module-bar {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;
+}
+.module-bar-label {
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--amber);
+}
+.module-bar-right { display: flex; align-items: center; gap: 12px; }
+.module-count { font-family: var(--f-mono); font-size: 10px; color: var(--tfaint); }
+.btn-ghost {
+  background: none; border: 1px solid var(--border); color: var(--tmuted);
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 5px 10px; cursor: pointer;
+  transition: all var(--transition);
+  clip-path: polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
+}
+.btn-ghost:hover { border-color: var(--amber); color: var(--amber); }
+
+.module-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+@media (max-width: 560px) { .module-grid { grid-template-columns: 1fr; } }
+.module-card {
+  background: var(--surf); border: 1px solid var(--border);
+  padding: 14px 16px; cursor: pointer; position: relative;
+  transition: all var(--transition);
+  clip-path: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+}
+.module-card:hover { border-color: rgba(255,255,255,0.14); }
+.module-card.selected {
+  border-color: var(--mod-accent);
+  box-shadow: 0 0 0 1px var(--mod-accent), 0 4px 18px var(--mod-glow);
+}
+.module-card-top { display: flex; align-items: center; gap: 9px; margin-bottom: 5px; }
+.module-pip { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.module-card.selected .module-pip { box-shadow: 0 0 8px var(--mod-glow); }
+.module-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.module-stage {
+  font-family: var(--f-mono); font-size: 8px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--tfaint); margin-bottom: 4px;
+}
+.module-desc { font-size: 11px; color: var(--tmuted); line-height: 1.4; }
+.module-check {
+  position: absolute; top: 12px; right: 12px;
+  width: 17px; height: 17px; border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  clip-path: polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
+  transition: all var(--transition);
+}
+.module-card.selected .module-check {
+  background: var(--mod-accent); border-color: var(--mod-accent);
+}
+.check-icon { display: none; }
+.module-card.selected .check-icon { display: block; }
+
+/* ── GENERATE BUTTON ─────────────────────────────────────────────────────── */
+.btn-generate {
+  width: 100%; background: var(--amber); color: #000;
+  border: none; padding: 14px 24px;
+  font-family: var(--f-ui); font-size: 14px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 4px 24px var(--amber-glow); transition: all var(--transition);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.btn-generate:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-generate:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+/* ── ERROR BOX ───────────────────────────────────────────────────────────── */
+.error-box {
+  background: rgba(225,29,72,0.07); border: 1px solid rgba(225,29,72,0.25);
+  color: #f87171; font-size: 12px; padding: 10px 14px; margin-bottom: 14px; display: none;
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.error-box.show { display: block; }
+
+/* ── GENERATING PHASE ────────────────────────────────────────────────────── */
+.gen-header { text-align: center; padding: 36px 0 28px; }
+.gen-title {
+  font-family: var(--f-brand); font-size: 22px; font-weight: 700;
+  color: #fff; margin-bottom: 5px;
+}
+.gen-account { color: var(--amber); }
+.gen-sub { font-size: 12px; color: var(--tmuted); }
+
+.progress-block {
+  background: var(--surf); border: 1px solid var(--border);
+  padding: 18px 22px; margin-bottom: 10px;
+  clip-path: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+}
+.progress-label {
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--tfaint); margin-bottom: 12px;
+}
+.log-line { display: flex; align-items: center; gap: 9px; padding: 3px 0; font-size: 12px; color: var(--tmuted); }
+.log-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: all 0.3s; }
+.log-line.active .log-dot { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); animation: blink 1.2s ease-in-out infinite; }
+.log-line.done  .log-dot { background: var(--c-qualify); box-shadow: 0 0 6px rgba(22,163,74,0.3); animation: none; }
+.log-line.error .log-dot { background: #E11D48; }
+.log-line.active { color: var(--text); }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+.module-progress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media (max-width: 540px) { .module-progress-grid { grid-template-columns: 1fr; } }
+.mod-prog-item {
+  display: flex; align-items: center; gap: 9px; padding: 10px 12px;
+  background: var(--surf-2); border: 1px solid var(--border);
+  transition: border-color 0.3s;
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.mod-prog-item.active { border-color: var(--mp-accent); }
+.mod-prog-item.done   { border-color: rgba(22,163,74,0.35); }
+.mod-prog-item.error  { border-color: rgba(225,29,72,0.35); }
+.mod-prog-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
+.mod-prog-item.active .mod-prog-pip { background: var(--mp-accent); box-shadow: 0 0 6px var(--mp-glow); animation: blink 1.2s ease-in-out infinite; }
+.mod-prog-item.done   .mod-prog-pip { background: var(--c-qualify); box-shadow: 0 0 6px rgba(22,163,74,0.3); animation: none; }
+.mod-prog-item.error  .mod-prog-pip { background: #E11D48; animation: none; }
+.mod-prog-name { font-size: 11px; font-weight: 500; color: var(--tmuted); }
+.mod-prog-item.active .mod-prog-name, .mod-prog-item.done .mod-prog-name { color: var(--text); }
+
+/* ── OUTPUT PHASE ────────────────────────────────────────────────────────── */
+.output-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.output-account {
+  font-family: var(--f-brand); font-size: 20px; font-weight: 700; color: #fff;
+}
+.output-meta { font-family: var(--f-mono); font-size: 10px; color: var(--tfaint); margin-top: 2px; }
+
+.output-tabs { display: flex; gap: 4px; margin-bottom: 2px; overflow-x: auto; padding-bottom: 2px; }
+.output-tab {
+  padding: 8px 14px; background: var(--surf); border: 1px solid var(--border);
+  color: var(--tmuted); font-family: var(--f-ui); font-size: 12px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: all var(--transition);
+  display: flex; align-items: center; gap: 7px;
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.output-tab:hover { color: var(--text); border-color: rgba(255,255,255,0.14); }
+.output-tab.active { color: #fff; border-color: var(--tab-accent,var(--amber)); background: rgba(255,255,255,0.03); }
+.tab-pip { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+.output-panel {
+  background: var(--surf); border: 1px solid var(--border);
+  padding: 26px 28px; min-height: 380px; margin-bottom: 12px;
+  clip-path: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+}
+
+/* ── OUTPUT PANEL THEMING ────────────────────────────────────────────────── */
+.output-panel { --mod-color: var(--amber); --mod-glow: var(--amber-glow); --mod-muted: var(--amber-muted); }
+
+/* ── ZNITH COMPONENT RENDERER ────────────────────────────────────────────── */
+/* Section header — dark card with left accent stripe */
+.zr-h2 {
+  display: flex; align-items: center; gap: 0;
+  margin: 22px 0 10px; overflow: hidden;
+  clip-path: polygon(0 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%);
+}
+.zr-h2:first-child { margin-top: 0; }
+.zr-h2-stripe { width: 3px; min-height: 100%; background: var(--mod-color); flex-shrink: 0; align-self: stretch; }
+.zr-h2-inner {
+  flex: 1; background: var(--surf-2); padding: 9px 14px;
+  font-family: var(--f-brand); font-size: 13px; font-weight: 700; color: #fff;
+}
+/* Section subheading — mono label with extending rule */
+.zr-h3 {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--f-mono); font-size: 8px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--mod-color); margin: 18px 0 8px;
+}
+.zr-h3::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+/* Bullet item — chamfered card with accent dot */
+.zr-ul { list-style: none; padding: 0; margin: 0 0 10px; display: flex; flex-direction: column; gap: 4px; }
+.zr-li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 12px; background: var(--surf-2); border: 1px solid var(--border);
+  font-size: 12px; line-height: 1.55; color: var(--text);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  transition: border-color 0.2s;
+}
+.zr-li:hover { border-color: rgba(255,255,255,0.12); }
+.zr-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--mod-color); box-shadow: 0 0 6px var(--mod-glow); flex-shrink: 0; margin-top: 5px; }
+/* Numbered item */
+.zr-num { display: flex; align-items: flex-start; gap: 10px; padding: 5px 0; font-size: 12px; color: var(--text); line-height: 1.55; }
+.zr-num-badge {
+  min-width: 20px; height: 20px; background: var(--mod-color); color: #000;
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  clip-path: polygon(3px 0%,calc(100% - 3px) 0%,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0% calc(100% - 3px),0% 3px);
+}
+/* Paragraph */
+.zr-p { font-size: 13px; line-height: 1.65; margin: 4px 0 8px; color: var(--text); }
+/* HR divider */
+.zr-hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+/* Table */
+.zr-table { width: 100%; border-collapse: collapse; margin: 10px 0 14px; font-size: 12px; }
+.zr-table th {
+  padding: 7px 11px; text-align: left;
+  font-family: var(--f-mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #000; background: var(--mod-color);
+}
+.zr-table td {
+  padding: 7px 11px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 12px; color: var(--tmuted); vertical-align: top;
+}
+.zr-table td:first-child { color: var(--text); font-weight: 500; }
+.zr-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+.zr-table tr:last-child td { border-bottom: none; }
+/* Inline */
+.zr-strong { color: #fff; font-weight: 600; }
+.zr-em { color: var(--tmuted); font-style: italic; }
+.score-r { color: #f87171; } .score-y { color: #fbbf24; } .score-g { color: #4ade80; }
+/* Snapshot stat grid — detected from "Key · Value" patterns in At a Glance */
+.zr-snap-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(140px,1fr)); gap: 8px; margin: 8px 0 14px; }
+.zr-snap-stat {
+  background: var(--surf-2); border: 1px solid var(--border); padding: 10px 12px;
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.zr-snap-label { font-family: var(--f-mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tfaint); margin-bottom: 4px; }
+.zr-snap-value { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.4; }
+
+/* ── COACHING PROMPTS ────────────────────────────────────────────────────── */
+.zr-coaching-intro { font-size: 11px; color: var(--tmuted); margin: -4px 0 10px; }
+.zr-coaching-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0 0 14px; }
+@media (max-width: 560px) { .zr-coaching-grid { grid-template-columns: 1fr; } }
+.zr-coaching-card {
+  background: var(--surf-2); border: 1px solid var(--border);
+  padding: 11px 13px; cursor: pointer; transition: all 0.2s;
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.zr-coaching-card:hover { border-color: var(--mod-color); background: var(--mod-muted); }
+.zr-coaching-title {
+  font-family: var(--f-mono); font-size: 8px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--mod-color); margin-bottom: 5px;
+}
+.zr-coaching-desc { font-size: 11px; color: var(--tmuted); line-height: 1.4; }
+
+/* ── OUTPUT ACTIONS ──────────────────────────────────────────────────────── */
+.output-actions { display: flex; align-items: center; gap: 10px; }
+.btn-copy {
+  background: var(--surf); border: 1px solid var(--border); color: var(--tmuted);
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 8px 14px; cursor: pointer; display: flex; align-items: center; gap: 6px;
+  transition: all var(--transition);
+  clip-path: polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
+}
+.btn-copy:hover { border-color: var(--amber); color: var(--amber); }
+.btn-reset {
+  background: none; border: none; color: var(--tfaint); cursor: pointer;
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 8px 0; transition: color var(--transition);
+}
+.btn-reset:hover { color: var(--text); }
+
+/* ── ERROR IN OUTPUT ─────────────────────────────────────────────────────── */
+.output-fail { display: flex; flex-direction: column; gap: 10px; padding: 8px 0; }
+.output-fail-msg { font-size: 12px; color: #f87171; }
+.btn-retry {
+  background: none; border: 1px solid rgba(225,29,72,0.3); color: #f87171;
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 6px 12px; cursor: pointer; transition: all var(--transition);
+  clip-path: polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
+  align-self: flex-start;
+}
+.btn-retry:hover { background: rgba(225,29,72,0.08); }
+
+/* ── TOAST ───────────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 52px; left: 50%; transform: translateX(-50%);
+  background: var(--surf); border: 1px solid var(--border); color: var(--text);
+  font-family: var(--f-mono); font-size: 11px; padding: 8px 18px;
+  opacity: 0; pointer-events: none; z-index: 500; transition: opacity 0.3s;
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+
+/* ── CHAT FAB ────────────────────────────────────────────────────────────── */
+.chat-fab {
+  position: fixed; bottom: 46px; right: 24px; z-index: 200;
+  background: var(--surf); border: 1px solid var(--border); color: var(--text);
+  font-family: var(--f-ui); font-size: 12px; font-weight: 600;
+  padding: 9px 15px; cursor: pointer; display: flex; align-items: center; gap: 8px;
+  transition: all var(--transition); box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.chat-fab:hover { border-color: var(--amber); }
+.chat-fab.live { border-color: rgba(184,134,11,0.4); background: rgba(184,134,11,0.05); }
+.chat-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
+.chat-fab.live .chat-pip { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); animation: blink 2s ease-in-out infinite; }
+
+/* ── CHAT OVERLAY ────────────────────────────────────────────────────────── */
+.chat-overlay {
+  position: fixed; bottom: 0; right: 0;
+  width: 380px; height: 560px;
+  background: var(--surf); border: 1px solid var(--border);
+  border-bottom: none; border-right: none;
+  display: none; flex-direction: column; z-index: 300;
+}
+.chat-overlay.open { display: flex; animation: slideUp 0.25s ease; }
+@keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@media (max-width: 500px) { .chat-overlay { width: 100%; } }
+
+.chat-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.chat-head-left { display: flex; align-items: center; gap: 8px; }
+.chat-head-pip { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); animation: blink 2s ease-in-out infinite; }
+.chat-head-title { font-size: 13px; font-weight: 600; }
+.chat-head-sub { font-family: var(--f-mono); font-size: 9px; color: var(--tfaint); }
+.chat-close { background: none; border: none; color: var(--tfaint); font-size: 18px; cursor: pointer; line-height: 1; padding: 2px 4px; }
+.chat-close:hover { color: var(--text); }
+
+.chat-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.chat-msg { font-size: 12px; line-height: 1.55; max-width: 90%; white-space: pre-wrap; }
+.chat-msg.user {
+  align-self: flex-end; background: var(--amber-muted);
+  border: 1px solid rgba(184,134,11,0.2); padding: 8px 11px; color: var(--text);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.chat-msg.assistant {
+  align-self: flex-start; background: var(--surf-2);
+  border: 1px solid var(--border); padding: 8px 11px; color: var(--text);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+
+.chat-input-area { flex-shrink: 0; border-top: 1px solid var(--border); padding: 10px 12px; }
+.chat-row { display: flex; gap: 7px; align-items: flex-end; }
+.chat-input {
+  flex: 1; background: var(--surf-2); border: 1px solid var(--border);
+  color: var(--text); font-family: var(--f-ui); font-size: 12px;
+  padding: 7px 10px; resize: none; max-height: 90px; outline: none; line-height: 1.5;
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.chat-input:focus { border-color: var(--amber); }
+.chat-input::placeholder { color: var(--tfaint); }
+.chat-send {
+  background: var(--amber); border: none; color: #000;
+  width: 32px; height: 32px; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; transition: all var(--transition);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.chat-send:hover:not(:disabled) { filter: brightness(1.1); }
+.chat-send:disabled { opacity: 0.35; cursor: not-allowed; }
+.chat-hint { font-family: var(--f-mono); font-size: 9px; color: var(--tfaint); text-align: center; margin-top: 6px; }
+
+/* ── HISTORY BUTTON ─────────────────────────────────────────────────────── */
+.hist-btn {
+  position: relative; background: var(--surf-2); border: 1px solid var(--border);
+  color: var(--tmuted); cursor: pointer; padding: 7px 11px;
+  display: flex; align-items: center; gap: 7px; font-family: var(--f-ui);
+  font-size: 11px; font-weight: 600; letter-spacing: 0.03em;
+  transition: all var(--transition);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.hist-btn:hover { border-color: var(--amber); color: var(--text); }
+.hist-btn.active { border-color: rgba(184,134,11,0.4); color: var(--amber); background: rgba(184,134,11,0.05); }
+.hist-badge {
+  display: none; align-items: center; justify-content: center;
+  background: var(--amber); color: #000; font-size: 9px; font-weight: 700;
+  width: 16px; height: 16px; border-radius: 50%; line-height: 1; flex-shrink: 0;
+}
+
+/* ── HISTORY OVERLAY ─────────────────────────────────────────────────────── */
+.hist-overlay {
+  position: fixed; top: 58px; right: 0; bottom: 34px;
+  width: 320px; background: var(--surf);
+  border-left: 1px solid var(--border);
+  display: none; flex-direction: column; z-index: 250;
+  box-shadow: -8px 0 32px rgba(0,0,0,0.4);
+}
+.hist-overlay.open { display: flex; animation: slideLeft 0.22s ease; }
+@keyframes slideLeft { from { opacity:0; transform:translateX(16px); } to { opacity:1; transform:translateX(0); } }
+.hist-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.hist-head-title { font-size: 12px; font-weight: 700; color: var(--text); letter-spacing: 0.04em; text-transform: uppercase; }
+.hist-head-sub { font-family: var(--f-mono); font-size: 9px; color: var(--tfaint); margin-top: 2px; }
+.hist-close { background: none; border: none; color: var(--tfaint); font-size: 18px; cursor: pointer; line-height: 1; padding: 2px 4px; }
+.hist-close:hover { color: var(--text); }
+.hist-list { flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.hist-empty { text-align: center; color: var(--tfaint); font-size: 12px; padding: 40px 20px; line-height: 1.7; }
+.hist-entry {
+  background: var(--surf-2); border: 1px solid var(--border);
+  padding: 11px 13px; cursor: pointer; transition: all var(--transition);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.hist-entry:hover { border-color: var(--amber); background: rgba(184,134,11,0.04); }
+.hist-entry-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
+.hist-entry-account { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hist-entry-del { background: none; border: none; color: var(--tfaint); font-size: 16px; cursor: pointer; line-height: 1; padding: 0 2px; flex-shrink: 0; }
+.hist-entry-del:hover { color: #E11D48; }
+.hist-entry-meta { font-family: var(--f-mono); font-size: 9px; color: var(--tfaint); display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
+.hist-entry-stage {
+  font-family: var(--f-mono); font-size: 8px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--amber); background: var(--amber-muted);
+  padding: 1px 6px; border-radius: 2px;
+}
+.hist-entry-mods { display: flex; flex-wrap: wrap; gap: 4px; }
+.hist-mod-pill {
+  font-family: var(--f-mono); font-size: 8px; letter-spacing: 0.06em;
+  text-transform: uppercase; padding: 2px 6px; border: 1px solid var(--border);
+  color: var(--tfaint);
+  clip-path: polygon(3px 0%,calc(100% - 3px) 0%,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0% calc(100% - 3px),0% 3px);
+}
+.hist-footer { padding: 10px 14px; border-top: 1px solid var(--border); flex-shrink: 0; }
+.hist-clear-btn {
+  width: 100%; background: none; border: 1px solid var(--border); color: var(--tfaint);
+  font-family: var(--f-ui); font-size: 11px; padding: 7px; cursor: pointer;
+  transition: all var(--transition);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+.hist-clear-btn:hover { border-color: #E11D48; color: #E11D48; }
+
+/* ── FOOTER ──────────────────────────────────────────────────────────────── */
+.znith-footer {
+  background: var(--surf); border-top: 1px solid rgba(184,134,11,0.15);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 34px; position: sticky; bottom: 0; z-index: 50;
+}
+.znith-wordmark { display: flex; align-items: center; }
+.footer-meta { display: flex; align-items: center; gap: 7px; }
+.footer-pip { width: 4px; height: 4px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 6px var(--amber-glow); animation: blink 2.5s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#B8860B">
+        <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
+      </svg>
+    </div>
+    <div class="logo-divider"></div>
+    <div class="logo-text">Sales Hub <span>/ Intelligence</span></div>
+  </div>
+  <div class="header-right">
+    <button class="hist-btn" id="histBtn" onclick="toggleHistory()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      History
+      <span class="hist-badge" id="histBadge">0</span>
+    </button>
+    <span class="api-key-status" id="apiKeyStatus">API key required</span>
+    <input type="password" class="api-key-input" id="apiKeyInput"
+      placeholder="Paste API key…"
+      oninput="onApiKeyInput(this.value)"
+      autocomplete="off" spellcheck="false">
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main>
+
+  <!-- ── PHASE: INTAKE ── -->
+  <div class="phase active" id="phase-intake">
+
+    <div class="hero-eyebrow">Sales Intelligence Hub</div>
+    <div class="hero-title">What account are we working?</div>
+    <div class="hero-sub">Three fields gets you four outputs. Add context for sharper intel.</div>
+
+    <div class="error-box" id="errorBox"></div>
+
+    <!-- Required -->
+    <div class="card">
+      <div class="card-label">Required</div>
+      <div class="field" style="margin-bottom:14px;">
+        <label class="field-label">Account Name <span class="req">*</span></label>
+        <input type="text" id="accountName" placeholder="e.g. Workday, Inc." autocomplete="off">
+      </div>
+      <div class="field-grid">
+        <div class="field">
+          <label class="field-label">Deal Stage <span class="req">*</span></label>
+          <select id="dealStage">
+            <option value="">Select stage…</option>
+            <option value="Prospecting">Prospecting — no contact yet</option>
+            <option value="Discovery">Discovery — first conversations</option>
+            <option value="Qualification">Qualification — evaluating fit</option>
+            <option value="Evaluation">Evaluation — active proof of value</option>
+            <option value="Proposal">Proposal — commercial discussion</option>
+            <option value="Negotiation">Negotiation — near close</option>
+            <option value="Existing Customer">Existing Customer — renewal / expansion</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="field-label">Meeting Context <span class="req">*</span></label>
+          <input type="text" id="meetingContext" placeholder="e.g. Second call with VP Legal, pitching CLM">
+        </div>
+      </div>
+    </div>
+
+    <!-- Advanced -->
+    <div class="card">
+      <button class="adv-toggle" id="advToggle" onclick="toggleAdv()">
+        <span class="adv-arrow">▶</span>&nbsp; Advanced Context — optional but sharpens every output
+      </button>
+      <div class="adv-body" id="advBody">
+        <div class="field-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label class="field-label">Known Pain</label>
+            <textarea id="knownPain" rows="2" placeholder="Pain you've already uncovered…"></textarea>
+          </div>
+          <div class="field">
+            <label class="field-label">Competitor in Play</label>
+            <input type="text" id="competitor" placeholder="e.g. Ironclad, DocuSign CLM, Icertis">
+          </div>
+        </div>
+        <div class="field-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label class="field-label">Economic Buyer</label>
+            <input type="text" id="economicBuyer" placeholder="Name, title — or TBD">
+          </div>
+          <div class="field">
+            <label class="field-label">Champion</label>
+            <input type="text" id="champion" placeholder="Name + strength: weak / building / strong">
+          </div>
+        </div>
+        <div class="field-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label class="field-label">Target Close Date</label>
+            <input type="text" id="closeDate" placeholder="e.g. Q3 2026 or Sep 30">
+          </div>
+          <div class="field">
+            <label class="field-label">Compelling Event</label>
+            <input type="text" id="compellingEvent" placeholder="e.g. contract expiring, audit, exec mandate">
+          </div>
+        </div>
+        <div class="field-grid" style="margin-bottom:12px;">
+          <div class="field">
+            <label class="field-label">Budget</label>
+            <input type="text" id="budget" placeholder="Confirmed amount, ballpark, or TBD">
+          </div>
+          <div class="field">
+            <label class="field-label">License Count / Seats</label>
+            <input type="text" id="licenseCount" placeholder="e.g. 50 users (confirmed) or ~200 (inferred)">
+          </div>
+        </div>
+        <div class="field" style="margin-bottom:14px;">
+          <label class="field-label">Additional Notes</label>
+          <textarea id="extraNotes" rows="2" placeholder="Anything else worth knowing…"></textarea>
+        </div>
+        <div class="field-label">Documents — transcripts · 10-Ks · RFPs · discovery notes</div>
+        <div class="upload-zone" id="uploadZone"
+          onclick="document.getElementById('fileInput').click()"
+          ondragover="onDragOver(event)" ondragleave="onDragLeave()" ondrop="onDrop(event)">
+          <input type="file" id="fileInput" multiple accept=".pdf,.txt,.docx,.md"
+            style="display:none" onchange="onFileSelect(event)">
+          <div class="upload-icon">⬆</div>
+          <div class="upload-text">Drop files here or click to browse</div>
+          <div class="upload-hint">PDF · TXT · DOCX · MD &nbsp;·&nbsp; Max 10MB each</div>
+        </div>
+        <div class="file-list" id="fileList"></div>
+      </div>
+    </div>
+
+    <!-- Module selection -->
+    <div class="card">
+      <div class="module-bar">
+        <div class="module-bar-label">Select Outputs</div>
+        <div class="module-bar-right">
+          <span class="module-count" id="moduleCount">2 of 4 selected</span>
+          <button class="btn-ghost" id="toggleAllBtn" onclick="toggleAllModules()">Select All</button>
+        </div>
+      </div>
+      <div class="module-grid" id="moduleGrid"></div>
+    </div>
+
+    <button class="btn-generate" id="generateBtn" onclick="generate()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      Generate Intel
+    </button>
+
+  </div><!-- /phase-intake -->
+
+  <!-- ── PHASE: GENERATING ── -->
+  <div class="phase" id="phase-generating">
+    <div class="gen-header">
+      <div class="gen-title">Building intel for <span class="gen-account" id="genAccount"></span></div>
+      <div class="gen-sub">Research pass → parallel synthesis · ~20–30 seconds</div>
+    </div>
+
+    <div class="progress-block">
+      <div class="progress-label">Research Pass — live web search</div>
+      <div class="log-line" id="log-r1">
+        <div class="log-dot"></div>
+        <span>Searching for company profile and financials…</span>
+      </div>
+      <div class="log-line" id="log-r2">
+        <div class="log-dot"></div>
+        <span>Scanning recent news, triggers, and strategic priorities…</span>
+      </div>
+      <div class="log-line" id="log-r3">
+        <div class="log-dot"></div>
+        <span>Mapping tech stack, stakeholders, and competitive signals…</span>
+      </div>
+      <div class="log-line" id="log-r4">
+        <div class="log-dot"></div>
+        <span>Research complete — passing context to synthesis</span>
+      </div>
+    </div>
+
+    <div class="progress-block">
+      <div class="progress-label">Synthesis — all outputs running in parallel</div>
+      <div class="module-progress-grid" id="modProgGrid"></div>
+    </div>
+  </div><!-- /phase-generating -->
+
+  <!-- ── PHASE: OUTPUTS ── -->
+  <div class="phase" id="phase-outputs">
+    <div class="output-header">
+      <div>
+        <div class="output-account" id="outputAccount"></div>
+        <div class="output-meta" id="outputMeta"></div>
+      </div>
+      <button class="btn-reset" onclick="resetToIntake()">← New Account</button>
+    </div>
+    <div class="output-tabs" id="outputTabs"></div>
+    <div class="output-panel" id="outputPanel"></div>
+    <div class="output-actions">
+      <button class="btn-copy" onclick="copyOutput()">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2v1"/></svg>
+        Copy to clipboard
+      </button>
+      <button class="btn-copy" onclick="downloadDoc()" style="margin-left:8px;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Word doc
+      </button>
+      <button class="btn-copy" onclick="downloadPDF()" style="margin-left:8px;">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Export PDF
+      </button>
+    </div>
+  </div><!-- /phase-outputs -->
+
+</main>
+
+<!-- ── HISTORY OVERLAY ── -->
+<div class="hist-overlay" id="histOverlay">
+  <div class="hist-head">
+    <div>
+      <div class="hist-head-title">Saved Sessions</div>
+      <div class="hist-head-sub">Click any entry to reload outputs</div>
+    </div>
+    <button class="hist-close" onclick="toggleHistory()">×</button>
+  </div>
+  <div class="hist-list" id="histList"></div>
+  <div class="hist-footer">
+    <button class="hist-clear-btn" onclick="clearAllHistory()">Clear all history</button>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast"></div>
+
+<!-- ── CHAT FAB ── -->
+<button class="chat-fab" id="chatFab" onclick="toggleChat()">
+  <div class="chat-pip"></div>
+  Assistant
+</button>
+
+<!-- ── CHAT OVERLAY ── -->
+<div class="chat-overlay" id="chatOverlay">
+  <div class="chat-head">
+    <div class="chat-head-left">
+      <div class="chat-head-pip"></div>
+      <div>
+        <div class="chat-head-title">Sales Assistant</div>
+        <div class="chat-head-sub">Web search &nbsp;·&nbsp; Full account context</div>
+      </div>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">×</button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-input-area">
+    <div class="chat-row">
+      <textarea class="chat-input" id="chatInput" rows="1"
+        placeholder="Ask anything about this account…"
+        onkeydown="onChatKey(event)"
+        oninput="autoResize(this)"></textarea>
+      <button class="chat-send" id="chatSend" onclick="sendChat()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="13" height="13">
+          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+      </button>
+    </div>
+    <div class="chat-hint">Enter to send &nbsp;·&nbsp; Shift+Enter for new line</div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer class="znith-footer">
+  <div class="znith-wordmark">
+    <span style="font-family:var(--f-mono);color:var(--amber);font-weight:700;">/</span>
+    <span style="font-family:var(--f-brand);font-weight:800;color:var(--amber);">Z</span>
+    <span style="font-family:var(--f-brand);font-weight:800;color:var(--tfaint);">nith</span>
+  </div>
+  <div class="footer-meta">
+    <span style="font-family:var(--f-mono);font-size:9px;color:var(--tfaint);letter-spacing:0.08em;">Sales Hub</span>
+    <div class="footer-pip"></div>
+    <span style="font-family:var(--f-mono);font-size:9px;color:var(--tfaint);letter-spacing:0.08em;">v2.0</span>
+  </div>
+</footer>
+
+<script>
+'use strict';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// KNOWLEDGE BRAIN
+// Paste the knowledge brain content between the backticks when ready.
+// This is injected into every synthesis prompt automatically.
+// ─────────────────────────────────────────────────────────────────────────────
+const KNOWLEDGE_BRAIN = `
+=== CONGA KNOWLEDGE BRAIN v1.0 ===
+Built from: rep field notes, competitive slide decks, product briefs, Dellwood/Palmetto deal context.
+Use this to generate account-specific, competitor-aware, stage-appropriate sales outputs.
+
+---
+
+## COMPANY & PLATFORM OVERVIEW
+
+Conga is the Revenue Lifecycle Management company. The platform handles the full arc of a commercial deal — from product configuration and quoting (CPQ) through contracting (CLM) through document generation (DocGen/Composer) through revenue recognition and renewals (RLM). The core message: Conga unifies what most companies run on disconnected point solutions.
+
+Built natively on Salesforce. Deep Salesforce integration is a structural advantage, not a feature. But Conga also operates fully standalone — Composer API mode works with any CRM or custom platform via REST API with zero Salesforce dependency (Dellwood Insurance proof point: pure API mode on a custom-built policy platform called Aqua, no Salesforce in the stack).
+
+THE SINGLE MOST POWERFUL PROOF POINT IN THE PORTFOLIO: Salesforce uses Conga CPQ to quote its own enterprise deals. Salesforce's own revenue operations team chose Conga over their own product. Use this in every competitive deal against Salesforce Revenue Cloud.
+
+Market position: 10,000+ customers, 20+ years of document generation market leadership, Gartner Voice of the Customer recognition.
+
+---
+
+## PRODUCT KNOWLEDGE
+
+### CLM — Contract Lifecycle Management
+
+THE REAL PROBLEM IT SOLVES: Contracts are slow, scattered, and uncontrolled. Legal is a bottleneck. Reps rogue-negotiate and accept non-standard terms. Renewal dates get missed. No one knows what's in the executed contracts sitting in inboxes and shared drives.
+
+WHO FEELS THIS PAIN: General Counsel, VP Legal, CLO (owns the bottleneck), CFO (owns the revenue leakage from missed renewals and bad terms), CRO (owns the deal velocity problem — slow legal = slow close).
+
+BEFORE CONGA CLM: Contracts drafted in Word, emailed back and forth, redlines tracked manually, approvals chased in Slack, executed contracts stored in inboxes or a SharePoint folder no one trusts. No obligation tracking. Renewals caught by accident.
+
+AFTER CONGA CLM: Contract requests initiated from Salesforce opportunities. Pre-approved templates and clauses eliminate off-template risk. Automated approval routing with parallel tracks. AI-powered redline review flags risk. Executed contracts stored, searchable, with obligation reminders. Renewal pipeline visible in Salesforce alongside revenue pipeline.
+
+SALESFORCE-NATIVE ADVANTAGE: Contract data flows bidirectionally with Opportunity, Account, Contact. A rep can see contract status without leaving Salesforce. Finance can see signed terms. This integration is architectural — it is not a connector. DocuSign CLM and Ironclad both require sync logic that breaks.
+
+HONEST WINS: Complex Salesforce-native enterprises, heavily regulated industries (insurance, life sciences, financial services), companies replacing a first-generation CLM that wasn't integrated with their CRM, multi-entity or multi-geography orgs.
+
+HONEST LOSSES: Companies that genuinely only need light redlining with no Salesforce integration (Ironclad can win these), companies that don't have a Salesforce investment and have no desire to build one.
+
+[PLACEHOLDER: Specific contract cycle reduction stats — need rep input or CS data. E.g., "reduced contract cycle from X days to Y at [company type]"]
+
+---
+
+### CPQ — Configure Price Quote
+
+THE REAL PROBLEM IT SOLVES: Sales reps price wrong, approve wrong, and quote inconsistently. Margin leaks through undiscounted deals that no one caught. Complex product catalogs make reps guess instead of configure. Quote approval chains take days because they live in email threads.
+
+WHO FEELS THIS PAIN: VP Sales Operations, CRO, Finance/CFO (margin leakage), Sales Enablement (reps aren't hitting quota because they're stuck in quoting limbo).
+
+BEFORE CONGA CPQ: Reps build quotes in spreadsheets or manually in Salesforce. Pricing rules live in someone's head. Discount approvals sent via email and Slack. Rogue pricing. Inconsistent quote formats going to customers. Legal language on quotes not reviewed.
+
+AFTER CONGA CPQ: Guided selling walks reps through product configuration. Pricing rules enforced automatically — no one can quote outside parameters without triggering the right approval chain. Discount thresholds trigger tiered approvals with SLA visibility. Quote output is professional, consistent, and includes pre-approved legal language. One click generates a complete proposal.
+
+KEY DIFFERENTIATOR vs. DealHub/lightweight tools: Conga handles complex promotions, multi-tier approval matrices, multi-currency, multi-entity configurations, and conditional pricing logic that lightweight SaaS CPQ tools can't manage. The rule of thumb: if your pricing has more than 3 discount tiers and more than 1 approval level, DealHub starts to break down.
+
+52M+ CARTS CREATED ON CONGA CPQ. This is the volume proof point — use it.
+
+[PLACEHOLDER: CPQ section — need to add: quote-to-close cycle improvement stats, margin leakage reduction numbers, approval cycle time reduction, and competitive detail vs. Oracle/SAP CPQ.]
+
+---
+
+### DocGen / Composer — Document Generation
+
+THE REAL PROBLEM IT SOLVES: Documents are the last mile of every transaction and they're broken. Reps, ops, and legal waste hours per week creating documents manually from templates that are inconsistently maintained, version-uncontrolled, and error-prone.
+
+WHO FEELS THIS PAIN: Sales Ops (tired of reps creating bad proposals), Legal/Compliance (horrified that non-standard language is going out), Underwriting/Ops (for financial services — they own the forms problem), IT (when scale requires API-level document automation).
+
+SALESFORCE MODE: The most common deployment. Users click a button inside Salesforce, Composer pulls data from related objects, merges it into a configured template, and outputs a finished Word or PDF. Non-technical template admins manage the library through a UI. No code required for most template changes.
+
+API MODE (standalone — underused and underappreciated): Composer operates as a standalone document assembly engine. Any system can call Conga's REST API, pass a JSON data payload, and receive a finished document in return. No Salesforce dependency whatsoever. This destroys the "we're not on Salesforce" objection. Dellwood Insurance (insurance policy generation) and Palmetto Solar (solar contract generation) run Composer this way.
+
+RULES ENGINE DIFFERENTIATOR: Beyond merge, Conga's rules engine determines which documents apply to a given transaction based on configured attributes (state, product, business unit, coverage type, etc.). For Dellwood: Conga evaluates 2,000+ insurance forms against risk attributes and returns the correctly sequenced forms list — sub-second, enforcing mutually exclusive rules, co-existence rules, sequence ordering, and frozen-at-bind state. This is not a commodity capability. Most competitors, and any realistic internal build, can merge data into a template. The hard problem is rules-driven document selection at scale — that is Conga's core.
+
+SELF-SERVICE ADMINISTRATION: Business users (underwriting ops, product teams, sales enablement) add templates, modify rules, and activate new document types without developer involvement. This is a structural differentiator vs. internal builds and vs. more technical document tools. Matters especially in insurance and financial services where product changes are frequent.
+
+20+ YEARS OF MARKET LEADERSHIP in document generation. 46M+ documents generated annually. These numbers signal production-grade enterprise scale.
+
+BUILD VS. BUY FRAMING (for API mode deals): Building the merge is a weekend project. Building the rules engine — with mutually exclusive form logic, effective dates, frozen-at-bind states, non-technical admin UI, and scale — is a multi-quarter engineering commitment with ongoing maintenance overhead that compounds as the business grows. Every time a new state is added, a form is updated, a product launches — who makes that change? Conga hands ownership to the business. Internal builds recreate the IT dependency.
+
+DOCGEN COMPETITORS:
+- Nintex: Workflow-heavy, less document-focused, typically seen in SharePoint-centric environments. Weaker Salesforce integration.
+- DocuSign Gen: Mostly eSign-adjacent. Templates less sophisticated, rules engine much lighter than Conga. Usually an afterthought add-on to their eSign relationship.
+- Salesforce native merge templates: Basic. No rules engine, no complex template logic, no admin UI for non-technical users. Breaks at scale.
+- Internal builds: See build vs. buy framing above.
+
+---
+
+### RLM — Revenue Lifecycle Management
+
+WHAT IT IS: The platform layer that connects quoting, contracting, and revenue management end-to-end. Positions Conga as a unified revenue platform, not a collection of point tools.
+
+WHO CARES: CFO, CRO, RevOps leadership — anyone trying to connect the revenue process from first quote through renewal through recognition without managing four separate vendor relationships.
+
+[PLACEHOLDER: RLM needs more specific positioning detail — how it connects to CLM+CPQ, what specifically it does that Salesforce Revenue Cloud and Zuora don't, customer proof points. Collect from product team or enterprise reps before using in outputs.]
+
+---
+
+### AiMe — AI Capabilities
+
+WHAT IT DOES TODAY (honest): AI-powered contract review and risk flagging, clause suggestions during authoring, natural language search on contract repositories, redline analysis and comparison.
+
+WHO CARES: Legal teams who want speed on review, GCs who want visibility into contract risk across the portfolio.
+
+THE HONEST NUANCE: Every vendor in this space is claiming AI leadership right now. Ironclad and Icertis are marketing AI aggressively. Conga's AI is real and functional — it surfaces risk, accelerates review, and works within the platform. But it is not yet best-in-class for pure AI contract analytics. The right positioning: Conga's AI is native to the platform, not a bolt-on. The platform foundation (20 years, 10,000+ customers, production scale) matters more than the AI marketing.
+
+[PLACEHOLDER: AiMe needs specific capability details — what's live now vs. roadmap, specific AI features with names, any customer results. Do not promise roadmap items as live capabilities.]
+
+---
+
+## PROOF POINTS & STATS
+
+- 52M+ carts created on Conga CPQ (public stat — use freely)
+- 46M+ documents generated annually (public stat — use freely)
+- 10,000+ customers (public stat — use freely)
+- 20+ years of document generation market leadership
+- CUSTOMER ZERO: Salesforce uses Conga CPQ to quote its own enterprise deals. Salesforce's revenue operations team chose Conga over Salesforce Revenue Cloud. Most powerful single counter to "we'll just use Salesforce."
+- Gartner Voice of the Customer recognition — use when buyers cite analyst preference for competitors
+- Dellwood Insurance (DocGen API mode): 250,000+ policy documents per year on Conga's API engine, zero Salesforce dependency, sub-second rules evaluation for 2,000+ form library
+- Teresa Waller / Cerner (via Kicksaw): 5,000 templates consolidated, compliance-driven form governance, reference available
+- [PLACEHOLDER: Contract cycle reduction stat — need verified number. Commonly cited as 60-70% reduction but validate source before using]
+- [PLACEHOLDER: Revenue leakage / margin improvement stats — need rep or CS data]
+- [PLACEHOLDER: Quote-to-close cycle improvement — need CPQ customer data]
+
+---
+
+## COMPETITIVE INTELLIGENCE
+
+### Ironclad
+
+WHY THEY'RE IN DEALS: Strong modern UI, heavy marketing to CLO and legal buyer, aggressive trial tactic (free 30-day POC to get installed). Well-funded, fast-moving, resonating with mid-market and enterprise legal teams who haven't bought CLM before.
+
+THEIR TRIAL TACTIC: Ironclad offers free POCs aggressively. Once installed, they build switching costs fast. If you hear "Ironclad offered us a free trial," accelerate — they're trying to get embedded before the evaluation is formal.
+
+WHERE THEY GENUINELY BEAT US: Companies that want CLM only with no interest in CPQ, DocGen, or Salesforce integration. Modern UI that's faster to demo impressively. Strong legal team adoption in DocuSign-heavy companies.
+
+THEIR REAL WEAKNESSES:
+- No CPQ. No DocGen. Not a platform — it's a point solution. If the customer has a quote-to-contract gap, Ironclad leaves it open.
+- Salesforce integration is a connector, not native. Data sync breaks. Rep visibility into contract status requires leaving Salesforce.
+- Weak on complex approval workflows — designed for lighter enterprise use cases.
+- AI marketing is heavy but underlying capability is less differentiated than they imply.
+
+TRAP QUESTIONS:
+- "How does your team handle the handoff between a signed quote and contract creation today? Does that live in the same system?"
+- "When a rep closes a deal, how long does it take before a contract is in the customer's hands? Where does that delay live?"
+
+RESPONSE WHEN CUSTOMER SAYS "we're also looking at Ironclad":
+"Ironclad has strong CLM and a good UI — they deserve to be on your shortlist if you're buying CLM only. The question worth asking is whether you want your contract management to operate in isolation or as part of a connected revenue process. If your reps live in Salesforce and you want them to see contract status, trigger documents, and track renewals without leaving their workflow, that's an architectural question Ironclad can't fully answer. They're a point solution in a space where you're likely managing multiple connected problems."
+
+---
+
+### DocuSign CLM
+
+WHY THEY'RE IN DEALS: Brand recognition, existing DocuSign eSign footprint, "one vendor for eSign and CLM" pitch, procurement convenience.
+
+WHERE THEY GENUINELY BEAT US: Accounts where DocuSign eSign is deeply embedded and the buyer wants a single eSign+CLM vendor. Simple CLM use cases with no Salesforce dependency.
+
+THEIR REAL WEAKNESSES:
+- Built by acquisition, not designed as an integrated CLM. The product seams show.
+- Salesforce integration is weak — bidirectional data sync requires significant work and is a known customer complaint.
+- Complex approval workflow handling is limited.
+- Customer satisfaction in the CLM layer is notably lower than their eSign product.
+- Not connected to CPQ or revenue management — contract data doesn't flow to quoting.
+
+TRAP QUESTIONS:
+- "How much of your contracting process lives inside Salesforce today versus in DocuSign?"
+- "When you think about the contract data — terms, pricing, renewal dates — where does that need to live so your sales and finance teams can act on it?"
+
+RESPONSE: "DocuSign CLM exists because DocuSign needed to extend beyond eSign. The CLM they built is functional for simple use cases. Where we see customers get frustrated is when they need the contract data to actually flow back into Salesforce for forecasting, renewal visibility, and rep workflow — the integration that should be seamless isn't. If your teams are heavily Salesforce-driven, that gap matters."
+
+---
+
+### Icertis
+
+WHY THEY'RE IN DEALS: Enterprise credibility, AI-forward marketing, large analyst recognition, strong in heavily regulated industries. Usually a CFO or GC evaluation at Fortune 500 companies.
+
+WHERE THEY GENUINELY BEAT US: Very large enterprises with complex multi-jurisdiction contract requirements, heavy AI contract analytics needs, legal teams that want maximum configurability and don't care about time-to-value.
+
+THEIR REAL WEAKNESSES:
+- Implementation timelines: 12-18 months is common. Real projects have gone longer.
+- Implementation cost: Very high services-to-software ratio. Not mid-market viable.
+- Weak on the revenue side — no CPQ integration, no DocGen depth, not built for the sales process.
+- Overkill for most enterprise deals below Fortune 200.
+
+TRAP QUESTIONS:
+- "What's your target go-live date? And what internal resources do you have allocated to implementation?"
+- "Have you scoped the implementation with their services team yet? Have you gotten a services cost estimate alongside the software cost?"
+
+RESPONSE: "Icertis is genuinely best-in-class for the Fortune 50 legal organization that has 18 months and a large services budget and needs maximum legal AI configurability. For a company at your scale that needs to be live in a reasonable timeframe and needs the contract layer to connect to your quoting and revenue process, Icertis is significant overkill — the implementation risk is real, and their strength on the legal analytics side doesn't offset the gap on the revenue operations side."
+
+---
+
+### Salesforce Revenue Cloud / RCA (Revenue Cloud Advanced)
+
+WHY THEY'RE IN DEALS: The customer is already in Salesforce and is being told by their Salesforce AE that they can "stay on platform." Consolidation argument: fewer vendors, one throat to choke, all data native to Salesforce.
+
+WHERE THEY GENUINELY BEAT US: When the customer's IT team is philosophically committed to staying 100% on Salesforce and pricing complexity is low enough that RCA handles it.
+
+THEIR REAL WEAKNESSES:
+- Salesforce uses Conga CPQ to quote its own enterprise deals. This is the killshot. Salesforce's own team chose Conga. Because complex pricing logic, approval workflows, and document generation at scale aren't things RCA handles cleanly.
+- RCA is still maturing — complex promotions, advanced approval matrices, and CPQ-to-CLM integration require significant configuration and often custom development.
+- Customers frequently resist paying Salesforce more money after already feeling over-billed.
+
+TRAP QUESTIONS:
+- "Has your Salesforce AE given you a full scope and cost estimate for the RCA implementation? What did the SI quote?"
+- "Do you know which of your pricing scenarios and approval rules are currently supported natively in RCA versus requiring custom development?"
+
+RESPONSE: "Here's the thing we always share when Salesforce Revenue Cloud comes up: Salesforce itself uses Conga CPQ to quote their enterprise deals. Their own revenue operations team ran the evaluation and chose Conga over their own product. The reason isn't complicated — complex pricing configurations, conditional approval chains, and document generation at scale aren't what RCA was built to do cleanly. Before you commit to building that natively, it's worth asking your Salesforce AE what the scope looks like for your specific pricing complexity."
+
+---
+
+### DealHub
+
+WHY THEY'RE IN DEALS: Fast implementation, clean modern UI, strong in SaaS mid-market, lower price point. Often positioned as "CPQ without the complexity."
+
+WHERE THEY GENUINELY BEAT US: Small to mid-market SaaS companies with simple product catalogs (subscription tiers, add-ons), limited approval chains.
+
+THEIR REAL WEAKNESSES:
+- Struggles with complex product configurations, multi-tier pricing, and sophisticated approval matrices.
+- No CLM. No DocGen. Point solution only.
+- Multi-currency and multi-entity scenarios are weak.
+- As companies grow past the complexity DealHub was designed for, they outgrow it and replace it.
+
+TRAP QUESTIONS:
+- "How many distinct pricing tiers and discount levels does your sales team manage today? Do different deal sizes trigger different approval chains?"
+- "What happens when a deal involves multiple products with interdependent pricing?"
+
+RESPONSE: "DealHub is a solid choice if you're selling SaaS with two or three pricing tiers and a single approval level. If your reps are configuring complex deals with multi-product pricing, conditional discounts, and tiered approvals — or if you anticipate growing into that — DealHub starts to create workarounds fast. It also only answers one piece of the revenue process — no CLM, no DocGen."
+
+---
+
+### Agiloft
+
+WHY THEY'RE IN DEALS: Growing CLM player with a highly configurable no-code platform. Strong in government and regulated industries. Gaining SI investment.
+
+IMPORTANT — PARTNER DRIFT: Some SIs are actively building Agiloft practices. In enterprise deals where a partner is influencing the evaluation, get clarity on their preferred platform early. Ask the SI directly: "What CLM practices do you currently have and which do you prefer implementing?"
+
+WHERE THEY GENUINELY BEAT US: Customers skeptical of Salesforce dependency, government sector, highly regulated environments where maximum configurability matters more than time-to-value.
+
+THEIR REAL WEAKNESSES:
+- Configuration complexity — highly flexible platform requires significant implementation work. "No-code" doesn't mean fast.
+- Less Salesforce-native than Conga — integration is not as deep.
+- Less depth on CPQ and DocGen — still primarily a CLM vendor.
+- Smaller partner ecosystem for complex global deployments.
+
+---
+
+### DocGen Competitors (Secondary)
+
+NINTEX: Primarily a workflow platform with document generation as a feature. Strong in Microsoft/SharePoint environments. Not a serious competitor in Salesforce-native accounts.
+
+CONGA vs. ANY INTERNAL BUILD: The key argument is always the rules engine + self-service administration. Building the document merge is easy. Building the rules engine (conditional form selection, mutually exclusive logic, sequence ordering, effective dates, admin UI for non-technical users) is the hard part. And rebuilding it every time the business changes is the invisible ongoing cost.
+
+---
+
+## MARKET TRENDS (Current — April 2026)
+
+1. IRONCLAD TRIAL TACTIC IS AGGRESSIVE. They are offering free POCs systematically. If a customer mentions Ironclad has offered a trial, treat it as a red flag — they're trying to build switching costs before formal evaluation. Accelerate your discovery and executive engagement.
+
+2. PARTNER DRIFT TO AGILOFT IS REAL. Some implementation partners that previously prioritized Conga are building Agiloft practices. In enterprise deals where a partner is influencing the evaluation, get clarity on their preferred platform early.
+
+3. SALESFORCE DISPLACEMENT PLAY. Salesforce is actively pushing Revenue Cloud in accounts where Conga has CPQ — both top-down through Salesforce AEs and through partner channel. Counter: Customer Zero. Always.
+
+4. AI POSITIONING ARMS RACE. Every vendor is marketing AI aggressively. Ironclad and Icertis are the loudest. The defensible Conga position: "Conga's AI is native to a platform that's been processing real enterprise contracts and transactions at scale for 20 years. That production context matters more than which vendor has the best AI press release."
+
+5. "WE'RE NOT ON SALESFORCE" OBJECTION IS LOSING VALIDITY. The Composer API standalone deployment pattern is real, referenceable, and production-proven. Every rep should know this. Do not concede the Salesforce-only label.
+
+---
+
+## SALES METHODOLOGY
+
+### Discovery Framework
+
+Lead with business outcomes, not features. The goal of discovery is to understand the cost of the current state before you propose anything.
+
+THE VALUE-BASED DISCOVERY SEQUENCE:
+1. What does the process look like today? (Walk me through the last time you did this end-to-end)
+2. Where does it break? (What's the most painful moment in that process?)
+3. What does that cost? (Time lost, deals slowed, errors made, risk created — put a number on it)
+4. What would good look like if you fixed it? (Let them define success, not you)
+5. Why now? (What changed that makes this a priority today vs. last year?)
+
+DISCOVERY QUESTIONS THAT ACTUALLY WORK:
+- "Walk me through the last contract you closed — from the moment a rep sent the first draft to the moment it was fully executed. Where did time go?"
+- "When a deal slips because of the contract process, what usually happened? How often does that occur?"
+- "Who at your company can approve a non-standard contract term right now? How long does that usually take?"
+- "If we could cut your contract cycle in half, what would that be worth in deals per quarter?"
+- "Who asked you to look at this? Did this come down from leadership, or did you bring it up?" (Champion qualification)
+
+THE EXEC-TASKED VS. SELF-IDENTIFIED TEST: A champion is strongest when they've been explicitly tasked by an executive. Ask: "Who put this on your plate? Did this come from above, or did you surface it?" Self-identified champions often can't get budget approved. Executive-tasked champions usually already have it.
+
+### Champion Development
+
+WHAT A REAL CHAMPION LOOKS LIKE:
+- Has organizational credibility and visibility (people return their calls)
+- Understands the business problem, not just the product features
+- Has been in the room when the executive discussion happened — or IS the executive
+- Has something personally at stake in the outcome (a metric they own, a project they're accountable for)
+- Will coach you — will tell you who else is in the room, what the objections are, what the timeline really is
+
+WHAT A FALSE CHAMPION LOOKS LIKE:
+- Enthusiastic in every meeting but can't get you to the economic buyer
+- Gives you access to themselves but not to their VP or CFO
+- Says "the budget is there" without being able to name the budget owner
+- Champions the product but can't articulate the business case to their own leadership
+
+QUESTIONS TO TEST CHAMPION STRENGTH:
+- "Can you help me get 20 minutes with [economic buyer]? I want to make sure their priorities are reflected in what we build."
+- "If this goes to the CFO for sign-off, what objection do you think they'd have? How would you handle that?"
+
+### Deal Stage Framing
+
+PROSPECT/QUALIFY: Is the pain real or hypothetical? Is there an economic buyer engaged or just a champion? What does the cost of doing nothing look like? Bad signal: "We're just exploring." Good signal: "We need to fix this before [specific date/event]."
+
+DISCOVERY: Depth of pain established, business case forming. Who owns the budget conversation? Is there a competitor in the deal? Why now vs. not last year? Bad signal: Champion can't get you to the executive. Good signal: Champion is setting up meetings and coaching you.
+
+DEMO/PROOF: Demonstrate to their stated problems, not your standard deck. Connect every demo moment to something they said in discovery. Bad signal: Rep is showing the full product tour. Good signal: Demo is 30 minutes and addresses the top 3 specific pain points they described.
+
+NEGOTIATE/CLOSE: Business case is agreed. Why us, why now — reinforce value, don't just defend price. Understand the legal/procurement process timeline. Who signs? When is the budget period? Bad signal: Stuck on price without business case agreed. Good signal: They're asking about implementation timeline and internal IT readiness.
+
+### Objection Handling
+
+"WE'RE ALREADY IN SALESFORCE, WE'LL JUST USE REVENUE CLOUD."
+Counter: Customer Zero. "Salesforce uses Conga CPQ to quote their own enterprise deals. Their team ran the evaluation and chose us over their own product. Before we take Revenue Cloud off the table, it's worth asking your Salesforce AE to show you how they'd handle [specific pricing scenario] natively."
+
+"WE'RE NOT ON SALESFORCE."
+Counter: Composer API standalone. "Conga's document engine is available as a pure REST API — no Salesforce dependency. An insurance company runs 250,000+ documents per year through our API from a fully custom platform with no Salesforce in the stack. The 'Salesforce-only' perception is outdated."
+
+"THE PRICE IS TOO HIGH."
+Counter: Get to ROI first. "Before we talk about price, I want to make sure we've agreed on the value. You said contracts are taking [X days] on average and legal is a bottleneck on [Y deals per quarter]. If we get that to [Z days], what does that mean for your close rate? For your quarterly revenue?"
+
+"WE CAN BUILD THIS INTERNALLY."
+Counter: Build vs. buy framing. "You can build the document merge — that's an afternoon. The hard part is building the rules engine that knows which documents apply to which transaction type, with conditional logic, effective dates, and a non-technical admin UI so your business team can make changes without filing a developer ticket. That's months of engineering work, and every time your business changes, you pay the maintenance cost again. We have customers who tried to build that and came to us 18 months later."
+
+"WE LIKE IRONCLAD."
+Counter: Platform framing. "Ironclad is a solid CLM and has a great UI — the question is whether you're buying CLM in isolation or as part of a connected revenue process. When a rep closes a deal in Salesforce, how does that trigger the contract? When the contract is signed, how does that flow back into Salesforce for renewal tracking and revenue forecasting? Those handoffs are where Ironclad creates gaps."
+
+"YOUR AI ISN'T AS ADVANCED AS IRONCLAD/ICERTIS."
+Counter: Substance over marketing. "Every vendor is claiming AI leadership right now. Conga's AI is in production — it reviews contracts, flags risk, suggests clauses, and processes real enterprise transaction data at scale. What I'd ask any vendor is: show me a specific contract workflow with real legal terms and show me what the AI actually does. Not the marketing deck — the live demo. Roadmap claims are easy. Production capabilities are what matter."
+
+---
+
+[END OF KNOWLEDGE BRAIN v1.0 — GAPS TO FILL: CPQ competitive detail, AiMe specifics, RLM detail, contract cycle reduction stats, ROI benchmarks. Collect from enterprise team and CS. Add to knowledge-brain-v1.md file.]
+`;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MODULE REGISTRY
+// To add a new module: add one entry here. No other code changes needed.
+// ─────────────────────────────────────────────────────────────────────────────
+const MODULES = {
+  'account-brief': {
+    id:          'account-brief',
+    label:       'Account Brief',
+    description: 'Exec-ready pre-meeting intelligence snapshot',
+    stage:       'Prepare',
+    accent:      '#0D9488',
+    accentGlow:  'rgba(13,148,136,0.28)',
+    accentMuted: 'rgba(13,148,136,0.12)',
+  },
+  'value-map': {
+    id:          'value-map',
+    label:       'Value Map',
+    description: 'Strategic initiatives mapped to Conga capabilities',
+    stage:       'Discover',
+    accent:      '#8B5CF6',
+    accentGlow:  'rgba(139,92,246,0.28)',
+    accentMuted: 'rgba(139,92,246,0.12)',
+  },
+  'qualify-iq': {
+    id:          'qualify-iq',
+    label:       'Qualify IQ',
+    description: 'MEDDIC gap analysis with honest deal scoring',
+    stage:       'Qualify',
+    accent:      '#16A34A',
+    accentGlow:  'rgba(22,163,74,0.28)',
+    accentMuted: 'rgba(22,163,74,0.12)',
+  },
+  'demo-brief': {
+    id:          'demo-brief',
+    label:       'Demo Brief',
+    description: 'SE-ready demo flow with persona-specific hooks',
+    stage:       'Qualify',
+    accent:      '#EA580C',
+    accentGlow:  'rgba(234,88,12,0.28)',
+    accentMuted: 'rgba(234,88,12,0.12)',
+  },
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SHARED API KEY (optional)
+// Paste your key here to deploy for a team that doesn't have their own keys.
+// Leave blank ('') to require each user to enter their own key in the header.
+// ─────────────────────────────────────────────────────────────────────────────
+const SHARED_API_KEY = '';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// API CONFIG
+// To migrate to a Conga backend: change `endpoint` to your proxy URL.
+// All other code stays the same.
+// ─────────────────────────────────────────────────────────────────────────────
+const API_CONFIG = {
+  endpoint:       '/api/claude',
+  researchModel:  'claude-haiku-4-5-20251001',  // fast + web search
+  synthesisModel: 'claude-sonnet-4-6',           // best quality for outputs
+  chatModel:      'claude-haiku-4-5-20251001',   // fast for conversation
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────────────
+const state = {
+  apiKey:          '',
+  account:         '',
+  stage:           '',
+  meeting:         '',
+  pain:            '',
+  competitor:      '',
+  buyer:           '',
+  champion:        '',
+  closeDate:       '',
+  compellingEvent: '',
+  budget:          '',
+  licenseCount:    '',
+  notes:           '',
+  documents:       [],   // [{ name, type:'pdf'|'text', base64?, text? }]
+  selectedModules: ['account-brief', 'value-map'],
+  research:        '',
+  outputs:         {},   // { moduleId: 'markdown' | null }
+  activeModule:    '',
+  chatHistory:     [],
+  generating:      false,
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// API LAYER
+// Single function for all Anthropic calls.
+// Swap endpoint in API_CONFIG to migrate to backend.
+// ─────────────────────────────────────────────────────────────────────────────
+async function callAPI({ model, messages, system = null, tools = null, maxTokens = 3000 }) {
+  const body = { model, messages, max_tokens: maxTokens };
+  if (system) body.system = system;
+  if (tools)  body.tools  = tools;
+
+  const res = await fetch(API_CONFIG.endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API error ${res.status}`);
+  }
+  return res.json();
+}
+
+// Fix UTF-8 bytes misread as Latin-1 (common in web search results)
+function fixMojibake(str) {
+  return str
+    .replace(/Ã©/g,'é').replace(/Ã¨/g,'è').replace(/Ã /g,'à')
+    .replace(/Ã¢/g,'â').replace(/Ã®/g,'î').replace(/Ã´/g,'ô')
+    .replace(/Ã»/g,'û').replace(/Ã§/g,'ç').replace(/Ã¼/g,'ü')
+    .replace(/Ã¶/g,'ö').replace(/Ã¤/g,'ä').replace(/Ã±/g,'ñ')
+    .replace(/Ã‰/g,'É').replace(/Ãˆ/g,'È').replace(/Ã€/g,'À')
+    .replace(/Ã³/g,'ó').replace(/Ã²/g,'ò').replace(/Ãº/g,'ú')
+    .replace(/Ã¹/g,'ù').replace(/Ã¦/g,'æ').replace(/Ã¸/g,'ø')
+    .replace(/Ã¥/g,'å').replace(/Ã‚/g,'Â').replace(/ÃŽ/g,'Î');
+}
+
+function extractText(data) {
+  return fixMojibake((data.content || [])
+    .filter(b => b.type === 'text')
+    .map(b => b.text)
+    .join('\n')
+    .trim());
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// COACHING PROMPTS — hardcoded interactive component for Account Brief
+// ─────────────────────────────────────────────────────────────────────────────
+const COACHING_PROMPTS = [
+  { label: 'Champion',               desc: 'Identify & qualify a champion — questions to ask, signals to look for',                          prompt: a => `For ${a}: Help me qualify and develop my champion. What are the 3 most important questions I should ask to test champion strength? What signals tell me I have a real champion vs. a false champion here?` },
+  { label: 'Economic Buyer',         desc: 'Find the economic buyer — how to identify, access, and not alienate your champion doing it',      prompt: a => `For ${a}: Help me find and get access to the economic buyer. How do I get there without alienating my champion? What's the right path given what you know about this account and deal stage?` },
+  { label: 'Plant Late-Stage Seeds', desc: 'What to do NOW to avoid late-stage surprises — executive access, PoV, competitive traps',         prompt: a => `For ${a}: What should I do RIGHT NOW to prevent late-stage deal killers? Cover: (1) executive access I should establish now, (2) a point of view to plant with leadership, (3) competitive traps to set based on who's in this deal.` },
+  { label: 'Decision Process',       desc: 'Map the decision process — who has final say, evaluation criteria, internal kill factors',        prompt: a => `For ${a}: Help me map the decision process. Based on what you know: who likely has final say, what evaluation criteria should I align to, and what internal factors could kill this deal?` },
+  { label: 'Mutual Success Plan',    desc: 'Build a mutual success plan — get them to co-own the path to a decision early',                   prompt: a => `For ${a}: Help me build a mutual success plan. What milestones should I propose? How do I frame this so they co-own the timeline rather than feeling pushed? What are the key 3–4 steps between now and close?` },
+  { label: 'Multi-Threading',        desc: 'Multi-thread the deal — who else to engage and how to do it without burning your contact',        prompt: a => `For ${a}: Help me multi-thread this deal. Based on the account research, who else should I be engaging? How do I expand my contacts without burning my champion? What's the right sequencing?` },
+];
+
+const delay = ms => new Promise(r => setTimeout(r, ms));
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DOCUMENT HANDLING
+// ─────────────────────────────────────────────────────────────────────────────
+function readFile(file) {
+  return new Promise((resolve, reject) => {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const reader = new FileReader();
+    if (ext === 'pdf') {
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve({
+        name: file.name, type: 'pdf',
+        base64: reader.result.split(',')[1],
+        mediaType: 'application/pdf',
+      });
+    } else {
+      reader.readAsText(file);
+      reader.onload = () => resolve({
+        name: file.name, type: 'text',
+        text: reader.result.slice(0, 40000),
+      });
+    }
+    reader.onerror = () => reject(new Error(`Could not read ${file.name}`));
+  });
+}
+
+function getDocBlocks() {
+  return state.documents.map(doc => {
+    if (doc.type === 'pdf' && doc.base64) {
+      return { type: 'document', source: { type: 'base64', media_type: doc.mediaType, data: doc.base64 }, title: doc.name };
+    }
+    return { type: 'text', text: `--- Document: ${doc.name} ---\n${doc.text}\n---` };
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PROMPTS
+// ─────────────────────────────────────────────────────────────────────────────
+function getCtx() {
+  return {
+    account:         (document.getElementById('accountName')?.value    || state.account).trim(),
+    stage:            document.getElementById('dealStage')?.value      || state.stage,
+    meeting:         (document.getElementById('meetingContext')?.value || state.meeting).trim(),
+    pain:            (document.getElementById('knownPain')?.value      || '').trim(),
+    competitor:      (document.getElementById('competitor')?.value     || '').trim(),
+    buyer:           (document.getElementById('economicBuyer')?.value  || '').trim(),
+    champion:        (document.getElementById('champion')?.value       || '').trim(),
+    closeDate:       (document.getElementById('closeDate')?.value      || '').trim(),
+    compellingEvent: (document.getElementById('compellingEvent')?.value || '').trim(),
+    budget:          (document.getElementById('budget')?.value         || '').trim(),
+    licenseCount:    (document.getElementById('licenseCount')?.value   || '').trim(),
+    notes:           (document.getElementById('extraNotes')?.value     || '').trim(),
+  };
+}
+
+function buildResearchPrompt(ctx) {
+  const docNote = state.documents.length
+    ? `\n\nDOCUMENTS PROVIDED: ${state.documents.map(d => d.name).join(', ')} — these will be analyzed during synthesis.`
+    : '';
+
+  return `You are a strategic account researcher. Use web search to build a comprehensive intelligence brief on ${ctx.account}.
+
+REP CONTEXT:
+Stage: ${ctx.stage}
+Meeting: ${ctx.meeting}
+${ctx.pain       ? `Known Pain: ${ctx.pain}`             : ''}
+${ctx.competitor ? `Competitor in Play: ${ctx.competitor}` : ''}
+${ctx.buyer      ? `Economic Buyer: ${ctx.buyer}`         : ''}
+${ctx.champion   ? `Champion: ${ctx.champion}`            : ''}
+${ctx.notes      ? `Notes: ${ctx.notes}`                  : ''}${docNote}
+
+Search for and compile the following. Use real data, real names, real numbers. Label estimates clearly.
+
+1. COMPANY PROFILE
+   Industry and sub-sector · Revenue or ARR · Employee count · HQ · Ownership type (public/private/PE-backed) · Founded · Core business in 2–3 sentences.
+
+2. STRATEGIC PRIORITIES
+   Top 3 current initiatives sourced from earnings calls, annual reports, CEO interviews, or press releases. Quote the source.
+
+3. BUSINESS CHALLENGES
+   Operational, commercial, and legal/contract challenges related to: revenue operations, quoting complexity, contract lifecycle, document generation, pricing, or compliance.
+
+4. RECENT NEWS (last 18 months)
+   M&A, funding, leadership changes, digital transformation announcements, revenue ops news, regulatory issues.
+
+5. TECH STACK SIGNALS
+   Known CRM, ERP, e-signature, CLM, CPQ, or DocGen tooling — from job postings, partner listings, case studies, or their website.
+
+6. KEY STAKEHOLDERS
+   C-suite and VP-level names in Sales, Revenue Operations, Legal, Finance, and IT. Include titles and LinkedIn where found.
+
+7. INDUSTRY BENCHMARKS
+   For their industry: contract cycle times, quote error rates, revenue leakage rates, compliance pressures, digital transformation trends.
+
+8. COMPETITIVE LANDSCAPE
+   CLM/CPQ/document tools they currently use or have evaluated. Any public RFP activity or vendor evaluation signals from job postings, partner directories, or G2/Gartner reviews.
+
+9. BUYING SIGNALS
+   Open job requisitions for Revenue Operations, Legal Operations, Contract Management, CPQ, Sales Operations, or CLM/DocGen roles. Recent hires in these functions. Any signals of active vendor evaluation, budget allocation, or digital transformation initiatives underway.
+
+For every finding, label confidence: [Confirmed — source] | [Inferred — source] | [Estimated — method]. Never present inferences as facts.
+
+Format as a structured brief with clear section headers. Be exhaustive — this research is the single source of truth powering four separate, high-stakes sales deliverables: an Account Brief, a Value Map, a Demo Brief, and a MEDDIC Qualify IQ. Gaps here degrade all four outputs.`;
+}
+
+function buildSharedContext(ctx, research) {
+  const docTextBlocks = state.documents
+    .filter(d => d.type === 'text' && d.text)
+    .map(d => `--- ${d.name} ---\n${d.text}`)
+    .join('\n\n');
+
+  return `━━━ CONGA KNOWLEDGE BASE ━━━
+${KNOWLEDGE_BRAIN}
+
+━━━ ACCOUNT RESEARCH ━━━
+${research}
+${docTextBlocks ? `\n━━━ UPLOADED DOCUMENTS ━━━\n${docTextBlocks}` : ''}
+
+━━━ DEAL CONTEXT ━━━
+Account: ${ctx.account}
+Stage: ${ctx.stage}
+Meeting: ${ctx.meeting}
+${ctx.pain            ? `Known Pain: ${ctx.pain}`                     : ''}
+${ctx.competitor      ? `Competitor: ${ctx.competitor}`                : ''}
+${ctx.buyer           ? `Economic Buyer / Authority: ${ctx.buyer}`     : ''}
+${ctx.champion        ? `Champion: ${ctx.champion}`                    : ''}
+${ctx.closeDate       ? `Target Close: ${ctx.closeDate}`               : ''}
+${ctx.compellingEvent ? `Compelling Event: ${ctx.compellingEvent}`     : ''}
+${ctx.budget          ? `Budget: ${ctx.budget}`                        : ''}
+${ctx.licenseCount    ? `License Count / Seats: ${ctx.licenseCount}`   : ''}
+${ctx.notes           ? `Notes: ${ctx.notes}`                          : ''}
+
+TONE: Confident, specific, business-first. Every bullet ≤ 20 words. Quantify wherever possible. Reference ${ctx.account} by name throughout. Generic output is a failure.`;
+}
+
+const STAGE_FRAMING = {
+  'Prospecting':       'Frame as research-based hypotheses. Language is exploratory: "likely," "typically," "patterns suggest." Use industry benchmarks labeled as estimates.',
+  'Discovery':         'Mix research with benchmarks. Invite validation: "suggests," "indicates," "based on what we found." Frame as educated hypotheses.',
+  'Qualification':     'Pain is surfaced but not confirmed. Frame around confirming and quantifying. Tone is confident but curious.',
+  'Evaluation':        'Pain is confirmed. Use direct, specific language. Reference what you learned in discovery. Tone is proof-oriented.',
+  'Proposal':          'Business case is forming. Quantified ROI and comparative proof. Tone is assertive.',
+  'Negotiation':       'Business case approved. Frame everything as confirmed facts. Focus on value agreed upon and the implementation path.',
+  'Existing Customer': 'Frame as expansion and renewal. Highlight value realized. Focus on white space and next investment.',
+};
+
+function buildSynthesisPrompt(moduleId, ctx, research) {
+  const shared = buildSharedContext(ctx, research);
+  const stageGuide = STAGE_FRAMING[ctx.stage] || 'Frame appropriately for the deal stage.';
+
+  switch (moduleId) {
+    case 'account-brief': return promptAccountBrief(shared, ctx, stageGuide);
+    case 'value-map':     return promptValueMap(shared, ctx, stageGuide);
+    case 'demo-brief':    return promptDemoBrief(shared, ctx, stageGuide);
+    case 'qualify-iq':    return promptQualifyIQ(shared, ctx, stageGuide);
+    default:              return `${shared}\n\nGenerate a sales brief for ${ctx.account}.`;
+  }
+}
+
+function promptAccountBrief(shared, ctx, stageGuide) {
+  const hasTranscript = state.documents.length > 0;
+
+  return `You are a senior Conga Account Executive preparing for a high-stakes meeting. Build a comprehensive, account-specific Account Brief for ${ctx.account}. Every section must reference ${ctx.account} by name. Generic output — content that could apply to any company — is a failure.
+
+${shared}
+
+STAGE GUIDANCE: ${stageGuide}
+
+${hasTranscript
+  ? `Uploaded documents are available — analyze them for the Call Transcript Analysis section.`
+  : `No transcripts uploaded. In Call Transcript Analysis output only: "No transcripts provided — this section will populate after your first call."`}
+
+Output EXACTLY the sections below in this order. Do not rename or skip any.
+
+---
+
+## Company Snapshot
+2–3 sentences: what they do, scale, ownership, market position.
+
+### At a Glance
+Industry · [specific industry / sub-sector]
+Revenue · [amount and date — e.g. $750M TTM (Aug 2025)]
+Employees · [count and date — e.g. ~5,000–6,100 (Jan 2026)]
+HQ · [City, State/Country]
+Founded · [year]
+Ownership · [Public / Private / PE-backed — ticker if public]
+
+---
+
+## What They Do
+
+### Business Overview
+3–4 sentences: core product, who they sell to, how the platform works.
+
+### Customer Value Proposition
+2–3 sentences: how they create measurable value for their customers.
+
+### Business Model
+2–3 sentences: how they make money — pricing model, key revenue drivers.
+
+---
+
+## Industry Pulse
+
+### Tailwinds
+3 bullets: macro forces, regulatory pressure, or trends creating urgency for what Conga solves. Specific to their industry — not generic.
+
+### Headwinds
+3 bullets: competitive threats, budget pressure, inertia, or shifts that create deal risk or business risk. Be honest.
+
+---
+
+## Deal Brief
+Infer from research where not provided — label (inferred). Mark unknowns as Not yet confirmed.
+
+| Field | Value |
+|-------|-------|
+| Deal Stage | ${ctx.stage} |
+| Products in Scope | Infer from meeting context and pain — CLM / CPQ / DocGen / RLM / Full Suite |
+| Economic Buyer / Authority | ${ctx.buyer || 'Not yet confirmed'} |
+| Champion | ${ctx.champion || 'Not yet confirmed'} |
+| Budget | ${ctx.budget || 'Not yet confirmed'} |
+| License Count / Seats | ${ctx.licenseCount || 'Not yet confirmed'} |
+| Compelling Event | ${ctx.compellingEvent || 'Not yet confirmed'} |
+| Target Close | ${ctx.closeDate || 'Not yet confirmed'} |
+| Competitor(s) in Play | ${ctx.competitor || 'None identified — check tech stack for signals'} |
+
+**Deal Health at a Glance:** 1–2 honest sentences. How qualified is this deal right now? Name the single biggest gap.
+
+---
+
+## Strategic Priorities
+3 numbered initiatives. Note the source for each (earnings call, press release, job postings).
+
+---
+
+## Recent News & Triggers
+3–5 bullets. Events creating urgency or Conga relevance. Include dates where known.
+
+---
+
+## Their Tech Stack
+Current CRM, ERP, e-sign, contracts, quoting, DocGen. Flag legacy systems, gaps, and anything Conga replaces or integrates with.
+
+---
+
+## The People in the Room
+For each known or likely attendee: **Title** | What they care about | How to open with them
+
+---
+
+## Why Conga — Right Now
+3 bullets. Each must name a specific ${ctx.account} initiative, trigger, or pain point from the research — then connect it directly to a Conga product capability and a measurable outcome. No bullet may be true of a generic company. Format: **[Specific trigger]** → [Conga capability] → [expected outcome or proof point].
+
+---
+
+## Key Discovery Questions
+7 questions. Each must be rooted in a specific finding from the research about ${ctx.account} — not generic Conga discovery questions. After each question, add a brief note in italics explaining what pain or gap it is designed to surface and where the research signal came from.
+
+No yes/no questions. Open-ended only. Questions should sequence naturally — early questions establish context, later ones quantify impact and create urgency.
+
+1.
+2.
+3.
+4.
+5.
+6.
+7.
+
+---
+
+## Landmines
+2–3 specific sensitivities for this account: known competitors in play, past vendor friction, internal politics, procurement gatekeepers, budget constraints, or objections likely given their profile. For each, add a one-line counter-move.
+
+---
+
+## Conga Point of View
+1–2 sentences MAXIMUM. The single most compelling reason ${ctx.account} should choose Conga right now — written as something the AE says out loud when the CFO asks "why Conga, why now?" Must reference a specific triggering event, business pressure, or initiative from the research. No product feature lists. No marketing language.
+
+---
+
+## Call Transcript Analysis
+${hasTranscript ? `Analyze all uploaded documents and produce:
+
+**Critical Pain Points Identified**
+Bullet list — quote specific language from the calls where possible.
+
+**The 3 Whys**
+- Why Anything: Why does ${ctx.account} need to change at all?
+- Why Now: What is forcing action at this moment?
+- Why Conga: What specifically about Conga maps to their stated needs?
+
+**Key Notes & Other Information**
+Facts, names, commitments, concerns from the calls.
+
+**Call Timeline** (if multiple calls present)
+| Date / Call | Topics Discussed | Key Outcomes |
+|-------------|-----------------|--------------|
+
+**Deal Overview**
+2–4 sentence narrative: where is this deal in the story? What happened, what was learned, what happens next?` : `No transcripts provided — this section will populate after your first call.`}`;
+}
+
+function promptValueMap(shared, ctx, stageGuide) {
+  const timelineRanges = `
+STANDARD IMPLEMENTATION TIMELINES (use these to flag timeline risks in the MSP):
+- CLM only: Evaluation 1–3 months, Implementation 2–6 months
+- CPQ only: Evaluation 2–12 months (complexity-dependent), Implementation 4–12 months
+- DocGen only: Evaluation 1–8 weeks, Implementation 2–12 weeks
+- Full Suite (CLM + CPQ + DocGen): Evaluation 3–12 months, Implementation 3–12 months
+
+If the customer's stated close date or go-live expectation conflicts with these ranges, call it out explicitly as a timeline risk in the MSP.`;
+
+  const timelineContext = ctx.closeDate
+    ? `Customer's stated target close date: ${ctx.closeDate}. Evaluate whether this is realistic given the product scope and standard timelines above.`
+    : `No target close date provided. Use industry-standard timelines in the MSP.`;
+
+  return `You are a Conga strategic consultant. Build a Value Map for ${ctx.account} that connects their real business priorities to specific Conga capabilities. Every section must be account-specific — content that could apply to any company is a failure.
+
+${shared}
+
+STAGE GUIDANCE: ${stageGuide}
+
+${timelineRanges}
+
+${timelineContext}
+
+For each strategic initiative, clearly label whether it is CONFIRMED (stated by the customer or in uploaded documents) or INFERRED (from research, job postings, industry signals). If inferred, cite the source.
+
+Rank the 3 initiatives by Conga deal relevance — Initiative 1 should be the strongest, most direct fit to a Conga product capability. Initiative 3 may be a supporting or adjacent opportunity.
+
+For Quantified Value: use company-specific data from the research where available. If unavailable, use the industry benchmarks from the Conga Knowledge Base — always label as (industry estimate) and cite the benchmark source.
+
+Structure your output EXACTLY as follows:
+
+---
+
+## Initiative 1: [Name the initiative]
+**Confidence:** Confirmed — [source] OR Inferred — [source, e.g. "Q3 earnings call" / "job postings for RevOps" / "industry trend"]
+
+### Their World
+- **Objective:** what they're trying to achieve
+- **Strategy:** how they're going about it
+- **Challenge:** what's in the way right now
+
+### Conga's Role
+- **Required Capability:** what they need to solve this
+- **Conga Solution:** specific product + mechanism
+- **How It Helps:** 1 sentence, mechanism-level — no marketing language
+- **Quantified Value:** metric or ROI. Use industry benchmarks if no company-specific data — label as (estimate)
+- **Proof Point:** 1 sentence from a similar company or customer
+
+---
+
+## Initiative 2: [Name the initiative]
+**Confidence:** Confirmed or Inferred — [source]
+[same structure as Initiative 1]
+
+---
+
+## Initiative 3: [Name the initiative]
+**Confidence:** Confirmed or Inferred — [source]
+[same structure as Initiative 1]
+
+---
+
+## Mutual Success Plan
+
+${ctx.closeDate ? `**Timeline Note:** Customer has stated a target close of ${ctx.closeDate}. Evaluate this against standard product timelines and flag any risks.` : `**Timeline Note:** No close date confirmed. Build MSP around standard ranges — flag the need to confirm timeline as a key next step.`}
+
+| Milestone | Target Date / Timeframe | Key Activities | Owner | Success Criteria |
+|-----------|------------------------|----------------|-------|-----------------|
+| Discovery Complete | [Week 1–2 or specific date] | Confirm pain, map stakeholders, document current state | AE | Pain quantified, champion identified, product scope agreed |
+| Technical Validation | [Week 3–4] | Demo tailored to confirmed pain, SE scoping, integration review | AE + SE | Demo success, POC criteria agreed |
+| Business Case Approved | [Week 5–6] | ROI model, exec alignment, legal awareness | AE | Economic buyer aligned on value and vendor |
+| Contract Signed | [Specific date based on close target] | MSA negotiation, procurement, SOW | AE | Signed, implementation kickoff date set |
+| Implementation Kickoff | [Post-close] | SI engagement, project plan, data mapping | Customer + SI | Project plan live, go-live date confirmed |
+| Go-Live | [Based on product scope] | Training, UAT, launch | Customer + SI | Users live, success metrics baselining |
+
+**⚠ Timeline Risks:** [Identify any mismatches between the customer's stated timeline and standard implementation ranges. Example: "Customer expects go-live in 6 weeks — CLM implementation typically requires 2–6 months. This needs an explicit scoping conversation before close."]
+
+---
+
+## Sources
+Key sources used in the research pass. Label each as Confirmed or Inferred.`;
+}
+
+function promptDemoBrief(shared, ctx, stageGuide) {
+  return `You are a Conga Solutions Engineer building a demo brief for a real customer meeting. Every recommendation must be grounded in what the research reveals about ${ctx.account} — generic demo flows are a failure.
+
+${shared}
+
+STAGE GUIDANCE: ${stageGuide}
+
+Structure your output exactly as follows:
+
+## Demo Objective
+One sentence: what specific belief must ${ctx.account} walk away with for this demo to be a success? Name the pain and the outcome — not "they should like Conga."
+
+## Open With This
+Exact 2–3 sentence script for the AE to open the demo. Reference a specific pain point or recent event from the research. Name who in the room feels it. State clearly what Conga will prove today.
+
+## Recommended Demo Flow
+
+| Step | Conga Module / Feature | What to Show | Key Talking Points | Pain Addressed | Time |
+|------|----------------------|-------------|-------------------|----------------|------|
+| 1 | ... | ... | ... | ... | 10 min |
+| 2 | ... | ... | ... | ... | 15 min |
+| 3 | ... | ... | ... | ... | 15 min |
+| 4 | ... | ... | ... | ... | 10 min |
+| 5 | ... | ... | ... | ... | 10 min |
+
+Each step must name the specific Conga product module or feature being shown, not just a category. Tie every step to a confirmed or inferred pain from the research.
+
+## Persona Hooks
+For each known or likely attendee: their role, what they care most about, and the single demo moment they need to see to become an advocate. Format: **[Name / Title]** — [what they care about] — [the moment to hit].
+
+## Pre-Demo Discovery Questions
+3 questions the AE must ask at the start of the meeting — before demoing anything. Purpose: confirm pain is still active, surface new context, and set the frame for what Conga will prove.
+
+## Champion Briefing
+What to send or tell the champion 24–48 hours before the demo. Include: what to prepare the room for, who to brief internally, any logistics or access needed. 3–5 bullets.
+
+## Configuration Risks
+3–5 specific things the SE must validate or build before demo day — named by product area. Be honest about where the standard demo environment may not match ${ctx.account}'s use case.
+
+## Where Conga Wins
+${ctx.competitor ? `Against ${ctx.competitor}: ` : ''}2–3 specific moments in the demo flow where Conga's differentiation is most visible. For each: what to show, what to say, and why this lands against the alternative.
+
+## Do Not Demo
+2–3 specific things to avoid showing or discussing in this meeting — and why, given ${ctx.account}'s context, profile, or known sensitivities.`;
+}
+
+function promptQualifyIQ(shared, ctx, stageGuide) {
+  return `You are a sales qualification expert and deal coach. Build a rigorous MEDDIC Qualify IQ report for ${ctx.account}. Be honest — this is an internal tool and sugar-coating deal health destroys its value.
+
+${shared}
+
+STAGE GUIDANCE: ${stageGuide}
+
+Structure your output exactly as follows:
+
+## MEDDIC Scorecard
+
+| Element | Score | Evidence | Gap / Next Action |
+|---------|-------|---------|-------------------|
+| Metrics | 🔴 / 🟡 / 🟢 | What specific business impact has been quantified or identified? | ... |
+| Economic Buyer | 🔴 / 🟡 / 🟢 | Name, title, and level of access to the final decision maker? | ... |
+| Decision Criteria | 🔴 / 🟡 / 🟢 | What are their formal evaluation requirements? Is Conga mapped to them? | ... |
+| Decision Process | 🔴 / 🟡 / 🟢 | What are the internal approval and procurement steps? Who signs? | ... |
+| Identify Pain | 🔴 / 🟡 / 🟢 | Is pain confirmed, quantified, and felt urgently by a senior sponsor? | ... |
+| Champion | 🔴 / 🟡 / 🟢 | Is there an active champion with influence, access, and motivation to help Conga win? | ... |
+
+🔴 Not identified &nbsp; 🟡 Partial / suspected &nbsp; 🟢 Confirmed
+
+Populate the Evidence column with specific facts from the research or deal context — not placeholders. If unknown, say "Unknown — must confirm."
+
+## Deal Health Summary
+**Overall:** X of 6 MEDDIC elements confirmed
+**Biggest strength:** 1 sentence — the single most solid thing working in Conga's favor
+**Biggest risk:** 1 sentence — the single gap most likely to stall or lose this deal
+**Stage check:** Is this deal correctly staged at ${ctx.stage}? If not, what stage is it actually in and why?
+**Forecast Category:** Commit / Best Case / Pipeline / Omit — with a 1-sentence rationale
+
+## Multi-Threading Assessment
+Who else in ${ctx.account} should be engaged but isn't? List 2–3 roles by title, why they matter to this deal, and how to get access. Flag single-threaded risk if the deal is relying on one contact.
+
+## The 3 Things You Must Do Next
+Ranked by urgency. Each action must be specific to the gaps identified above — no generic sales advice. Include a time-bound target: "by [this week / before next call / within 2 weeks]."
+
+1.
+2.
+3.
+
+## Honest Assessment
+2–3 sentences: should Conga invest time and resources here? What is the single thing that would most change your confidence level — up or down?
+
+## Competitive Exposure
+${ctx.competitor ? `Competitor in play: ${ctx.competitor}` : 'Based on tech stack signals and profile, likely competitors:'}
+- **Threat level:** Low / Medium / High
+- **Why they are dangerous here:** specific to ${ctx.account}'s profile, not generic
+- **Your counter-move:** the one thing Conga must demonstrate or prove to neutralize this threat`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GENERATION ENGINE
+// ─────────────────────────────────────────────────────────────────────────────
+async function generate() {
+  if (state.generating) return;
+
+  const ctx = getCtx();
+  hideError();
+
+  if (!ctx.account)  return showError('Account name is required.');
+  if (!ctx.stage)    return showError('Deal stage is required.');
+  if (!ctx.meeting)  return showError('Meeting context is required.');
+  if (!state.apiKey) return showError('Paste your Anthropic API key in the header to continue.');
+  if (!state.selectedModules.length) return showError('Select at least one output.');
+
+  // Freeze state for this run
+  Object.assign(state, ctx);
+  state.generating = true;
+  state.outputs    = {};
+  state.research   = '';
+
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('genAccount').textContent = ctx.account;
+  buildModProgressUI();
+  showPhase('generating');
+
+  // Sequence research log lines while API call runs
+  setLog('log-r1', 'active');
+  const _t2 = setTimeout(() => { setLog('log-r1','done'); setLog('log-r2','active'); }, 4000);
+  const _t3 = setTimeout(() => { setLog('log-r2','done'); setLog('log-r3','active'); }, 9000);
+  const _t4 = setTimeout(() => { setLog('log-r3','done'); setLog('log-r4','active'); }, 14000);
+
+  try {
+    // ── PASS 1: RESEARCH (Haiku + web_search, multi-turn) ────────────
+    const docBlocks = getDocBlocks();
+    const tools     = [{ type: 'web_search_20250305', name: 'web_search' }];
+    let   messages  = [{ role: 'user', content: [...docBlocks, { type: 'text', text: buildResearchPrompt(ctx) }] }];
+    let   researchText = '';
+
+    // Loop up to 5 turns to let Haiku complete all web search calls
+    for (let turn = 0; turn < 5; turn++) {
+      const data = await callAPI({ model: API_CONFIG.researchModel, messages, tools, maxTokens: 4000 });
+      const hasText    = (data.content || []).some(b => b.type === 'text');
+      const toolCalls  = (data.content || []).filter(b => b.type === 'tool_use');
+
+      if (hasText) {
+        researchText = extractText(data);
+        break;
+      }
+
+      // If tool_use but no final text yet, feed tool results back
+      if (toolCalls.length) {
+        messages = [...messages,
+          { role: 'assistant', content: data.content },
+          { role: 'user', content: toolCalls.map(tc => ({
+              type: 'tool_result', tool_use_id: tc.id,
+              content: tc.input?.query ? `Search completed for: ${tc.input.query}` : 'Search completed.',
+          }))}
+        ];
+      } else {
+        // end_turn with no text — take whatever we have
+        researchText = extractText(data);
+        break;
+      }
+    }
+
+    // Clear pending timers and mark all research lines done
+    clearTimeout(_t2); clearTimeout(_t3); clearTimeout(_t4);
+    state.research = researchText;
+    ['log-r1','log-r2','log-r3','log-r4'].forEach(id => setLog(id, 'done'));
+
+    // ── PASS 2: PARALLEL SYNTHESIS (Sonnet 4.6) ──────────────────────
+    await Promise.all(state.selectedModules.map(async (id) => {
+      setModProg(id, 'active');
+      try {
+        const prompt = buildSynthesisPrompt(id, ctx, state.research);
+        const data   = await callAPI({
+          model:     API_CONFIG.synthesisModel,
+          messages:  [{ role: 'user', content: [...docBlocks, { type: 'text', text: prompt }] }],
+          maxTokens: 8000,
+        });
+        state.outputs[id] = extractText(data);
+        setModProg(id, 'done');
+      } catch (err) {
+        state.outputs[id] = null;
+        setModProg(id, 'error');
+        console.error(`Synthesis failed [${id}]:`, err);
+      }
+    }));
+
+    // ── RENDER ───────────────────────────────────────────────────────
+    const successful = state.selectedModules.filter(id => state.outputs[id]);
+    if (!successful.length) throw new Error('All synthesis passes failed. Check your API key and try again.');
+
+    renderOutputs(successful, ctx);
+    showPhase('outputs');
+    document.getElementById('chatFab').classList.add('live');
+    saveToHistory(ctx, state.outputs);
+
+  } catch (err) {
+    showPhase('intake');
+    showError(
+      err.message.includes('401') || err.message.toLowerCase().includes('key')
+        ? 'API key invalid or expired. Check the key in the header and try again.'
+        : `Generation failed: ${err.message}`
+    );
+  } finally {
+    state.generating = false;
+    document.getElementById('generateBtn').disabled = false;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// OUTPUT RENDERING
+// ─────────────────────────────────────────────────────────────────────────────
+function renderOutputs(ids, ctx) {
+  // Always render tabs in canonical MODULES order regardless of selection order
+  const order = Object.keys(MODULES);
+  ids = ids.slice().sort((a, b) => order.indexOf(a) - order.indexOf(b));
+
+  document.getElementById('outputAccount').textContent = ctx.account;
+  document.getElementById('outputMeta').textContent    =
+    `${ctx.stage} · ${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+  const tabsEl = document.getElementById('outputTabs');
+  tabsEl.innerHTML = '';
+  ids.forEach((id, i) => {
+    const mod = MODULES[id];
+    const tab = document.createElement('button');
+    tab.className = 'output-tab' + (i === 0 ? ' active' : '');
+    tab.style.setProperty('--tab-accent', mod.accent);
+    tab.dataset.id = id;
+    tab.innerHTML  = `<span class="tab-pip" style="background:${mod.accent};"></span>${mod.label}`;
+    tab.onclick    = () => switchTab(id, tab);
+    tabsEl.appendChild(tab);
+  });
+
+  state.activeModule = ids[0];
+  renderPanel();
+}
+
+function switchTab(id, tabEl) {
+  document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+  tabEl.classList.add('active');
+  state.activeModule = id;
+  renderPanel();
+}
+
+function buildCoachingPromptsHtml() {
+  const acct  = state.account || 'this account';
+  const cards = COACHING_PROMPTS.map((p, i) =>
+    `<div class="zr-coaching-card" onclick="sendCoachingPrompt(${i})">
+      <div class="zr-coaching-title">${p.label}</div>
+      <div class="zr-coaching-desc">${p.desc}</div>
+    </div>`
+  ).join('');
+  return `<div class="zr-h2"><div class="zr-h2-stripe"></div><div class="zr-h2-inner">Coaching Prompts — Do These Now. Not Later.</div></div>
+<div class="zr-p zr-coaching-intro">Click any prompt to open it in the Assistant — or use as a conversation checklist.</div>
+<div class="zr-coaching-grid">${cards}</div>`;
+}
+
+function sendCoachingPrompt(idx) {
+  const msg     = COACHING_PROMPTS[idx].prompt(state.account || 'this account');
+  const input   = document.getElementById('chatInput');
+  const overlay = document.getElementById('chatOverlay');
+  if (!overlay.classList.contains('open')) overlay.classList.add('open');
+  document.getElementById('chatFab').classList.add('live');
+  input.value = msg;
+  autoResize(input);
+  input.focus();
+  toast('Prompt loaded — review and send');
+}
+
+function renderPanel() {
+  const content = state.outputs[state.activeModule];
+  const panel   = document.getElementById('outputPanel');
+  const mod     = MODULES[state.activeModule];
+
+  // Apply module accent colors to the panel
+  if (mod) {
+    panel.style.setProperty('--mod-color', mod.accent);
+    panel.style.setProperty('--mod-glow',  mod.accentGlow);
+    panel.style.setProperty('--mod-muted', mod.accentMuted);
+    panel.style.borderColor = mod.accentGlow.replace('0.28)', '0.35)');
+    panel.style.boxShadow   = `0 4px 28px ${mod.accentGlow}`;
+  }
+
+  if (!content) {
+    panel.innerHTML = `<div class="output-fail">
+      <div class="output-fail-msg">This output failed to generate.</div>
+      <button class="btn-retry" onclick="retryModule('${state.activeModule}')">↺ Retry</button>
+    </div>`;
+    return;
+  }
+
+  let html = renderMarkdown(content);
+  if (state.activeModule === 'account-brief') html += buildCoachingPromptsHtml();
+  panel.innerHTML = html;
+}
+
+async function retryModule(id) {
+  if (!state.research) { showError('Research is missing — regenerate from the intake.'); return; }
+  setModProg(id, 'active');
+  try {
+    const ctx    = state;
+    const prompt = buildSynthesisPrompt(id, ctx, state.research);
+    const data   = await callAPI({
+      model:     API_CONFIG.synthesisModel,
+      messages:  [{ role: 'user', content: [...getDocBlocks(), { type: 'text', text: prompt }] }],
+      maxTokens: 8000,
+    });
+    state.outputs[id] = extractText(data);
+    renderPanel();
+    setModProg(id, 'done');
+    toast('✓ Regenerated');
+  } catch (err) {
+    toast('Retry failed: ' + err.message);
+    setModProg(id, 'error');
+  }
+}
+
+function copyOutput() {
+  const raw = state.outputs[state.activeModule];
+  if (!raw) return;
+  navigator.clipboard.writeText(raw).then(() => toast('✓ Copied to clipboard'));
+}
+
+function markdownToWordHtml(raw, accentColor) {
+  const acc     = accentColor || '#1e3a5f';
+  const accDark = '#0f2235';
+  let t = raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const lines = t.split('\n');
+  const out   = [];
+  let inTable = false, tableRows = [], inList = false, firstH2 = true;
+
+  const flushList  = () => { if (inList)  { out.push('</ul>'); inList = false; } };
+  const flushTable = () => {
+    if (!inTable) return;
+    let html = `<table style="width:100%;border-collapse:collapse;margin:10pt 0;font-size:10pt;">`;
+    tableRows.forEach((r, i) => {
+      if (i === 0) {
+        html += `<tr style="background:${accDark};">`;
+        r.forEach(c => { html += `<th style="color:#fff;padding:6pt 10pt;text-align:left;font-weight:700;font-size:9pt;letter-spacing:0.05em;border:1px solid ${acc};">${c}</th>`; });
+        html += '</tr>';
+      } else {
+        const bg = i % 2 === 0 ? '#f4f6f9' : '#ffffff';
+        html += `<tr style="background:${bg};">`;
+        r.forEach((c, ci) => {
+          const fw = ci === 0 ? 'font-weight:600;color:#1a202c;' : 'color:#374151;';
+          html += `<td style="${fw}padding:5pt 10pt;border:1px solid #d1d9e0;vertical-align:top;">${c}</td>`;
+        });
+        html += '</tr>';
+      }
+    });
+    html += '</table>';
+    out.push(html);
+    inTable = false; tableRows = [];
+  };
+
+  const inline = s => s
+    .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#0f2235;font-weight:700;">$1</strong>')
+    .replace(/\*(.+?)\*/g,     '<em style="color:#4b5563;">$1</em>')
+    .replace(/`(.+?)`/g,       '<code style="font-family:Consolas,monospace;background:#eef2f7;padding:1pt 3pt;font-size:9pt;color:#1e3a5f;">$1</code>');
+
+  lines.forEach(line => {
+    if (line.startsWith('| ') || line.match(/^\|[-: ]+\|/)) {
+      flushList();
+      if (line.match(/^\|[-: ]+\|/)) return; // separator row
+      inTable = true;
+      tableRows.push(line.split('|').slice(1,-1).map(c => inline(c.trim())));
+      return;
+    }
+    if (inTable) flushTable();
+
+    if (/^### (.+)/.test(line)) {
+      flushList();
+      const txt = line.slice(4);
+      out.push(`<p style="font-size:8pt;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:${acc};margin:14pt 0 4pt;border-bottom:1px solid #d1d9e0;padding-bottom:3pt;">${inline(txt)}</p>`);
+    } else if (/^## (.+)/.test(line)) {
+      flushList();
+      const txt = line.slice(3);
+      const mt  = firstH2 ? '0' : '22pt';
+      firstH2   = false;
+      out.push(`<table style="width:100%;border-collapse:collapse;margin:${mt} 0 8pt;"><tr><td style="background:${accDark};padding:7pt 12pt;border-left:4pt solid ${acc};"><span style="font-family:Calibri,Arial,sans-serif;font-size:13pt;font-weight:700;color:#ffffff;">${inline(txt)}</span></td></tr></table>`);
+    } else if (/^# (.+)/.test(line)) {
+      flushList();
+      const txt = line.slice(2);
+      out.push(`<p style="font-family:Calibri,Arial,sans-serif;font-size:18pt;font-weight:800;color:${accDark};margin:0 0 4pt;">${inline(txt)}</p>`);
+    } else if (/^[-*] (.+)/.test(line)) {
+      if (!inList) { out.push(`<ul style="margin:4pt 0 8pt;padding-left:0;list-style:none;">`); inList = true; }
+      const txt = line.slice(2);
+      out.push(`<li style="margin:3pt 0;padding:4pt 8pt 4pt 20pt;position:relative;font-size:11pt;color:#374151;background:#f8fafc;border-left:3pt solid ${acc};"><span style="position:absolute;left:6pt;top:6pt;color:${acc};font-weight:900;">·</span>${inline(txt)}</li>`);
+    } else if (/^\d+\. (.+)/.test(line)) {
+      flushList();
+      out.push(`<p style="margin:3pt 0 3pt 20pt;font-size:11pt;color:#374151;">${inline(line)}</p>`);
+    } else if (line.trim() === '---') {
+      flushList();
+      out.push(`<hr style="border:none;border-top:1px solid #d1d9e0;margin:14pt 0;">`);
+    } else if (line.trim() === '') {
+      flushList();
+      out.push(`<p style="margin:3pt 0;">&nbsp;</p>`);
+    } else {
+      flushList();
+      out.push(`<p style="margin:3pt 0 5pt;font-size:11pt;color:#374151;line-height:1.6;">${inline(line)}</p>`);
+    }
+  });
+  flushList(); flushTable();
+  return out.join('\n');
+}
+
+function downloadDoc() {
+  const raw = state.outputs[state.activeModule];
+  if (!raw) return;
+
+  const modObj   = MODULES[state.activeModule] || {};
+  const modLabel = modObj.label || 'Brief';
+  const accent   = modObj.accent || '#1e3a5f';
+  const accDark  = '#0f2235';
+  const account  = state.account || 'Account';
+  const dateStr  = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const bodyHtml = markdownToWordHtml(raw, accent);
+
+  const doc = `<html xmlns:o='urn:schemas-microsoft-com:office:office'
+  xmlns:w='urn:schemas-microsoft-com:office:word'
+  xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset='utf-8'>
+<title>${account} — ${modLabel}</title>
+<xml>
+  <w:WordDocument>
+    <w:View>Print</w:View>
+    <w:Zoom>100</w:Zoom>
+    <w:DoNotOptimizeForBrowser/>
+  </w:WordDocument>
+</xml>
+<style>
+  @page {
+    size: letter;
+    margin: 1in 1in 1.2in 1in;
+    mso-footer-margin: 0.5in;
+    mso-footer: f1;
+  }
+  body {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 11pt;
+    color: #374151;
+    line-height: 1.55;
+  }
+  div.header-block {
+    background: ${accDark};
+    padding: 18pt 22pt 14pt;
+    margin: 0 0 22pt;
+    border-bottom: 4pt solid ${accent};
+  }
+  div.header-block .co-name {
+    font-size: 22pt; font-weight: 800;
+    color: #ffffff; margin: 0 0 3pt;
+    font-family: Calibri, Arial, sans-serif;
+  }
+  div.header-block .mod-name {
+    font-size: 11pt; color: ${accent};
+    font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; margin: 0 0 6pt;
+  }
+  div.header-block .doc-meta {
+    font-size: 8pt; color: rgba(255,255,255,0.55);
+    font-family: Consolas, monospace; letter-spacing: 0.04em;
+  }
+  div.confidential-bar {
+    text-align: center;
+    font-size: 7pt; font-family: Consolas, monospace;
+    letter-spacing: 0.15em; text-transform: uppercase;
+    color: #9ca3af; border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 3pt 0; margin: 0 0 18pt;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── ZNITH FOOTER (repeats every page) ── -->
+<div style="mso-element:footer" id="f1">
+  <table style="width:100%;border-collapse:collapse;border-top:2pt solid ${accDark};margin-top:4pt;">
+    <tr>
+      <td style="padding:4pt 0;font-family:Consolas,monospace;font-size:7.5pt;color:#6b7280;">
+        <span style="font-weight:800;color:${accDark};">/</span><span style="font-weight:800;color:${accDark};">Znith</span>
+        &nbsp;&nbsp;·&nbsp;&nbsp;Sales Intelligence Hub
+      </td>
+      <td style="padding:4pt 0;text-align:center;font-family:Consolas,monospace;font-size:7.5pt;color:#9ca3af;">
+        ${account} &nbsp;·&nbsp; ${modLabel}
+      </td>
+      <td style="padding:4pt 0;text-align:right;font-family:Consolas,monospace;font-size:7.5pt;color:#9ca3af;">
+        Internal Use Only &nbsp;·&nbsp; ${dateStr}
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ── DOCUMENT HEADER ── -->
+<div class="header-block">
+  <div class="mod-name">${modLabel}</div>
+  <div class="co-name">${account}</div>
+  <div class="doc-meta">Conga Sales Intelligence Hub &nbsp;·&nbsp; ${state.stage} &nbsp;·&nbsp; ${dateStr}</div>
+</div>
+
+<div class="confidential-bar">Internal Use Only — Conga Sales</div>
+
+${bodyHtml}
+
+</body>
+</html>`;
+
+  const blob = new Blob(['\ufeff', doc], { type: 'application/msword' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `${account.replace(/[^a-z0-9]/gi,'_')}_${modLabel.replace(/[^a-z0-9]/gi,'_')}.doc`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('✓ Downloaded as Word doc');
+}
+
+function downloadPDF() {
+  const raw = state.outputs[state.activeModule];
+  if (!raw) return;
+
+  const modObj      = MODULES[state.activeModule] || {};
+  const modLabel    = modObj.label       || 'Brief';
+  const accent      = modObj.accent      || '#0D9488';
+  const accentGlow  = modObj.accentGlow  || 'rgba(13,148,136,0.28)';
+  const accentMuted = modObj.accentMuted || 'rgba(13,148,136,0.12)';
+  const account     = state.account      || 'Account';
+  const stageStr    = state.stage        || '';
+  const dateStr     = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  const bodyHtml    = renderMarkdown(raw);
+
+  const page = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>${account} — ${modLabel}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;700;800&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui: 'Barlow', sans-serif;
+  --f-mono: 'IBM Plex Mono', monospace;
+  --mod-color: ${accent};
+  --mod-glow: ${accentGlow};
+  --mod-muted: ${accentMuted};
+  --bg:     #0e0d0b;
+  --surf:   #181714;
+  --surf-2: #222018;
+  --border: rgba(255,255,255,0.07);
+  --text:   rgba(255,255,255,0.85);
+  --tmuted: rgba(255,255,255,0.45);
+  --tfaint: rgba(255,255,255,0.20);
+  --amber:  #B8860B;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: #0e0d0b;
+  color: rgba(255,255,255,0.85);
+  font-family: var(--f-ui);
+  font-size: 13px;
+  line-height: 1.6;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+@page { size: letter; margin: 0.65in 0.75in 0.85in; }
+@media print {
+  .no-print { display: none !important; }
+  .zr-h2 { page-break-after: avoid; }
+  .zr-table { page-break-inside: avoid; }
+  .zr-snap-grid { page-break-inside: avoid; }
+  .zr-li { page-break-inside: avoid; }
+  .zr-num { page-break-inside: avoid; }
+}
+
+/* ── PDF PAGE HEADER ────────────────────────────────── */
+.pdf-hd {
+  background: #181714;
+  border-left: 4px solid ${accent};
+  padding: 16px 20px 14px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  page-break-after: avoid;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.pdf-hd-mod {
+  font-family: var(--f-mono);
+  font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase;
+  color: ${accent}; margin-bottom: 4px;
+}
+.pdf-hd-co {
+  font-family: var(--f-brand);
+  font-size: 22px; font-weight: 800; color: #fff;
+}
+.pdf-hd-meta {
+  font-family: var(--f-mono);
+  font-size: 9px; color: rgba(255,255,255,0.30); margin-top: 4px;
+}
+.pdf-hd-badge {
+  font-family: var(--f-mono);
+  font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.20); text-align: right;
+}
+
+/* ── PDF FOOTER (fixed = repeats on every printed page) ── */
+.pdf-ft {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #181714;
+  border-top: 1px solid rgba(184,134,11,0.2);
+  padding: 5px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.pdf-ft-wm {
+  font-family: var(--f-brand); font-size: 10px; font-weight: 800; color: #B8860B;
+}
+.pdf-ft-wm span { color: rgba(255,255,255,0.25); font-weight: 400; }
+.pdf-ft-center { font-family: var(--f-mono); font-size: 8px; color: rgba(255,255,255,0.25); }
+.pdf-ft-right  { font-family: var(--f-mono); font-size: 8px; color: rgba(255,255,255,0.25); }
+
+/* ── CONTENT WRAPPER ─────────────────────────────────── */
+.pdf-body { padding: 0 2px; }
+
+/* ── ZNITH COMPONENT RENDERER ────────────────────────── */
+.zr-h2 {
+  display: flex; align-items: center; gap: 0;
+  margin: 22px 0 10px; overflow: hidden;
+  clip-path: polygon(0 0,100% 0,100% calc(100% - 6px),calc(100% - 6px) 100%,0 100%);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.zr-h2:first-child { margin-top: 0; }
+.zr-h2-stripe {
+  width: 3px; min-height: 100%; background: ${accent};
+  flex-shrink: 0; align-self: stretch;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.zr-h2-inner {
+  flex: 1; background: #222018; padding: 9px 14px;
+  font-family: var(--f-brand); font-size: 13px; font-weight: 700; color: #fff;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.zr-h3 {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--f-mono); font-size: 8px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: ${accent}; margin: 18px 0 8px;
+}
+.zr-h3::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+.zr-ul { list-style: none; padding: 0; margin: 0 0 10px; display: flex; flex-direction: column; gap: 4px; }
+.zr-li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 7px 12px; background: #222018; border: 1px solid rgba(255,255,255,0.07);
+  font-size: 12px; line-height: 1.55; color: rgba(255,255,255,0.85);
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.zr-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: ${accent};
+  flex-shrink: 0; margin-top: 5px;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.zr-num { display: flex; align-items: flex-start; gap: 10px; padding: 5px 0; font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.55; }
+.zr-num-badge {
+  min-width: 20px; height: 20px; background: ${accent}; color: #000;
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+  clip-path: polygon(3px 0%,calc(100% - 3px) 0%,100% 3px,100% calc(100% - 3px),calc(100% - 3px) 100%,3px 100%,0% calc(100% - 3px),0% 3px);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.zr-p { font-size: 13px; line-height: 1.65; margin: 4px 0 8px; color: rgba(255,255,255,0.85); }
+.zr-hr { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin: 18px 0; }
+.zr-table {
+  width: 100%; border-collapse: collapse; margin: 10px 0 14px; font-size: 12px;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.zr-table th {
+  padding: 7px 11px; text-align: left;
+  font-family: var(--f-mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: #000; background: ${accent};
+}
+.zr-table td {
+  padding: 7px 11px; border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 12px; color: rgba(255,255,255,0.45); vertical-align: top;
+}
+.zr-table td:first-child { color: rgba(255,255,255,0.85); font-weight: 500; }
+.zr-table tr:nth-child(even) td { background: rgba(255,255,255,0.02); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.zr-table tr:last-child td { border-bottom: none; }
+.zr-strong { color: #fff; font-weight: 600; }
+.zr-em { color: rgba(255,255,255,0.45); font-style: italic; }
+.score-r { color: #f87171; } .score-y { color: #fbbf24; } .score-g { color: #4ade80; }
+.zr-snap-grid {
+  display: grid; grid-template-columns: repeat(auto-fill,minmax(140px,1fr));
+  gap: 8px; margin: 8px 0 14px;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.zr-snap-stat {
+  background: #222018; border: 1px solid rgba(255,255,255,0.07); padding: 10px 12px;
+  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.zr-snap-label {
+  font-family: var(--f-mono); font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.20); margin-bottom: 4px;
+}
+.zr-snap-value { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.85); line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<div class="pdf-ft">
+  <div class="pdf-ft-wm">/Z<span>nith</span></div>
+  <div class="pdf-ft-center">${account} &nbsp;&middot;&nbsp; ${modLabel}</div>
+  <div class="pdf-ft-right">Internal Use Only &nbsp;&middot;&nbsp; ${dateStr}</div>
+</div>
+
+<div class="pdf-hd">
+  <div>
+    <div class="pdf-hd-mod">${modLabel}</div>
+    <div class="pdf-hd-co">${account}</div>
+    <div class="pdf-hd-meta">Conga Sales Intelligence Hub &nbsp;&middot;&nbsp; ${stageStr} &nbsp;&middot;&nbsp; ${dateStr}</div>
+  </div>
+  <div class="pdf-hd-badge">Internal Use Only</div>
+</div>
+
+<div class="pdf-body">${bodyHtml}</div>
+
+<script>
+document.fonts.ready.then(function() { setTimeout(function() { window.print(); }, 400); });
+<\/script>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  if (!win) { toast('Pop-up blocked — allow pop-ups for this site and try again'); return; }
+  win.document.write(page);
+  win.document.close();
+  toast('✓ PDF preview opened — save as PDF from the print dialog');
+}
+
+function resetToIntake() {
+  state.outputs      = {};
+  state.research     = '';
+  state.activeModule = '';
+  state.chatHistory  = [];
+  document.getElementById('chatFab').classList.remove('live');
+  document.getElementById('chatMessages').innerHTML = '';
+  document.getElementById('accountName').value      = '';
+  document.getElementById('dealStage').value        = '';
+  document.getElementById('meetingContext').value   = '';
+  ['knownPain','competitor','economicBuyer','champion','closeDate','compellingEvent','budget','licenseCount','extraNotes'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  showPhase('intake');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MARKDOWN RENDERER
+// ─────────────────────────────────────────────────────────────────────────────
+function inline(t) {
+  return t
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g, '<span class="zr-strong">$1</span>')
+    .replace(/\*(.+?)\*/g,     '<span class="zr-em">$1</span>')
+    .replace(/🔴/g, '<span class="score-r">🔴</span>')
+    .replace(/🟡/g, '<span class="score-y">🟡</span>')
+    .replace(/🟢/g, '<span class="score-g">🟢</span>');
+}
+
+// Detect "Label · Value" or "Label: Value" lines → snapshot stat pills
+function trySnapGrid(lines, startIdx) {
+  const snapPattern = /^([\w\s/\-&]+?)\s*[·:]\s*(.+)$/;
+  const items = [];
+  let i = startIdx;
+  while (i < lines.length) {
+    const l = lines[i].trim();
+    if (!l) break;
+    if (/^[#\-*|]/.test(l)) break;
+    const m = l.match(snapPattern);
+    if (!m) break;
+    items.push({ label: m[1].trim(), value: m[2].trim() });
+    i++;
+  }
+  return items.length >= 2 ? { items, consumed: i - startIdx } : null;
+}
+
+function renderMarkdown(raw) {
+  const lines = raw.split('\n');
+  const out   = [];
+  let i = 0;
+  let inList   = false;
+  let inNumList = false;
+  let inTable  = false;
+  let tableRows = [];
+  let numCount = 0;
+
+  const flushList    = () => { if (inList)    { out.push('</ul>'); inList = false; } };
+  const flushNumList = () => { if (inNumList) { out.push('</div>'); inNumList = false; numCount = 0; } };
+  const flushTable   = () => {
+    if (!inTable) return;
+    let html = '<table class="zr-table"><thead><tr>';
+    const headers = tableRows[0];
+    headers.forEach(h => { html += `<th>${inline(h)}</th>`; });
+    html += '</tr></thead><tbody>';
+    tableRows.slice(1).forEach(row => {
+      html += '<tr>';
+      row.forEach(c => { html += `<td>${inline(c)}</td>`; });
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    out.push(html);
+    inTable = false; tableRows = [];
+  };
+
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Table row
+    if (/^\|.+\|$/.test(trimmed)) {
+      flushList(); flushNumList();
+      if (/^\|[-: ]+\|$/.test(trimmed)) { i++; continue; } // separator
+      inTable = true;
+      tableRows.push(trimmed.split('|').slice(1,-1).map(c => c.trim()));
+      i++; continue;
+    }
+    if (inTable) flushTable();
+
+    // H2 section header
+    if (/^## /.test(line)) {
+      flushList(); flushNumList();
+      const txt = line.slice(3).trim();
+      out.push(`<div class="zr-h2"><div class="zr-h2-stripe"></div><div class="zr-h2-inner">${inline(txt)}</div></div>`);
+      i++; continue;
+    }
+
+    // H3 subheading — check if next lines are snap-grid candidates
+    if (/^### /.test(line)) {
+      flushList(); flushNumList();
+      const txt = line.slice(4).trim();
+      const lc  = txt.toLowerCase();
+      const h3s = lc === 'tailwinds' ? ' style="color:var(--c-qualify)"' :
+                  lc === 'headwinds' ? ' style="color:#E11D48"'          : '';
+      out.push(`<div class="zr-h3"${h3s}>${inline(txt)}</div>`);
+      i++;
+      // Peek: if next non-empty lines look like Key · Value pairs, render as snap grid
+      const snap = trySnapGrid(lines, i);
+      if (snap) {
+        out.push('<div class="zr-snap-grid">');
+        snap.items.forEach(s => {
+          out.push(`<div class="zr-snap-stat"><div class="zr-snap-label">${inline(s.label)}</div><div class="zr-snap-value">${inline(s.value)}</div></div>`);
+        });
+        out.push('</div>');
+        i += snap.consumed;
+      }
+      continue;
+    }
+
+    // Unordered list item
+    if (/^[-*•] /.test(trimmed)) {
+      flushNumList();
+      if (!inList) { out.push('<ul class="zr-ul">'); inList = true; }
+      const txt = trimmed.slice(2).trim();
+      out.push(`<li class="zr-li"><div class="zr-dot"></div><div>${inline(txt)}</div></li>`);
+      i++; continue;
+    }
+
+    // Numbered list item
+    if (/^\d+\. /.test(trimmed)) {
+      flushList();
+      if (!inNumList) { out.push('<div style="display:flex;flex-direction:column;gap:4px;margin:0 0 10px;">'); inNumList = true; }
+      numCount++;
+      const txt = trimmed.replace(/^\d+\. /, '');
+      out.push(`<div class="zr-num"><div class="zr-num-badge">${numCount}</div><div>${inline(txt)}</div></div>`);
+      i++; continue;
+    }
+
+    // HR
+    if (trimmed === '---') {
+      flushList(); flushNumList();
+      out.push('<div class="zr-hr"></div>');
+      i++; continue;
+    }
+
+    // Blank line
+    if (!trimmed) {
+      flushList(); flushNumList();
+      i++; continue;
+    }
+
+    // Check if this is a snap-grid candidate (Key · Value line not under a heading)
+    flushList(); flushNumList();
+    const snap = trySnapGrid(lines, i);
+    if (snap && snap.items.length >= 3) {
+      out.push('<div class="zr-snap-grid">');
+      snap.items.forEach(s => {
+        out.push(`<div class="zr-snap-stat"><div class="zr-snap-label">${inline(s.label)}</div><div class="zr-snap-value">${inline(s.value)}</div></div>`);
+      });
+      out.push('</div>');
+      i += snap.consumed;
+      continue;
+    }
+
+    // Plain paragraph
+    out.push(`<div class="zr-p">${inline(trimmed)}</div>`);
+    i++;
+  }
+
+  flushList(); flushNumList(); flushTable();
+  return `<div class="zr">${out.join('')}</div>`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CHAT
+// ─────────────────────────────────────────────────────────────────────────────
+function buildChatSystem() {
+  const outputCtx = Object.entries(state.outputs)
+    .filter(([, v]) => v)
+    .map(([id, content]) => `=== ${MODULES[id]?.label} ===\n${content}`)
+    .join('\n\n');
+
+  return `You are an expert Conga sales assistant helping an Account Executive prepare and win deals.
+
+CONGA KNOWLEDGE BASE:
+${KNOWLEDGE_BRAIN}
+
+CURRENT ACCOUNT: ${state.account}
+DEAL STAGE: ${state.stage}
+MEETING CONTEXT: ${state.meeting}
+${state.competitor ? `COMPETITOR: ${state.competitor}` : ''}
+${state.buyer      ? `ECONOMIC BUYER: ${state.buyer}`  : ''}
+${state.champion   ? `CHAMPION: ${state.champion}`     : ''}
+
+GENERATED OUTPUTS FOR THIS ACCOUNT:
+${outputCtx || 'No outputs generated yet — answer based on context provided.'}
+
+You can:
+- Answer questions about ${state.account}, their industry, or Conga positioning
+- Refine any section of the generated outputs — provide the exact replacement text
+- Draft follow-up emails, objection responses, or talking points
+- Coach on deal strategy, MEDDIC gaps, competitive positioning, or next steps
+- Search the web for current news, competitive intel, or account updates
+
+Be concise, direct, and specific to ${state.account || 'this account'}. Bullets ≤ 20 words. No generic advice.`;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg   = input.value.trim();
+  if (!msg || !state.apiKey) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  addChatMsg('user', msg);
+  state.chatHistory.push({ role: 'user', content: msg });
+
+  const sendBtn = document.getElementById('chatSend');
+  sendBtn.disabled = true;
+  const thinking = addChatMsg('assistant', '…');
+
+  try {
+    const data  = await callAPI({
+      model:     API_CONFIG.chatModel,
+      system:    buildChatSystem(),
+      messages:  state.chatHistory.slice(-12),
+      tools:     [{ type: 'web_search_20250305', name: 'web_search' }],
+      maxTokens: 2000,
+    });
+    const reply = extractText(data);
+    thinking.textContent = reply;
+    state.chatHistory.push({ role: 'assistant', content: reply });
+  } catch (err) {
+    thinking.textContent = `Error: ${err.message}`;
+  } finally {
+    sendBtn.disabled = false;
+  }
+}
+
+function addChatMsg(role, text) {
+  const wrap = document.getElementById('chatMessages');
+  const el   = document.createElement('div');
+  el.className    = `chat-msg ${role}`;
+  el.textContent  = text;
+  wrap.appendChild(el);
+  wrap.scrollTop  = wrap.scrollHeight;
+  return el;
+}
+
+function onChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+}
+
+function toggleChat() {
+  const ov = document.getElementById('chatOverlay');
+  ov.classList.toggle('open');
+  if (ov.classList.contains('open')) document.getElementById('chatInput').focus();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// UI HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function showPhase(name) {
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  document.getElementById('phase-' + name).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setLog(id, s) {
+  const el = document.getElementById(id);
+  if (el) el.className = 'log-line ' + s;
+}
+
+function buildModProgressUI() {
+  const grid = document.getElementById('modProgGrid');
+  grid.innerHTML = '';
+  state.selectedModules.forEach(id => {
+    const mod  = MODULES[id];
+    const item = document.createElement('div');
+    item.className = 'mod-prog-item';
+    item.id        = 'mp-' + id;
+    item.style.setProperty('--mp-accent', mod.accent);
+    item.style.setProperty('--mp-glow',   mod.accentGlow);
+    item.innerHTML = `<div class="mod-prog-pip"></div><div class="mod-prog-name">${mod.label}</div>`;
+    grid.appendChild(item);
+  });
+}
+
+function setModProg(id, s) {
+  const el = document.getElementById('mp-' + id);
+  if (el) el.className = 'mod-prog-item ' + s;
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+function hideError() {
+  document.getElementById('errorBox').classList.remove('show');
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.opacity = '1';
+  setTimeout(() => { el.style.opacity = '0'; }, 2500);
+}
+
+function onApiKeyInput(val) {
+  state.apiKey = val.trim();
+  const status = document.getElementById('apiKeyStatus');
+  if (!val)                        { status.textContent = 'API key required'; status.className = 'api-key-status'; }
+  else if (val.startsWith('sk-ant-')) { status.textContent = '✓ Key valid';   status.className = 'api-key-status valid'; }
+  else                              { status.textContent = 'Must start with sk-ant-'; status.className = 'api-key-status invalid'; }
+}
+
+function toggleAdv() {
+  document.getElementById('advBody').classList.toggle('open');
+  document.getElementById('advToggle').classList.toggle('open');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MODULE GRID
+// ─────────────────────────────────────────────────────────────────────────────
+function buildModuleGrid() {
+  const grid = document.getElementById('moduleGrid');
+  Object.values(MODULES).forEach(mod => {
+    const selected = state.selectedModules.includes(mod.id);
+    const card     = document.createElement('div');
+    card.className = 'module-card' + (selected ? ' selected' : '');
+    card.style.setProperty('--mod-accent', mod.accent);
+    card.style.setProperty('--mod-glow',   mod.accentGlow);
+    card.style.setProperty('--mod-muted',  mod.accentMuted);
+    card.dataset.id = mod.id;
+    card.onclick    = () => toggleModule(card, mod.id);
+    card.innerHTML  = `
+      <div class="module-card-top">
+        <div class="module-pip" style="background:${mod.accent};"></div>
+        <div class="module-name">${mod.label}</div>
+      </div>
+      <div class="module-stage">${mod.stage}</div>
+      <div class="module-desc">${mod.description}</div>
+      <div class="module-check">
+        <svg class="check-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>`;
+    grid.appendChild(card);
+  });
+  updateCount();
+}
+
+function toggleModule(card, id) {
+  const idx = state.selectedModules.indexOf(id);
+  if (idx === -1) { state.selectedModules.push(id); card.classList.add('selected'); }
+  else            { state.selectedModules.splice(idx, 1); card.classList.remove('selected'); }
+  updateCount();
+}
+
+function toggleAllModules() {
+  const all      = Object.keys(MODULES);
+  const allOn    = all.every(id => state.selectedModules.includes(id));
+  state.selectedModules = allOn ? [] : [...all];
+  document.querySelectorAll('.module-card').forEach(c => {
+    allOn ? c.classList.remove('selected') : c.classList.add('selected');
+  });
+  document.getElementById('toggleAllBtn').textContent = allOn ? 'Select All' : 'Deselect All';
+  updateCount();
+}
+
+function updateCount() {
+  const n = state.selectedModules.length;
+  const t = Object.keys(MODULES).length;
+  document.getElementById('moduleCount').textContent = `${n} of ${t} selected`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FILE HANDLING
+// ─────────────────────────────────────────────────────────────────────────────
+function onFileSelect(e)  { processFiles([...e.target.files]); e.target.value = ''; }
+function onDragOver(e)    { e.preventDefault(); document.getElementById('uploadZone').classList.add('drag-over'); }
+function onDragLeave()    { document.getElementById('uploadZone').classList.remove('drag-over'); }
+function onDrop(e)        { e.preventDefault(); document.getElementById('uploadZone').classList.remove('drag-over'); processFiles([...e.dataTransfer.files]); }
+
+async function processFiles(files) {
+  for (const file of files) {
+    if (file.size > 10 * 1024 * 1024)                         { toast(`${file.name} exceeds 10MB limit`); continue; }
+    if (state.documents.find(d => d.name === file.name))       continue;
+    try {
+      state.documents.push(await readFile(file));
+      renderFileList();
+    } catch { toast(`Could not read ${file.name}`); }
+  }
+}
+
+function renderFileList() {
+  const list = document.getElementById('fileList');
+  list.innerHTML = '';
+  state.documents.forEach((doc, i) => {
+    const item = document.createElement('div');
+    item.className = 'file-item';
+    item.innerHTML = `<span class="file-name">${doc.name}</span><span class="file-remove" onclick="removeFile(${i})">×</span>`;
+    list.appendChild(item);
+  });
+}
+
+function removeFile(i) {
+  state.documents.splice(i, 1);
+  renderFileList();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// HISTORY — localStorage persistence
+// ─────────────────────────────────────────────────────────────────────────────
+const HISTORY_KEY = 'conga_hub_history';
+const HISTORY_MAX = 30;
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function saveToHistory(ctx, outputs) {
+  const history = loadHistory();
+  const validOutputs = Object.fromEntries(Object.entries(outputs).filter(([,v]) => v));
+  if (!Object.keys(validOutputs).length) return;
+  const entry = {
+    id:      Date.now().toString(),
+    account: ctx.account,
+    stage:   ctx.stage,
+    date:    new Date().toISOString(),
+    modules: Object.keys(validOutputs).map(id => ({ id, label: MODULES[id]?.label || id })),
+    outputs: validOutputs,
+  };
+  history.unshift(entry);
+  if (history.length > HISTORY_MAX) history.splice(HISTORY_MAX);
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch(e) {}
+  updateHistoryBadge();
+}
+
+function deleteFromHistory(id) {
+  const history = loadHistory().filter(e => e.id !== id);
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); } catch(e) {}
+  renderHistoryList();
+  updateHistoryBadge();
+}
+
+function clearAllHistory() {
+  if (!confirm('Delete all saved sessions? This cannot be undone.')) return;
+  try { localStorage.removeItem(HISTORY_KEY); } catch(e) {}
+  renderHistoryList();
+  updateHistoryBadge();
+}
+
+function updateHistoryBadge() {
+  const count = loadHistory().length;
+  const badge = document.getElementById('histBadge');
+  if (!badge) return;
+  badge.textContent = count;
+  badge.style.display = count ? 'flex' : 'none';
+}
+
+function toggleHistory() {
+  const overlay = document.getElementById('histOverlay');
+  const btn     = document.getElementById('histBtn');
+  const isOpen  = overlay.classList.contains('open');
+  if (isOpen) {
+    overlay.classList.remove('open');
+    btn.classList.remove('active');
+  } else {
+    renderHistoryList();
+    overlay.classList.add('open');
+    btn.classList.add('active');
+  }
+}
+
+function renderHistoryList() {
+  const list    = document.getElementById('histList');
+  const history = loadHistory();
+  if (!history.length) {
+    list.innerHTML = '<div class="hist-empty">No saved sessions yet.<br><br>Generate outputs and they\'ll be saved here automatically.</div>';
+    return;
+  }
+  list.innerHTML = history.map(entry => {
+    const d       = new Date(entry.date);
+    const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const timeStr = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const pills   = entry.modules.map(m =>
+      `<span class="hist-mod-pill" style="border-color:${MODULES[m.id]?.accent||'var(--border)'};color:${MODULES[m.id]?.accent||'var(--tmuted)'};">${m.label}</span>`
+    ).join('');
+    return `<div class="hist-entry" onclick="loadHistoryEntry('${entry.id}')">
+      <div class="hist-entry-top">
+        <div class="hist-entry-account">${entry.account}</div>
+        <button class="hist-entry-del" onclick="event.stopPropagation();deleteFromHistory('${entry.id}')" title="Delete">×</button>
+      </div>
+      <div class="hist-entry-meta">
+        <span class="hist-entry-stage">${entry.stage}</span>
+        <span>${dateStr} &nbsp;${timeStr}</span>
+      </div>
+      <div class="hist-entry-mods">${pills}</div>
+    </div>`;
+  }).join('');
+}
+
+function loadHistoryEntry(id) {
+  const entry = loadHistory().find(e => e.id === id);
+  if (!entry) return;
+
+  // Restore state from saved entry
+  state.account      = entry.account;
+  state.stage        = entry.stage;
+  state.outputs      = entry.outputs;
+  state.research     = '';
+  state.chatHistory  = [];
+  state.activeModule = Object.keys(entry.outputs)[0];
+
+  const successful = Object.keys(entry.outputs).filter(k => entry.outputs[k]);
+  const ctx = { account: entry.account, stage: entry.stage };
+  renderOutputs(successful, ctx);
+  showPhase('outputs');
+
+  // Close drawer
+  document.getElementById('histOverlay').classList.remove('open');
+  document.getElementById('histBtn').classList.remove('active');
+  toast(`Loaded: ${entry.account}`);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────────────────────
+buildModuleGrid();
+updateHistoryBadge();
+
+// If a shared key is configured, load it and hide the header input
+if (SHARED_API_KEY && SHARED_API_KEY.startsWith('sk-ant-')) {
+  state.apiKey = SHARED_API_KEY;
+  const input  = document.getElementById('apiKeyInput');
+  const status = document.getElementById('apiKeyStatus');
+  if (input)  input.closest('.header-right') && (input.style.display = 'none');
+  if (status) { status.textContent = '✓ Ready'; status.className = 'api-key-status valid'; }
+}
+</script>
+</body>
+</html>
