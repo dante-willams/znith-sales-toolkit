@@ -75,21 +75,6 @@ header {
 }
 .logo-text span { color: var(--amber); font-weight: 400; }
 .header-right { display: flex; align-items: center; gap: 10px; }
-.api-key-status {
-  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.08em;
-  color: var(--tfaint); white-space: nowrap;
-}
-.api-key-status.valid   { color: var(--c-qualify); }
-.api-key-status.invalid { color: #E11D48; }
-.api-key-input {
-  background: var(--surf-2); border: 1px solid var(--border);
-  color: var(--text); font-family: var(--f-mono); font-size: 11px;
-  padding: 7px 12px; width: 220px; outline: none;
-  transition: border-color var(--transition);
-  clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
-}
-.api-key-input:focus { border-color: var(--amber); }
-.api-key-input::placeholder { color: var(--tfaint); }
 
 /* ── LAYOUT ──────────────────────────────────────────────────────────────── */
 main { max-width: 860px; margin: 0 auto; padding: 40px 24px 100px; }
@@ -624,11 +609,6 @@ select option { background: var(--surf-2); }
       History
       <span class="hist-badge" id="histBadge">0</span>
     </button>
-    <span class="api-key-status" id="apiKeyStatus">API key required</span>
-    <input type="password" class="api-key-input" id="apiKeyInput"
-      placeholder="Paste API key…"
-      oninput="onApiKeyInput(this.value)"
-      autocomplete="off" spellcheck="false">
   </div>
 </header>
 
@@ -1278,13 +1258,6 @@ const MODULES = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SHARED API KEY (optional)
-// Paste your key here to deploy for a team that doesn't have their own keys.
-// Leave blank ('') to require each user to enter their own key in the header.
-// ─────────────────────────────────────────────────────────────────────────────
-const SHARED_API_KEY = '';
-
-// ─────────────────────────────────────────────────────────────────────────────
 // API CONFIG
 // To migrate to a Conga backend: change `endpoint` to your proxy URL.
 // All other code stays the same.
@@ -1300,7 +1273,6 @@ const API_CONFIG = {
 // STATE
 // ─────────────────────────────────────────────────────────────────────────────
 const state = {
-  apiKey:          '',
   account:         '',
   stage:           '',
   meeting:         '',
@@ -1876,7 +1848,6 @@ async function generate() {
   if (!ctx.account)  return showError('Account name is required.');
   if (!ctx.stage)    return showError('Deal stage is required.');
   if (!ctx.meeting)  return showError('Meeting context is required.');
-  if (!state.apiKey) return showError('Paste your Anthropic API key in the header to continue.');
   if (!state.selectedModules.length) return showError('Select at least one output.');
 
   // Freeze state for this run
@@ -2722,7 +2693,7 @@ Be concise, direct, and specific to ${state.account || 'this account'}. Bullets 
 async function sendChat() {
   const input = document.getElementById('chatInput');
   const msg   = input.value.trim();
-  if (!msg || !state.apiKey) return;
+  if (!msg) return;
 
   input.value = '';
   input.style.height = 'auto';
@@ -2827,13 +2798,6 @@ function toast(msg) {
   setTimeout(() => { el.style.opacity = '0'; }, 2500);
 }
 
-function onApiKeyInput(val) {
-  state.apiKey = val.trim();
-  const status = document.getElementById('apiKeyStatus');
-  if (!val)                        { status.textContent = 'API key required'; status.className = 'api-key-status'; }
-  else if (val.startsWith('sk-ant-')) { status.textContent = '✓ Key valid';   status.className = 'api-key-status valid'; }
-  else                              { status.textContent = 'Must start with sk-ant-'; status.className = 'api-key-status invalid'; }
-}
 
 function toggleAdv() {
   document.getElementById('advBody').classList.toggle('open');
@@ -3051,14 +3015,7 @@ function loadHistoryEntry(id) {
 buildModuleGrid();
 updateHistoryBadge();
 
-// If a shared key is configured, load it and hide the header input
-if (SHARED_API_KEY && SHARED_API_KEY.startsWith('sk-ant-')) {
-  state.apiKey = SHARED_API_KEY;
-  const input  = document.getElementById('apiKeyInput');
-  const status = document.getElementById('apiKeyStatus');
-  if (input)  input.closest('.header-right') && (input.style.display = 'none');
-  if (status) { status.textContent = '✓ Ready'; status.className = 'api-key-status valid'; }
-}
+
 </script>
 </body>
 </html>
