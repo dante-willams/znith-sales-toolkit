@@ -13,6 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     :root{
@@ -20,13 +21,15 @@
       --border:#252f47;--purple:#f97316;--pdim:#c2410c;--plight:#fb923c;
       --text:#dde4f0;--tm:#8896b0;--td:#5a6a85;--navy:#0c1526;
       --danger:#f85a5a;--warn:#f0a429;--ok:#3ecf8e;--white:#ffffff;
+      --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+      --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
     }
-    body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
+    body{font-family:'DM Sans',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
     /* HEADER */
     .app-header{background:var(--navy);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
     .logo{display:flex;align-items:center;gap:12px}
     .logo-mark{display:flex;align-items:center}
-    .logo-tag{font-size:10px;color:var(--plight);font-weight:600;letter-spacing:0.8px;text-transform:uppercase;background:rgba(249,115,22,.15);padding:3px 9px;border-radius:4px;border:1px solid rgba(249,115,22,.3)}
+    .logo-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--plight);font-weight:600;letter-spacing:0.8px;text-transform:uppercase;background:rgba(249,115,22,.15);padding:3px 9px;clip-path:var(--clip-sm);border:1px solid rgba(249,115,22,.3)}
     /* STEPS */
     .steps{background:var(--surface);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;height:48px;gap:0;overflow-x:auto}
     .step{display:flex;align-items:center;gap:8px;padding:0 16px;height:100%;font-size:12px;font-weight:500;color:var(--td);white-space:nowrap}
@@ -39,24 +42,24 @@
     /* MAIN */
     .main{max-width:960px;margin:0 auto;padding:40px 32px}
     .ph{margin-bottom:32px}
-    .ph h1{font-size:24px;font-weight:700;color:var(--white);margin-bottom:6px}
+    .ph h1{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:6px}
     .ph p{color:var(--tm);font-size:14px}
     /* CARD */
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:24px;margin-bottom:20px}
-    .ct{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--plight);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+    .card{background:var(--surface);border:1px solid var(--border);clip-path:var(--clip-lg);padding:24px;margin-bottom:20px}
+    .ct{font-family:'DM Mono',monospace;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--plight);margin-bottom:16px;display:flex;align-items:center;gap:8px}
     /* FORM */
     .row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
     .row.s{grid-template-columns:1fr}
     .fg{display:flex;flex-direction:column;gap:5px}
-    label.fl{font-size:11px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.4px}
+    label.fl{font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:var(--tm);text-transform:uppercase;letter-spacing:.4px}
     .req{color:var(--purple);margin-left:2px}
-    input[type=text],select,textarea{background:var(--s2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:14px;padding:8px 12px;outline:none;transition:border-color .15s;font-family:inherit;width:100%}
+    input[type=text],select,textarea{background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-sm);color:var(--text);font-size:14px;padding:8px 12px;outline:none;transition:border-color .15s;font-family:inherit;width:100%}
     input:focus,select:focus,textarea:focus{border-color:var(--purple)}
     textarea{resize:vertical;min-height:80px}
     select option{background:var(--s2)}
     /* PRODUCTS */
     .pgrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-    .pcheck{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .15s;text-align:center;user-select:none}
+    .pcheck{display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border:1.5px solid var(--border);clip-path:var(--clip-lg);cursor:pointer;transition:all .15s;text-align:center;user-select:none}
     .pcheck:hover{border-color:var(--pdim);background:rgba(249,115,22,.04)}
     .pcheck.sel{border-color:var(--purple);background:rgba(249,115,22,.1)}
     .pcheck.sel .pi svg{color:var(--purple)}
@@ -72,24 +75,24 @@
     .pt input,.pt select{font-size:13px;padding:6px 8px}
     .bicon{background:none;border:none;color:var(--td);cursor:pointer;padding:4px 8px;border-radius:4px;font-size:16px;transition:color .15s}
     .bicon:hover{color:var(--danger)}
-    .badd{background:none;border:1px dashed var(--border);color:var(--tm);cursor:pointer;padding:8px 16px;border-radius:6px;font-size:12px;font-weight:500;width:100%;transition:all .15s}
+    .badd{background:none;border:1px dashed var(--border);color:var(--tm);cursor:pointer;padding:8px 16px;clip-path:var(--clip-sm);font-size:12px;font-weight:500;width:100%;transition:all .15s}
     .badd:hover{border-color:var(--purple);color:var(--plight)}
     /* BUTTONS */
-    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:6px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;border:none;font-family:inherit}
-    .btn-p{background:var(--purple);color:#fff}.btn-p:hover{background:var(--plight);color:#111}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;clip-path:var(--clip-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;border:none;font-family:inherit}
+    .btn-p{background:#B8860B;color:#000}.btn-p:hover{background:#D4A017;color:#000}
     .btn-s{background:var(--s2);color:var(--text);border:1px solid var(--border)}.btn-s:hover{border-color:var(--pdim)}
     .btn-ok{background:var(--ok);color:#021a0e;font-weight:700}
     .btn-ok:hover{filter:brightness(1.1)}
     .arow{display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:24px;border-top:1px solid var(--border)}
     /* DROP ZONE */
-    .dz{border:2px dashed var(--border);border-radius:12px;padding:48px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+    .dz{border:2px dashed var(--border);clip-path:var(--clip-lg);padding:48px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
     .dz:hover,.dz.over{border-color:var(--purple);background:rgba(249,115,22,.05)}
     .di{font-size:40px;margin-bottom:12px}
     .dt{font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px}
     .ds{font-size:13px;color:var(--tm)}
     /* FILE LIST */
     .flist{margin-top:16px;display:flex;flex-direction:column;gap:8px}
-    .fitem{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:10px 14px}
+    .fitem{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-sm);padding:10px 14px}
     .fname{flex:1;font-size:13px;font-weight:500}
     .fsize{font-size:11px;color:var(--tm)}
     .fst{font-size:11px}.fst.ok{color:var(--ok)}.fst.parsing{color:var(--warn)}.fst.error{color:var(--danger)}
@@ -100,7 +103,7 @@
     .gstatus{font-size:16px;font-weight:600;color:var(--text);margin-bottom:8px}
     .gsub{font-size:13px;color:var(--tm)}
     .gsteps{display:flex;flex-direction:column;gap:6px;max-width:400px;margin:24px auto 0;text-align:left}
-    .gstep{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--td);padding:7px 12px;border-radius:6px}
+    .gstep{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--td);padding:7px 12px;clip-path:var(--clip-sm)}
     .gstep.active{background:rgba(249,115,22,.1);color:var(--text)}
     .gstep.done{color:var(--ok)}
     .gsi{width:18px;text-align:center}
@@ -116,7 +119,7 @@
     .rt td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:top}
     .rt tr:last-child td{border-bottom:none}
     /* BADGES */
-    .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+    .badge{display:inline-block;padding:2px 8px;clip-path:var(--clip-sm);font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
     .bc{background:rgba(248,90,90,.12);color:#f85a5a;border:1px solid rgba(248,90,90,.3)}
     .bh{background:rgba(248,90,90,.12);color:#f85a5a;border:1px solid rgba(248,90,90,.3)}
     .be{background:rgba(240,164,41,.12);color:#f0a429;border:1px solid rgba(240,164,41,.3)}
@@ -128,27 +131,27 @@
     .bunk{background:var(--s3);color:var(--tm);border:1px solid var(--border)}
     /* OVERVIEW */
     .ogrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-    .oi{background:var(--s2);border:1px solid var(--border);border-radius:6px;padding:12px 14px}
+    .oi{background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-sm);padding:12px 14px}
     .oi label{font-size:10px;color:var(--td);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;display:block}
     .oi .val{font-size:13px;color:var(--text);font-weight:500}
     /* EDITABLE RISK ROW */
-    .rrow{display:grid;grid-template-columns:2fr 85px 2.5fr 1.2fr 36px;gap:8px;align-items:center;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px}
+    .rrow{display:grid;grid-template-columns:2fr 85px 2.5fr 1.2fr 36px;gap:8px;align-items:center;padding:10px;background:var(--surface);border:1px solid var(--border);clip-path:var(--clip-lg);margin-bottom:8px}
     /* EDITABLE SCENE ROW */
-    .srow{display:flex;gap:10px;align-items:flex-start;padding:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px}
+    .srow{display:flex;gap:10px;align-items:flex-start;padding:12px;background:var(--surface);border:1px solid var(--border);clip-path:var(--clip-lg);margin-bottom:8px}
     .snum{width:28px;height:28px;background:var(--s3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--plight);flex-shrink:0;margin-top:3px}
     .scols{flex:1;display:grid;grid-template-columns:1fr 2fr 1.2fr 55px;gap:8px}
     .sacts{display:flex;flex-direction:column;gap:4px}
-    .bmv{background:var(--s2);border:1px solid var(--border);color:var(--tm);cursor:pointer;padding:4px 8px;border-radius:4px;font-size:12px;transition:all .15s}
+    .bmv{background:var(--s2);border:1px solid var(--border);color:var(--tm);cursor:pointer;padding:4px 8px;clip-path:var(--clip-sm);font-size:12px;transition:all .15s}
     .bmv:hover{color:var(--text);border-color:var(--pdim)}
     .bmv:disabled{opacity:.35;cursor:default}
     /* SE CONFIG */
     .sec-area{margin-bottom:16px}
-    .sec-area h4{font-size:13px;font-weight:700;color:var(--plight);margin-bottom:8px;padding:6px 10px;background:rgba(249,115,22,.08);border-radius:4px;border-left:3px solid var(--purple)}
+    .sec-area h4{font-size:13px;font-weight:700;color:var(--plight);margin-bottom:8px;padding:6px 10px;background:rgba(249,115,22,.08);clip-path:var(--clip-sm);border-left:3px solid var(--purple)}
     .sec-req{font-size:13px;color:var(--text);padding:5px 0 5px 16px;position:relative;border-bottom:1px solid var(--border)}
     .sec-req:last-child{border-bottom:none}
     .sec-req::before{content:'·';position:absolute;left:5px;color:var(--purple);font-weight:900;font-size:18px;line-height:1}
     /* COMPETITIVE */
-    .ccard{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px}
+    .ccard{background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:16px;margin-bottom:12px}
     .cname{font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px;display:flex;align-items:center;gap:8px}
     .cbul{font-size:13px;color:var(--text);padding:4px 0 4px 16px;position:relative}
     .cbul::before{content:'•';position:absolute;left:4px;color:var(--plight)}
@@ -159,10 +162,10 @@
     .qi:last-child{border-bottom:none}
     .qi::before{content:'→';position:absolute;left:0;color:var(--tm)}
     /* SECTION HEADER */
-    .slabel{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--purple);margin-bottom:4px}
-    .stitle{font-size:18px;font-weight:700;color:var(--white);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--purple)}
+    .slabel{font-family:'DM Mono',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--purple);margin-bottom:4px}
+    .stitle{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:16px;padding-bottom:10px;border-bottom:2px solid var(--purple)}
     /* ERROR */
-    .errmsg{background:rgba(248,90,90,.08);border:1px solid rgba(248,90,90,.25);border-radius:6px;padding:12px 16px;font-size:13px;color:var(--danger);margin-top:16px}
+    .errmsg{background:rgba(248,90,90,.08);border:1px solid rgba(248,90,90,.25);clip-path:var(--clip-sm);padding:12px 16px;font-size:13px;color:var(--danger);margin-top:16px}
     /* UTILS */
     .hidden{display:none!important}
     input.sm,select.sm{font-size:12px;padding:5px 8px}
@@ -170,31 +173,31 @@
     ::-webkit-scrollbar-track{background:var(--bg)}
     ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
     ::-webkit-scrollbar-thumb:hover{background:var(--pdim)}
-    .plant-section{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-top:16px}
+    .plant-section{background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:14px 16px;margin-top:16px}
     .plant-section h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ok);margin-bottom:10px}
     /* KEY MESSAGE */
-    .keymsg{background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(249,115,22,.04));border:1.5px solid rgba(249,115,22,.3);border-radius:10px;padding:18px 22px;margin-bottom:24px}
+    .keymsg{background:linear-gradient(135deg,rgba(249,115,22,.08),rgba(249,115,22,.04));border:1.5px solid rgba(249,115,22,.3);clip-path:var(--clip-lg);padding:18px 22px;margin-bottom:24px}
     .keymsg-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--purple);margin-bottom:8px}
     .keymsg-text{font-size:17px;font-weight:700;color:var(--white);line-height:1.4}
     /* DEMO HOOK */
-    .hook-card{background:var(--s2);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:20px}
+    .hook-card{background:var(--s2);border-left:3px solid var(--purple);padding:14px 18px;margin-bottom:20px}
     .hook-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--plight);margin-bottom:6px}
     .hook-text{font-size:13px;color:var(--text);line-height:1.6;font-style:italic}
     /* SE COMPLEXITY BADGE */
-    .cx-high{background:rgba(248,90,90,.12);color:#f85a5a;border:1px solid rgba(248,90,90,.3);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;display:inline-block;margin-left:8px;vertical-align:middle}
-    .cx-med{background:rgba(240,164,41,.12);color:#f0a429;border:1px solid rgba(240,164,41,.3);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;display:inline-block;margin-left:8px;vertical-align:middle}
-    .cx-low{background:rgba(62,207,142,.12);color:#3ecf8e;border:1px solid rgba(62,207,142,.3);font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;display:inline-block;margin-left:8px;vertical-align:middle}
+    .cx-high{background:rgba(248,90,90,.12);color:#f85a5a;border:1px solid rgba(248,90,90,.3);font-size:10px;font-weight:700;padding:2px 7px;clip-path:var(--clip-sm);display:inline-block;margin-left:8px;vertical-align:middle}
+    .cx-med{background:rgba(240,164,41,.12);color:#f0a429;border:1px solid rgba(240,164,41,.3);font-size:10px;font-weight:700;padding:2px 7px;clip-path:var(--clip-sm);display:inline-block;margin-left:8px;vertical-align:middle}
+    .cx-low{background:rgba(62,207,142,.12);color:#3ecf8e;border:1px solid rgba(62,207,142,.3);font-size:10px;font-weight:700;padding:2px 7px;clip-path:var(--clip-sm);display:inline-block;margin-left:8px;vertical-align:middle}
     .sec-tech{font-size:11px;color:var(--td);padding:3px 0 6px 16px;font-style:italic}
     .plant-section h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ok);margin-bottom:10px}
     /* NAV TABS */
     .app-nav{display:flex;gap:4px;align-items:center}
-    .nav-btn{background:none;border:none;color:var(--tm);cursor:pointer;padding:6px 14px;border-radius:6px;font-size:13px;font-weight:500;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:7px}
+    .nav-btn{background:none;border:none;color:var(--tm);cursor:pointer;padding:6px 14px;clip-path:var(--clip-sm);font-size:13px;font-weight:500;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:7px}
     .nav-btn:hover{background:rgba(255,255,255,.06);color:var(--text)}
     .nav-btn.active{background:rgba(249,115,22,.12);color:var(--plight)}
-    .nbadge{background:var(--purple);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;min-width:18px;text-align:center}
+    .nbadge{background:var(--purple);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;clip-path:var(--clip-sm);min-width:18px;text-align:center}
     /* ALL BRIEFS */
     .brief-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:8px}
-    .brief-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:18px;cursor:pointer;transition:all .15s;position:relative}
+    .brief-card{background:var(--surface);border:1px solid var(--border);clip-path:var(--clip-lg);padding:18px;cursor:pointer;transition:all .15s;position:relative}
     .brief-card:hover{border-color:var(--purple);background:var(--s2)}
     .bc-company{font-size:15px;font-weight:700;color:var(--white);margin-bottom:4px}
     .bc-products{font-size:11px;color:var(--plight);margin-bottom:8px}
@@ -217,21 +220,30 @@
 .chat-toggle:hover{color:var(--text)}
 .chat-hint{font-size:11px;color:var(--td);padding:10px 18px;border-bottom:1px solid var(--border);flex-shrink:0;line-height:1.5}
 .chat-messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
-.chat-msg{max-width:100%;font-size:12.5px;line-height:1.55;border-radius:10px;padding:10px 13px;white-space:pre-wrap;word-break:break-word}
+.chat-msg{max-width:100%;font-size:12.5px;line-height:1.55;clip-path:var(--clip-sm);padding:10px 13px;white-space:pre-wrap;word-break:break-word}
 .chat-msg.user{background:rgba(249,115,22,.14);border:1px solid rgba(249,115,22,.25);color:var(--text);align-self:flex-end;max-width:88%}
 .chat-msg.assistant{background:var(--s3);border:1px solid var(--border);color:var(--text);align-self:flex-start}
 .chat-msg.thinking{background:var(--s3);border:1px solid var(--border);color:var(--td);align-self:flex-start;font-style:italic;opacity:.7}
-.chat-edit-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.25);color:var(--ok);border-radius:20px;font-size:10px;font-weight:600;padding:2px 8px;margin-top:6px;letter-spacing:.04em}
+.chat-edit-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.25);color:var(--ok);clip-path:var(--clip-sm);font-size:10px;font-weight:600;padding:2px 8px;margin-top:6px;letter-spacing:.04em}
 .chat-input-row{display:flex;gap:8px;align-items:flex-end;padding:14px 16px;border-top:1px solid var(--border);background:var(--s3);flex-shrink:0}
-.chat-textarea{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:inherit;font-size:12.5px;padding:9px 12px;outline:none;resize:none;line-height:1.5;transition:border-color .2s;min-height:40px;max-height:120px}
+.chat-textarea{flex:1;background:var(--bg);border:1px solid var(--border);clip-path:var(--clip-sm);color:var(--text);font-family:inherit;font-size:12.5px;padding:9px 12px;outline:none;resize:none;line-height:1.5;transition:border-color .2s;min-height:40px;max-height:120px}
 .chat-textarea:focus{border-color:var(--pdim)}
-.chat-send{background:var(--purple);border:none;border-radius:10px;width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#fff;transition:opacity .2s}
+.chat-send{background:var(--purple);border:none;clip-path:var(--clip-sm);width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#fff;transition:opacity .2s}
 .chat-send:hover{opacity:.85}
 .chat-send:disabled{opacity:.4;cursor:default}
 
 /* ── FLOATING PILL (collapsed state) ── */
-.chat-tab{position:fixed;bottom:28px;right:20px;background:var(--purple);color:#fff;border:none;border-radius:24px;padding:10px 18px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 20px rgba(249,115,22,.35);z-index:201;transition:opacity .25s ease;letter-spacing:.03em;font-family:inherit}
+.chat-tab{position:fixed;bottom:28px;right:20px;background:#B8860B;color:#000;border:none;clip-path:var(--clip-sm);padding:10px 18px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 20px rgba(184,134,11,.35);z-index:201;transition:opacity .25s ease;letter-spacing:.03em;font-family:inherit}
 .chat-tab:hover{opacity:.88}
+
+/* ── ZNITH FOOTER ── */
+.znith-footer{background:var(--surface);border-top:1px solid rgba(249,115,22,0.18);display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:34px;margin-top:auto}
+.znith-wordmark{display:flex;align-items:center;gap:1px;font-size:13px;line-height:1}
+.znith-slash{font-family:'DM Mono',monospace;color:#B8860B;font-weight:700;font-size:13px;margin-right:2px}
+.znith-z{font-family:'Playfair Display',serif;font-weight:800;color:#B8860B;font-size:13px}
+.znith-nith{font-family:'Playfair Display',serif;font-weight:800;color:rgba(244,240,255,0.5);font-size:13px}
+.znith-footer-info{display:flex;align-items:center;gap:7px;font-family:'DM Mono',monospace;font-size:9px;color:rgba(244,240,255,0.2);letter-spacing:.04em;text-transform:uppercase}
+.znith-pip{width:4px;height:4px;border-radius:50%;background:#B8860B;flex-shrink:0}
   </style>
 </head>
 <body>
@@ -371,9 +383,9 @@
       <div class="gstep active" id="gs1"><span class="gsi">⏳</span><span>Extracting content from uploaded files</span></div>
       <div class="gstep" id="gs2"><span class="gsi">◯</span><span>Building deal context and stakeholder map</span></div>
       <div class="gstep" id="gs3"><span class="gsi">◯</span><span>Identifying pain points and demo imperatives</span></div>
-      <div class="gstep" id="gs4"><span class="gsi">◯</span><span>Structuring SE configuration requirements</span></div>
-      <div class="gstep" id="gs5"><span class="gsi">◯</span><span>Mapping competitive landscape</span></div>
-      <div class="gstep" id="gs6"><span class="gsi">◯</span><span>Finalizing demo flow with timing</span></div>
+      <div class="gstep" id="gs4"><span class="gsi">◯</span><span>Designing demo flow &amp; solution map</span></div>
+      <div class="gstep" id="gs5"><span class="gsi">◯</span><span>Mapping competitive landscape &amp; risks</span></div>
+      <div class="gstep" id="gs6"><span class="gsi">◯</span><span>Assembling &amp; rendering brief</span></div>
     </div>
     <div id="gen-err" class="errmsg hidden"></div>
     <div id="gen-retry" class="hidden" style="margin-top:20px">
@@ -401,7 +413,7 @@
   </div>
 
   <div class="tc active" id="tc-overview">
-    <div id="ov-keymsg" style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3);border-radius:8px;padding:14px 18px;margin-bottom:20px;display:none">
+    <div id="ov-keymsg" style="background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.3);clip-path:var(--clip-lg);padding:14px 18px;margin-bottom:20px;display:none">
       <div style="font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--plight);margin-bottom:6px">KEY MESSAGE</div>
       <div id="ov-keymsg-text" style="font-size:15px;font-weight:600;color:var(--white);line-height:1.4"></div>
     </div>
@@ -858,82 +870,81 @@ async function startGenerate(){
   goTo('generating');
   gStep(1,'active');
 
-  await new Promise(r=>setTimeout(r,300));
-
   const allText = S.files.map(f=>`=== FILE: ${f.name} ===\n${f.text||'(Could not extract)'}\n`).join('\n\n');
   gStep(1,'done'); gStep(2,'active');
 
-  const sys = buildSystem();
-  const msg = buildMessage(allText);
-
-  gStep(2,'done'); gStep(3,'active');
-
-  const stepsAnim = animateSteps(3);
-
   try{
-    // Build content array — text prompt + any image files
     const images = S.files.filter(f=>f.imageData);
-    const textContent = {type:'text', content:msg};
 
-    const userContent = [
-      ...images.map(f=>({
-        type:'image',
-        source:{type:'base64', media_type:f.imageData.mime, data:f.imageData.b64}
-      })),
-      {type:'text', text:msg}
+    // ── Phase A: Foundation (deal context, stakeholders, pain points) ──
+    const userContentA = [
+      ...images.map(f=>({type:'image',source:{type:'base64',media_type:f.imageData.mime,data:f.imageData.b64}})),
+      {type:'text',text:buildMessageFoundation(allText)}
     ];
 
-    const res = await fetch('/api/claude',{
+    const resA = await fetch('/api/claude',{
       method:'POST',
       headers:getApiHeaders(),
       body:JSON.stringify({
         model:'claude-sonnet-4-20250514',
-        max_tokens:8000,
-        system:sys,
-        messages:[{role:'user',content:userContent}]
+        max_tokens:16000,
+        system:buildSystemFoundation(),
+        messages:[{role:'user',content:userContentA}]
       })
     });
+    if(!resA.ok){
+      const e=await resA.json().catch(()=>({error:{message:'HTTP '+resA.status}}));
+      throw new Error(e.error?.message||'API error '+resA.status);
+    }
+    const dataA = await resA.json();
+    const foundation = parseJson(dataA.content.map(c=>c.text||'').join(''));
 
-    clearInterval(stepsAnim);
+    gStep(2,'done'); gStep(3,'done'); gStep(4,'active'); gStep(5,'active');
 
-    if(!res.ok){
-      const err=await res.json().catch(()=>({error:{message:'HTTP '+res.status}}));
-      throw new Error(err.error?.message||'API error '+res.status);
+    // ── Phase B: Demo design + Technical/Competitive (parallel) ──
+    const fCtx = JSON.stringify(foundation);
+    const [resB, resC] = await Promise.all([
+      fetch('/api/claude',{
+        method:'POST',
+        headers:getApiHeaders(),
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:16000,
+          system:buildSystemDesign(),
+          messages:[{role:'user',content:[{type:'text',text:buildMessageDesign(fCtx,allText)}]}]
+        })
+      }),
+      fetch('/api/claude',{
+        method:'POST',
+        headers:getApiHeaders(),
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:16000,
+          system:buildSystemTech(),
+          messages:[{role:'user',content:[{type:'text',text:buildMessageTech(fCtx,allText)}]}]
+        })
+      })
+    ]);
+    if(!resB.ok){
+      const e=await resB.json().catch(()=>({error:{message:'HTTP '+resB.status}}));
+      throw new Error(e.error?.message||'API error '+resB.status);
+    }
+    if(!resC.ok){
+      const e=await resC.json().catch(()=>({error:{message:'HTTP '+resC.status}}));
+      throw new Error(e.error?.message||'API error '+resC.status);
     }
 
-    const data=await res.json();
-    const raw=data.content.map(c=>c.text||'').join('');
-    let clean=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+    const [dataB, dataC] = await Promise.all([resB.json(), resC.json()]);
+    const design = parseJson(dataB.content.map(c=>c.text||'').join(''));
+    const tech   = parseJson(dataC.content.map(c=>c.text||'').join(''));
 
-    // If JSON was truncated (hit token limit), attempt repair by closing open structures
-    if(!clean.endsWith('}')){
-      // Find the last complete top-level key-value pair and close the object
-      // Strategy: close any open strings, arrays, and objects
-      let depth = 0, inStr = false, escape = false;
-      for(let i=0;i<clean.length;i++){
-        const c=clean[i];
-        if(escape){escape=false;continue;}
-        if(c==='\\'){escape=true;continue;}
-        if(c==='"'&&!inStr){inStr=true;continue;}
-        if(c==='"'&&inStr){inStr=false;continue;}
-        if(!inStr){
-          if(c==='{'||c==='[') depth++;
-          else if(c==='}'||c===']') depth--;
-        }
-      }
-      if(inStr) clean += '"';
-      // Close arrays and objects based on depth
-      for(let i=0;i<depth;i++) clean += (clean.trimEnd().endsWith('"')||/[}\]0-9]/.test(clean.trimEnd().slice(-1))) ? '}' : '}';
-      // Final safety: ensure ends with }
-      if(!clean.endsWith('}')) clean = clean.replace(/,\s*$/, '') + '}';
-    }
+    gStep(4,'done'); gStep(5,'done'); gStep(6,'active');
 
-    S.brief=JSON.parse(clean);
-    S.risks=[...(S.brief.configRisks||[])];
-    S.flow=[...(S.brief.demoFlow||[])];
+    S.brief = {...foundation, ...design, ...tech};
+    S.risks = [...(S.brief.configRisks||[])];
+    S.flow  = [...(S.brief.demoFlow||[])];
 
     for(let i=1;i<=6;i++) gStep(i,'done');
-    await new Promise(r=>setTimeout(r,600));
     renderReview();
     saveCurrentBrief();
     openChatWhenReady();
@@ -941,7 +952,6 @@ async function startGenerate(){
     goTo('review');
 
   } catch(err){
-    clearInterval(stepsAnim);
     console.error(err);
     document.getElementById('gen-err').textContent='Error: '+err.message+' — Check your API key and try again.';
     document.getElementById('gen-err').classList.remove('hidden');
@@ -949,20 +959,33 @@ async function startGenerate(){
     document.querySelector('.spin').style.display='none';
   }
 }
-
-function animateSteps(start){
-  let cur=start;
-  return setInterval(()=>{
-    if(cur<=6){gStep(cur-1,'done');gStep(cur,'active');cur++;}
-  },2800);
-}
 function gStep(n,status){
   const el=document.getElementById('gs'+n); if(!el) return;
   el.className='gstep '+status;
   el.querySelector('.gsi').textContent=status==='done'?'✓':status==='active'?'⏳':'◯';
 }
 
-function buildSystem(){
+function parseJson(raw){
+  let clean=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+  if(!clean.endsWith('}')){
+    let depth=0,inStr=false,escape=false;
+    for(let i=0;i<clean.length;i++){
+      const c=clean[i];
+      if(escape){escape=false;continue;}
+      if(c==='\\'){escape=true;continue;}
+      if(c==='"'&&!inStr){inStr=true;continue;}
+      if(c==='"'&&inStr){inStr=false;continue;}
+      if(!inStr){if(c==='{'||c==='[')depth++;else if(c==='}'||c===']')depth--;}
+    }
+    if(inStr) clean+='"';
+    for(let i=0;i<depth;i++) clean+='}';
+    if(!clean.endsWith('}')) clean=clean.replace(/,\s*$/,'')+'}';
+  }
+  return JSON.parse(clean);
+}
+
+// ── PHASE A: FOUNDATION ────────────────────────────────────────────────────
+function buildSystemFoundation(){
   return `You are a Strategic Contract Lifecycle Management and Revenue consultant helping Conga Account Executives build SE Demo Briefs. You produce AE-readable, deal-specific documents — not generic product brochures.
 
 CONGA PRODUCT SUITE:
@@ -1009,7 +1032,69 @@ JSON SCHEMA — match exactly:
   ],
   "painPoints": [
     { "title": "string 2-5 words", "priority": "PRIMARY|DIFFERENTIATOR|STATED REQUIREMENT|EXPANSION", "owner": "string — specific person or team who owns this pain (e.g. Julia / RevOps)", "whatsbroken": "string ≤40 words — specific current state, what breaks today", "impact": "string ≤25 words — quantified business impact if known, e.g. hours lost, errors, delays", "congaFix": "string ≤35 words — exactly how Conga solves this, mechanism-level", "demoImperative": "string — start with → — ≤45 words, what to show in the demo to prove this", "source": "BRD|Call|Notes|Inferred" }
-  ],
+  ]
+}`;
+}
+
+function buildMessageFoundation(text){
+  const personas = S.personas.length>0
+    ? S.personas.map(p=>`- ${p.name||'Unknown'} — ${p.title||'Unknown'} (${p.role||'role unknown'})`).join('\n')
+    : 'Not provided — infer from context';
+
+  return `Analyze this deal and extract the foundation for a Conga SE Demo Brief. Be specific — use names, numbers, and quotes from the source materials. Generic output is a failure.
+
+DEAL INTAKE:
+Company: ${S.company}
+Products being demoed: ${S.products.join(', ')}
+Current solution being replaced: ${S.current||'Not specified'}
+Known competitors: ${S.competitors||'Not specified — infer from industry and uploaded materials'}
+Additional context: ${S.notes||'None'}
+
+KEY PERSONAS:
+${personas}
+
+SOURCE MATERIALS:
+${text ? text.substring(0,14000) : 'No files uploaded — work from intake context only.'}
+
+INSTRUCTIONS:
+1. Extract every stated requirement, broken workflow, and pain point from the source materials. Quote the customer's own language where possible.
+2. For each pain point: name the specific owner (person or team), describe exactly what breaks today, quantify the impact if possible, then state exactly how Conga fixes it (mechanism-level, not marketing language).
+3. keyMessage: one sentence, ≤20 words, company-specific. Must reference their world, not ours.
+4. demoHook: the exact script the AE reads to open the demo. Name the pain, name who feels it, set what we prove today.
+5. dealSnapshot: extract evaluation window, current solution, Salesforce stack details, and relevant company context from the materials.
+6. stakeholders: map each persona to their role, engagement status, and the specific pain they personally own.
+
+Return ONLY the JSON object.`;
+}
+
+// ── PHASE B: DEMO DESIGN ──────────────────────────────────────────────────
+function buildSystemDesign(){
+  return `You are a Strategic Contract Lifecycle Management and Revenue consultant designing a Conga SE demo narrative and scene-by-scene flow.
+
+CONGA PRODUCT SUITE:
+- CLM: Contract authoring, negotiation, approvals, obligations, compliance, e-signature
+- CPQ: Guided selling, pricing rules, quote generation, approval workflows
+- DocGen/Composer: Document automation, template-based generation, merge from Salesforce/CRM data
+- RLM: Revenue Lifecycle Management — end-to-end revenue and contract process
+- POM: Price Optimization & Management — pricing strategy, price lists, floor/ceiling thresholds, margin protection, market-competitive pricing
+- AI (AiMe): Embedded AI — clause analysis, risk scoring, contract intelligence, AI redline review
+
+KEY DIFFERENTIATORS:
+- Conga is deeply Salesforce-native — not a bolt-on
+- CLM + CPQ + DocGen is a unified platform — no second vendor
+- 52M+ carts created, 2.3M+ CPQ users, Gartner Voice of Customer leader 2 consecutive years
+- Conga uses its own CPQ + CLM internally (Customer Zero) — first-hand experience with the same stack
+- Ironclad: CLM challenger — no CPQ, no doc gen, no native Salesforce architecture
+- DocuSign: common CLM incumbent — bolt-on integrations, not Salesforce-native
+- Salesforce RCA: often competing with CPQ — customers reluctant to pay Salesforce more; Salesforce uses Conga internally
+- DealHub: lighter weight CPQ — struggles with complex promotion logic, approval matrices
+
+TONE: McKinsey slide deck narrated by Simon Sinek. Confident, business-first, AE-readable. Every bullet ≤20 words. Quantify wherever possible.
+
+CRITICAL: Respond with ONLY valid JSON. No markdown backticks, no preamble, no explanation. Start your response with { and end with }.
+
+JSON SCHEMA — match exactly:
+{
   "solutionMap": [
     { "capability": "string — Conga capability name e.g. Dynamic Promotion Engine", "pain": "string — which pain this addresses ≤15 words", "mechanism": "string ≤50 words — exactly how it works, technical mechanism an AE can explain", "differentiator": "string ≤30 words — why competitors can't match this" }
   ],
@@ -1025,7 +1110,62 @@ JSON SCHEMA — match exactly:
   ],
   "agenda": [
     { "topic": "string", "presenter": "AE|SE|All", "details": "string ≤40 words — bullet points of what's covered", "minutes": number }
-  ],
+  ]
+}`
+}
+
+function buildMessageDesign(foundationCtx, text){
+  return `Using the deal foundation below, design the complete demo narrative and scene-by-scene flow for this Conga opportunity. Be specific — reference the customer's exact pain points, names, and language.
+
+DEAL FOUNDATION:
+${foundationCtx}
+
+DEAL CONTEXT:
+Company: ${S.company}
+Products being demoed: ${S.products.join(', ')}
+Current solution: ${S.current||'Not specified'}
+
+SOURCE MATERIALS (supplemental):
+${text ? text.substring(0,8000) : 'No files uploaded.'}
+
+INSTRUCTIONS:
+1. Build a solutionMap: for each Conga capability being demoed, pair it to the exact pain from the foundation, explain the technical mechanism, and state why competitors can't match it.
+2. Design a demoArc with a compelling narrative: Setup script → 2-4 Acts with specific what-to-say → Close. Each act should flow naturally from the previous and reference the customer's world by name.
+3. Design a demoFlow of 6-8 scenes (55-70 min total). Each scene must name a presenter (AE or SE), include specific talking points referencing customer-named pains, and map to a named pain from the foundation.
+4. Build an agenda table with presenter assignments and timing that matches the demoFlow scenes.
+
+Return ONLY the JSON object.`;
+}
+
+// ── PHASE C: TECHNICAL + COMPETITIVE ────────────────────────────────────
+function buildSystemTech(){
+  return `You are a Strategic Contract Lifecycle Management and Revenue consultant assessing technical configuration requirements and competitive positioning for a Conga SE demo.
+
+CONGA PRODUCT SUITE:
+- CLM: Contract authoring, negotiation, approvals, obligations, compliance, e-signature
+- CPQ: Guided selling, pricing rules, quote generation, approval workflows
+- DocGen/Composer: Document automation, template-based generation, merge from Salesforce/CRM data
+- RLM: Revenue Lifecycle Management — end-to-end revenue and contract process
+- POM: Price Optimization & Management — pricing strategy, price lists, floor/ceiling thresholds, margin protection, market-competitive pricing
+- AI (AiMe): Embedded AI — clause analysis, risk scoring, contract intelligence, AI redline review
+
+COMPETITIVE INTELLIGENCE:
+- Ironclad: CLM challenger — no CPQ, no doc gen, no native Salesforce architecture
+- DocuSign: common CLM incumbent — bolt-on integrations, not Salesforce-native
+- Salesforce RCA: often competing with CPQ — customers reluctant to pay Salesforce more; Salesforce uses Conga internally
+- DealHub: lighter weight CPQ — struggles with complex promotion logic, approval matrices
+- Oracle CPQ: complex implementation, weaker Salesforce integration
+- Icertis: enterprise CLM — complex implementation, no CPQ or DocGen
+- Agiloft: flexible CLM — no CPQ, steeper learning curve
+- 52M+ carts created, 2.3M+ CPQ users, Gartner Voice of Customer leader 2 consecutive years
+- Customer Zero: Conga runs Conga CPQ + CLM + NetSuite internally
+
+TONE: Confident, technical, AE-readable. Be direct about risks — don't minimize. Every bullet ≤20 words.
+
+CRITICAL: Respond with ONLY valid JSON. No markdown backticks, no preamble, no explanation. Start your response with { and end with }.
+
+JSON SCHEMA — match exactly:
+{
   "configRisks": [
     { "risk": "string 2-5 words", "level": "HIGH|MEDIUM|LOW", "action": "string ≤40 words", "owner": "string e.g. SE before call" }
   ],
@@ -1046,38 +1186,26 @@ JSON SCHEMA — match exactly:
 }`;
 }
 
-function buildMessage(text){
-  const personas = S.personas.length>0
-    ? S.personas.map(p=>`- ${p.name||'Unknown'} — ${p.title||'Unknown'} (${p.role||'role unknown'})`).join('\n')
-    : 'Not provided — infer from context';
+function buildMessageTech(foundationCtx, text){
+  return `Using the deal foundation below, build the technical configuration requirements, competitive intelligence, and open questions for this Conga demo. Be honest about risks — do not minimize.
 
-  return `Build a complete, deal-specific Demo Brief for this opportunity. Be specific — use names, numbers, and quotes from the source materials. Generic output is a failure.
+DEAL FOUNDATION:
+${foundationCtx}
 
-DEAL INTAKE:
+DEAL CONTEXT:
 Company: ${S.company}
 Products being demoed: ${S.products.join(', ')}
-Current solution being replaced: ${S.current||'Not specified'}
-Known competitors: ${S.competitors||'Not specified — infer from industry and uploaded materials'}
-Additional context: ${S.notes||'None'}
+Current solution: ${S.current||'Not specified'}
+Known competitors: ${S.competitors||'Not specified — infer from industry and product context'}
 
-KEY PERSONAS:
-${personas}
+SOURCE MATERIALS (supplemental):
+${text ? text.substring(0,8000) : 'No files uploaded.'}
 
-SOURCE MATERIALS:
-${text ? text.substring(0,14000) : 'No files uploaded — work from intake context only.'}
-
-INSTRUCTIONS — follow all of these precisely:
-1. Extract every stated requirement, broken workflow, and pain point. Quote the customer's own language where possible.
-2. For each pain point: name the specific owner (person or team), describe what breaks today, quantify impact if possible, then state exactly how Conga fixes it (mechanism-level, not marketing language).
-3. Build a solutionMap: for each Conga capability being demoed, pair it to the exact pain it solves, explain the mechanism, and state why competitors can't match it.
-4. Design a demoArc with a compelling narrative: Setup script → 2-4 Acts with specific what-to-say → Close. Each act should flow naturally from the previous.
-5. Design a demoFlow of 6-8 scenes (55-70 min total). Each scene must name a presenter (AE or SE), include specific talking points that reference the customer's world, and map to a named pain.
-6. Build an agenda table with presenter assignments and timing.
-7. For configRisks: identify 4-6 real technical risks the SE must address before demo day. Flag gaps honestly — don't minimize.
-8. For seConfig: one area per major requirement. Include the specific Salesforce object, field, or integration mechanism in the technicalNote.
-9. For competitive: You MUST include 3-4 named competitors with deep intelligence. Use your knowledge of the CPQ/CLM/DocGen market — do not wait for the customer to name them. For CPQ deals: always evaluate Salesforce RCA/Revenue Cloud, DealHub, Oracle CPQ, Monetize Now. For CLM deals: always evaluate DocuSign CLM, Ironclad, Icertis, Agiloft. For each competitor include: why they're in this deal, Conga's specific advantage (use real stats: 52M+ carts, 2.3M+ CPQ users, Gartner VoC leader, Customer Zero), their specific weakness in this customer's context, and 2-3 AE-ready talking points. The "what to plant" questions should be sharp enough to disqualify competitors before they present.
-10. keyMessage: one sentence, ≤20 words, company-specific. Must reference their world, not ours.
-11. demoHook: the exact script the AE reads to open. Name the pain, name who feels it, set what we prove today.
+INSTRUCTIONS:
+1. For configRisks: identify 4-6 real technical risks the SE must address before demo day. Flag gaps honestly — risk level should reflect actual demo-day jeopardy.
+2. For seConfig: one area per major product/requirement. Include the specific Salesforce object, field, or integration mechanism in the technicalNote.
+3. For competitive: You MUST include 3-4 named competitors with deep intelligence. Do not wait for the customer to name them. For CPQ deals: always evaluate Salesforce RCA/Revenue Cloud, DealHub, Oracle CPQ, Monetize Now. For CLM deals: always evaluate DocuSign CLM, Ironclad, Icertis, Agiloft. For each competitor include: why they're in this deal, Conga's specific advantage (cite real stats: 52M+ carts, 2.3M+ CPQ users, Gartner VoC leader, Customer Zero), their specific weakness in this customer's context, and 2-3 AE-ready talking points. The "whatToPlant" questions must be sharp enough to disqualify competitors before they present.
+4. For openQuestions: identify must-answer questions before demo day, scoping questions needed for accurate effort estimation, and nice-to-have discovery items.
 
 Return ONLY the JSON object.`;
 }
@@ -1142,7 +1270,7 @@ function renderReview(){
 
   // Solution Map
   document.getElementById('solution-body').innerHTML = (d.solutionMap||[]).map(s=>`
-    <div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div style="background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:16px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
       <div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--plight);margin-bottom:4px">Capability</div>
         <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px">${esc(s.capability)}</div>
@@ -1161,14 +1289,14 @@ function renderReview(){
   const arc = d.demoArc||{};
   let arcHtml = '';
   if(arc.setup){
-    arcHtml += `<div style="background:rgba(249,115,22,.06);border-left:3px solid var(--purple);border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:16px">
+    arcHtml += `<div style="background:rgba(249,115,22,.06);border-left:3px solid var(--purple);padding:14px 18px;margin-bottom:16px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--plight);margin-bottom:6px">🎤 SETUP — Opening Script</div>
       <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${esc(arc.setup)}</div>
     </div>`;
   }
   if((arc.acts||[]).length>0){
     arc.acts.forEach((act,i)=>{
-      arcHtml += `<div style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:10px">
+      arcHtml += `<div style="background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:14px 16px;margin-bottom:10px">
         <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px">ACT ${i+1}: ${esc(act.title)}</div>
         <div style="font-size:11px;color:var(--plight);margin-bottom:8px">${esc(act.theme)}</div>
         <div style="font-size:12px;color:var(--tm);line-height:1.6">${esc(act.script)}</div>
@@ -1176,7 +1304,7 @@ function renderReview(){
     });
   }
   if(arc.close){
-    arcHtml += `<div style="background:rgba(62,207,142,.06);border-left:3px solid var(--ok);border-radius:0 8px 8px 0;padding:14px 18px;margin-top:4px">
+    arcHtml += `<div style="background:rgba(62,207,142,.06);border-left:3px solid var(--ok);padding:14px 18px;margin-top:4px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ok);margin-bottom:6px">🏁 CLOSE — Closing Script</div>
       <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${esc(arc.close)}</div>
     </div>`;
@@ -1207,7 +1335,7 @@ function renderReview(){
     <div class="ccard">
       <div class="cname">${esc(c.name)} ${c.isIncumbent?'<span class="badge be">INCUMBENT</span>':''}</div>
       ${c.whyTheyAreThere?`<div style="font-size:11px;color:var(--td);font-style:italic;margin-bottom:8px">Why they're in the deal: ${esc(c.whyTheyAreThere)}</div>`:''}
-      ${c.ourAdvantage?`<div style="font-size:12px;color:var(--ok);margin-bottom:8px;padding:6px 10px;background:rgba(62,207,142,.06);border-radius:4px">✓ Our edge: ${esc(c.ourAdvantage)}</div>`:''}
+      ${c.ourAdvantage?`<div style="font-size:12px;color:var(--ok);margin-bottom:8px;padding:6px 10px;background:rgba(62,207,142,.06);clip-path:var(--clip-sm)">✓ Our edge: ${esc(c.ourAdvantage)}</div>`:''}
       ${(c.talkingPoints||c.bullets||[]).map(b=>`<div class="cbul">${esc(b)}</div>`).join('')}
       ${c.theirWeakness?`<div style="font-size:12px;color:var(--danger);margin-top:8px;font-style:italic">⚠ Their gap: ${esc(c.theirWeakness)}</div>`:''}
     </div>`).join('');
@@ -2252,7 +2380,7 @@ When updating: preserve every unchanged section exactly. Only modify what was ex
       headers:getApiHeaders(),
       body:JSON.stringify({
         model:'claude-haiku-4-5-20251001',
-        max_tokens:8000,
+        max_tokens:16000,
         system:systemPrompt,
         tools:[{type:'web_search_20250305',name:'web_search'}],
         messages:[
@@ -2367,6 +2495,18 @@ document.addEventListener('DOMContentLoaded', ()=>{
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="16.5" y1="16.5" x2="22" y2="22"/></svg>
   Assistant
 </button>
+
+<!-- ── ZNITH FOOTER ── -->
+<footer class="znith-footer">
+  <div class="znith-wordmark">
+    <span class="znith-slash">/</span><span class="znith-z">Z</span><span class="znith-nith">nith</span>
+  </div>
+  <div class="znith-footer-info">
+    <span>Demo Brief</span>
+    <div class="znith-pip"></div>
+    <span>v2</span>
+  </div>
+</footer>
 
 </body>
 </html>
