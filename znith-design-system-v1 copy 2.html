@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Znith — Master Design System Package</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+/* ── SYSTEM FONTS (locked) ── */
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui:    'Barlow', sans-serif;
+  --f-mono:  'IBM Plex Mono', monospace;
+
+  --amber:       #B8860B;
+  --amber-glow:  rgba(184,134,11,0.28);
+  --amber-muted: rgba(184,134,11,0.12);
+
+  --bg:     #0e0d0b;
+  --surf:   #181714;
+  --surf-2: #222018;
+  --border: rgba(255,255,255,0.07);
+  --text:   rgba(255,255,255,0.85);
+  --tmuted: rgba(255,255,255,0.45);
+  --tfaint: rgba(255,255,255,0.2);
+
+  --clip-lg: 10px;
+  --clip-sm: 5px;
+
+  --transition: 220ms cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #060503;
+  color: var(--text);
+  font-family: var(--f-ui);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── CLIP PATHS ── */
+.c-lg {
+  clip-path: polygon(
+    10px 0%, calc(100% - 10px) 0%, 100% 10px,
+    100% calc(100% - 10px), calc(100% - 10px) 100%,
+    10px 100%, 0% calc(100% - 10px), 0% 10px
+  );
+}
+.c-sm {
+  clip-path: polygon(
+    5px 0%, calc(100% - 5px) 0%, 100% 5px,
+    100% calc(100% - 5px), calc(100% - 5px) 100%,
+    5px 100%, 0% calc(100% - 5px), 0% 5px
+  );
+}
+
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 5px var(--amber-glow); }
+  50%      { box-shadow: 0 0 14px var(--amber-glow); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── PAGE LAYOUT ── */
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 48px 24px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+}
+
+/* ── SECTION ── */
+.section-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+
+.section-title {
+  font-family: var(--f-brand);
+  font-size: 22px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.section-sub {
+  font-size: 13px;
+  color: var(--tmuted);
+  margin-bottom: 24px;
+  max-width: 560px;
+}
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #060503;
+  border: 1px solid var(--border);
+  padding: 20px 22px;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  line-height: 1.85;
+  color: rgba(255,255,255,0.55);
+  overflow-x: auto;
+  position: relative;
+  clip-path: polygon(
+    10px 0%, calc(100% - 10px) 0%, 100% 10px,
+    100% calc(100% - 10px), calc(100% - 10px) 100%,
+    10px 100%, 0% calc(100% - 10px), 0% 10px
+  );
+}
+
+.code-block .c  { color: rgba(255,255,255,0.22); } /* comment */
+.code-block .k  { color: #B8860B; }                /* key / var name */
+.code-block .v  { color: #7ec8a0; }                /* value */
+.code-block .s  { color: #9d87f5; }                /* selector */
+.code-block .h  { color: rgba(255,255,255,0.75); } /* highlight */
+
+.copy-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(184,134,11,0.15);
+  border: 1px solid rgba(184,134,11,0.3);
+  color: var(--amber);
+  font-family: var(--f-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all var(--transition);
+  clip-path: polygon(4px 0%, calc(100% - 4px) 0%, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0% calc(100% - 4px), 0% 4px);
+}
+.copy-btn:hover { background: rgba(184,134,11,0.3); }
+
+/* ── MODULE GUIDE TABLE ── */
+.module-table {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.module-row {
+  display: grid;
+  grid-template-columns: 26px 180px 120px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  background: var(--surf);
+  padding: 11px 16px;
+  clip-path: polygon(
+    10px 0%, calc(100% - 10px) 0%, 100% 10px,
+    100% calc(100% - 10px), calc(100% - 10px) 100%,
+    10px 100%, 0% calc(100% - 10px), 0% 10px
+  );
+  border: 1px solid var(--border);
+}
+
+.module-pip {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.module-name {
+  font-family: var(--f-ui);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.module-stage {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tfaint);
+}
+
+.module-use {
+  font-family: var(--f-ui);
+  font-size: 12px;
+  color: var(--tmuted);
+}
+
+.module-hex {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  clip-path: polygon(4px 0%, calc(100% - 4px) 0%, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0% calc(100% - 4px), 0% 4px);
+}
+
+/* ── LIVE PREVIEW ── */
+.preview-shell {
+  background: var(--bg);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  clip-path: polygon(
+    10px 0%, calc(100% - 10px) 0%, 100% 10px,
+    100% calc(100% - 10px), calc(100% - 10px) 100%,
+    10px 100%, 0% calc(100% - 10px), 0% 10px
+  );
+}
+
+.preview-topbar {
+  background: var(--surf);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.preview-wordmark {
+  font-family: var(--f-brand);
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview-wordmark .slash {
+  font-family: var(--f-mono);
+  color: var(--amber);
+  font-weight: 700;
+}
+
+.preview-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.preview-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.preview-metric {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  clip-path: polygon(
+    10px 0%, calc(100% - 10px) 0%, 100% 10px,
+    100% calc(100% - 10px), calc(100% - 10px) 100%,
+    10px 100%, 0% calc(100% - 10px), 0% 10px
+  );
+}
+
+.preview-metric-val {
+  font-family: var(--f-brand);
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--amber);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.preview-metric-lbl {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tfaint);
+}
+
+.preview-stage {
+  background: var(--surf);
+  border: 1px solid var(--amber);
+  box-shadow: 0 0 0 1px var(--amber), 0 4px 20px var(--amber-glow);
+  clip-path: polygon(
+    10px 0%, calc(100% - 10px) 0%, 100% 10px,
+    100% calc(100% - 10px), calc(100% - 10px) 100%,
+    10px 100%, 0% calc(100% - 10px), 0% 10px
+  );
+  overflow: hidden;
+}
+
+.preview-stage-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.02);
+  border-bottom: 1px solid var(--border);
+}
+
+.preview-stage-num {
+  width: 24px; height: 24px;
+  background: var(--amber);
+  color: #000;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
+}
+
+.preview-stage-title {
+  flex: 1;
+  font-family: var(--f-ui);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.preview-badge {
+  font-family: var(--f-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  background: var(--amber-muted);
+  color: var(--amber);
+  clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
+}
+
+.preview-stage-body {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.preview-field-lbl {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tfaint);
+  margin-bottom: 5px;
+}
+
+.preview-input {
+  width: 100%;
+  background: var(--surf-2);
+  border: none;
+  padding: 9px 12px;
+  color: var(--text);
+  font-family: var(--f-ui);
+  font-size: 13px;
+  outline: none;
+  clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
+}
+.preview-input::placeholder { color: var(--tfaint); }
+
+.preview-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--amber);
+  color: #000;
+  border: none;
+  padding: 10px 22px;
+  font-family: var(--f-ui);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 16px var(--amber-glow);
+  transition: all var(--transition);
+  clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
+}
+.preview-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+.preview-footer {
+  background: var(--surf);
+  border-top: 1px solid rgba(184,134,11,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 34px;
+}
+
+.preview-footer-brand {
+  font-family: var(--f-brand);
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.preview-footer-info {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--f-mono);
+  font-size: 9px;
+  color: var(--tfaint);
+}
+
+.preview-footer-pip {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 6px var(--amber-glow);
+  animation: glow-pulse 2.5s ease-in-out infinite;
+}
+
+/* ── PAGE HEADER ── */
+.page-hero {
+  text-align: center;
+  padding: 48px 0 8px;
+}
+
+.page-hero .eyebrow {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 12px;
+}
+
+.page-hero h1 {
+  font-family: var(--f-brand);
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 8px;
+}
+
+.page-hero p {
+  color: var(--tmuted);
+  font-size: 14px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+}
+
+/* Prompt block */
+.prompt-block {
+  background: #060503;
+  border: 1px solid rgba(184,134,11,0.25);
+  padding: 22px 24px;
+  clip-path: polygon(
+    10px 0%, calc(100% - 10px) 0%, 100% 10px,
+    100% calc(100% - 10px), calc(100% - 10px) 100%,
+    10px 100%, 0% calc(100% - 10px), 0% 10px
+  );
+  position: relative;
+}
+
+.prompt-block pre {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  line-height: 1.85;
+  color: rgba(255,255,255,0.7);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.prompt-block .ph { color: var(--amber); }
+.prompt-block .pi { color: #9d87f5; }
+.prompt-block .pv { color: #7ec8a0; }
+
+/* Checklist */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--surf);
+  clip-path: polygon(
+    10px 0%, calc(100% - 10px) 0%, 100% 10px,
+    100% calc(100% - 10px), calc(100% - 10px) 100%,
+    10px 100%, 0% calc(100% - 10px), 0% 10px
+  );
+  font-size: 13px;
+}
+
+.check-icon {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--amber);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.check-title {
+  font-weight: 600;
+  color: var(--text);
+  font-family: var(--f-ui);
+  margin-bottom: 2px;
+}
+
+.check-detail {
+  font-size: 12px;
+  color: var(--tmuted);
+  font-family: var(--f-ui);
+}
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="eyebrow">Znith Design System v1.0 — Finalized</div>
+    <h1>/Znith</h1>
+    <p>Epilogue + Barlow + IBM Plex Mono · Amber #B8860B · 10px/5px chamfer · Module accent system</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── 01: LIVE PREVIEW ── -->
+  <div>
+    <div class="section-label">01</div>
+    <div class="section-title">The Finalized System</div>
+    <div class="section-sub">Every element locked. This is exactly what every updated tool should look like.</div>
+
+    <div class="preview-shell">
+      <div class="preview-topbar">
+        <div class="preview-wordmark">
+          <span class="slash">/</span>Znith
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <div class="preview-badge">Prospecting Agent</div>
+          <div class="preview-badge" style="background:rgba(255,255,255,0.05); color:var(--tfaint);">v1.0</div>
+        </div>
+      </div>
+
+      <div class="preview-body">
+        <div class="preview-metrics">
+          <div class="preview-metric">
+            <div class="preview-metric-val">34%</div>
+            <div class="preview-metric-lbl">Faster Cycle</div>
+          </div>
+          <div class="preview-metric">
+            <div class="preview-metric-val">$180K</div>
+            <div class="preview-metric-lbl">Est. Value</div>
+          </div>
+          <div class="preview-metric">
+            <div class="preview-metric-val">12d</div>
+            <div class="preview-metric-lbl">Time Saved</div>
+          </div>
+        </div>
+
+        <div class="preview-stage">
+          <div class="preview-stage-head">
+            <div class="preview-stage-num">2</div>
+            <div class="preview-stage-title">Strategic Initiatives</div>
+            <div class="preview-badge">Active</div>
+          </div>
+          <div class="preview-stage-body">
+            <div>
+              <div class="preview-field-lbl">Initiative 1</div>
+              <input class="preview-input" placeholder="e.g. Accelerate revenue by 30% in FY25">
+            </div>
+            <div>
+              <div class="preview-field-lbl">Initiative 2</div>
+              <input class="preview-input" placeholder="e.g. Reduce contract cycle time by half">
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="preview-btn">Continue →</button>
+          <span style="font-family:var(--f-mono); font-size:9px; color:var(--tfaint); letter-spacing:0.08em;">or press Enter</span>
+        </div>
+      </div>
+
+      <div class="preview-footer">
+        <div class="preview-footer-brand">
+          <span style="color:var(--amber); font-family:var(--f-mono); font-weight:700;">/</span>
+          <span style="color:var(--amber);">Z</span><span style="color:rgba(255,255,255,0.5);">nith</span>
+        </div>
+        <div class="preview-footer-info">
+          <span>Prospecting Agent</span>
+          <div class="preview-footer-pip"></div>
+          <span>v1.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 02: MODULE ACCENT GUIDE ── -->
+  <div>
+    <div class="section-label">02</div>
+    <div class="section-title">Module Accent Guide</div>
+    <div class="section-sub">Amber is the Znith system color — nav, footer, wordmark, system UI. Each module carries one secondary accent on stage borders, header accent lines, and badges only.</div>
+
+    <div class="module-table">
+      <div class="module-row" style="background:rgba(184,134,11,0.06); border-color:rgba(184,134,11,0.2);">
+        <div class="module-pip" style="background:#B8860B; box-shadow:0 0 8px rgba(184,134,11,0.4);"></div>
+        <div class="module-name">Prospecting Agent</div>
+        <div class="module-stage">Top of Funnel</div>
+        <div class="module-use">Primary amber — no secondary needed. This is the flagship tool.</div>
+        <div class="module-hex" style="background:rgba(184,134,11,0.12); color:#B8860B;">#B8860B</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#0D9488; box-shadow:0 0 8px rgba(13,148,136,0.4);"></div>
+        <div class="module-name">Account Brief</div>
+        <div class="module-stage">Prepare</div>
+        <div class="module-use">Teal — depth, research, knowledge</div>
+        <div class="module-hex" style="background:rgba(13,148,136,0.12); color:#0D9488;">#0D9488</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#8B5CF6; box-shadow:0 0 8px rgba(139,92,246,0.4);"></div>
+        <div class="module-name">Value Map</div>
+        <div class="module-stage">Discover</div>
+        <div class="module-use">Violet — strategy, insight, elevation</div>
+        <div class="module-hex" style="background:rgba(139,92,246,0.12); color:#8B5CF6;">#8B5CF6</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#EA580C; box-shadow:0 0 8px rgba(234,88,12,0.4);"></div>
+        <div class="module-name">Demo Brief</div>
+        <div class="module-stage">Qualify</div>
+        <div class="module-use">Orange — energy, momentum, performance</div>
+        <div class="module-hex" style="background:rgba(234,88,12,0.12); color:#EA580C;">#EA580C</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#16A34A; box-shadow:0 0 8px rgba(22,163,74,0.4);"></div>
+        <div class="module-name">Qualify IQ</div>
+        <div class="module-stage">Qualify</div>
+        <div class="module-use">Green — signal, go/no-go, confidence</div>
+        <div class="module-hex" style="background:rgba(22,163,74,0.12); color:#16A34A;">#16A34A</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#E11D48; box-shadow:0 0 8px rgba(225,29,72,0.4);"></div>
+        <div class="module-name">Deal Coach</div>
+        <div class="module-stage">Negotiate</div>
+        <div class="module-use">Rose — urgency, stakes, close</div>
+        <div class="module-hex" style="background:rgba(225,29,72,0.12); color:#E11D48;">#E11D48</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 03: CSS SNIPPET ── -->
+  <div>
+    <div class="section-label">03</div>
+    <div class="section-title">Drop-In CSS Variables</div>
+    <div class="section-sub">Copy this :root block into every tool. It's the entire system in one paste. Then add the Google Fonts link and the clip-path utilities.</div>
+
+    <div class="code-block" id="cssBlock">
+      <button class="copy-btn" onclick="copyBlock('cssBlock')">Copy</button>
+<span class="c">/* ── ZNITH DESIGN SYSTEM v1.0 ─────────────────────── */</span>
+<span class="c">/* Fonts: Epilogue (brand) + Barlow (UI) + IBM Plex Mono */</span>
+<span class="c">/* Add to &lt;head&gt;: */</span>
+<span class="c">/* &lt;link href="https://fonts.googleapis.com/css2?family=</span>
+<span class="c">     Epilogue:wght@400;500;600;700;800&amp;</span>
+<span class="c">     family=Barlow:wght@300;400;500;600;700&amp;</span>
+<span class="c">     family=IBM+Plex+Mono:wght@400;500;700&amp;</span>
+<span class="c">     display=swap" rel="stylesheet"&gt; */</span>
+
+<span class="s">:root</span> {
+  <span class="c">/* ── TYPOGRAPHY ── */</span>
+  <span class="k">--f-brand</span>: <span class="v">'Epilogue', sans-serif</span>;    <span class="c">/* headings, wordmark, metrics */</span>
+  <span class="k">--f-ui</span>:    <span class="v">'Barlow', sans-serif</span>;      <span class="c">/* body, inputs, nav, buttons */</span>
+  <span class="k">--f-mono</span>:  <span class="v">'IBM Plex Mono', monospace</span>; <span class="c">/* labels, badges, version */</span>
+
+  <span class="c">/* ── AMBER SYSTEM COLOR ── */</span>
+  <span class="k">--amber</span>:        <span class="v">#B8860B</span>;                <span class="c">/* primary brand — nav, footer, wordmark */</span>
+  <span class="k">--amber-glow</span>:   <span class="v">rgba(184,134,11,0.28)</span>;  <span class="c">/* shadows, pip glows */</span>
+  <span class="k">--amber-muted</span>:  <span class="v">rgba(184,134,11,0.12)</span>;  <span class="c">/* badge backgrounds, active nav */</span>
+
+  <span class="c">/* ── MODULE ACCENT COLORS (secondary only) ── */</span>
+  <span class="k">--c-prospect</span>:  <span class="v">#B8860B</span>;  <span class="c">/* Prospecting Agent — Amber (same as system) */</span>
+  <span class="k">--c-account</span>:   <span class="v">#0D9488</span>;  <span class="c">/* Account Brief — Teal */</span>
+  <span class="k">--c-valuemap</span>:  <span class="v">#8B5CF6</span>;  <span class="c">/* Value Map — Violet */</span>
+  <span class="k">--c-demo</span>:      <span class="v">#EA580C</span>;  <span class="c">/* Demo Brief — Orange */</span>
+  <span class="k">--c-qualify</span>:   <span class="v">#16A34A</span>;  <span class="c">/* Qualify IQ — Green */</span>
+  <span class="k">--c-deal</span>:      <span class="v">#E11D48</span>;  <span class="c">/* Deal Coach — Rose */</span>
+
+  <span class="c">/* ── BASE PALETTE ── */</span>
+  <span class="k">--bg</span>:      <span class="v">#0e0d0b</span>;                  <span class="c">/* page background */</span>
+  <span class="k">--surf</span>:    <span class="v">#181714</span>;                  <span class="c">/* card / sidebar */</span>
+  <span class="k">--surf-2</span>:  <span class="v">#222018</span>;                  <span class="c">/* elevated / input bg */</span>
+  <span class="k">--border</span>:  <span class="v">rgba(255,255,255,0.07)</span>;   <span class="c">/* subtle borders */</span>
+  <span class="k">--text</span>:    <span class="v">rgba(255,255,255,0.85)</span>;   <span class="c">/* primary text */</span>
+  <span class="k">--tmuted</span>:  <span class="v">rgba(255,255,255,0.45)</span>;   <span class="c">/* secondary text */</span>
+  <span class="k">--tfaint</span>:  <span class="v">rgba(255,255,255,0.2)</span>;    <span class="c">/* labels, placeholders */</span>
+
+  <span class="c">/* ── CORNER SYSTEM (LOCKED) ── */</span>
+  <span class="k">--clip-lg</span>: <span class="v">10px</span>;  <span class="c">/* cards, panels, stage blocks, modals */</span>
+  <span class="k">--clip-sm</span>: <span class="v">5px</span>;   <span class="c">/* badges, buttons, inputs, nav items */</span>
+
+  <span class="c">/* ── TRANSITIONS ── */</span>
+  <span class="k">--transition</span>: <span class="v">220ms cubic-bezier(0.4,0,0.2,1)</span>;
+  <span class="k">--spring</span>:     <span class="v">400ms cubic-bezier(0.34,1.56,0.64,1)</span>;
+}
+
+<span class="c">/* ── CLIP-PATH UTILITIES ── */</span>
+<span class="s">.c-lg</span> {
+  clip-path: polygon(
+    <span class="v">10px</span> 0%, calc(100% - <span class="v">10px</span>) 0%, 100% <span class="v">10px</span>,
+    100% calc(100% - <span class="v">10px</span>), calc(100% - <span class="v">10px</span>) 100%,
+    <span class="v">10px</span> 100%, 0% calc(100% - <span class="v">10px</span>), 0% <span class="v">10px</span>
+  );
+}
+<span class="s">.c-sm</span> {
+  clip-path: polygon(
+    <span class="v">5px</span> 0%, calc(100% - <span class="v">5px</span>) 0%, 100% <span class="v">5px</span>,
+    100% calc(100% - <span class="v">5px</span>), calc(100% - <span class="v">5px</span>) 100%,
+    <span class="v">5px</span> 100%, 0% calc(100% - <span class="v">5px</span>), 0% <span class="v">5px</span>
+  );
+}
+
+<span class="c">/* ── ZNITH FOOTER (drop into every tool) ── */</span>
+<span class="s">.znith-footer</span> {
+  background: <span class="v">var(--surf)</span>;
+  border-top: <span class="v">1px solid rgba(184,134,11,0.15)</span>;
+  display: <span class="v">flex</span>;
+  align-items: <span class="v">center</span>;
+  justify-content: <span class="v">space-between</span>;
+  padding: <span class="v">0 16px</span>;
+  height: <span class="v">34px</span>;
+  position: <span class="v">sticky</span>;
+  bottom: <span class="v">0</span>;
+}
+    </div>
+  </div>
+
+  <!-- ── 04: UPDATE PROMPT ── -->
+  <div>
+    <div class="section-label">04</div>
+    <div class="section-title">The Update Prompt</div>
+    <div class="section-sub">Paste this into Claude with your existing tool's HTML attached. Swap the bracketed values for each tool. Claude will apply the full system in one pass.</div>
+
+    <div class="prompt-block" id="promptBlock">
+      <button class="copy-btn" onclick="copyBlock('promptBlock')">Copy</button>
+      <pre>
+<span class="ph">You are updating an existing Znith sales tool to match the finalized
+Znith Design System v1.0. Apply ALL of the following changes to the
+attached HTML file. Do not change any functionality, API calls,
+prompt logic, or data structures — visual and typographic updates only.</span>
+
+<span class="pi">TOOL IDENTITY</span>
+Tool name:      <span class="pv">[e.g. Account Brief]</span>
+Module accent:  <span class="pv">[e.g. #0D9488 — Teal]</span>
+Glow value:     <span class="pv">[e.g. rgba(13,148,136,0.28)]</span>
+Muted value:    <span class="pv">[e.g. rgba(13,148,136,0.12)]</span>
+Current version: <span class="pv">[e.g. v3.1]</span>
+
+<span class="pi">TYPOGRAPHY — replace all font references</span>
+Brand / Display: Epilogue (weights: 700, 800)
+UI / Body:       Barlow (weights: 400, 500, 600, 700)
+Mono / Labels:   IBM Plex Mono (weights: 400, 500, 700)
+
+Google Fonts link to add to &lt;head&gt;:
+&lt;link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&amp;family=Barlow:wght@300;400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"&gt;
+
+<span class="pi">COLOR SYSTEM</span>
+Background:       #0e0d0b
+Surface:          #181714
+Surface elevated: #222018
+Border:           rgba(255,255,255,0.07)
+Text primary:     rgba(255,255,255,0.85)
+Text muted:       rgba(255,255,255,0.45)
+Text faint:       rgba(255,255,255,0.2)
+
+Znith system amber:  #B8860B
+Amber glow:          rgba(184,134,11,0.28)
+Amber muted:         rgba(184,134,11,0.12)
+
+This tool's accent:  [MODULE ACCENT HEX]
+Accent glow:         [MODULE ACCENT rgba glow]
+Accent muted:        [MODULE ACCENT rgba muted]
+
+<span class="pi">CORNER SYSTEM — replace all border-radius with clip-path</span>
+Large elements (cards, panels, stage blocks, modals):
+  clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px,
+    100% calc(100% - 10px), calc(100% - 10px) 100%,
+    10px 100%, 0% calc(100% - 10px), 0% 10px);
+
+Small elements (badges, buttons, inputs, nav items):
+  clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px,
+    100% calc(100% - 5px), calc(100% - 5px) 100%,
+    5px 100%, 0% calc(100% - 5px), 0% 5px);
+
+Remove all border-radius properties. Replace with clip-path above.
+
+<span class="pi">FOOTER — add to the bottom of every page</span>
+Replace any existing footer with:
+&lt;footer class="znith-footer"&gt;
+  &lt;div class="znith-wordmark"&gt;
+    &lt;span style="font-family:'IBM Plex Mono'; color:#B8860B; font-weight:700;"&gt;/&lt;/span&gt;
+    &lt;span style="font-family:'Epilogue'; font-weight:800; color:#B8860B;"&gt;Z&lt;/span&gt;
+    &lt;span style="font-family:'Epilogue'; font-weight:800; color:rgba(255,255,255,0.5);"&gt;nith&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div style="display:flex; align-items:center; gap:8px;"&gt;
+    &lt;span style="font-family:'IBM Plex Mono'; font-size:9px; color:rgba(255,255,255,0.2);"&gt;[TOOL NAME]&lt;/span&gt;
+    &lt;div style="width:4px; height:4px; border-radius:50%; background:#B8860B;"&gt;&lt;/div&gt;
+    &lt;span style="font-family:'IBM Plex Mono'; font-size:9px; color:rgba(255,255,255,0.2);"&gt;[VERSION]&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;
+
+<span class="pi">APPLY MODULE ACCENT to these elements only:</span>
+- Active stage block border + box-shadow
+- Stage number badge background
+- Active badge background + text color
+- Header accent line (if present)
+- Progress pip glow color
+
+<span class="pi">AMBER (#B8860B) applies to these system elements:</span>
+- Znith footer wordmark
+- Navigation active state
+- Primary CTA button background
+- Metric values
+- Footer pip glow
+
+<span class="pi">DO NOT change:</span>
+- Any JavaScript logic
+- API call structure or prompts
+- Input IDs or form field names
+- Any data processing functions
+- File structure or external dependencies
+
+Return the complete updated single-file HTML.
+      </pre>
+    </div>
+  </div>
+
+  <!-- ── 05: PER-TOOL REFERENCE ── -->
+  <div>
+    <div class="section-label">05</div>
+    <div class="section-title">Per-Tool Quick Reference</div>
+    <div class="section-sub">Values to substitute into the prompt for each tool. Copy the row, paste into the bracketed fields.</div>
+
+    <div class="checklist">
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#B8860B;">Prospecting Agent</div>
+          <div class="check-detail">Accent: #B8860B · Glow: rgba(184,134,11,0.28) · Muted: rgba(184,134,11,0.12)</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#0D9488;">Account Brief (Call Brief)</div>
+          <div class="check-detail">Accent: #0D9488 · Glow: rgba(13,148,136,0.28) · Muted: rgba(13,148,136,0.12)</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#8B5CF6;">Value Map</div>
+          <div class="check-detail">Accent: #8B5CF6 · Glow: rgba(139,92,246,0.28) · Muted: rgba(139,92,246,0.12)</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#EA580C;">Demo Brief</div>
+          <div class="check-detail">Accent: #EA580C · Glow: rgba(234,88,12,0.28) · Muted: rgba(234,88,12,0.12)</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#16A34A;">Qualify IQ</div>
+          <div class="check-detail">Accent: #16A34A · Glow: rgba(22,163,74,0.28) · Muted: rgba(22,163,74,0.12)</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#E11D48;">Deal Coach</div>
+          <div class="check-detail">Accent: #E11D48 · Glow: rgba(225,29,72,0.28) · Muted: rgba(225,29,72,0.12)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function copyBlock(id) {
+  const el = document.getElementById(id);
+  const text = el.innerText.replace('Copy\n', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = el.querySelector('.copy-btn');
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.style.background = 'rgba(22,163,74,0.2)';
+    btn.style.borderColor = 'rgba(22,163,74,0.4)';
+    btn.style.color = '#16A34A';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
