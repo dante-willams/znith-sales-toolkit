@@ -118,15 +118,10 @@
   }
 
   .logo-text {
-    font-family: 'Epilogue', sans-serif;
-    font-size: 16px;
-    font-weight: 500;
-    color: var(--white);
-    letter-spacing: 0.02em;
-  }
-
-  .logo-text span {
-    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    line-height: 1;
   }
 
   .header-steps {
@@ -176,7 +171,7 @@
     position: relative; z-index: 1;
     max-width: 900px;
     margin: 0 auto;
-    padding: 88px 24px 120px;
+    padding: 88px 24px 154px;
   }
 
   /* ── PHASE SECTIONS ── */
@@ -186,6 +181,11 @@
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes glow-pulse {
+    0%,100% { box-shadow: 0 0 5px rgba(139,92,246,0.4); }
+    50%      { box-shadow: 0 0 12px rgba(139,92,246,0.7); }
   }
 
   /* ── TYPOGRAPHY ── */
@@ -308,7 +308,7 @@
     user-select: none;
   }
 
-  .tag:hover { background: rgba(201,168,76,0.25); }
+  .tag:hover { background: rgba(184,134,11,0.2); }
   .tag.selected {
     background: var(--amber);
     border-color: var(--amber);
@@ -382,8 +382,8 @@
 
   .spinner-ring {
     width: 64px; height: 64px;
-    border: 3px solid rgba(201,168,76,0.15);
-    border-top-color: var(--gold);
+    border: 3px solid var(--violet-muted);
+    border-top-color: var(--violet);
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin: 0 auto 24px;
@@ -430,7 +430,7 @@
     transition: border-color 0.2s;
   }
 
-  .source-card:hover { border-color: rgba(201,168,76,0.3); }
+  .source-card:hover { border-color: rgba(184,134,11,0.25); }
 
   .source-title {
     font-weight: 600;
@@ -470,7 +470,7 @@
     position: absolute;
     top: -60px; right: -60px;
     width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(124,92,252,0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 70%);
   }
 
   .vm-company {
@@ -519,7 +519,7 @@
     flex-shrink: 0;
   }
 
-  .vm-section-num.gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
+  .vm-section-num.gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(184,134,11,0.25); }
   .vm-section-num.teal { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(61,224,200,0.25); }
   .vm-section-num.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.25); }
   .vm-section-num.green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,0.25); }
@@ -561,7 +561,7 @@
     height: 3px;
   }
 
-  .initiative-card.c1 { border-color: rgba(201,168,76,0.25); background: rgba(201,168,76,0.05); }
+  .initiative-card.c1 { border-color: rgba(184,134,11,0.2); background: rgba(184,134,11,0.06); }
   .initiative-card.c1::before { background: var(--gold); }
   .initiative-card.c2 { border-color: rgba(61,224,200,0.2); background: rgba(61,224,200,0.04); }
   .initiative-card.c2::before { background: var(--teal); }
@@ -634,7 +634,7 @@
 
   .metric-chip.value {
     background: var(--gold-dim);
-    border: 1px solid rgba(201,168,76,0.25);
+    border: 1px solid rgba(184,134,11,0.2);
     color: var(--gold-light);
   }
 
@@ -775,7 +775,7 @@
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--navy-border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(201,168,76,0.3); }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(184,134,11,0.35); }
 
   /* ── FILE DROP ZONE ── */
   #dropZone {
@@ -796,8 +796,8 @@
   }
   #dropZone.drag-over { border-style: solid; }
   #dropZone.has-files {
-    border-color: rgba(124,92,252,0.4);
-    background: rgba(124,92,252,0.05);
+    border-color: rgba(139,92,246,0.4);
+    background: rgba(139,92,246,0.05);
     border-style: solid;
     padding: 16px 20px;
   }
@@ -814,7 +814,7 @@
     margin-bottom: 4px;
     transition: background 0.2s;
   }
-  #dropZone:hover .drop-icon, #dropZone.drag-over .drop-icon { background: rgba(124,92,252,0.25); }
+  #dropZone:hover .drop-icon, #dropZone.drag-over .drop-icon { background: rgba(139,92,246,0.25); }
   .drop-title { font-size: 14px; font-weight: 600; color: var(--white); }
   .drop-sub { font-size: 12px; color: var(--white-dim); }
 
@@ -852,12 +852,12 @@
   }
 
   .file-chip.processing {
-    border-color: rgba(124,92,252,0.35);
+    border-color: rgba(139,92,246,0.35);
     animation: chipIn 0.2s ease forwards, processingPulse 1.2s ease-in-out 0.2s infinite;
   }
 
   .file-chip.done {
-    border-color: rgba(124,92,252,0.22);
+    border-color: rgba(139,92,246,0.22);
   }
 
   .file-chip-icon { font-size: 18px; flex-shrink: 0; }
@@ -892,8 +892,8 @@
     content: ''; flex: 1; height: 1px; background: var(--navy-border);
   }
   @keyframes processingPulse {
-    0%, 100% { background: rgba(124,92,252,0.07); }
-    50% { background: rgba(124,92,252,0.14); }
+    0%, 100% { background: rgba(139,92,246,0.07); }
+    50% { background: rgba(139,92,246,0.14); }
   }
 
   /* ── APP SHELL (main + sidebar) ── */
@@ -963,8 +963,8 @@
     white-space: pre-wrap; word-break: break-word;
   }
   .chat-msg.user {
-    background: rgba(124,92,252,0.15);
-    border: 1px solid rgba(124,92,252,0.25);
+    background: rgba(139,92,246,0.15);
+    border: 1px solid rgba(139,92,246,0.25);
     color: var(--white);
     align-self: flex-end;
     max-width: 88%;
@@ -987,7 +987,7 @@
     display: inline-flex; align-items: center; gap: 5px;
     background: rgba(74,222,128,0.1);
     border: 1px solid rgba(74,222,128,0.25);
-    color: var(--green); border-radius: 20px;
+    color: var(--green); clip-path: var(--clip-sm);
     font-size: 10px; font-weight: 600;
     padding: 2px 8px; margin-top: 6px;
     letter-spacing: 0.04em;
@@ -1044,14 +1044,14 @@
   }
   .stage-pill {
     padding: 6px 16px;
-    border-radius: 20px;
+    clip-path: var(--clip-sm);
     font-size: 12px; font-weight: 500;
     background: var(--navy-light);
     border: 1px solid var(--navy-border);
     color: var(--white-dim);
     cursor: pointer; transition: all 0.2s; user-select: none;
   }
-  .stage-pill:hover { border-color: rgba(124,92,252,0.4); color: var(--white); }
+  .stage-pill:hover { border-color: rgba(139,92,246,0.4); color: var(--white); }
   .stage-pill.selected {
     background: var(--amber);
     border-color: var(--amber);
@@ -1059,8 +1059,8 @@
     font-weight: 700;
   }
   .maps-tab { cursor: pointer; gap: 7px; }
-  .maps-tab:hover { color: var(--gold); border-color: rgba(124,92,252,0.3); background: var(--gold-glow); }
-  .maps-tab.active-tab { color: var(--white); border-color: rgba(244,240,255,0.2); background: var(--white-faint); }
+  .maps-tab:hover { color: var(--amber); border-color: var(--amber-muted); background: rgba(184,134,11,0.06); }
+  .maps-tab.active-tab { color: var(--white); border-color: rgba(255,255,255,0.15); background: var(--white-faint); }
   .maps-count {
     background: var(--amber); color: #000;
     font-size: 10px; font-weight: 700; padding: 1px 6px;
@@ -1085,8 +1085,8 @@
     font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600;
     cursor: pointer; transition: all 0.2s; border: 1px solid;
   }
-  .btn-word { background: rgba(124,92,252,0.15); border-color: rgba(124,92,252,0.4); color: var(--gold-light); }
-  .btn-word:hover { background: rgba(124,92,252,0.28); }
+  .btn-word { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.4); color: var(--gold-light); }
+  .btn-word:hover { background: rgba(139,92,246,0.28); }
   .btn-pdf { background: rgba(255,143,163,0.1); border-color: rgba(255,143,163,0.3); color: var(--red); }
   .btn-pdf:hover { background: rgba(255,143,163,0.2); }
   .btn-copy { background: var(--white-faint); border-color: var(--navy-border); color: var(--white-dim); }
@@ -1121,19 +1121,19 @@
     text-transform: uppercase; color: var(--white-dim);
   }
   .edit-field input, .edit-field textarea {
-    background: rgba(10,14,26,0.5); border: 1px solid var(--navy-border);
-    border-radius: 8px; color: var(--white); font-family: 'Barlow', sans-serif;
+    background: rgba(34,32,24,0.5); border: 1px solid var(--navy-border);
+    clip-path: var(--clip-sm); color: var(--white); font-family: 'Barlow', sans-serif;
     font-size: 13px; padding: 9px 12px; outline: none;
     transition: border-color 0.2s; resize: vertical;
   }
   .edit-field input:focus, .edit-field textarea:focus {
-    border-color: var(--gold); box-shadow: 0 0 0 2px rgba(124,92,252,0.12);
+    border-color: var(--violet); box-shadow: 0 0 0 2px var(--violet-muted);
   }
   .edit-section-header {
     font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
     text-transform: uppercase; color: var(--gold);
     margin: 18px 0 12px; padding-bottom: 6px;
-    border-bottom: 1px solid rgba(124,92,252,0.15);
+    border-bottom: 1px solid rgba(139,92,246,0.15);
   }
   .edit-msp-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; }
   @media (max-width: 640px) { .edit-msp-grid { grid-template-columns: 1fr; } }
@@ -1168,8 +1168,8 @@
     padding: 7px 16px; clip-path: var(--clip-sm); font-size: 12px; font-weight: 600;
     cursor: pointer; border: 1px solid; font-family: 'Barlow', sans-serif; transition: all 0.2s;
   }
-  .saved-map-btn-load { background: var(--gold-dim); border-color: rgba(124,92,252,0.3); color: var(--gold-light); }
-  .saved-map-btn-load:hover { background: rgba(124,92,252,0.25); }
+  .saved-map-btn-load { background: var(--gold-dim); border-color: rgba(139,92,246,0.3); color: var(--gold-light); }
+  .saved-map-btn-load:hover { background: rgba(139,92,246,0.25); }
   .saved-map-btn-delete { background: transparent; border-color: var(--navy-border); color: var(--white-dim); }
   .saved-map-btn-delete:hover { border-color: rgba(255,143,163,0.4); color: var(--red); }
   .no-saved-maps {
@@ -1180,18 +1180,19 @@
 
   /* ── PDF PRINT ── */
   @media print {
-    header, .phase-eyebrow, .phase-title, .phase-subtitle,
-    .export-toolbar, .btn-row, #toast, .section-divider { display: none !important; }
-    body { background: #111111 !important; }
+    header, footer, .phase-eyebrow, .phase-title, .phase-subtitle,
+    .export-toolbar, .btn-row, #toast, .section-divider,
+    .chat-sidebar, .chat-tab { display: none !important; }
+    body { background: #ffffff !important; color: #111 !important; }
     main { padding: 0 !important; max-width: 100% !important; }
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .vm-wrap { font-size: 11px; }
-    .vm-masthead { border-radius: 0 !important; }
+    .vm-masthead { border-radius: 0 !important; clip-path: none !important; }
   }
 
   /* Responsive */
   @media (max-width: 640px) {
-    main { padding: 32px 16px 100px; }
+    main { padding: 32px 16px 134px; }
     .phase-title { font-size: 28px; }
     header { height: auto; min-height: 56px; }
     .header-inner { padding: 0 16px; flex-wrap: wrap; gap: 8px; height: auto; min-height: 56px; }
@@ -1208,11 +1209,13 @@
   <div class="header-inner">
   <div class="header-logo">
     <div class="logo-mark">
-      <svg viewBox="0 0 1039.041 1080" width="20" height="20" xmlns="http://www.w3.org/2000/svg">
-        <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z" fill="#dbd2ff"/>
+      <svg viewBox="0 0 1039.041 1080" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+        <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z" fill="#8B5CF6"/>
       </svg>
     </div>
-    <div class="logo-text">Conga <span>Value Map</span> Builder</div>
+    <div class="logo-text">
+      <span style="font-family:'Epilogue',sans-serif;font-weight:700;font-size:18px;color:rgba(255,255,255,0.9);">Conga <span style="color:var(--violet);">Value Map</span> Builder</span>
+    </div>
   </div>
   <div class="header-steps">
     <div class="step-pill active" id="pill-1"><span class="step-dot"></span><span>Intake</span></div>
@@ -1582,7 +1585,8 @@
 
     try {
       const prompt = buildResearchPrompt();
-      const response = await callClaude(prompt, true);
+      const researchSystem = `You are an elite strategic intelligence analyst specializing in enterprise B2B research. Your job is to produce a structured, citation-rich intelligence brief that a senior sales executive can act on immediately. Be specific and data-driven. Always output the INDUSTRY field first. Use real numbers, dates, and named sources. Never speculate without signaling it.`;
+      const response = await callClaude(prompt, true, researchSystem);
       state.research = response;
 
       // Extract discovered industry from research output
@@ -1593,7 +1597,7 @@
       logEl.querySelectorAll('.log-line').forEach(l => l.classList.replace('active','done'));
       statusEl.textContent = 'Research complete. Moving to synthesis...';
 
-      setTimeout(() => { runSynthesis(); }, 800);
+      runSynthesis();
     } catch (e) {
       const errEl = document.getElementById('research-error');
       errEl.textContent = 'Research error: ' + e.message;
@@ -1631,15 +1635,14 @@
 
     try {
       const prompt = buildSynthesisPrompt();
-      const response = await callClaude(prompt, false);
+      const synthesisSystem = `You are a senior Conga solutions consultant with deep expertise in CLM, CPQ, DocGen, RLM, and AI. You build Value Maps for enterprise deals. You output ONLY the structured tagged format requested — no commentary, no preamble, no explanation outside the tags. Every field must be specific, credible, and directly tied to the account's strategic context. Use real metrics where available; use plausible industry benchmarks when not. Your output will be rendered directly into a client-facing deliverable.`;
+      const response = await callClaude(prompt, false, synthesisSystem);
       state.valueMap = parseValueMap(response);
 
-      setTimeout(() => {
-        renderValueMap();
-        maybeShowEditTab();
-        autoSaveMap();
-        setPhase(4);
-      }, synthSteps.length * 1000 + 500);
+      renderValueMap();
+      maybeShowEditTab();
+      autoSaveMap();
+      setPhase(4);
 
     } catch (e) {
       const errEl = document.getElementById('synthesis-error');
@@ -1690,9 +1693,23 @@ Format your response as a structured intelligence brief with clear sections. Be 
         'STAGE GUIDANCE: This deal is closed. Frame this as a success summary and expansion/renewal planning document. Highlight the value already agreed upon. MSP should focus on implementation milestones, adoption goals, and expansion opportunities. Tone is forward-looking and celebratory.'
     };
     const stageGuide = stageInstructions[state.stage] || stageInstructions['Discovery'];
-    // Keep research brief — max 1500 chars to stay under Tier 1 token limits
-    const researchSnippet = state.research.slice(0, 1500);
-    return `Conga CLM/CPQ/DocGen/RLM/AI consultant. Build a Value Map. SHORT answers only — max 10 words per field. No prose.
+    // Full research context — Tier 4, no token pressure
+    const researchSnippet = state.research.slice(0, 4000);
+    return `Build a strategic Value Map for a Conga enterprise deal. Be specific, credible, and account-specific throughout. Use real metrics from the research where available; use plausible industry benchmarks when not. Never be generic.
+
+FIELD GUIDANCE:
+- OBJECTIVE: 1 sentence — the account's business goal for this initiative
+- STRATEGY: 1 sentence — how they plan to achieve it
+- INITIATIVE: Short phrase naming the initiative (e.g. "Accelerate Revenue Operations")
+- CHALLENGE: 1 sentence describing the specific operational pain blocking their goal
+- CHALLENGE_METRIC: A real or benchmark number quantifying the current pain (e.g. "42-day avg contract cycle")
+- TARGET_METRIC: The outcome they want to reach (e.g. "<14 days within 6 months")
+- STAKEHOLDER: Job title of the primary champion for this initiative
+- REQUIRED_CAPABILITY: What the customer needs to solve this (vendor-agnostic)
+- CONGA_CAPABILITY: The specific Conga product/feature that delivers it
+- HOW_CONGA_HELPS: 1–2 sentences — exactly how Conga solves the challenge
+- VALUE: Quantified business impact — include a % or $ figure
+- PROOF: A real customer name, published stat, or analyst benchmark (not generic)
 
 COMPANY: ${state.company} | INDUSTRY: ${state.industry}
 STAKEHOLDERS: ${stakeholderList}
@@ -1789,12 +1806,16 @@ Include company websites, news articles, press releases, earnings calls, analyst
     };
   }
 
-  async function callClaude(prompt, useWebSearch) {
+  async function callClaude(prompt, useWebSearch, systemMessage = null) {
     const body = {
       model: "claude-haiku-4-5-20251001",
-      max_tokens: useWebSearch ? 2000 : 3000,
+      max_tokens: useWebSearch ? 4000 : 6000,
       messages: [{ role: "user", content: prompt }]
     };
+
+    if (systemMessage) {
+      body.system = systemMessage;
+    }
 
     if (useWebSearch) {
       body.tools = [{ type: "web_search_20250305", name: "web_search" }];
@@ -1882,7 +1903,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
     const vm = state.valueMap;
     if (!vm) return;
 
-    const iColors = ['#7c5cfc','#a990ff','#c4b5fd'];
+    const iColors = ['#8B5CF6','#a78bfa','#c4b5fd'];
     const iLabels = ['Initiative 1','Initiative 2','Initiative 3'];
 
     // Rows in the Value Map matrix
@@ -2001,7 +2022,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .vm-masthead-logo {
           width: 40px; height: 40px;
           background: var(--gold-dim);
-          border: 1px solid rgba(124,92,252,0.3);
+          border: 1px solid rgba(139,92,246,0.3);
           border-radius: 10px;
           display: flex; align-items: center; justify-content: center;
         }
@@ -2034,7 +2055,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .vm-stakeholder-row {
           display: grid;
           grid-template-columns: 200px repeat(3, minmax(0, 1fr));
-          background: rgba(10,14,26,0.4);
+          background: rgba(24,23,20,0.6);
           border: 1px solid var(--navy-border);
           border-top: none;
         }
@@ -2053,15 +2074,15 @@ Include company websites, news articles, press releases, earnings calls, analyst
           border-top: none;
           transition: background 0.15s;
         }
-        .vm-row:hover { background: rgba(124,92,252,0.03); }
-        .vm-row-highlight { background: rgba(124,92,252,0.04); }
-        .vm-row-highlight:hover { background: rgba(124,92,252,0.07); }
+        .vm-row:hover { background: rgba(139,92,246,0.03); }
+        .vm-row-highlight { background: rgba(139,92,246,0.04); }
+        .vm-row-highlight:hover { background: rgba(139,92,246,0.07); }
 
         .vm-row-label {
           padding: 12px 16px;
           display: flex; align-items: flex-start; gap: 10px;
           border-right: 1px solid var(--navy-border);
-          background: rgba(10,14,26,0.25);
+          background: rgba(24,23,20,0.4);
         }
         .row-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
         .row-label-text { font-size: 12px; font-weight: 600; color: var(--white); }
@@ -2087,7 +2108,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .state-target  { background: rgba(126,232,162,0.1); border: 1px solid rgba(126,232,162,0.2); color: var(--green); }
         .value-chip {
           display: inline-block; padding: 5px 10px;
-          background: rgba(124,92,252,0.12); border: 1px solid rgba(124,92,252,0.3);
+          background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3);
           border-radius: 6px; font-size: 12px; font-weight: 700; color: var(--gold-light); line-height: 1.4;
         }
         .proof-chip {
@@ -2114,7 +2135,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
           font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
           color: var(--gold); background: var(--navy-light);
           border: 1px solid var(--navy-border); border-top: none;
-          border-bottom: 1px solid rgba(124,92,252,0.15);
+          border-bottom: 1px solid rgba(139,92,246,0.15);
         }
 
         /* MSP */
@@ -2134,7 +2155,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .msp-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
         @media (max-width: 700px) { .msp-grid { grid-template-columns: 1fr 1fr; } }
         .msp-card {
-          background: rgba(10,14,26,0.4);
+          background: rgba(24,23,20,0.6);
           border: 1px solid var(--navy-border);
           border-radius: 10px; padding: 14px 16px;
           position: relative; overflow: hidden;
@@ -2157,12 +2178,12 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .source-item {
           display: flex; align-items: flex-start; gap: 10px;
           padding: 10px 14px;
-          background: rgba(10,14,26,0.4);
+          background: rgba(24,23,20,0.6);
           border: 1px solid var(--navy-border);
           border-radius: 8px;
           transition: border-color 0.2s;
         }
-        .source-item:hover { border-color: rgba(124,92,252,0.3); }
+        .source-item:hover { border-color: rgba(139,92,246,0.3); }
         .source-num {
           font-family: 'IBM Plex Mono', monospace; font-size: 10px;
           color: var(--gold); font-weight: 600; flex-shrink: 0; margin-top: 2px;
@@ -2193,7 +2214,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
               <div class="vm-masthead-meta"><span>${escHtml(state.industry || 'Industry identified via research')}</span> · ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
             </div>
           </div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);opacity:0.7">Value Map · Confidential</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);opacity:0.7">Value Map · Confidential</div>
         </div>
 
         <!-- COLUMN HEADERS -->
@@ -2645,7 +2666,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
   function showEditTab() {
     const vm = state.valueMap;
     if (!vm) return;
-    const iColors = ['#7c5cfc','#a990ff','#c4b5fd'];
+    const iColors = ['#8B5CF6','#a78bfa','#c4b5fd'];
     const iLabels = ['Initiative 1','Initiative 2','Initiative 3'];
     const fields = [
       { key:'objective',          label:'Objective',           rows:1 },
@@ -2700,7 +2721,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
       </div>
       <div class="edit-msp-grid">`;
     vm.milestones.forEach((m, mi) => {
-      html += `<div style="background:rgba(10,14,26,0.4);border:1px solid var(--navy-border);border-radius:10px;padding:14px 16px">
+      html += `<div style="background:rgba(24,23,20,0.6);border:1px solid var(--navy-border);border-radius:10px;padding:14px 16px">
         <div class="edit-field-label" style="margin-bottom:10px;color:var(--gold)">Milestone ${mi+1}: ${escHtml(m.phase)}</div>
         <div class="edit-field" style="margin-bottom:8px">
           <div class="edit-field-label">Timing</div>
@@ -3103,7 +3124,7 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
     try {
       const body = {
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 800,
+        max_tokens: 1500,
         system: systemPrompt,
         messages: chatHistory
       };
@@ -3244,6 +3265,18 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
   Assistant
 </button>
+<!-- ZNITH FOOTER -->
+<footer style="position:fixed;bottom:0;left:0;right:0;width:100%;background:var(--surf,#181714);border-top:1px solid rgba(184,134,11,0.15);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:34px;z-index:98;">
+  <div style="display:flex;align-items:center;gap:5px;">
+    <span style="font-family:'IBM Plex Mono',monospace;color:#B8860B;font-weight:700;font-size:13px;">/</span>
+    <span style="font-family:'Epilogue',sans-serif;font-weight:800;font-size:13px;color:#B8860B;">Z</span><span style="font-family:'Epilogue',sans-serif;font-weight:800;font-size:13px;color:rgba(255,255,255,0.4);">nith</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.2);">Value Map</span>
+    <div style="width:4px;height:4px;border-radius:50%;background:#8B5CF6;box-shadow:0 0 6px rgba(139,92,246,0.5);animation:glow-pulse 2.5s ease-in-out infinite;"></div>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.2);">v2.0</span>
+  </div>
+</footer>
 </div><!-- /.app-shell -->
 
 </body>
