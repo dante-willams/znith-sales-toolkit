@@ -49,6 +49,8 @@ body {
   font-size: 14px;
   line-height: 1.6;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── CHAMFER UTILITIES ───────────────────────────────────────────────────── */
@@ -77,7 +79,7 @@ header {
 .header-right { display: flex; align-items: center; gap: 10px; }
 
 /* ── LAYOUT ──────────────────────────────────────────────────────────────── */
-main { max-width: 860px; margin: 0 auto; padding: 40px 24px 100px; }
+main { flex: 1; max-width: 860px; width: 100%; margin: 0 auto; padding: 40px 24px 100px; }
 
 /* ── PHASES ──────────────────────────────────────────────────────────────── */
 .phase { display: none; }
@@ -1939,7 +1941,7 @@ async function generate() {
     if (!successful.length) throw new Error('All synthesis passes failed. Check your API key and try again.');
 
     document.getElementById('finalizeBlock').style.display = 'block';
-    await new Promise(r => setTimeout(r, 400));
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
     renderOutputs(successful, ctx);
     showPhase('outputs');
