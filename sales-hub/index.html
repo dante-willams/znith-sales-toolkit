@@ -710,7 +710,7 @@ select option { background: var(--surf-2); }
             style="display:none" onchange="onFileSelect(event)">
           <div class="upload-icon">⬆</div>
           <div class="upload-text">Drop files here or click to browse</div>
-          <div class="upload-hint">PDF · TXT · DOCX · MD &nbsp;·&nbsp; Max 10MB each</div>
+          <div class="upload-hint">PDF · TXT · DOCX · MD &nbsp;·&nbsp; Max 25MB each &nbsp;·&nbsp; Individual files only — ZIP and folders not supported</div>
         </div>
         <div class="file-list" id="fileList"></div>
       </div>
@@ -2867,7 +2867,7 @@ function onDrop(e)        { e.preventDefault(); document.getElementById('uploadZ
 
 async function processFiles(files) {
   for (const file of files) {
-    if (file.size > 10 * 1024 * 1024)                         { toast(`${file.name} exceeds 10MB limit`); continue; }
+    if (file.size > 25 * 1024 * 1024)                         { toast(`${file.name} exceeds 25MB limit`); continue; }
     if (state.documents.find(d => d.name === file.name))       continue;
     try {
       state.documents.push(await readFile(file));
