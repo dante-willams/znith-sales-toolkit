@@ -1632,7 +1632,7 @@ const state = {
 // ════════════════════════════════════════════════════
 // API HELPER
 // ════════════════════════════════════════════════════
-async function callClaude(userPrompt, systemPrompt = 'You are a helpful analyst. Return ONLY valid JSON, no preamble, no markdown code fences.', useWebSearch = false, documentBlocks = [], maxTokens = 4000) {
+async function callClaude(userPrompt, systemPrompt = 'You are a helpful analyst. Return ONLY valid JSON, no preamble, no markdown code fences.', useWebSearch = false, documentBlocks = [], maxTokens = 5000) {
   const headers = {
     'Content-Type': 'application/json'
   };
@@ -1785,17 +1785,22 @@ Return ONLY valid JSON, no markdown, starting with {:
 }
 Current date: ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}.`;
 
-  const compRaw = await callClaude(companyPrompt, 'You are a business intelligence analyst. Return ONLY valid JSON starting with {. Never refuse to answer — estimate if needed.', true);
+  const compRaw = await callClaude(companyPrompt, 'You are a business intelligence analyst. Return ONLY valid JSON starting with {. If data is unavailable for a field, omit it or use null rather than guessing.', true);
   state.results.company = safeParseJSON(compRaw) || { industry: industry||'Unknown', revenue:'No information available', employees:'No information available', hq:'Unknown', founded:'Unknown', ownership:'Unknown', peOwner:null, peOwnerNotes:null, summary:'', financialTrend:'', recentNews:[], competitors:[], integrationPartners:[], sources:[] };
   if (state.results.company.sources) state.results.allSources.push(...state.results.company.sources);
   addLog('done', 'Company profile complete');
-  await delay(2000);
 
-  // ── PASS 1b: Company Deep Dive (no web search) ───────
-  updateStatus('Analyzing what ' + company + ' does…');
-  addLog('active', 'Building company deep dive — products, value, business model');
+  // ── PASSES 1b + 2 + 3: Run in parallel (all depend only on Pass 1a) ─────
+  updateStatus('Running parallel research — deep dive, contacts, and industry…');
+  addLog('active', 'Launching parallel research: deep dive · contacts · industry trends');
 
-  const deepDivePrompt = `You know the company "${company}" (${state.results.company.industry||industry||'technology'}). Using your training knowledge, answer these three questions about them:
+  const detectedIndustry = industry || state.results.company.industry || 'enterprise software';
+
+  await Promise.all([
+
+    // ── PASS 1b: Company Deep Dive (no web search) ───────
+    (async () => {
+      const deepDivePrompt = `You know the company "${company}" (${state.results.company.industry||industry||'technology'}). Using your training knowledge, answer these three questions about them:
 
 Return ONLY valid JSON starting with {:
 {
@@ -1805,52 +1810,46 @@ Return ONLY valid JSON starting with {:
 }
 Be specific and factual. If ${company} is not well known, provide your best assessment based on available information.`;
 
-  const deepRaw = await callClaude(deepDivePrompt, 'You are a business analyst. Return ONLY valid JSON starting with {. Use your training knowledge freely.', false);
-  const deepData = safeParseJSON(deepRaw) || {};
-  state.results.company.whatTheyDo = deepData.whatTheyDo || 'No information available';
-  state.results.company.customerValue = deepData.customerValue || 'No information available';
-  state.results.company.businessModel = deepData.businessModel || 'No information available';
-  addLog('done', 'Deep dive complete');
-  await delay(2000);
+      const deepRaw = await callClaude(deepDivePrompt, 'You are a business analyst. Return ONLY valid JSON starting with {. Use your training knowledge freely. If uncertain about a specific fact, note it briefly rather than stating it as certain.', false);
+      const deepData = safeParseJSON(deepRaw) || {};
+      state.results.company.whatTheyDo = deepData.whatTheyDo || 'No information available';
+      state.results.company.customerValue = deepData.customerValue || 'No information available';
+      state.results.company.businessModel = deepData.businessModel || 'No information available';
+      addLog('done', 'Deep dive complete');
+    })(),
 
-  // ── PASS 2: Contacts ──────────────────────────────
-  if (state.contacts.length > 0) {
-    addLog('active', `Researching ${state.contacts.length} contact${state.contacts.length>1?'s':''}…`);
-    state.results.contacts = [];
-    for (let i = 0; i < state.contacts.length; i++) {
-      const c = state.contacts[i];
-      if (!c.name.trim()) continue;
-      updateStatus(`Profiling ${c.name}…`);
-
-      const contactPrompt = `Research ${c.name}${c.title ? ', '+c.title : ''} at ${company}.${c.linkedin ? ' LinkedIn: '+c.linkedin : ''}
+    // ── PASS 2: Contacts ──────────────────────────────
+    (async () => {
+      const validContacts = state.contacts.filter(c => c.name.trim());
+      if (validContacts.length === 0) return;
+      addLog('active', `Researching ${validContacts.length} contact${validContacts.length>1?'s':''}…`);
+      state.results.contacts = await Promise.all(validContacts.map(async (c) => {
+        const contactPrompt = `Research ${c.name}${c.title ? ', '+c.title : ''} at ${company}.${c.linkedin ? ' LinkedIn: '+c.linkedin : ''}
 
 Return ONLY a JSON object:
 {
   "name": "${c.name}",
   "title": "${c.title || 'Unknown Title'}",
-  "background": "2 sentence professional background",
-  "tenure": "estimated tenure at ${company} (e.g. 3 years)",
+  "background": "2 sentences: their professional background, areas of expertise, and what they are likely responsible for in their current role",
+  "tenure": "estimated tenure at ${company} (e.g. '3 years' — if unknown, write 'Unknown')",
   "previousCompanies": ["notable prior employer 1", "notable prior employer 2"],
-  "talkingAngle": "1 sentence: how to open a conversation based on their background and role",
-  "recentActivity": "any recent public activity, article, or talk (or 'None found')",
+  "talkingAngle": "1 sentence: a specific, personalized conversation opener based on their actual background, tenure, or stated priorities — not a generic sales opener",
+  "recentActivity": "any LinkedIn posts, published articles, conference talks, or job changes in the last 12 months (or 'None found')",
   "conga_alumni_flag": false
 }
+
+For conga_alumni_flag: set to true ONLY if you find evidence this person previously worked at Conga, Apttus, or Model N. Default to false if uncertain.
 Current date: ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}.`;
 
-      const contactRaw = await callClaude(contactPrompt, 'You are a business intelligence analyst. Return ONLY valid JSON, no preamble, no markdown code fences.', true);
-      const contactData = safeParseJSON(contactRaw) || { name: c.name, title: c.title||'—', background:'No public profile found.', tenure:'Unknown', previousCompanies:[], talkingAngle:'Research their LinkedIn profile before the call.', recentActivity:'None found', conga_alumni_flag: false };
-      state.results.contacts.push(contactData);
-    }
-    addLog('done', 'Contact intelligence complete');
-  }
-  await delay(2000);
+        const contactRaw = await callClaude(contactPrompt, 'You are a business intelligence analyst. Return ONLY valid JSON, no preamble, no markdown code fences.', true);
+        return safeParseJSON(contactRaw) || { name: c.name, title: c.title||'—', background:'No public profile found.', tenure:'Unknown', previousCompanies:[], talkingAngle:'Research their LinkedIn profile before the call.', recentActivity:'None found', conga_alumni_flag: false };
+      }));
+      addLog('done', 'Contact intelligence complete');
+    })(),
 
-  // ── PASS 3: Industry Trends ───────────────────────
-  updateStatus('Analyzing industry trends…');
-  addLog('active', 'Analyzing industry tailwinds, headwinds, and benchmarks');
-
-  const detectedIndustry = industry || state.results.company.industry || 'enterprise software';
-  const industryPrompt = `You are a senior industry analyst writing a market briefing for an enterprise software sales rep. The rep is about to meet with ${company}, a company in the "${detectedIndustry}" industry.
+    // ── PASS 3: Industry Trends ───────────────────────
+    (async () => {
+      const industryPrompt = `You are a senior industry analyst writing a market briefing for an enterprise software sales rep. The rep is about to meet with ${company}, a company in the "${detectedIndustry}" industry.
 
 Your job: surface REAL business trends shaping the "${detectedIndustry}" industry right now — macroeconomic forces, competitive dynamics, regulatory shifts, technology disruption, buyer behavior changes. Write what a McKinsey analyst or industry journalist would write. Do NOT frame anything around CLM, CPQ, or document automation software.
 
@@ -1878,13 +1877,15 @@ Return ONLY valid JSON starting with {:
   "congaRelevanceNote": "1 sentence only: if any trend creates a natural opening to discuss contract, revenue, or document processes at ${company}, note it briefly — otherwise write 'No obvious direct connection'"
 }`;
 
-  const industryRaw = await callClaude(industryPrompt, 'You are an industry analyst. Return ONLY valid JSON starting with {. Be specific to this industry, not generic.', false);
-  state.results.industry = safeParseJSON(industryRaw) || { tailwinds:[], headwinds:[], relevantTrends:[], benchmarks:[], congaRelevanceNote:'' };
-  if (!state.results.industry.tailwinds?.length) {
-    state.results.industry = { tailwinds:['Industry data unavailable — verify company name and retry'], headwinds:['Industry data unavailable'], relevantTrends:[], benchmarks:[], congaRelevanceNote:'' };
-  }
-  addLog('done', 'Industry analysis complete');
-  await delay(2000);
+      const industryRaw = await callClaude(industryPrompt, 'You are an industry analyst. Return ONLY valid JSON starting with {. Be specific to this industry, not generic.', false);
+      state.results.industry = safeParseJSON(industryRaw) || { tailwinds:[], headwinds:[], relevantTrends:[], benchmarks:[], congaRelevanceNote:'' };
+      if (!state.results.industry.tailwinds?.length) {
+        state.results.industry = { tailwinds:['Industry data unavailable — verify company name and retry'], headwinds:['Industry data unavailable'], relevantTrends:[], benchmarks:[], congaRelevanceNote:'' };
+      }
+      addLog('done', 'Industry analysis complete');
+    })()
+
+  ]); // end parallel block
 
   // ── PASS 4: Conga POV ─────────────────────────────
   updateStatus('Building Conga point of view…');
@@ -1933,7 +1934,6 @@ Include one entry per product: ${productList}`;
   const povRaw = await callClaude(povPrompt, 'You are a Conga solution consultant with deep knowledge of CLM, CPQ, and document automation. Return ONLY valid JSON, no preamble, no markdown code fences.', false, getPDFDocBlocks());
   state.results.congaPOV = safeParseJSON(povRaw) || { overarchingNarrative: 'Conga can streamline revenue and contract operations for this account.', productPOV: [] };
   addLog('done', 'Conga POV complete');
-  await delay(2000);
 
   // ── PASS 5: Call Strategy ─────────────────────────
   updateStatus('Crafting call strategy…');
@@ -1978,16 +1978,13 @@ Include 3-5 stakeholders specific to ${productList} at a ${detectedIndustry} com
   const strategyRaw = await callClaude(strategyPrompt, 'You are an expert enterprise sales coach specializing in CLM, CPQ, and RevOps deals. Return ONLY valid JSON, no preamble, no markdown code fences.', false, getPDFDocBlocks());
   state.results.callStrategy = safeParseJSON(strategyRaw) || { openingHook:'Do your research before the call.', discoveryQuestions:[], landmines:[], recommendedNextStep:'Book the next meeting.', dealFlags:[], alumniCheckPrompt:'Check LinkedIn for Conga alumni at this account.', suggestedStakeholders:[] };
   addLog('done', 'Call strategy complete');
-  await delay(2000);
 
   // ── PASS 6: Deal Brief ───────────────────────────────
   updateStatus('Building deal brief…');
-  addLog('active', 'Analyzing deal position and coaching recommendations');
+  addLog('active', 'Launching parallel deal analysis: health assessment · gaps & actions');
 
-  const dealPrompt = `You are a senior enterprise sales coach specializing in complex B2B SaaS deals. 
-Analyze the deal situation for a Conga AE selling to ${company} and provide a Deal Brief.
-
-Deal Context:
+  // Shared context string reused across all three deal brief calls
+  const dealContext = `Deal Context:
 - Meeting type: ${meetingType}
 - Stage: ${oppStage || 'Early/Unknown'}
 - AE goal: ${callGoal || 'Qualify opportunity'}
@@ -1998,52 +1995,121 @@ Deal Context:
 - Uploaded docs: ${getTextDocContext() ? 'Yes — analyze for deal signals' : 'None'}
 ${getTextDocContext()}
 
-A great Conga deal requires: a champion who has pain, an economic buyer who controls budget, 
+A great Conga deal requires: a champion who has pain, an economic buyer who controls budget,
 a clear decision process, and early multi-threading to avoid late-stage surprises.
-Many deals die because reps don't identify these early enough.
+Many deals die because reps don't identify these early enough.`;
+
+  // ── PASS 6A + 6B: Run in parallel ────────────────────────────────────────
+  const [dealRawA, dealRawB] = await Promise.all([
+
+    // ── PASS 6A: Deal Health + Situational Assessment ─────────────────────
+    callClaude(`You are a senior enterprise sales coach specializing in complex B2B SaaS deals.
+Analyze the deal situation for a Conga AE selling to ${company}. Focus ONLY on the situational assessment — health, where we stand, and stakeholder clarity.
+
+${dealContext}
 
 Return ONLY valid JSON starting with {:
 {
   "dealHealthScore": "Green / Yellow / Red",
-  "dealHealthReason": "1-2 sentences: why this score based on what we know",
+  "dealHealthReason": "1-2 sentences: why this score based on what we know — be specific to this deal, not generic",
   "whereWeStand": "3-4 sentences: honest assessment of where this deal stands — what we know, what we don't know, what's encouraging, what's concerning",
   "transcriptInsights": "If call transcripts or notes were uploaded, extract 2-3 specific deal signals (buying signals, objections, stakeholder dynamics, timeline urgency). If no transcripts, write: 'No transcript uploaded — add call notes to get specific insights'",
-  "criticalGaps": ["specific thing we don't know yet that could kill the deal", "gap 2", "gap 3"],
-  "whatMustHappenNext": ["specific action 1 to advance the deal", "action 2", "action 3"],
+  "championStatus": "Confirmed / Suspected / Unknown — and 1 sentence on who the likely champion is or what to look for at ${company}",
+  "economicBuyerStatus": "Identified / Suspected / Unknown — and 1 sentence on who controls budget at ${company} and how to get access",
+  "decisionProcessClarity": "Clear / Partial / Unknown — and 1 sentence on what we know about ${company}'s buying process",
+  "competitiveExposure": "Low / Medium / High — and 1 sentence on competitive risk based on known competitors in this deal"
+}`,
+      'You are a senior enterprise sales coach. Return ONLY valid JSON starting with {. Be direct, specific, and honest — do not sugarcoat deal risks.',
+      false, getPDFDocBlocks()),
+
+    // ── PASS 6B: Critical Gaps, Actions + Recommendations ─────────────────
+    callClaude(`You are a senior enterprise sales coach specializing in complex B2B SaaS deals.
+Analyze the deal situation for a Conga AE selling to ${company}. Focus ONLY on what's missing, what must happen next, and specific coaching recommendations.
+
+${dealContext}
+
+Return ONLY valid JSON starting with {:
+{
+  "criticalGaps": [
+    "specific thing we don't know yet that could kill this deal — name it explicitly",
+    "second critical unknown — different category from gap 1",
+    "third critical unknown — different category from gaps 1 and 2"
+  ],
+  "whatMustHappenNext": [
+    "specific, concrete action #1 the AE must take to advance this deal — not generic",
+    "specific action #2 — different from action 1",
+    "specific action #3 — different from actions 1 and 2"
+  ],
   "dealRecommendations": [
     {
       "title": "short action title",
-      "detail": "1-2 sentences: specific, actionable coaching for this deal",
+      "detail": "1-2 sentences: specific, actionable coaching tailored to this deal at ${company} — not generic advice",
       "urgency": "Do This Now / Do This Soon / Plant This Seed",
       "icon": "emoji that fits the action"
     }
-  ],
-  "championStatus": "Confirmed / Suspected / Unknown — and 1 sentence on who the likely champion is or what to look for",
-  "economicBuyerStatus": "Identified / Suspected / Unknown — and 1 sentence on who controls budget and how to get access",
-  "decisionProcessClarity": "Clear / Partial / Unknown — and 1 sentence on what we know about their buying process",
-  "competitiveExposure": "Low / Medium / High — and 1 sentence on competitive risk based on known competitors",
-  "executiveSummary": [
-    "Most critical thing #1 the rep must know before walking into this meeting — company, deal, or relationship context",
-    "Most critical thing #2 — a key risk, gap, or opportunity specific to this deal",
-    "Most critical thing #3 — the single most important action to take on or before this call",
-    "Most critical thing #4 — something about the competitive or stakeholder landscape that could make or break this deal",
-    "Most critical thing #5 — the Conga angle or value hook most likely to resonate with this specific account"
   ]
 }
 Include 4-5 deal recommendations. Mix of immediate actions and longer-term seeds to plant.
-Think about: champion qualification, multi-threading to power, proof of value, competitive positioning, and late-stage readiness.`;
+Think about: champion qualification, multi-threading to power, proof of value, competitive positioning, and late-stage readiness.
+Every recommendation must be specific to ${company} and this deal — no generic sales advice.`,
+      'You are a senior enterprise sales coach. Return ONLY valid JSON starting with {. Be specific and actionable — every recommendation must be tailored to this deal, not generic.',
+      false, getPDFDocBlocks())
 
-  const dealRaw = await callClaude(dealPrompt, 'You are a senior enterprise sales coach. Return ONLY valid JSON starting with {. Be direct, specific, and honest — do not sugarcoat deal risks.', false, getPDFDocBlocks());
-  state.results.dealBrief = safeParseJSON(dealRaw) || {
-    dealHealthScore: 'Yellow',
-    dealHealthReason: 'Insufficient information to assess.',
-    whereWeStand: 'Add call notes or transcripts for a more accurate assessment.',
-    transcriptInsights: 'No transcript uploaded.',
-    criticalGaps: [], whatMustHappenNext: [], dealRecommendations: [],
-    championStatus: 'Unknown', economicBuyerStatus: 'Unknown',
-    decisionProcessClarity: 'Unknown', competitiveExposure: 'Unknown',
+  ]);
+
+  // Merge 6A + 6B results
+  const parsedA = safeParseJSON(dealRawA) || {};
+  const parsedB = safeParseJSON(dealRawB) || {};
+  state.results.dealBrief = {
+    dealHealthScore: parsedA.dealHealthScore || 'Yellow',
+    dealHealthReason: parsedA.dealHealthReason || 'Insufficient information to assess.',
+    whereWeStand: parsedA.whereWeStand || 'Add call notes or transcripts for a more accurate assessment.',
+    transcriptInsights: parsedA.transcriptInsights || 'No transcript uploaded.',
+    championStatus: parsedA.championStatus || 'Unknown',
+    economicBuyerStatus: parsedA.economicBuyerStatus || 'Unknown',
+    decisionProcessClarity: parsedA.decisionProcessClarity || 'Unknown',
+    competitiveExposure: parsedA.competitiveExposure || 'Unknown',
+    criticalGaps: parsedB.criticalGaps || [],
+    whatMustHappenNext: parsedB.whatMustHappenNext || [],
+    dealRecommendations: parsedB.dealRecommendations || [],
     executiveSummary: []
   };
+  addLog('done', 'Deal health and recommendations complete');
+
+  // ── PASS 6C: Executive Summary (synthesizes 6A + 6B) ──────────────────────
+  addLog('active', 'Synthesizing executive summary…');
+  const summaryRaw = await callClaude(
+    `You are a senior enterprise sales coach. A Conga AE is about to meet with ${company}.
+Write the 5 most critical things they must know walking into this meeting — drawn from the complete deal assessment below.
+
+Deal assessment:
+- Health: ${state.results.dealBrief.dealHealthScore} — ${state.results.dealBrief.dealHealthReason}
+- Where we stand: ${state.results.dealBrief.whereWeStand}
+- Champion: ${state.results.dealBrief.championStatus}
+- Economic buyer: ${state.results.dealBrief.economicBuyerStatus}
+- Decision process: ${state.results.dealBrief.decisionProcessClarity}
+- Competitive exposure: ${state.results.dealBrief.competitiveExposure}
+- Critical gaps: ${(state.results.dealBrief.criticalGaps||[]).join('; ')}
+- What must happen next: ${(state.results.dealBrief.whatMustHappenNext||[]).join('; ')}
+- Conga POV: ${povSummary}
+- Meeting type: ${meetingType}
+
+Return ONLY valid JSON starting with {:
+{
+  "executiveSummary": [
+    "Most critical thing #1 — company, deal, or relationship context the rep must know before this meeting",
+    "Most critical thing #2 — a key risk, gap, or opportunity specific to this deal at ${company}",
+    "Most critical thing #3 — the single most important action to take on or before this call",
+    "Most critical thing #4 — something about the competitive or stakeholder landscape that could make or break this deal",
+    "Most critical thing #5 — the Conga angle or value hook most likely to resonate with ${company} specifically"
+  ]
+}
+Each item must be a complete, standalone insight — specific to ${company} and this deal, not generic sales advice.`,
+    'You are a senior enterprise sales coach. Return ONLY valid JSON starting with {. Be direct and specific — no generic advice.',
+    false, [], 3000
+  );
+  const parsedC = safeParseJSON(summaryRaw) || {};
+  state.results.dealBrief.executiveSummary = parsedC.executiveSummary || [];
   addLog('done', 'Deal brief complete');
 
   updateStatus('Brief ready. ✓');
@@ -3828,7 +3894,7 @@ async function sendChatMessage(overrideText) {
 
     const body = {
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1500,
+      max_tokens: 3000,
       system: buildBriefContext(),
       tools: [{ type: 'web_search_20250305', name: 'web_search' }],
       messages: chatState.messages
