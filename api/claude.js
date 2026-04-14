@@ -17,6 +17,7 @@ module.exports = async function handler(req, res) {
       headers: {
         'Content-Type': 'application/json',
         'anthropic-version': '2023-06-01',
+        'anthropic-beta': 'prompt-caching-2024-07-31',
         'x-api-key': process.env.ANTHROPIC_API_KEY,
       },
       body: JSON.stringify(req.body),

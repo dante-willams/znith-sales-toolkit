@@ -1474,10 +1474,7 @@ function buildSharedContext(ctx, research) {
     .map(d => `--- ${d.name} ---\n${d.text}`)
     .join('\n\n');
 
-  return `━━━ CONGA KNOWLEDGE BASE ━━━
-${KNOWLEDGE_BRAIN}
-
-━━━ ACCOUNT RESEARCH ━━━
+  return `━━━ ACCOUNT RESEARCH ━━━
 ${research}
 ${docTextBlocks ? `\n━━━ UPLOADED DOCUMENTS ━━━\n${docTextBlocks}` : ''}
 
@@ -1924,6 +1921,7 @@ async function generate() {
         const prompt = buildSynthesisPrompt(id, ctx, state.research);
         const data   = await callAPI({
           model:     API_CONFIG.synthesisModel,
+          system:    [{ type: 'text', text: KNOWLEDGE_BRAIN, cache_control: { type: 'ephemeral' } }],
           messages:  [{ role: 'user', content: [...docBlocks, { type: 'text', text: prompt }] }],
           maxTokens: 8000,
         });
@@ -2057,6 +2055,7 @@ async function retryModule(id) {
     const prompt = buildSynthesisPrompt(id, ctx, state.research);
     const data   = await callAPI({
       model:     API_CONFIG.synthesisModel,
+      system:    [{ type: 'text', text: KNOWLEDGE_BRAIN, cache_control: { type: 'ephemeral' } }],
       messages:  [{ role: 'user', content: [...getDocBlocks(), { type: 'text', text: prompt }] }],
       maxTokens: 8000,
     });
