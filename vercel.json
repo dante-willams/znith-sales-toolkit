@@ -3,7 +3,7 @@
   "functions": {
     "api/claude.js": {
       "runtime": "nodejs20.x",
-      "maxDuration": 60
+      "maxDuration": 300
     }
   }
 }

@@ -897,6 +897,7 @@ async function startGenerate(){
       throw new Error(e.error?.message||'API error '+resA.status);
     }
     const dataA = await resA.json();
+    if(!dataA.content) throw new Error(dataA.error?.message||dataA.message||'Empty response from API');
     const foundation = parseJson(dataA.content.map(c=>c.text||'').join(''));
 
     gStep(2,'done'); gStep(3,'done'); gStep(4,'active'); gStep(5,'active');
@@ -935,6 +936,8 @@ async function startGenerate(){
     }
 
     const [dataB, dataC] = await Promise.all([resB.json(), resC.json()]);
+    if(!dataB.content) throw new Error(dataB.error?.message||dataB.message||'Empty response from API (phase B)');
+    if(!dataC.content) throw new Error(dataC.error?.message||dataC.message||'Empty response from API (phase C)');
     const design = parseJson(dataB.content.map(c=>c.text||'').join(''));
     const tech   = parseJson(dataC.content.map(c=>c.text||'').join(''));
 
