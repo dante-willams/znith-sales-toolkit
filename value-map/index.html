@@ -3145,7 +3145,7 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
         const msg = data.error?.message || `HTTP ${response.status}`;
         const isAuthError = response.status === 401 || msg.toLowerCase().includes('api key') || msg.toLowerCase().includes('auth');
         addChatMsg('assistant', isAuthError
-          ? '⚠️ Authentication failed. In the Claude.ai sidebar, inject your API key via VS Code and deploy to Netlify. The chat works fully on the deployed site.'
+          ? '⚠️ Authentication failed. Ensure the ANTHROPIC_API_KEY environment variable is set in your Vercel project. The chat works fully on the deployed site.'
           : '⚠️ API error: ' + msg);
         btn.disabled = false;
         return;
