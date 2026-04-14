@@ -3028,6 +3028,17 @@ function loadHistoryEntry(id) {
 buildModuleGrid();
 updateHistoryBadge();
 
+// Pre-warm the KNOWLEDGE_BRAIN prompt cache so synthesis calls get cache hits
+// on first generation. Silent — failure is fine, it just means no warm cache.
+(function warmCache() {
+  callAPI({
+    model:    API_CONFIG.synthesisModel,
+    system:   [{ type: 'text', text: KNOWLEDGE_BRAIN, cache_control: { type: 'ephemeral' } }],
+    messages: [{ role: 'user', content: [{ type: 'text', text: '.' }] }],
+    maxTokens: 1,
+  }).catch(() => {});
+})();
+
 
 </script>
 </body>
