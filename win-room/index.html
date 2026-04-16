@@ -4110,12 +4110,6 @@ function App() {
       <Footer />
       <ChatFAB open={chatOpen} onToggle={() => setChatOpen(!chatOpen)} />
       <ChatPanel open={chatOpen} onClose={() => setChatOpen(false)} dealState={dealState} />
-      {showNewDealModal && (
-        <NewDealModal
-          onClose={() => setShowNewDealModal(false)}
-          onCreate={(name) => { dealState.createDeal(name); setShowNewDealModal(false); }}
-        />
-      )}
     </>
   );
 }
