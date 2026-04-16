@@ -31,7 +31,7 @@
   --yellow: #ca8a04;
   --red:    #dc2626;
   --blue:   #3B82F6;
-  --blue-muted: rgba(59,130,246,0.12);
+  --blue-muted: var(--accent-muted);
 
   /* Base palette — v2 light */
   --navy:     #1A2332;
@@ -157,14 +157,14 @@ body {
 }
 .nav-item:hover { background: var(--surf-2); color: #374151; }
 .nav-item.active {
-  background: var(--blue-muted);
-  color: var(--blue);
+  background: var(--accent-muted);
+  color: var(--accent);
 }
 .nav-item.active::before {
   content: '';
   position: absolute; left: 0; top: 50%; transform: translateY(-50%);
   width: 3px; height: 24px;
-  background: var(--blue);
+  background: var(--accent);
   border-radius: 0 2px 2px 0;
 }
 
@@ -207,7 +207,7 @@ body {
   font-size: 10px; font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--blue);
+  color: var(--accent);
   margin-bottom: 12px;
 }
 
@@ -229,7 +229,7 @@ body {
   display: flex; align-items: center; justify-content: space-between;
 }
 .ctx-title .refresh-btn {
-  font-size: 10px; color: var(--blue);
+  font-size: 10px; color: var(--accent);
   background: none; border: none;
   cursor: pointer; font-family: var(--f-mono);
   text-transform: uppercase; letter-spacing: 0.08em;
@@ -290,11 +290,11 @@ body {
 .ctx-stakeholder .avatar {
   width: 26px; height: 26px;
   border-radius: 50%;
-  background: var(--blue-muted);
+  background: var(--accent-muted);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--f-brand);
   font-size: 10px; font-weight: 600;
-  color: var(--blue);
+  color: var(--accent);
   flex-shrink: 0;
 }
 .ctx-stakeholder .name { color: var(--text); font-weight: 500; }
@@ -365,7 +365,7 @@ body {
   transition: all var(--transition);
   z-index: 1;
 }
-.call-node.past .call-dot { background: var(--blue); border-color: var(--blue); }
+.call-node.past .call-dot { background: var(--accent); border-color: var(--accent); }
 .call-node.upcoming .call-dot {
   background: var(--amber);
   border-color: var(--amber);
@@ -390,7 +390,7 @@ body {
   background: var(--border);
   min-width: 20px;
 }
-.call-connector.done { background: var(--blue); opacity: 0.4; }
+.call-connector.done { background: var(--accent); opacity: 0.4; }
 
 /* Call Prep */
 .prep-header {
@@ -405,7 +405,7 @@ body {
   padding: 4px 10px;
   border-radius: 4px;
 }
-.badge-blue { background: var(--blue-muted); color: var(--blue); }
+.badge-blue { background: var(--accent-muted); color: var(--accent); }
 .badge-amber { background: var(--amber-muted); color: var(--amber); }
 .badge-green { background: rgba(34,197,94,0.12); color: var(--green); }
 .badge-red { background: rgba(239,68,68,0.12); color: var(--red); }
@@ -416,7 +416,7 @@ body {
   line-height: 1.6;
   padding: 14px 16px;
   background: var(--surf-2);
-  border-left: 3px solid var(--blue);
+  border-left: 3px solid var(--accent);
   margin-bottom: 20px;
   border-radius: 0 6px 6px 0;
 }
@@ -432,7 +432,7 @@ body {
 .topic-num {
   font-family: var(--f-mono);
   font-size: 11px; font-weight: 500;
-  color: var(--blue);
+  color: var(--accent);
   flex-shrink: 0;
   width: 20px;
 }
@@ -501,7 +501,7 @@ body {
 .coach-content .suggestion {
   font-size: 12px; color: var(--text);
   background: var(--surf-2);
-  border-left: 2px solid var(--blue);
+  border-left: 2px solid var(--accent);
   padding: 8px 12px;
   margin-top: 8px;
   font-style: italic;
@@ -612,7 +612,7 @@ body {
   letter-spacing: 0.04em;
 }
 .sentiment-positive { background: rgba(22,163,74,0.1); color: #15803d; }
-.sentiment-supportive { background: rgba(59,130,246,0.1); color: #2563eb; }
+.sentiment-supportive { background: var(--accent-muted); color: #be123c; }
 .sentiment-neutral { background: rgba(202,138,4,0.1); color: #a16207; }
 .sentiment-unknown { background: var(--surf-2); color: var(--tmuted); }
 
@@ -640,8 +640,8 @@ body {
   clip-path: polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
 }
 .view-btn.active {
-  background: var(--blue-muted);
-  color: var(--blue);
+  background: var(--accent-muted);
+  color: var(--accent);
 }
 .view-btn:hover:not(.active) { color: var(--text); }
 
@@ -669,19 +669,19 @@ body {
   position: relative;
 }
 .org-node.org-champion { border-color: rgba(22,163,74,0.35); box-shadow: 0 2px 8px rgba(22,163,74,0.08); }
-.org-node.org-engaged { border-color: rgba(59,130,246,0.35); box-shadow: 0 2px 8px rgba(59,130,246,0.06); }
+.org-node.org-engaged { border-color: var(--accent-glow); box-shadow: 0 2px 8px var(--accent-faint); }
 .org-node.org-no-access { border-color: rgba(220,38,38,0.25); opacity: 0.65; }
 .org-node.org-low { border-color: rgba(202,138,4,0.25); opacity: 0.8; }
 .org-avatar {
   width: 36px; height: 36px;
   border-radius: 50%;
-  background: var(--blue-muted);
+  background: var(--accent-muted);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--f-brand);
   font-size: 12px; font-weight: 600;
-  color: var(--blue);
+  color: var(--accent);
   margin: 0 auto 8px;
-  border: 1px solid rgba(59,130,246,0.15);
+  border: 1px solid var(--accent-muted);
 }
 .org-name { font-size: 13px; font-weight: 500; color: var(--text); }
 .org-title { font-size: 11px; color: var(--tmuted); margin-top: 2px; }
@@ -698,7 +698,7 @@ body {
 .org-role-dm { background: rgba(239,68,68,0.12); color: var(--red); }
 .org-role-eb { background: rgba(239,68,68,0.12); color: var(--red); }
 .org-role-champ { background: rgba(34,197,94,0.12); color: var(--green); }
-.org-role-tech { background: rgba(59,130,246,0.12); color: var(--blue); }
+.org-role-tech { background: var(--accent-muted); color: var(--accent); }
 .org-role-inf { background: rgba(234,179,8,0.12); color: var(--yellow); }
 .org-connector-vertical {
   width: 2px; height: 24px;
@@ -736,8 +736,8 @@ body {
   clip-path: polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
 }
 .hub-tab.active {
-  background: var(--blue-muted);
-  color: var(--blue);
+  background: var(--accent-muted);
+  color: var(--accent);
 }
 .hub-tab:hover:not(.active) { color: var(--text); }
 
@@ -751,20 +751,20 @@ body {
   transition: all var(--transition);
 }
 .upload-zone:hover {
-  border-color: var(--blue);
-  background: rgba(59,130,246,0.04);
+  border-color: var(--accent);
+  background: var(--accent-faint);
 }
 .upload-icon {
   color: var(--tmuted);
   margin-bottom: 10px;
 }
-.upload-zone:hover .upload-icon { color: var(--blue); }
+.upload-zone:hover .upload-icon { color: var(--accent); }
 .upload-text {
   font-size: 13px;
   color: var(--tmuted);
 }
 .upload-link {
-  color: var(--blue);
+  color: var(--accent);
   text-decoration: underline;
   cursor: pointer;
 }
@@ -978,26 +978,26 @@ body {
   border: none;
   clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 }
-.btn-primary { background: var(--blue); color: #fff; }
-.btn-primary:hover { background: #2563eb; }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #be123c; }
 .btn-secondary { background: var(--surf-2); color: var(--text); border: 1px solid var(--border); }
-.btn-secondary:hover { border-color: var(--blue); color: var(--blue); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
 /* ── AI CHAT WIDGET ───────────────────────────────────────────────── */
 .chat-fab {
   position: fixed;
   bottom: 52px; right: 24px;
   width: 52px; height: 52px;
-  background: var(--blue);
+  background: var(--accent);
   border: none;
   border-radius: 50%;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 20px rgba(59,130,246,0.4);
+  box-shadow: 0 4px 20px var(--accent-glow);
   transition: all var(--transition);
   z-index: 200;
 }
-.chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(59,130,246,0.5); }
+.chat-fab:hover { transform: scale(1.08); box-shadow: 0 6px 28px var(--accent-glow); }
 .chat-fab svg { width: 24px; height: 24px; fill: #fff; }
 .chat-fab.open { border-radius: 12px; }
 
@@ -1030,7 +1030,7 @@ body {
   color: var(--text);
   display: flex; align-items: center; gap: 8px;
 }
-.chat-top h3 .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+.chat-top h3 .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
 .chat-close {
   background: none; border: none;
   color: var(--tmuted); cursor: pointer;
@@ -1052,7 +1052,7 @@ body {
 }
 .chat-msg.user {
   align-self: flex-end;
-  background: var(--blue);
+  background: var(--accent);
   color: #fff;
   border-bottom-right-radius: 4px;
 }
@@ -1077,7 +1077,7 @@ body {
   border-radius: 8px;
   outline: none;
 }
-.chat-input:focus { border-color: var(--blue); }
+.chat-input:focus { border-color: var(--accent); }
 
 /* ── FORECAST REC ─────────────────────────────────────────────────── */
 .forecast-rec {
@@ -1153,7 +1153,7 @@ body {
 
 .loading-dots { display: inline-flex; gap: 4px; align-items: center; }
 .loading-dots span {
-  width: 6px; height: 6px; border-radius: 50%; background: var(--blue);
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
   animation: dotPulse 1.2s ease-in-out infinite;
 }
 .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
@@ -1162,7 +1162,7 @@ body {
 
 .generating-overlay {
   display: flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 20px; color: var(--blue); font-family: var(--f-mono);
+  padding: 20px; color: var(--accent); font-family: var(--f-mono);
   font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
 }
 
@@ -1176,7 +1176,7 @@ body {
 }
 .suggested-update .update-category {
   font-family: var(--f-mono); font-size: 10px; font-weight: 500;
-  text-transform: uppercase; letter-spacing: 0.06em; color: var(--blue);
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent);
 }
 .suggested-update .update-reason {
   font-size: 12px; color: var(--tmuted); line-height: 1.5;
@@ -1238,13 +1238,13 @@ body {
   outline: none; transition: border-color var(--transition);
   clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 }
-.textarea-input:focus { border-color: var(--blue); }
+.textarea-input:focus { border-color: var(--accent); }
 
 select.form-input { cursor: pointer; }
 
 .upload-zone.drag-over {
-  border-color: var(--blue);
-  background: rgba(59,130,246,0.06);
+  border-color: var(--accent);
+  background: var(--accent-faint);
 }
 
 .chat-input-row {
@@ -1252,13 +1252,13 @@ select.form-input { cursor: pointer; }
 }
 .chat-input-row .chat-input { flex: 1; }
 .chat-send-btn {
-  background: var(--blue); border: none; color: #fff;
+  background: var(--accent); border: none; color: #fff;
   width: 36px; height: 36px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer; flex-shrink: 0;
   transition: background var(--transition);
 }
-.chat-send-btn:hover { background: #2563eb; }
+.chat-send-btn:hover { background: #be123c; }
 .chat-send-btn:disabled { background: var(--surf-3); cursor: not-allowed; }
 
 .stake-table input.form-input,
@@ -1713,7 +1713,7 @@ function WelcomeScreen({ onCreate, deals, onSelect }) {
               marginBottom: 6, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               clipPath: 'polygon(6px 0%,calc(100% - 6px) 0%,100% 6px,100% calc(100% - 6px),calc(100% - 6px) 100%,6px 100%,0% calc(100% - 6px),0% 6px)',
               transition: 'border-color 0.2s',
-            }} onMouseOver={e => e.currentTarget.style.borderColor = 'var(--blue)'} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border)'}>
+            }} onMouseOver={e => e.currentTarget.style.borderColor = 'var(--accent)'} onMouseOut={e => e.currentTarget.style.borderColor = 'var(--border)'}>
               <span style={{fontWeight: 500, color: 'var(--text)'}}>{d.name}</span>
               <span style={{fontFamily: 'var(--f-mono)', fontSize: 10, color: 'var(--tmuted)'}}>Open →</span>
             </div>
@@ -1951,7 +1951,7 @@ function ImportFromSalesHub({ dealState }) {
     <div className="card">
       <div className="card-label" style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} onClick={() => setExpanded(!expanded)}>
         <span>Import from Sales Hub</span>
-        <span style={{fontSize: 12, color: 'var(--blue)'}}>{hubHistory.length} session{hubHistory.length !== 1 ? 's' : ''} found {expanded ? '▾' : '▸'}</span>
+        <span style={{fontSize: 12, color: 'var(--accent)'}}>{hubHistory.length} session{hubHistory.length !== 1 ? 's' : ''} found {expanded ? '▾' : '▸'}</span>
       </div>
       {expanded && (
         <div style={{marginTop: 8}}>
@@ -2136,7 +2136,7 @@ Sort calls chronologically. Deduplicate stakeholders. Score MEDDPICC based on AL
     <div className="card">
       <div className="card-label" style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} onClick={() => setExpanded(!expanded)}>
         <span>Mid-Deal Catchup</span>
-        <span style={{fontSize: 12, color: 'var(--blue)'}}>{expanded ? '▾' : '▸'}</span>
+        <span style={{fontSize: 12, color: 'var(--accent)'}}>{expanded ? '▾' : '▸'}</span>
       </div>
       {expanded && (
         <div style={{marginTop: 8}}>
@@ -2146,7 +2146,7 @@ Sort calls chronologically. Deduplicate stakeholders. Score MEDDPICC based on AL
           <div
             className="upload-zone"
             onDrop={handleFiles}
-            onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--blue)'; }}
+            onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--accent)'; }}
             onDragLeave={(e) => { e.currentTarget.style.borderColor = ''; }}
             onClick={() => fileInputRef.current?.click()}
           >
@@ -2225,7 +2225,7 @@ function DealDocuments({ dealState }) {
           input.onchange = (e) => handleFiles(Array.from(e.target.files));
           input.click();
         }}
-        onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--blue)'; }}
+        onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--accent)'; }}
         onDragLeave={(e) => { e.currentTarget.style.borderColor = ''; }}
         onDrop={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = ''; handleFiles(Array.from(e.dataTransfer.files)); }}
       >
@@ -2898,7 +2898,7 @@ Analyze everything above and output as JSON. You MUST include meddpicc updates b
             <div
               className="upload-zone"
               onDrop={handleFileDrop}
-              onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--blue)'; }}
+              onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--accent)'; }}
               onDragLeave={(e) => { e.currentTarget.style.borderColor = ''; }}
               onClick={() => fileInputRef.current?.click()}
             >
@@ -3001,7 +3001,7 @@ Analyze everything above and output as JSON. You MUST include meddpicc updates b
               ))}
               {debriefResult.suggestedUpdates.msp?.filter(m => m.name).map((m, i) => (
                 <div key={i} style={{fontSize: 12, color: 'var(--tmuted)', padding: '4px 0', display: 'flex', gap: 6}}>
-                  <span style={{color: 'var(--blue)'}}>+</span> Milestone: <strong style={{color: 'var(--text)'}}>{m.name}</strong> (Target: {m.target})
+                  <span style={{color: 'var(--accent)'}}>+</span> Milestone: <strong style={{color: 'var(--text)'}}>{m.name}</strong> (Target: {m.target})
                 </div>
               ))}
             </div>
@@ -3282,7 +3282,7 @@ function DealReviewSection({ dealState }) {
           <div className="sub">Deal Size</div>
         </div>
         <div className="health-card">
-          <div className="big-num" style={{color: 'var(--blue)'}}>{calls.length}</div>
+          <div className="big-num" style={{color: 'var(--accent)'}}>{calls.length}</div>
           <div className="sub">Calls Logged</div>
         </div>
         <div className="health-card">
@@ -3409,7 +3409,7 @@ function DealBriefSection({ dealState }) {
     const win = window.open('', '_blank');
     win.document.write(`<html><head><title>Deal Brief - ${setup.account}</title>
       <style>body{font-family:sans-serif;padding:40px;max-width:800px;margin:0 auto;color:#333;line-height:1.6;}
-      h1{font-size:24px;border-bottom:2px solid #3B82F6;padding-bottom:8px;}
+      h1{font-size:24px;border-bottom:2px solid #B8860B;padding-bottom:8px;}
       h2{font-size:16px;margin-top:20px;color:#5F6B7A;}
       li{margin-bottom:4px;}strong{color:#1A1D23;}</style></head><body>`);
     win.document.write(renderMarkdown(buildBriefText()));
