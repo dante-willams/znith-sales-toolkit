@@ -124,25 +124,42 @@ header{
   height:64px;
 }
 
-/* ── DARK THEME OVERRIDES ── */
+/* ── DARK THEME — full v1 palette ── */
 [data-theme="dark"]{
-  --navy-mid:    #2D3748;
+  /* Core page */
+  --bg:          #0A0E1A;
+  --surf:        #1A2332;
+  --surf-2:      #151C2B;
+  --border:      rgba(255,255,255,0.08);
+  --border-md:   rgba(255,255,255,0.15);
+  --text:        rgba(255,255,255,0.88);
+  --tmuted:      rgba(255,255,255,0.50);
+  --tfaint:      rgba(255,255,255,0.28);
+  /* Legacy card aliases */
+  --navy-mid:    #1E2A3C;
   --navy-light:  #1A2332;
   --navy-border: rgba(255,255,255,0.10);
   --white:       rgba(255,255,255,0.88);
   --white-dim:   rgba(255,255,255,0.50);
   --white-faint: rgba(255,255,255,0.08);
 }
+[data-theme="dark"] body { background: var(--bg); }
+[data-theme="dark"] .phase-title  { color: rgba(255,255,255,0.92); }
+[data-theme="dark"] .phase-subtitle { color: rgba(255,255,255,0.45); }
+[data-theme="dark"] .card-title   { color: rgba(255,255,255,0.92); }
+[data-theme="dark"] .form-label   { color: rgba(255,255,255,0.50); }
+[data-theme="dark"] .addenda-controls,
+[data-theme="dark"] .addenda-toggle { background: var(--surf); border-color: var(--border); color: var(--tmuted); }
 [data-theme="dark"] input[type=text],
 [data-theme="dark"] input[type=url],
 [data-theme="dark"] input[type=email],
 [data-theme="dark"] select,
 [data-theme="dark"] textarea { color: rgba(255,255,255,0.88); }
 [data-theme="dark"] input::placeholder,
-[data-theme="dark"] textarea::placeholder { color: rgba(240,244,255,0.25); }
-[data-theme="dark"] .input-wrap:focus-within { background: rgba(18,28,44,0.95); box-shadow: 0 0 0 3px var(--accent-faint); }
-[data-theme="dark"] .phase-title { color: rgba(255,255,255,0.92); }
-[data-theme="dark"] .phase-subtitle { color: rgba(255,255,255,0.50); }
+[data-theme="dark"] textarea::placeholder { color: rgba(240,244,255,0.22); }
+[data-theme="dark"] .input-wrap { background: #1E2A3C; border-color: rgba(255,255,255,0.10); }
+[data-theme="dark"] .input-wrap:focus-within { background: #243448; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-faint); }
+[data-theme="dark"] .input-wrap select option { background: #1A2332; }
 
 .theme-toggle-btn{
   background:transparent;
