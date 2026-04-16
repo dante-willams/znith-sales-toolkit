@@ -123,6 +123,40 @@ header{
   display:flex;align-items:center;justify-content:space-between;
   height:64px;
 }
+
+/* ── DARK THEME OVERRIDES ── */
+[data-theme="dark"]{
+  --navy-mid:    #2D3748;
+  --navy-light:  #1A2332;
+  --navy-border: rgba(255,255,255,0.10);
+  --white:       rgba(255,255,255,0.88);
+  --white-dim:   rgba(255,255,255,0.50);
+  --white-faint: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] input[type=text],
+[data-theme="dark"] input[type=url],
+[data-theme="dark"] input[type=email],
+[data-theme="dark"] select,
+[data-theme="dark"] textarea { color: rgba(255,255,255,0.88); }
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder { color: rgba(240,244,255,0.25); }
+[data-theme="dark"] .input-wrap:focus-within { background: rgba(18,28,44,0.95); box-shadow: 0 0 0 3px var(--accent-faint); }
+[data-theme="dark"] .phase-title { color: rgba(255,255,255,0.92); }
+[data-theme="dark"] .phase-subtitle { color: rgba(255,255,255,0.50); }
+
+.theme-toggle-btn{
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.5);
+  padding:5px 10px;
+  clip-path:var(--clip-sm);
+  cursor:pointer;
+  font-size:15px;
+  line-height:1;
+  transition:var(--transition);
+  margin-right:8px;
+}
+.theme-toggle-btn:hover{ border-color:var(--amber); color:var(--amber); }
 .header-logo{display:flex;align-items:center;gap:14px;}
 .logo-mark{
   width:36px;height:36px;
@@ -1194,6 +1228,7 @@ input[type=checkbox].chip-check{display:none;}
     <div class="step-dot" id="dot-3"></div>
   </div>
   <div class="header-right">
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
     <button class="header-briefs-btn" id="briefsBtn" onclick="showSavedBriefs()">
       📋 All Account Briefs <span class="briefs-count-badge" id="briefsCount">0</span>
     </button>
@@ -1751,6 +1786,24 @@ input[type=checkbox].chip-check{display:none;}
 </div>
 
 <script>
+// ════════════════════════════════════════════════════
+// THEME TOGGLE
+// ════════════════════════════════════════════════════
+(function(){
+  const saved = localStorage.getItem('ab-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+})();
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('ab-theme', next);
+  document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
 // ════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════
