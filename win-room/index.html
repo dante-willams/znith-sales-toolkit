@@ -1625,15 +1625,29 @@ function useDealState() {
   const createDeal = useCallback((name) => {
     const id = genId();
     const newDeal = { id, name, lastModified: new Date().toISOString(), health: 0 };
-    setDeals(prev => [...prev, newDeal]);
-    setActiveDealId(id);
-    localStorage.setItem(`winroom_${id}_setup`, JSON.stringify({...DEFAULT_SETUP, account: name}));
+    const freshSetup = {...DEFAULT_SETUP, account: name};
+    const freshMeddpicc = {...DEFAULT_MEDDPICC};
+    // Write to localStorage
+    localStorage.setItem(`winroom_${id}_setup`, JSON.stringify(freshSetup));
     localStorage.setItem(`winroom_${id}_stakeholders`, JSON.stringify([]));
     localStorage.setItem(`winroom_${id}_calls`, JSON.stringify([]));
-    localStorage.setItem(`winroom_${id}_meddpicc`, JSON.stringify({...DEFAULT_MEDDPICC}));
+    localStorage.setItem(`winroom_${id}_meddpicc`, JSON.stringify(freshMeddpicc));
     localStorage.setItem(`winroom_${id}_msp`, JSON.stringify({ milestones: [] }));
     localStorage.setItem(`winroom_${id}_summary`, JSON.stringify(''));
     localStorage.setItem(`winroom_${id}_chat`, JSON.stringify([]));
+    localStorage.setItem(`winroom_${id}_docs`, JSON.stringify([]));
+    // Force-reset React state immediately
+    _setSetup(freshSetup);
+    _setStakeholders([]);
+    _setCalls([]);
+    _setMeddpicc(freshMeddpicc);
+    _setMsp({ milestones: [] });
+    _setSummary('');
+    _setChatHistory([]);
+    // Update ref and index
+    dealIdRef.current = id;
+    setDeals(prev => [...prev, newDeal]);
+    setActiveDealId(id);
     return id;
   }, [setDeals, setActiveDealId]);
 
@@ -1691,6 +1705,34 @@ const CONGA_LOGO_PATH = "M568.721,606.067c-40.866,15.972-87.452,23.937-139.791,2
 // ═══════════════════════════════════════════════════════════════════
 // COMPONENTS
 // ═══════════════════════════════════════════════════════════════════
+
+// ─── Save Indicator ───
+function SaveIndicator({ show }) {
+  if (!show) return null;
+  return (
+    <div style={{
+      position: 'fixed', bottom: 52, left: '50%', transform: 'translateX(-50%)',
+      background: 'var(--navy)', color: 'var(--amber)', padding: '8px 20px',
+      fontFamily: 'var(--f-mono)', fontSize: 10, fontWeight: 500,
+      letterSpacing: '0.06em', textTransform: 'uppercase',
+      clipPath: 'var(--clip-sm)', zIndex: 250,
+      boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+      animation: 'fadeIn 0.2s ease',
+      display: 'flex', alignItems: 'center', gap: 6,
+    }}>
+      <span style={{color: 'var(--green)'}}>✓</span> Changes saved
+    </div>
+  );
+}
+
+function useSaveIndicator() {
+  const [show, setShow] = useState(false);
+  const trigger = useCallback(() => {
+    setShow(true);
+    setTimeout(() => setShow(false), 1500);
+  }, []);
+  return [show, trigger];
+}
 
 // ─── Loading Dots ───
 function LoadingDots() {
@@ -1874,6 +1916,7 @@ function Footer() {
 
 function DealSetup({ dealState }) {
   const { setup, setSetup } = dealState;
+  const [saveShow, triggerSave] = useSaveIndicator();
 
   const handleChange = (field, value) => {
     setSetup(prev => ({...prev, [field]: value}));
@@ -1881,6 +1924,7 @@ function DealSetup({ dealState }) {
 
   const handleBlur = () => {
     dealState.updateDealIndex();
+    triggerSave();
   };
 
   const fields = [
@@ -1903,6 +1947,7 @@ function DealSetup({ dealState }) {
         <h2>Deal Setup</h2>
         <p>Account and opportunity details for {setup.account || 'this deal'}</p>
       </div>
+      <SaveIndicator show={saveShow} />
       <div className="card">
         <div className="card-label">Account Information</div>
         <div className="form-grid">
@@ -2558,8 +2603,9 @@ function CallHub({ dealState }) {
       </div>
 
       <div className="hub-tabs">
-        <button className={`hub-tab ${tab === 'prep' ? 'active' : ''}`} onClick={() => setTab('prep')}>Prep</button>
-        <button className={`hub-tab ${tab === 'debrief' ? 'active' : ''}`} onClick={() => setTab('debrief')}>Debrief</button>
+        <button className={`hub-tab ${tab === 'prep' ? 'active' : ''}`} onClick={() => setTab('prep')}>Next Call Prep</button>
+        <button className={`hub-tab ${tab === 'debrief' ? 'active' : ''}`} onClick={() => setTab('debrief')}>Log a Call</button>
+        <button className={`hub-tab ${tab === 'history' ? 'active' : ''}`} onClick={() => setTab('history')}>Call History ({dealState.calls.length})</button>
       </div>
 
       <CallTimeline dealState={dealState} />
@@ -2570,6 +2616,9 @@ function CallHub({ dealState }) {
       </div>
       <div style={{display: tab === 'debrief' ? 'block' : 'none'}}>
         <CallDebrief dealState={dealState} debriefResult={debriefResult} setDebriefResult={setDebriefResult} loading={debriefLoading} setLoading={setDebriefLoading} error={debriefError} setError={setDebriefError} form={debriefForm} setForm={setDebriefForm} files={debriefFiles} setFiles={setDebriefFiles} transcriptText={debriefTranscriptText} setTranscriptText={setDebriefTranscriptText} />
+      </div>
+      <div style={{display: tab === 'history' ? 'block' : 'none'}}>
+        <CallHistory dealState={dealState} />
       </div>
     </div>
   );
@@ -2624,6 +2673,136 @@ function CallTimeline({ dealState }) {
         </div>
       )}
     </>
+  );
+}
+
+// ─── Call History (editable list of all past calls) ───
+function CallHistory({ dealState }) {
+  const { calls, setCalls } = dealState;
+  const sortedCalls = [...calls].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const [editingId, setEditingId] = useState(null);
+  const [saved, setSaved] = useState('');
+
+  const updateCall = (id, field, value) => {
+    setCalls(prev => prev.map(c => c.id === id ? {...c, [field]: value} : c));
+  };
+
+  const deleteCall = (id) => {
+    if (confirm('Delete this call? This cannot be undone.')) {
+      setCalls(prev => prev.filter(c => c.id !== id));
+    }
+  };
+
+  const saveEdits = () => {
+    setEditingId(null);
+    setSaved('Changes saved');
+    setTimeout(() => setSaved(''), 2000);
+  };
+
+  if (!calls.length) {
+    return (
+      <div className="empty-state">
+        <h3>No Calls Logged</h3>
+        <p>Use the "Log a Call" tab to add your first call with transcript and notes.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {saved && <div style={{padding: '8px 14px', background: 'rgba(22,163,74,0.08)', color: 'var(--green)', fontSize: 12, fontFamily: 'var(--f-mono)', marginBottom: 12, clipPath: 'var(--clip-sm)'}}>{saved}</div>}
+      <div style={{fontSize: 12, color: 'var(--tmuted)', marginBottom: 16}}>{calls.length} call{calls.length !== 1 ? 's' : ''} logged</div>
+      {sortedCalls.map((c, i) => {
+        const isEditing = editingId === c.id;
+        const callNum = calls.length - i;
+        // Flags
+        const flags = [];
+        if (!c.attendees) flags.push('No attendees recorded');
+        if (!c.summary || c.summary.length < 20) flags.push('Missing or incomplete summary');
+        if (!c.transcript && (!c.notes || c.notes.length < 20)) flags.push('No transcript or detailed notes');
+
+        return (
+          <div key={c.id} className="card" style={{borderLeft: '3px solid var(--accent)'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10}}>
+              <div>
+                <div style={{display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4}}>
+                  <span className="prep-badge badge-amber">Call #{callNum}</span>
+                  {isEditing ? (
+                    <select className="form-input" value={c.type} onChange={e => updateCall(c.id, 'type', e.target.value)} style={{padding: '3px 8px', fontSize: 12}}>
+                      {CALL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  ) : (
+                    <span style={{fontFamily: 'var(--f-mono)', fontSize: 11, color: 'var(--tmuted)', textTransform: 'uppercase', letterSpacing: '0.04em'}}>{c.type || 'Unknown'}</span>
+                  )}
+                </div>
+                {isEditing ? (
+                  <input className="form-input" type="date" value={c.date || ''} onChange={e => updateCall(c.id, 'date', e.target.value)} style={{padding: '3px 8px', fontSize: 12, marginBottom: 4}} />
+                ) : (
+                  <div style={{fontSize: 12, color: 'var(--tfaint)'}}>{c.date ? new Date(c.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) : 'No date'}</div>
+                )}
+              </div>
+              <div style={{display: 'flex', gap: 6}}>
+                {isEditing ? (
+                  <button className="btn-sm approve" onClick={saveEdits}>Save</button>
+                ) : (
+                  <button className="btn-sm dismiss" onClick={() => setEditingId(c.id)}>Edit</button>
+                )}
+                <button className="btn-sm dismiss" onClick={() => deleteCall(c.id)} style={{color: 'var(--red)'}}>Delete</button>
+              </div>
+            </div>
+
+            {/* Attendees */}
+            <div style={{marginBottom: 8}}>
+              <div style={{fontFamily: 'var(--f-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--tfaint)', marginBottom: 3}}>Attendees</div>
+              {isEditing ? (
+                <input className="form-input" value={c.attendees || ''} onChange={e => updateCall(c.id, 'attendees', e.target.value)} placeholder="e.g. Sarah Chen, Dev Patel" style={{fontSize: 12}} />
+              ) : (
+                <div style={{fontSize: 13, color: c.attendees ? 'var(--text)' : 'var(--tfaint)'}}>{c.attendees || 'Not recorded'}</div>
+              )}
+            </div>
+
+            {/* Summary */}
+            <div style={{marginBottom: 8}}>
+              <div style={{fontFamily: 'var(--f-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--tfaint)', marginBottom: 3}}>Summary</div>
+              {isEditing ? (
+                <textarea className="textarea-input" value={c.summary || ''} onChange={e => updateCall(c.id, 'summary', e.target.value)} rows={3} style={{fontSize: 12}} />
+              ) : (
+                <div style={{fontSize: 13, color: 'var(--tmuted)', lineHeight: 1.55}}>{c.summary || 'No summary available'}</div>
+              )}
+            </div>
+
+            {/* Outcomes / Notes */}
+            {(c.notes || isEditing) && (
+              <div style={{marginBottom: 8}}>
+                <div style={{fontFamily: 'var(--f-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--tfaint)', marginBottom: 3}}>Key Outcomes</div>
+                {isEditing ? (
+                  <textarea className="textarea-input" value={c.notes || ''} onChange={e => updateCall(c.id, 'notes', e.target.value)} rows={2} style={{fontSize: 12}} />
+                ) : (
+                  <div style={{fontSize: 12, color: 'var(--tmuted)'}}>{c.notes}</div>
+                )}
+              </div>
+            )}
+
+            {/* Feedback (from AI debrief, if exists) */}
+            {c.feedback && (
+              <div style={{marginTop: 8, padding: '8px 12px', background: 'var(--surf-2)', clipPath: 'var(--clip-sm)'}}>
+                <div style={{fontFamily: 'var(--f-mono)', fontSize: 9, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--tfaint)', marginBottom: 3}}>AI Feedback</div>
+                <div style={{fontSize: 12, color: 'var(--tmuted)', lineHeight: 1.5}}>{c.feedback}</div>
+              </div>
+            )}
+
+            {/* Flags */}
+            {flags.length > 0 && !isEditing && (
+              <div style={{marginTop: 8, display: 'flex', gap: 6, flexWrap: 'wrap'}}>
+                {flags.map((f, fi) => (
+                  <span key={fi} style={{fontSize: 10, fontFamily: 'var(--f-mono)', color: 'var(--yellow)', background: 'rgba(234,88,12,0.08)', padding: '2px 8px', clipPath: 'var(--clip-sm)'}}>⚠ {f}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
