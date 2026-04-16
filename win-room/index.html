@@ -1547,93 +1547,50 @@ function useDealState() {
   const [deals, setDeals] = usePersistedState('winroom_deals', []);
   const [activeDealId, setActiveDealId] = usePersistedState('winroom_active_deal', null);
 
-  const getDealKey = useCallback((suffix) => `winroom_${activeDealId}_${suffix}`, [activeDealId]);
+  // Use a ref so write functions always have the current deal ID
+  const dealIdRef = useRef(activeDealId);
+  useEffect(() => { dealIdRef.current = activeDealId; }, [activeDealId]);
 
-  const readDealSlice = useCallback((suffix, defaultVal) => {
-    if (!activeDealId) return defaultVal;
-    try { return JSON.parse(localStorage.getItem(`winroom_${activeDealId}_${suffix}`)) ?? defaultVal; }
+  function readSlice(suffix, defaultVal, dealId) {
+    const id = dealId || dealIdRef.current;
+    if (!id) return defaultVal;
+    try { return JSON.parse(localStorage.getItem(`winroom_${id}_${suffix}`)) ?? defaultVal; }
     catch { return defaultVal; }
-  }, [activeDealId]);
+  }
 
-  const writeDealSlice = useCallback((suffix, value) => {
-    if (!activeDealId) return;
-    try { localStorage.setItem(`winroom_${activeDealId}_${suffix}`, JSON.stringify(value)); } catch(e) {}
-  }, [activeDealId]);
+  function writeSlice(suffix, value) {
+    const id = dealIdRef.current;
+    if (!id) return;
+    try { localStorage.setItem(`winroom_${id}_${suffix}`, JSON.stringify(value)); } catch(e) {}
+  }
 
-  const [setup, _setSetup] = useState(() => readDealSlice('setup', {...DEFAULT_SETUP}));
-  const [stakeholders, _setStakeholders] = useState(() => readDealSlice('stakeholders', []));
-  const [calls, _setCalls] = useState(() => readDealSlice('calls', []));
-  const [meddpicc, _setMeddpicc] = useState(() => readDealSlice('meddpicc', {...DEFAULT_MEDDPICC}));
-  const [msp, _setMsp] = useState(() => readDealSlice('msp', { milestones: [] }));
-  const [summary, _setSummary] = useState(() => readDealSlice('summary', ''));
-  const [chatHistory, _setChatHistory] = useState(() => readDealSlice('chat', []));
+  const [setup, _setSetup] = useState(() => readSlice('setup', {...DEFAULT_SETUP}));
+  const [stakeholders, _setStakeholders] = useState(() => readSlice('stakeholders', []));
+  const [calls, _setCalls] = useState(() => readSlice('calls', []));
+  const [meddpicc, _setMeddpicc] = useState(() => readSlice('meddpicc', {...DEFAULT_MEDDPICC}));
+  const [msp, _setMsp] = useState(() => readSlice('msp', { milestones: [] }));
+  const [summary, _setSummary] = useState(() => readSlice('summary', ''));
+  const [chatHistory, _setChatHistory] = useState(() => readSlice('chat', []));
 
-  const setSetup = useCallback((v) => {
-    _setSetup(prev => {
-      const val = typeof v === 'function' ? v(prev) : v;
-      writeDealSlice('setup', val);
-      return val;
-    });
-  }, [writeDealSlice]);
-
-  const setStakeholders = useCallback((v) => {
-    _setStakeholders(prev => {
-      const val = typeof v === 'function' ? v(prev) : v;
-      writeDealSlice('stakeholders', val);
-      return val;
-    });
-  }, [writeDealSlice]);
-
-  const setCalls = useCallback((v) => {
-    _setCalls(prev => {
-      const val = typeof v === 'function' ? v(prev) : v;
-      writeDealSlice('calls', val);
-      return val;
-    });
-  }, [writeDealSlice]);
-
-  const setMeddpicc = useCallback((v) => {
-    _setMeddpicc(prev => {
-      const val = typeof v === 'function' ? v(prev) : v;
-      writeDealSlice('meddpicc', val);
-      return val;
-    });
-  }, [writeDealSlice]);
-
-  const setMsp = useCallback((v) => {
-    _setMsp(prev => {
-      const val = typeof v === 'function' ? v(prev) : v;
-      writeDealSlice('msp', val);
-      return val;
-    });
-  }, [writeDealSlice]);
-
-  const setSummary = useCallback((v) => {
-    _setSummary(prev => {
-      const val = typeof v === 'function' ? v(prev) : v;
-      writeDealSlice('summary', val);
-      return val;
-    });
-  }, [writeDealSlice]);
-
-  const setChatHistory = useCallback((v) => {
-    _setChatHistory(prev => {
-      const val = typeof v === 'function' ? v(prev) : v;
-      writeDealSlice('chat', val);
-      return val;
-    });
-  }, [writeDealSlice]);
+  // Write-through setters: update React state AND localStorage in one shot
+  const setSetup = (v) => { _setSetup(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('setup', val); return val; }); };
+  const setStakeholders = (v) => { _setStakeholders(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('stakeholders', val); return val; }); };
+  const setCalls = (v) => { _setCalls(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('calls', val); return val; }); };
+  const setMeddpicc = (v) => { _setMeddpicc(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('meddpicc', val); return val; }); };
+  const setMsp = (v) => { _setMsp(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('msp', val); return val; }); };
+  const setSummary = (v) => { _setSummary(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('summary', val); return val; }); };
+  const setChatHistory = (v) => { _setChatHistory(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('chat', val); return val; }); };
 
   // Re-load slices when activeDealId changes
   useEffect(() => {
     if (!activeDealId) return;
-    _setSetup(readDealSlice('setup', {...DEFAULT_SETUP}));
-    _setStakeholders(readDealSlice('stakeholders', []));
-    _setCalls(readDealSlice('calls', []));
-    _setMeddpicc(readDealSlice('meddpicc', {...DEFAULT_MEDDPICC}));
-    _setMsp(readDealSlice('msp', { milestones: [] }));
-    _setSummary(readDealSlice('summary', ''));
-    _setChatHistory(readDealSlice('chat', []));
+    _setSetup(readSlice('setup', {...DEFAULT_SETUP}, activeDealId));
+    _setStakeholders(readSlice('stakeholders', [], activeDealId));
+    _setCalls(readSlice('calls', [], activeDealId));
+    _setMeddpicc(readSlice('meddpicc', {...DEFAULT_MEDDPICC}, activeDealId));
+    _setMsp(readSlice('msp', { milestones: [] }, activeDealId));
+    _setSummary(readSlice('summary', '', activeDealId));
+    _setChatHistory(readSlice('chat', [], activeDealId));
   }, [activeDealId]);
 
   const createDeal = useCallback((name) => {
@@ -1893,9 +1850,9 @@ function DealSetup({ dealState }) {
     { key: 'erp', label: 'ERP', type: 'text' },
     { key: 'opportunity', label: 'Opportunity Name', type: 'text', full: true },
     { key: 'stage', label: 'Stage', type: 'select', options: STAGE_OPTIONS },
-    { key: 'products', label: 'Products', type: 'text' },
-    { key: 'dealSize', label: 'Deal Size', type: 'text' },
-    { key: 'closeTarget', label: 'Close Target', type: 'text' },
+    { key: 'products', label: 'Conga Products', type: 'text', placeholder: 'e.g. CLM, CPQ, Revenue Lifecycle Cloud' },
+    { key: 'dealSize', label: 'Deal Size (ARR)', type: 'text', placeholder: 'e.g. $485,000' },
+    { key: 'closeTarget', label: 'Target Close Date', type: 'date' },
   ];
 
   return (
@@ -1922,10 +1879,11 @@ function DealSetup({ dealState }) {
               ) : (
                 <input
                   className="form-input"
-                  type="text"
+                  type={f.type || 'text'}
                   value={setup[f.key] || ''}
                   onChange={(e) => handleChange(f.key, e.target.value)}
                   onBlur={handleBlur}
+                  placeholder={f.placeholder || ''}
                 />
               )}
             </div>
@@ -3420,9 +3378,11 @@ function DealBriefSection({ dealState }) {
     return brief;
   };
 
+  const [copyMsg, setCopyMsg] = useState('');
   const copyToClipboard = () => {
     navigator.clipboard.writeText(buildBriefText()).then(() => {
-      alert('Brief copied to clipboard!');
+      setCopyMsg('Copied to clipboard!');
+      setTimeout(() => setCopyMsg(''), 3000);
     });
   };
 
@@ -3470,6 +3430,7 @@ function DealBriefSection({ dealState }) {
       <div className="brief-actions">
         <button className="btn btn-primary" onClick={exportPDF}>Export as PDF</button>
         <button className="btn btn-secondary" onClick={copyToClipboard}>Copy to Clipboard</button>
+        {copyMsg && <span style={{fontSize: 12, color: 'var(--green)', marginLeft: 8, fontFamily: 'var(--f-mono)'}}>{copyMsg}</span>}
       </div>
     </div>
   );
