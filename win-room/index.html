@@ -185,16 +185,36 @@ body {
 
 .section-header {
   margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
-.section-header h2 {
+.section-header-text h2 {
   font-family: var(--f-brand);
   font-size: 20px; font-weight: 800;
   color: var(--navy);
   margin-bottom: 4px;
 }
-.section-header p {
+.section-header-text p {
   font-size: 13px;
   color: var(--tmuted);
+}
+.section-save-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.section-save-area .saved-flash {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--green);
+  text-transform: uppercase;
+  animation: fadeIn 0.15s ease;
 }
 
 /* ── CARDS ─────────────────────────────────────────────────────────── */
@@ -1734,6 +1754,33 @@ function useSaveIndicator() {
   return [show, trigger];
 }
 
+// ─── Section Save Button ───
+function SectionSaveBtn({ dealState }) {
+  const [saved, setSaved] = useState(false);
+  const handleSave = () => {
+    dealState.updateDealIndex();
+    setSaved(true);
+    setTimeout(() => setSaved(false), 1600);
+  };
+  return (
+    <div className="section-save-area">
+      {saved && <span className="saved-flash">✓ Saved</span>}
+      <button
+        className="btn-sm"
+        onClick={handleSave}
+        style={{
+          background: 'var(--accent)', color: '#fff',
+          border: 'none', padding: '6px 16px',
+          fontFamily: 'var(--f-mono)', fontSize: 11,
+          fontWeight: 600, letterSpacing: '0.04em',
+          textTransform: 'uppercase', cursor: 'pointer',
+          clipPath: 'var(--clip-sm)',
+        }}
+      >Save</button>
+    </div>
+  );
+}
+
 // ─── Loading Dots ───
 function LoadingDots() {
   return <span className="loading-dots"><span></span><span></span><span></span></span>;
@@ -1942,8 +1989,11 @@ function DealSetup({ dealState }) {
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
-        <h2>Deal Setup</h2>
-        <p>Account and opportunity details for {setup.account || 'this deal'}</p>
+        <div className="section-header-text">
+          <h2>Deal Setup</h2>
+          <p>Account and opportunity details for {setup.account || 'this deal'}</p>
+        </div>
+        <SectionSaveBtn dealState={dealState} />
       </div>
       <SaveIndicator show={saveShow} />
       <div className="card">
@@ -2447,8 +2497,11 @@ function StakeholderSection({ dealState }) {
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
-        <h2>Stakeholder Map</h2>
-        <p>{stakeholders.length} contacts mapped for {dealState.setup.account || 'this deal'}</p>
+        <div className="section-header-text">
+          <h2>Stakeholder Map</h2>
+          <p>{stakeholders.length} contacts mapped for {dealState.setup.account || 'this deal'}</p>
+        </div>
+        <SectionSaveBtn dealState={dealState} />
       </div>
 
       <div className="view-toggle">
@@ -2596,8 +2649,11 @@ function CallHub({ dealState }) {
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
-        <h2>Call Hub</h2>
-        <p>Prepare, execute, and debrief every customer interaction</p>
+        <div className="section-header-text">
+          <h2>Call Hub</h2>
+          <p>Prepare, execute, and debrief every customer interaction</p>
+        </div>
+        <SectionSaveBtn dealState={dealState} />
       </div>
 
       <div className="hub-tabs">
@@ -3333,8 +3389,11 @@ function StrategySection({ dealState }) {
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
-        <h2>MEDDIC</h2>
-        <p>MEDDPICC scorecard and competitive positioning</p>
+        <div className="section-header-text">
+          <h2>MEDDIC</h2>
+          <p>MEDDPICC scorecard and competitive positioning</p>
+        </div>
+        <SectionSaveBtn dealState={dealState} />
       </div>
 
       <div className="card">
@@ -3434,8 +3493,11 @@ function MutualPlanSection({ dealState }) {
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
-        <h2>Mutual Success Plan</h2>
-        <p>Shared milestones and timeline with {dealState.setup.account || 'the customer'}</p>
+        <div className="section-header-text">
+          <h2>Mutual Success Plan</h2>
+          <p>Shared milestones and timeline with {dealState.setup.account || 'the customer'}</p>
+        </div>
+        <SectionSaveBtn dealState={dealState} />
       </div>
 
       {/* Visual Timeline */}
@@ -3541,8 +3603,11 @@ function DealReviewSection({ dealState }) {
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
-        <h2>Deal Review</h2>
-        <p>Health dashboard and risk assessment</p>
+        <div className="section-header-text">
+          <h2>Deal Review</h2>
+          <p>Health dashboard and risk assessment</p>
+        </div>
+        <SectionSaveBtn dealState={dealState} />
       </div>
 
       <div className="health-dashboard">
@@ -3703,8 +3768,11 @@ function DealBriefSection({ dealState }) {
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
-        <h2>Deal Brief</h2>
-        <p>Exportable summary for leadership review</p>
+        <div className="section-header-text">
+          <h2>Deal Brief</h2>
+          <p>Exportable summary for leadership review</p>
+        </div>
+        <SectionSaveBtn dealState={dealState} />
       </div>
 
       {briefSections.map(s => (
