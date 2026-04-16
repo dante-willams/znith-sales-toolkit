@@ -26,9 +26,9 @@
   --accent-muted: rgba(184,134,11,0.12);
   --accent-faint: rgba(184,134,11,0.08);
 
-  /* Status colors */
+  /* Status colors (visually distinct from amber UI accent) */
   --green:  #16a34a;
-  --yellow: #ca8a04;
+  --yellow: #EA580C;   /* orange — clearly not amber */
   --red:    #dc2626;
   --blue:   #3B82F6;
   --blue-muted: var(--accent-muted);
@@ -415,7 +415,7 @@ body {
 .badge-amber { background: var(--amber-muted); color: var(--amber); }
 .badge-green { background: rgba(34,197,94,0.12); color: var(--green); }
 .badge-red { background: rgba(239,68,68,0.12); color: var(--red); }
-.badge-yellow { background: rgba(234,179,8,0.12); color: var(--yellow); }
+.badge-yellow { background: rgba(234,88,12,0.12); color: var(--yellow); }
 
 .prep-overview {
   font-size: 13px; color: var(--tmuted);
@@ -619,7 +619,7 @@ body {
 }
 .sentiment-positive { background: rgba(22,163,74,0.1); color: #15803d; }
 .sentiment-supportive { background: var(--accent-muted); color: #9A7209; }
-.sentiment-neutral { background: rgba(202,138,4,0.1); color: #a16207; }
+.sentiment-neutral { background: rgba(234,88,12,0.1); color: #EA580C; }
 .sentiment-unknown { background: var(--surf-2); color: var(--tmuted); }
 
 /* ── VIEW TOGGLE (Stakeholders) ──────────────────────────────────── */
@@ -677,7 +677,7 @@ body {
 .org-node.org-champion { border-color: rgba(22,163,74,0.35); box-shadow: 0 2px 8px rgba(22,163,74,0.08); }
 .org-node.org-engaged { border-color: var(--accent-glow); box-shadow: 0 2px 8px var(--accent-faint); }
 .org-node.org-no-access { border-color: rgba(220,38,38,0.25); opacity: 0.65; }
-.org-node.org-low { border-color: rgba(202,138,4,0.25); opacity: 0.8; }
+.org-node.org-low { border-color: rgba(234,88,12,0.25); opacity: 0.8; }
 .org-avatar {
   width: 36px; height: 36px;
   border-radius: 50%;
@@ -705,7 +705,7 @@ body {
 .org-role-eb { background: rgba(239,68,68,0.12); color: var(--red); }
 .org-role-champ { background: rgba(34,197,94,0.12); color: var(--green); }
 .org-role-tech { background: var(--accent-muted); color: var(--accent); }
-.org-role-inf { background: rgba(234,179,8,0.12); color: var(--yellow); }
+.org-role-inf { background: rgba(234,88,12,0.12); color: var(--yellow); }
 .org-connector-vertical {
   width: 2px; height: 24px;
   background: var(--border);
