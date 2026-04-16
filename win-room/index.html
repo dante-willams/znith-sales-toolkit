@@ -3565,25 +3565,11 @@ function ContextPanel({ dealState }) {
     return name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
   };
 
-  // Health arc path computation
-  const arcRadius = 45;
-  const arcCX = 60;
-  const arcCY = 60;
-  const startAngle = Math.PI;
-  const endAngle = 0;
-  const scoreAngle = startAngle + ((healthScore / 100) * (endAngle - startAngle));
-
-  const describeArc = (cx, cy, r, start, end) => {
-    const x1 = cx + r * Math.cos(start);
-    const y1 = cy + r * Math.sin(start);
-    const x2 = cx + r * Math.cos(end);
-    const y2 = cy + r * Math.sin(end);
-    const angleDiff = Math.abs(end - start);
-    const largeArc = angleDiff > Math.PI ? 1 : 0;
-    // Sweep direction: 0 because we go from PI (left) toward 0 (right) — counter-clockwise visually up
-    return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 0 ${x2} ${y2}`;
-  };
-
+  // Health arc — use stroke-dasharray for reliability
+  // Semicircle from left to right, radius 45, circumference of half-circle = PI * 45 ≈ 141.37
+  const arcPath = "M 15 60 A 45 45 0 0 1 105 60"; // left to right semicircle
+  const arcLength = Math.PI * 45; // ~141.37
+  const filledLength = (healthScore / 100) * arcLength;
   const healthColor = healthScore >= 70 ? 'var(--green)' : healthScore >= 40 ? 'var(--yellow)' : 'var(--red)';
 
   const sortedCalls = [...calls].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
@@ -3595,8 +3581,9 @@ function ContextPanel({ dealState }) {
         <div className="health-widget">
           <div className="health-arc">
             <svg width="120" height="68" viewBox="0 0 120 68">
-              <path d={describeArc(arcCX, arcCY, arcRadius, startAngle, endAngle)} fill="none" stroke="var(--surf-2)" strokeWidth="8" strokeLinecap="round" />
-              <path d={describeArc(arcCX, arcCY, arcRadius, startAngle, scoreAngle)} fill="none" stroke={healthColor} strokeWidth="8" strokeLinecap="round" />
+              <path d={arcPath} fill="none" stroke="var(--border)" strokeWidth="8" strokeLinecap="round" />
+              <path d={arcPath} fill="none" stroke={healthColor} strokeWidth="8" strokeLinecap="round"
+                strokeDasharray={`${filledLength} ${arcLength}`} />
             </svg>
           </div>
           <div className="health-value" style={{color: healthColor}}>{healthScore}%</div>
