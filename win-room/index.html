@@ -1457,9 +1457,9 @@ function formatDate(d) {
 }
 
 function computeHealthScore(meddpicc) {
-  const scores = { green: 3, yellow: 2, red: 1 };
-  const total = Object.values(meddpicc).reduce((sum, v) => sum + (scores[v.status] || 1), 0);
-  return Math.round((total / 24) * 100);
+  const scores = { green: 2, yellow: 1, red: 0 };
+  const total = Object.values(meddpicc).reduce((sum, v) => sum + (scores[v.status] ?? 0), 0);
+  return Math.round((total / 16) * 100); // 8 elements × max 2 = 16
 }
 
 function getStatusColor(status) {
@@ -1677,7 +1677,7 @@ const NAV_LABELS = {
   'deal-setup': 'Setup',
   'stakeholders': 'Stakeholders',
   'call-hub': 'Call-Hub',
-  'strategy': 'Strategy',
+  'strategy': 'MEDDIC',
   'mutual-plan': 'Plan',
   'deal-review': 'Review',
   'deal-brief': 'Brief',
@@ -2735,8 +2735,8 @@ Output as JSON:
                     <li key={i}>
                       <span className="topic-num">{t.num || i + 1}</span>
                       <div className="topic-text">
-                        {t.text}
-                        {t.rationale && <em> -- {t.rationale}</em>}
+                        <strong style={{color: 'var(--navy)', display: 'block', marginBottom: 2}}>{t.text}</strong>
+                        {t.rationale && <span style={{fontSize: 12, color: 'var(--tmuted)'}}>{t.rationale}</span>}
                       </div>
                     </li>
                   ))}
@@ -3156,7 +3156,7 @@ function StrategySection({ dealState }) {
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
-        <h2>Deal Strategy</h2>
+        <h2>MEDDIC</h2>
         <p>MEDDPICC scorecard and competitive positioning</p>
       </div>
 
@@ -3578,8 +3578,10 @@ function ContextPanel({ dealState }) {
     const y1 = cy + r * Math.sin(start);
     const x2 = cx + r * Math.cos(end);
     const y2 = cy + r * Math.sin(end);
-    const largeArc = end - start > Math.PI ? 1 : 0;
-    return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
+    const angleDiff = Math.abs(end - start);
+    const largeArc = angleDiff > Math.PI ? 1 : 0;
+    // Sweep direction: 0 because we go from PI (left) toward 0 (right) — counter-clockwise visually up
+    return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 0 ${x2} ${y2}`;
   };
 
   const healthColor = healthScore >= 70 ? 'var(--green)' : healthScore >= 40 ? 'var(--yellow)' : 'var(--red)';
