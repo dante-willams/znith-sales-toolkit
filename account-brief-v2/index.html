@@ -1407,7 +1407,7 @@ input[type=checkbox].chip-check{display:none;}
         ondrop="handleDrop(event)">
         <div class="drop-zone-icon">📂</div>
         <div class="drop-zone-title">Drop files here or click to browse</div>
-        <div class="drop-zone-sub">Up to 5 files · Contents are read and used to sharpen every section</div>
+        <div class="drop-zone-sub">Up to 20 files · Contents are read and used to sharpen every section</div>
         <div class="drop-zone-types">.pdf · .txt · .docx · .md · .csv</div>
       </div>
       <input type="file" id="fileInput" multiple accept=".pdf,.txt,.docx,.md,.csv,.eml"
@@ -3111,7 +3111,7 @@ function updateContact(id, field, value) {
 // DOCUMENT UPLOAD
 // ════════════════════════════════════════════════════
 const FILE_ICONS = { pdf:'📄', txt:'📝', md:'📝', docx:'📋', doc:'📋', csv:'📊', eml:'📧', default:'📎' };
-const FILE_LIMITS = { maxFiles: 5, maxSizeMB: 10 };
+const FILE_LIMITS = { maxFiles: 20, maxSizeMB: 10 };
 
 function getFileExt(name) { return name.split('.').pop().toLowerCase(); }
 function getFileIcon(name) { return FILE_ICONS[getFileExt(name)] || FILE_ICONS.default; }
@@ -3140,7 +3140,7 @@ function handleFileInputChange(fileList) {
 
 function handleFiles(files) {
   const remaining = FILE_LIMITS.maxFiles - state.uploadedDocuments.length;
-  if (remaining <= 0) { alert('Maximum 5 files reached. Remove a file to add another.'); return; }
+  if (remaining <= 0) { alert('Maximum 20 files reached. Remove a file to add another.'); return; }
   files.slice(0, remaining).forEach(file => {
     if (file.size > FILE_LIMITS.maxSizeMB * 1048576) {
       alert(`"${file.name}" exceeds the ${FILE_LIMITS.maxSizeMB}MB limit and was skipped.`); return;
