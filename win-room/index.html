@@ -2200,6 +2200,16 @@ function StakeholderSection({ dealState }) {
 
 function CallHub({ dealState }) {
   const [tab, setTab] = useState('prep');
+  // Lift state up so it survives tab switches
+  const [prepResult, setPrepResult] = usePersistedState(`winroom_${dealState.activeDealId}_prepResult`, null);
+  const [prepLoading, setPrepLoading] = useState(false);
+  const [prepError, setPrepError] = useState('');
+  const [debriefResult, setDebriefResult] = usePersistedState(`winroom_${dealState.activeDealId}_debriefResult`, null);
+  const [debriefLoading, setDebriefLoading] = useState(false);
+  const [debriefError, setDebriefError] = useState('');
+  const [debriefForm, setDebriefForm] = useState({ callType: '', callDate: '', attendees: '', notes: '' });
+  const [debriefFiles, setDebriefFiles] = useState([]);
+  const [debriefTranscriptText, setDebriefTranscriptText] = useState('');
 
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
@@ -2213,10 +2223,15 @@ function CallHub({ dealState }) {
         <button className={`hub-tab ${tab === 'debrief' ? 'active' : ''}`} onClick={() => setTab('debrief')}>Debrief</button>
       </div>
 
-      {/* Call Timeline */}
       <CallTimeline dealState={dealState} />
 
-      {tab === 'prep' ? <CallPrep dealState={dealState} /> : <CallDebrief dealState={dealState} />}
+      {/* Use display:none instead of unmounting so state survives */}
+      <div style={{display: tab === 'prep' ? 'block' : 'none'}}>
+        <CallPrep dealState={dealState} prepResult={prepResult} setPrepResult={setPrepResult} loading={prepLoading} setLoading={setPrepLoading} error={prepError} setError={setPrepError} />
+      </div>
+      <div style={{display: tab === 'debrief' ? 'block' : 'none'}}>
+        <CallDebrief dealState={dealState} debriefResult={debriefResult} setDebriefResult={setDebriefResult} loading={debriefLoading} setLoading={setDebriefLoading} error={debriefError} setError={setDebriefError} form={debriefForm} setForm={setDebriefForm} files={debriefFiles} setFiles={setDebriefFiles} transcriptText={debriefTranscriptText} setTranscriptText={setDebriefTranscriptText} />
+      </div>
     </div>
   );
 }
@@ -2273,30 +2288,37 @@ function CallTimeline({ dealState }) {
   );
 }
 
-function CallPrep({ dealState }) {
-  const [callType, setCallType] = useState('Discovery');
-  const [callDate, setCallDate] = useState('');
-  const [attendees, setAttendees] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [prepResult, setPrepResult] = useState(null);
-  const [error, setError] = useState('');
+function CallPrep({ dealState, prepResult, setPrepResult, loading, setLoading, error, setError }) {
+  // Auto-infer next call type based on deal stage and history
+  const inferredCallType = useMemo(() => {
+    const callCount = dealState.calls.length;
+    const stage = dealState.setup.stage || '';
+    if (callCount === 0) return 'Discovery';
+    const lastCall = [...dealState.calls].sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+    const lastType = lastCall?.type || '';
+    if (lastType === 'Discovery') return 'Technical Deep-Dive';
+    if (lastType === 'Technical Deep-Dive') return 'Demo';
+    if (lastType === 'Demo') return 'Scoping';
+    if (lastType === 'Scoping') return 'Executive/EB Meeting';
+    if (stage.includes('Negotiation')) return 'Negotiation';
+    return 'Follow-up';
+  }, [dealState.calls, dealState.setup.stage]);
 
   const generatePrep = async () => {
     setLoading(true);
     setError('');
-    setPrepResult(null);
 
-    const prompt = `Based on the deal context above, generate call prep for:
-- Call Type: ${callType}
-- Date: ${callDate || 'TBD'}
-- Attendees: ${attendees || 'TBD'}
+    const prompt = `Based on the deal context above, generate call prep for the next call.
+${dealState.calls.length > 0 ? `This is call #${dealState.calls.length + 1} in the deal cycle. Infer the most logical call type and attendees from context.` : 'This appears to be the first call.'}
 
 Output as JSON:
 {
-  "overview": "2-3 sentence strategic framing",
-  "topics": [{"num": 1, "text": "topic with talk track", "rationale": "why this matters now"}],
-  "coachNudges": [{"severity": "red|yellow|green", "category": "MEDDPICC element", "message": "the issue", "suggestion": "specific thing to say in quotes"}],
-  "landmines": ["thing to avoid"]
+  "inferredCallType": "what type of call this should be",
+  "inferredAttendees": "who should be on this call based on deal context",
+  "overview": "2-3 sentence strategic framing of what this call should accomplish",
+  "topics": [{"num": 1, "text": "topic with specific talk track in italics", "rationale": "why this matters now"}],
+  "coachNudges": [{"severity": "red|yellow|green", "category": "MEDDPICC element or strategic area", "message": "the specific issue", "suggestion": "exact thing to say or do, in quotes"}],
+  "landmines": ["specific thing to avoid and why"]
 }`;
 
     try {
@@ -2319,32 +2341,35 @@ Output as JSON:
     setLoading(false);
   };
 
+  // Auto-generate prep if calls exist and no prep result yet
+  const hasAutoTriggered = useRef(false);
+  useEffect(() => {
+    if (dealState.calls.length > 0 && !prepResult && !loading && !hasAutoTriggered.current) {
+      hasAutoTriggered.current = true;
+      generatePrep();
+    }
+  }, [dealState.calls.length]);
+
   return (
     <div>
-      <div className="card">
-        <div className="card-label">Next Call Setup</div>
-        <div className="form-grid-3">
-          <div className="form-group">
-            <label className="form-label">Call Type</label>
-            <select className="form-input" value={callType} onChange={e => setCallType(e.target.value)}>
-              {CALL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-          <div className="form-group">
-            <label className="form-label">Date</label>
-            <input className="form-input" type="date" value={callDate} onChange={e => setCallDate(e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Attendees</label>
-            <input className="form-input" type="text" value={attendees} onChange={e => setAttendees(e.target.value)} placeholder="Names, comma separated" />
-          </div>
-        </div>
-        <div style={{marginTop: 16}}>
+      {!prepResult && !loading && dealState.calls.length === 0 && (
+        <div className="card">
+          <div className="card-label">Next Call: {inferredCallType}</div>
+          <p style={{fontSize: 13, color: 'var(--tmuted)', marginBottom: 16}}>
+            Log your first call in the Debrief tab, then call prep will auto-generate based on your deal context.
+          </p>
           <button className="btn btn-primary" onClick={generatePrep} disabled={loading}>
-            {loading ? <><LoadingDots /> Generating...</> : 'Generate Call Prep'}
+            {loading ? <><LoadingDots /> Generating...</> : 'Generate Call Prep Anyway'}
           </button>
         </div>
-      </div>
+      )}
+
+      {dealState.calls.length > 0 && !prepResult && !loading && (
+        <div className="card">
+          <div className="card-label">Generating prep for Call #{dealState.calls.length + 1}</div>
+          <button className="btn btn-primary" onClick={generatePrep}>Generate Call Prep</button>
+        </div>
+      )}
 
       {loading && (
         <div className="generating-overlay">
@@ -2426,17 +2451,7 @@ Output as JSON:
   );
 }
 
-function CallDebrief({ dealState }) {
-  const [callType, setCallType] = useState('Discovery');
-  const [callDate, setCallDate] = useState('');
-  const [attendees, setAttendees] = useState('');
-  const [notes, setNotes] = useState('');
-  const [files, setFiles] = useState([]);
-  const [transcriptText, setTranscriptText] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [debriefResult, setDebriefResult] = useState(null);
-  const [approvedUpdates, setApprovedUpdates] = useState({});
-  const [error, setError] = useState('');
+function CallDebrief({ dealState, debriefResult, setDebriefResult, loading, setLoading, error, setError, form, setForm, files, setFiles, transcriptText, setTranscriptText }) {
   const fileInputRef = useRef(null);
 
   const handleFileDrop = async (e) => {
@@ -2445,53 +2460,56 @@ function CallDebrief({ dealState }) {
     const droppedFiles = Array.from(e.dataTransfer?.files || e.target?.files || []);
     const readFiles = [];
     for (const f of droppedFiles) {
-      try {
-        const parsed = await readFile(f);
-        readFiles.push(parsed);
-      } catch (err) {
-        console.error(err);
-      }
+      try { readFiles.push(await readFile(f)); } catch (err) { console.error(err); }
     }
     setFiles(prev => [...prev, ...readFiles]);
-    // Extract text content
-    const textContent = readFiles
-      .filter(f => f.type === 'text')
-      .map(f => f.text)
-      .join('\n\n');
+    const textContent = readFiles.filter(f => f.type === 'text').map(f => f.text).join('\n\n');
     if (textContent) setTranscriptText(prev => prev ? prev + '\n\n' + textContent : textContent);
   };
 
-  const removeFile = (idx) => {
-    setFiles(prev => prev.filter((_, i) => i !== idx));
-  };
+  const removeFile = (idx) => setFiles(prev => prev.filter((_, i) => i !== idx));
 
   const analyzeCall = async () => {
     setLoading(true);
     setError('');
-    setDebriefResult(null);
-    setApprovedUpdates({});
+
+    // Normalize MEDDPICC keys for AI output mapping
+    const meddpiccKeyMap = `Use EXACTLY these keys for meddpicc updates: metrics, economicBuyer, decisionCriteria, decisionProcess, implicatePain, champion, competition, paperProcess`;
 
     const prompt = `Analyze this completed call for deal: ${dealState.setup.account || 'Unknown'}
 
 Call details:
-- Type: ${callType} | Date: ${callDate || 'Not specified'} | Attendees: ${attendees || 'Not specified'}
+- Type: ${form.callType || 'Not specified'} | Date: ${form.callDate || 'Not specified'} | Attendees: ${form.attendees || 'Not specified'}
 
-${transcriptText ? 'TRANSCRIPT:\n' + transcriptText.slice(0, 8000) : ''}
-${notes ? 'REP NOTES:\n' + notes : ''}
+${transcriptText ? 'CALL TRANSCRIPT / DOCUMENTS:\n' + transcriptText.slice(0, 15000) : ''}
+${form.notes ? '\nREP NOTES:\n' + form.notes : ''}
 
-Output as JSON:
+IMPORTANT: ${meddpiccKeyMap}
+
+Analyze everything above and output as JSON. You MUST include meddpicc updates based on any evidence found — score each element that has ANY signal in the transcript:
 {
-  "callSummary": "3-5 sentence summary",
+  "inferredCallType": "infer the call type from content",
+  "inferredAttendees": "names mentioned in transcript",
+  "callSummary": "3-5 sentence summary of what happened",
   "performanceFeedback": {
-    "strengths": ["specific things done well from the call"],
-    "improvements": ["constructive feedback with alternatives"]
+    "strengths": ["3-5 specific things done well, with evidence from transcript"],
+    "improvements": ["3-5 constructive points with specific alternative approaches"]
   },
   "suggestedUpdates": {
-    "stakeholders": [{"action": "add", "name": "", "title": "", "role": "", "engagement": "", "sentiment": "", "reason": ""}],
-    "meddpicc": {},
-    "msp": [{"action": "add", "name": "", "target": "", "owner": "", "status": "", "reason": ""}]
+    "stakeholders": [{"action": "add|update", "name": "", "title": "", "role": "Champion|Economic Buyer|Technical Evaluator|Decision Maker|Influencer|Coach|Blocker|End User", "engagement": "High|Medium|Low|No access", "sentiment": "Positive|Supportive|Neutral|Negative|Unknown", "reason": ""}],
+    "meddpicc": {
+      "metrics": {"newStatus": "green|yellow|red", "newEvidence": "specific evidence from call", "reason": "why this status"},
+      "economicBuyer": {"newStatus": "green|yellow|red", "newEvidence": "...", "reason": "..."},
+      "decisionCriteria": {"newStatus": "green|yellow|red", "newEvidence": "...", "reason": "..."},
+      "decisionProcess": {"newStatus": "green|yellow|red", "newEvidence": "...", "reason": "..."},
+      "implicatePain": {"newStatus": "green|yellow|red", "newEvidence": "...", "reason": "..."},
+      "champion": {"newStatus": "green|yellow|red", "newEvidence": "...", "reason": "..."},
+      "competition": {"newStatus": "green|yellow|red", "newEvidence": "...", "reason": "..."},
+      "paperProcess": {"newStatus": "green|yellow|red", "newEvidence": "...", "reason": "..."}
+    },
+    "msp": [{"action": "add|update", "name": "", "target": "", "owner": "", "status": "Done|Overdue|At Risk|Upcoming", "reason": ""}]
   },
-  "dealStateSummaryUpdate": "Updated 300-500 word rolling summary incorporating this call"
+  "dealStateSummaryUpdate": "Updated 300-500 word rolling summary incorporating this call. Reference specific names, dates, and outcomes."
 }`;
 
     try {
@@ -2505,6 +2523,8 @@ Output as JSON:
       const parsed = safeParseJSON(text);
       if (parsed) {
         setDebriefResult(parsed);
+        // AUTO-APPLY: Save call + apply all updates immediately
+        autoApplyDebrief(parsed);
       } else {
         setDebriefResult({ callSummary: text, performanceFeedback: { strengths: [], improvements: [] }, suggestedUpdates: {}, dealStateSummaryUpdate: '' });
       }
@@ -2514,164 +2534,185 @@ Output as JSON:
     setLoading(false);
   };
 
-  const approveUpdate = (key) => {
-    setApprovedUpdates(prev => ({...prev, [key]: true}));
-  };
-
-  const dismissUpdate = (key) => {
-    setApprovedUpdates(prev => ({...prev, [key]: false}));
-  };
-
-  const saveDebrief = () => {
-    // Add call to history
+  const autoApplyDebrief = (result) => {
+    // Save call to history
     const newCall = {
       id: genId(),
-      type: callType,
-      date: callDate || new Date().toISOString().split('T')[0],
-      attendees: attendees,
-      summary: debriefResult?.callSummary || notes,
-      transcript: transcriptText,
-      notes: notes,
+      type: result.inferredCallType || form.callType || 'Follow-up',
+      date: form.callDate || new Date().toISOString().split('T')[0],
+      attendees: result.inferredAttendees || form.attendees || '',
+      summary: result.callSummary || form.notes,
+      transcript: transcriptText?.slice(0, 20000),
+      notes: form.notes,
     };
     dealState.setCalls(prev => [...prev, newCall]);
 
-    // Apply approved stakeholder updates
-    if (debriefResult?.suggestedUpdates?.stakeholders && approvedUpdates) {
-      debriefResult.suggestedUpdates.stakeholders.forEach((s, i) => {
-        if (approvedUpdates[`stake_${i}`]) {
-          dealState.setStakeholders(prev => [...prev, {
-            id: genId(),
-            name: s.name || '',
-            title: s.title || '',
-            role: s.role || 'Influencer',
-            engagement: s.engagement || 'Medium',
-            sentiment: s.sentiment || 'Unknown',
-            notes: s.reason || '',
-          }]);
+    // Auto-apply ALL stakeholder updates
+    if (result.suggestedUpdates?.stakeholders) {
+      result.suggestedUpdates.stakeholders.forEach(s => {
+        if (s.name) {
+          // Check if stakeholder already exists
+          const exists = dealState.stakeholders.find(
+            existing => existing.name.toLowerCase() === s.name.toLowerCase()
+          );
+          if (!exists) {
+            dealState.setStakeholders(prev => [...prev, {
+              id: genId(), name: s.name || '', title: s.title || '',
+              role: s.role || 'Influencer', engagement: s.engagement || 'Medium',
+              sentiment: s.sentiment || 'Unknown', notes: s.reason || '',
+            }]);
+          }
         }
       });
     }
 
-    // Apply approved MEDDPICC updates
-    if (debriefResult?.suggestedUpdates?.meddpicc && approvedUpdates) {
-      const meddUpdates = debriefResult.suggestedUpdates.meddpicc;
-      Object.entries(meddUpdates).forEach(([key, val]) => {
-        if (approvedUpdates[`medd_${key}`] && DEFAULT_MEDDPICC[key]) {
-          dealState.setMeddpicc(prev => ({
-            ...prev,
-            [key]: { status: val.newStatus || prev[key]?.status, evidence: val.newEvidence || prev[key]?.evidence }
-          }));
-        }
+    // Auto-apply ALL MEDDPICC updates
+    if (result.suggestedUpdates?.meddpicc) {
+      dealState.setMeddpicc(prev => {
+        const updated = {...prev};
+        Object.entries(result.suggestedUpdates.meddpicc).forEach(([key, val]) => {
+          if (updated[key] && val.newStatus) {
+            updated[key] = { status: val.newStatus, evidence: val.newEvidence || updated[key].evidence };
+          }
+        });
+        return updated;
       });
     }
 
-    // Apply approved MSP updates
-    if (debriefResult?.suggestedUpdates?.msp && approvedUpdates) {
-      debriefResult.suggestedUpdates.msp.forEach((m, i) => {
-        if (approvedUpdates[`msp_${i}`]) {
+    // Auto-apply MSP updates
+    if (result.suggestedUpdates?.msp) {
+      result.suggestedUpdates.msp.forEach(m => {
+        if (m.name) {
           dealState.setMsp(prev => ({
             ...prev,
             milestones: [...prev.milestones, {
-              id: genId(),
-              name: m.name || '',
-              target: m.target || '',
-              owner: m.owner || '',
-              status: m.status || 'Upcoming',
+              id: genId(), name: m.name, target: m.target || '',
+              owner: m.owner || '', status: m.status || 'Upcoming',
             }]
           }));
         }
       });
     }
 
-    // Update summary
-    if (debriefResult?.dealStateSummaryUpdate) {
-      dealState.setSummary(debriefResult.dealStateSummaryUpdate);
+    // Update rolling summary
+    if (result.dealStateSummaryUpdate) {
+      dealState.setSummary(result.dealStateSummaryUpdate);
     }
 
     dealState.updateDealIndex();
 
-    // Reset form
-    setCallType('Discovery');
-    setCallDate('');
-    setAttendees('');
-    setNotes('');
+    // Clear form for next call (but keep result visible)
+    setForm({ callType: '', callDate: '', attendees: '', notes: '' });
     setFiles([]);
     setTranscriptText('');
+  };
+
+  const clearResults = () => {
     setDebriefResult(null);
-    setApprovedUpdates({});
-    alert('Call saved and updates applied!');
+    setForm({ callType: '', callDate: '', attendees: '', notes: '' });
+    setFiles([]);
+    setTranscriptText('');
   };
 
   return (
     <div>
-      <div className="card">
-        <div className="card-label">Call Details</div>
-        <div className="form-grid-3">
-          <div className="form-group">
-            <label className="form-label">Call Type</label>
-            <select className="form-input" value={callType} onChange={e => setCallType(e.target.value)}>
-              {CALL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
-          <div className="form-group">
-            <label className="form-label">Date</label>
-            <input className="form-input" type="date" value={callDate} onChange={e => setCallDate(e.target.value)} />
-          </div>
-          <div className="form-group">
-            <label className="form-label">Attendees</label>
-            <input className="form-input" type="text" value={attendees} onChange={e => setAttendees(e.target.value)} placeholder="Names, comma separated" />
+      {/* Show banner if results exist from previous analysis */}
+      {debriefResult && (
+        <div className="card" style={{borderColor: 'var(--green)', background: 'rgba(22,163,74,0.04)'}}>
+          <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between'}}>
+            <div>
+              <span style={{color: 'var(--green)', fontFamily: 'var(--f-mono)', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 500}}>
+                ✓ Call analyzed & changes auto-applied
+              </span>
+              <p style={{fontSize: 12, color: 'var(--tmuted)', marginTop: 4}}>
+                Stakeholders, MEDDPICC, milestones, and deal summary have been updated. Review changes across sections.
+              </p>
+            </div>
+            <button className="btn btn-secondary" onClick={clearResults} style={{flexShrink: 0}}>Log Another Call</button>
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="card">
-        <div className="card-label">Transcript</div>
-        <div
-          className="upload-zone"
-          onDrop={handleFileDrop}
-          onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
-          onDragLeave={(e) => { e.currentTarget.classList.remove('drag-over'); }}
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <div className="upload-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          </div>
-          <div className="upload-text">
-            Drop transcript files here or <span className="upload-link">browse</span>
-          </div>
-          <div className="upload-formats">TXT, VTT, SRT, PDF supported</div>
-          <input ref={fileInputRef} type="file" accept=".txt,.vtt,.srt,.pdf,.doc,.docx" multiple style={{display: 'none'}} onChange={handleFileDrop} />
-        </div>
-        {files.length > 0 && (
-          <div className="file-list">
-            {files.map((f, i) => (
-              <div className="file-item" key={i}>
-                <span>{f.name}</span>
-                <button className="remove-btn" onClick={() => removeFile(i)}>&times;</button>
+      {!debriefResult && (
+        <>
+          <div className="card">
+            <div className="card-label">Call Details</div>
+            <div className="form-grid-3">
+              <div className="form-group">
+                <label className="form-label">Call Type <span style={{color: 'var(--tfaint)', textTransform: 'none', letterSpacing: 0, fontWeight: 400}}>(optional — AI will infer)</span></label>
+                <select className="form-input" value={form.callType} onChange={e => setForm(prev => ({...prev, callType: e.target.value}))}>
+                  <option value="">Auto-detect</option>
+                  {CALL_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
               </div>
-            ))}
+              <div className="form-group">
+                <label className="form-label">Date</label>
+                <input className="form-input" type="date" value={form.callDate} onChange={e => setForm(prev => ({...prev, callDate: e.target.value}))} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Attendees <span style={{color: 'var(--tfaint)', textTransform: 'none', letterSpacing: 0, fontWeight: 400}}>(optional — AI will extract)</span></label>
+                <input className="form-input" type="text" value={form.attendees} onChange={e => setForm(prev => ({...prev, attendees: e.target.value}))} placeholder="Auto-detected from transcript" />
+              </div>
+            </div>
           </div>
-        )}
-      </div>
 
-      <div className="card">
-        <div className="card-label">Rep Notes</div>
-        <textarea
-          className="textarea-input"
-          value={notes}
-          onChange={e => setNotes(e.target.value)}
-          placeholder="What happened? Key takeaways, action items, signals..."
-          rows={4}
-        />
-      </div>
+          <div className="card">
+            <div className="card-label">Upload Call Materials</div>
+            <p style={{fontSize: 12, color: 'var(--tmuted)', marginBottom: 10}}>
+              Transcripts, call recordings, customer documents, RFPs, emails, or any files from this interaction
+            </p>
+            <div
+              className="upload-zone"
+              onDrop={handleFileDrop}
+              onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--blue)'; }}
+              onDragLeave={(e) => { e.currentTarget.style.borderColor = ''; }}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <div className="upload-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              </div>
+              <div className="upload-text">
+                Drop files here or <span className="upload-link">browse</span>
+              </div>
+              <div className="upload-formats">Transcripts, RFPs, emails, PDFs, DOCX, TXT — any call-related materials</div>
+              <input ref={fileInputRef} type="file" accept=".txt,.vtt,.srt,.pdf,.doc,.docx,.md,.rtf,.csv" multiple style={{display: 'none'}} onChange={handleFileDrop} />
+            </div>
+            {files.length > 0 && (
+              <div className="file-list">
+                {files.map((f, i) => (
+                  <div className="file-item" key={i}>
+                    <span>{f.name}</span>
+                    <button className="remove-btn" onClick={() => removeFile(i)}>×</button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
-      <button className="btn btn-primary" onClick={analyzeCall} disabled={loading || (!notes && !transcriptText)}>
-        {loading ? <><LoadingDots /> Analyzing...</> : 'Analyze Call & Generate Feedback'}
-      </button>
+          <div className="card">
+            <div className="card-label">Rep Notes</div>
+            <textarea
+              className="textarea-input"
+              value={form.notes}
+              onChange={e => setForm(prev => ({...prev, notes: e.target.value}))}
+              placeholder="What happened? Key takeaways, action items, signals... Anything not in the transcript."
+              rows={4}
+            />
+          </div>
+
+          <button className="btn btn-primary" onClick={analyzeCall} disabled={loading || (!form.notes && !transcriptText)} style={{width: '100%', padding: 12}}>
+            {loading ? <><LoadingDots /> Analyzing...</> : 'Analyze Call & Generate Feedback'}
+          </button>
+          <div style={{textAlign: 'center', fontSize: 11, color: 'var(--tfaint)', marginTop: 6, fontFamily: 'var(--f-mono)'}}>
+            Estimated time: 30-60 seconds depending on transcript length
+          </div>
+        </>
+      )}
 
       {loading && (
-        <div className="generating-overlay" style={{marginTop: 16}}>
-          <LoadingDots /> Analyzing call and generating feedback...
+        <div className="generating-overlay" style={{marginTop: 16, flexDirection: 'column', gap: 4}}>
+          <div style={{display: 'flex', alignItems: 'center', gap: 10}}><LoadingDots /> Analyzing call transcript and generating feedback...</div>
+          <div style={{fontSize: 10, color: 'var(--tfaint)'}}>This typically takes 30-60 seconds</div>
         </div>
       )}
 
@@ -2684,25 +2725,18 @@ Output as JSON:
 
       {debriefResult && (
         <div style={{marginTop: 16}}>
-          {/* Call Summary */}
           <div className="card">
-            <div className="card-label">Call Summary</div>
+            <div className="card-label">Call Summary {debriefResult.inferredCallType && `— ${debriefResult.inferredCallType}`}</div>
             <p style={{fontSize: 13, color: 'var(--tmuted)', lineHeight: 1.6}}>{debriefResult.callSummary}</p>
           </div>
 
-          {/* Performance Feedback */}
           <div className="perf-block">
-            <div className="perf-header">
-              <h3>Performance Feedback</h3>
-            </div>
+            <div className="perf-header"><h3>Performance Feedback</h3></div>
             {debriefResult.performanceFeedback?.strengths?.length > 0 && (
               <>
                 <div className="perf-group-title">Strengths</div>
                 {debriefResult.performanceFeedback.strengths.map((s, i) => (
-                  <div className="perf-item" key={i}>
-                    <span className="icon" style={{color: 'var(--green)'}}>&#10003;</span>
-                    <span>{s}</span>
-                  </div>
+                  <div className="perf-item" key={i}><span className="icon" style={{color: 'var(--green)'}}>✓</span><span>{s}</span></div>
                 ))}
               </>
             )}
@@ -2710,99 +2744,34 @@ Output as JSON:
               <>
                 <div className="perf-group-title sharpen">Areas to Sharpen</div>
                 {debriefResult.performanceFeedback.improvements.map((s, i) => (
-                  <div className="perf-item" key={i}>
-                    <span className="icon" style={{color: 'var(--yellow)'}}>&#x1F527;</span>
-                    <span>{s}</span>
-                  </div>
+                  <div className="perf-item" key={i}><span className="icon" style={{color: 'var(--yellow)'}}>→</span><span>{s}</span></div>
                 ))}
               </>
             )}
           </div>
 
-          {/* Suggested Updates */}
+          {/* Show what was auto-applied */}
           {debriefResult.suggestedUpdates && (
             <div className="card">
-              <div className="card-label">Suggested Updates</div>
-
-              {/* Stakeholder updates */}
-              {debriefResult.suggestedUpdates.stakeholders?.map((s, i) => (
-                <div className="suggested-update" key={`stake_${i}`}>
-                  <div className="update-header">
-                    <span className="update-category">Stakeholder: {s.action}</span>
-                    {approvedUpdates[`stake_${i}`] === true && <span className="prep-badge badge-green">Approved</span>}
-                    {approvedUpdates[`stake_${i}`] === false && <span className="prep-badge badge-red">Dismissed</span>}
-                  </div>
-                  <div style={{fontSize: 13, color: 'var(--text)', marginBottom: 4}}>
-                    <strong>{s.name}</strong> - {s.title} ({s.role})
-                  </div>
-                  <div className="update-reason">{s.reason}</div>
-                  {approvedUpdates[`stake_${i}`] === undefined && (
-                    <div className="update-actions">
-                      <button className="btn-sm approve" onClick={() => approveUpdate(`stake_${i}`)}>Approve</button>
-                      <button className="btn-sm dismiss" onClick={() => dismissUpdate(`stake_${i}`)}>Dismiss</button>
-                    </div>
-                  )}
+              <div className="card-label">Changes Applied</div>
+              {debriefResult.suggestedUpdates.stakeholders?.filter(s => s.name).map((s, i) => (
+                <div key={i} style={{fontSize: 12, color: 'var(--tmuted)', padding: '4px 0', display: 'flex', gap: 6}}>
+                  <span style={{color: 'var(--green)'}}>+</span> Stakeholder: <strong style={{color: 'var(--text)'}}>{s.name}</strong> ({s.role})
                 </div>
               ))}
-
-              {/* MEDDPICC updates */}
               {debriefResult.suggestedUpdates.meddpicc && Object.entries(debriefResult.suggestedUpdates.meddpicc).map(([key, val]) => (
-                <div className="suggested-update" key={`medd_${key}`}>
-                  <div className="update-header">
-                    <span className="update-category">MEDDPICC: {MEDDPICC_LABELS[key] || key}</span>
-                    {approvedUpdates[`medd_${key}`] === true && <span className="prep-badge badge-green">Approved</span>}
-                    {approvedUpdates[`medd_${key}`] === false && <span className="prep-badge badge-red">Dismissed</span>}
-                  </div>
-                  <div style={{fontSize: 13, color: 'var(--text)', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8}}>
-                    <span style={{display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: getStatusColor(val.newStatus)}}></span>
-                    {val.newStatus?.toUpperCase()} {val.newEvidence && ` -- ${val.newEvidence}`}
-                  </div>
-                  <div className="update-reason">{val.reason}</div>
-                  {approvedUpdates[`medd_${key}`] === undefined && (
-                    <div className="update-actions">
-                      <button className="btn-sm approve" onClick={() => approveUpdate(`medd_${key}`)}>Approve</button>
-                      <button className="btn-sm dismiss" onClick={() => dismissUpdate(`medd_${key}`)}>Dismiss</button>
-                    </div>
-                  )}
+                <div key={key} style={{fontSize: 12, color: 'var(--tmuted)', padding: '4px 0', display: 'flex', alignItems: 'center', gap: 6}}>
+                  <span style={{display: 'inline-block', width: 7, height: 7, borderRadius: '50%', background: getStatusColor(val.newStatus)}}></span>
+                  {MEDDPICC_LABELS[key] || key}: <strong style={{color: 'var(--text)'}}>{val.newStatus}</strong> — {val.newEvidence?.slice(0, 80)}
                 </div>
               ))}
-
-              {/* MSP updates */}
-              {debriefResult.suggestedUpdates.msp?.map((m, i) => (
-                <div className="suggested-update" key={`msp_${i}`}>
-                  <div className="update-header">
-                    <span className="update-category">Milestone: {m.action}</span>
-                    {approvedUpdates[`msp_${i}`] === true && <span className="prep-badge badge-green">Approved</span>}
-                    {approvedUpdates[`msp_${i}`] === false && <span className="prep-badge badge-red">Dismissed</span>}
-                  </div>
-                  <div style={{fontSize: 13, color: 'var(--text)', marginBottom: 4}}>
-                    <strong>{m.name}</strong> - Target: {m.target} | Owner: {m.owner}
-                  </div>
-                  <div className="update-reason">{m.reason}</div>
-                  {approvedUpdates[`msp_${i}`] === undefined && (
-                    <div className="update-actions">
-                      <button className="btn-sm approve" onClick={() => approveUpdate(`msp_${i}`)}>Approve</button>
-                      <button className="btn-sm dismiss" onClick={() => dismissUpdate(`msp_${i}`)}>Dismiss</button>
-                    </div>
-                  )}
+              {debriefResult.suggestedUpdates.msp?.filter(m => m.name).map((m, i) => (
+                <div key={i} style={{fontSize: 12, color: 'var(--tmuted)', padding: '4px 0', display: 'flex', gap: 6}}>
+                  <span style={{color: 'var(--blue)'}}>+</span> Milestone: <strong style={{color: 'var(--text)'}}>{m.name}</strong> (Target: {m.target})
                 </div>
               ))}
             </div>
           )}
-
-          <div style={{display: 'flex', gap: 10, marginTop: 16}}>
-            <button className="btn btn-primary" onClick={saveDebrief}>Save Debrief & Apply Updates</button>
-            <button className="btn btn-secondary" onClick={() => {
-              // Accept all
-              const all = {};
-              debriefResult.suggestedUpdates?.stakeholders?.forEach((_, i) => { all[`stake_${i}`] = true; });
-              if (debriefResult.suggestedUpdates?.meddpicc) {
-                Object.keys(debriefResult.suggestedUpdates.meddpicc).forEach(k => { all[`medd_${k}`] = true; });
-              }
-              debriefResult.suggestedUpdates?.msp?.forEach((_, i) => { all[`msp_${i}`] = true; });
-              setApprovedUpdates(all);
-            }}>Accept All</button>
-          </div>
         </div>
       )}
     </div>
@@ -3495,13 +3464,13 @@ function App() {
       <div className="app-body">
         <NavRail active={activeSection} onNav={setActiveSection} />
         <main className="workspace">
-          {activeSection === 'deal-setup' && <DealSetup dealState={dealState} />}
-          {activeSection === 'stakeholders' && <StakeholderSection dealState={dealState} />}
-          {activeSection === 'call-hub' && <CallHub dealState={dealState} />}
-          {activeSection === 'strategy' && <StrategySection dealState={dealState} />}
-          {activeSection === 'mutual-plan' && <MutualPlanSection dealState={dealState} />}
-          {activeSection === 'deal-review' && <DealReviewSection dealState={dealState} />}
-          {activeSection === 'deal-brief' && <DealBriefSection dealState={dealState} />}
+          <div style={{display: activeSection === 'deal-setup' ? 'block' : 'none'}}><DealSetup dealState={dealState} /></div>
+          <div style={{display: activeSection === 'stakeholders' ? 'block' : 'none'}}><StakeholderSection dealState={dealState} /></div>
+          <div style={{display: activeSection === 'call-hub' ? 'block' : 'none'}}><CallHub dealState={dealState} /></div>
+          <div style={{display: activeSection === 'strategy' ? 'block' : 'none'}}><StrategySection dealState={dealState} /></div>
+          <div style={{display: activeSection === 'mutual-plan' ? 'block' : 'none'}}><MutualPlanSection dealState={dealState} /></div>
+          <div style={{display: activeSection === 'deal-review' ? 'block' : 'none'}}><DealReviewSection dealState={dealState} /></div>
+          <div style={{display: activeSection === 'deal-brief' ? 'block' : 'none'}}><DealBriefSection dealState={dealState} /></div>
         </main>
         <ContextPanel dealState={dealState} />
       </div>
