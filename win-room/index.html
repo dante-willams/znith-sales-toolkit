@@ -20,11 +20,11 @@
   --amber-faint: rgba(184,134,11,0.08);
   --amber-bg:    #FDF3DC;
 
-  /* Module accent — Win Room (rose) */
-  --accent:       #E11D48;
-  --accent-glow:  rgba(225,29,72,0.22);
-  --accent-muted: rgba(225,29,72,0.12);
-  --accent-faint: rgba(225,29,72,0.08);
+  /* Module accent — Win Room (amber, same as system) */
+  --accent:       #B8860B;
+  --accent-glow:  rgba(184,134,11,0.22);
+  --accent-muted: rgba(184,134,11,0.12);
+  --accent-faint: rgba(184,134,11,0.08);
 
   /* Status colors */
   --green:  #16a34a;
@@ -618,7 +618,7 @@ body {
   letter-spacing: 0.04em;
 }
 .sentiment-positive { background: rgba(22,163,74,0.1); color: #15803d; }
-.sentiment-supportive { background: var(--accent-muted); color: #be123c; }
+.sentiment-supportive { background: var(--accent-muted); color: #9A7209; }
 .sentiment-neutral { background: rgba(202,138,4,0.1); color: #a16207; }
 .sentiment-unknown { background: var(--surf-2); color: var(--tmuted); }
 
@@ -985,7 +985,7 @@ body {
   clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 }
 .btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: #be123c; }
+.btn-primary:hover { background: #9A7209; }
 .btn-secondary { background: var(--surf-2); color: var(--text); border: 1px solid var(--border); }
 .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -1273,7 +1273,7 @@ select.form-input { cursor: pointer; }
   cursor: pointer; flex-shrink: 0;
   transition: background var(--transition);
 }
-.chat-send-btn:hover { background: #be123c; }
+.chat-send-btn:hover { background: #9A7209; }
 .chat-send-btn:disabled { background: var(--surf-3); cursor: not-allowed; }
 
 .stake-table input.form-input,
