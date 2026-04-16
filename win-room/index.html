@@ -1364,7 +1364,7 @@ const DEFAULT_MEDDPICC = {
 const DEFAULT_SETUP = {
   account: '', industry: '', size: '', revenue: '',
   crm: '', erp: '', opportunity: '', stage: 'Discovery',
-  products: '', dealSize: '', closeTarget: '',
+  products: '', dealSize: '', closeTarget: '', accountContext: '',
 };
 
 const MEDDPICC_LABELS = {
@@ -1470,6 +1470,18 @@ function readFile(file) {
 
 function genId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
+// Try to extract a YYYY-MM-DD date from a filename (e.g. "4.16.Conga_ModMed.txt" → current-year-04-16)
+function extractDateFromFilename(filename) {
+  const y = new Date().getFullYear();
+  // ISO: 2025-04-16 or 2025.04.16
+  let m = filename.match(/(\d{4})[-.](\d{2})[-.](\d{2})/);
+  if (m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+  // M.D or M-D at start of filename (e.g. "4.16." or "04-16")
+  m = filename.match(/^(\d{1,2})[.\-_](\d{1,2})[.\-_]/);
+  if (m) return `${y}-${m[1].padStart(2,'0')}-${m[2].padStart(2,'0')}`;
+  return null;
+}
+
 function formatDate(d) {
   if (!d) return '';
   const date = new Date(d);
@@ -1516,7 +1528,9 @@ function buildDealContext({ setup, stakeholders, calls, meddpicc, msp, summary }
   ctx += `- Account: ${setup.account || 'Not set'} | Industry: ${setup.industry || 'N/A'} | Size: ${setup.size || 'N/A'}\n`;
   ctx += `- Revenue: ${setup.revenue || 'N/A'} | CRM: ${setup.crm || 'N/A'} | ERP: ${setup.erp || 'N/A'}\n`;
   ctx += `- Opportunity: ${setup.opportunity || 'Not set'} | Stage: ${setup.stage || 'N/A'}\n`;
-  ctx += `- Products: ${setup.products || 'N/A'} | Deal Size: ${setup.dealSize || 'N/A'} | Close Target: ${setup.closeTarget || 'N/A'}\n\n`;
+  ctx += `- Products: ${setup.products || 'N/A'} | Deal Size: ${setup.dealSize || 'N/A'} | Close Target: ${setup.closeTarget || 'N/A'}\n`;
+  if (setup.accountContext) ctx += `- Account Context: ${setup.accountContext}\n`;
+  ctx += '\n';
 
   if (stakeholders.length) {
     ctx += `### Stakeholders (${stakeholders.length})\n`;
@@ -1965,6 +1979,51 @@ function Footer() {
 function DealSetup({ dealState }) {
   const { setup, setSetup } = dealState;
   const [saveShow, triggerSave] = useSaveIndicator();
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupStatus, setLookupStatus] = useState('');
+  const hasAutoLooked = useRef(false);
+
+  // Auto-lookup when deal has account name but no industry yet (new deal)
+  useEffect(() => {
+    if (setup.account && !setup.industry && !lookupLoading && !hasAutoLooked.current) {
+      hasAutoLooked.current = true;
+      runAccountLookup();
+    }
+  }, [setup.account]);
+
+  const runAccountLookup = async () => {
+    if (!setup.account || lookupLoading) return;
+    setLookupLoading(true);
+    setLookupStatus('Looking up account intel...');
+    try {
+      const data = await callAPI({
+        model: API_CONFIG.fastModel,
+        messages: [{ role: 'user', content: `Sales intelligence for B2B rep. Based on your knowledge of "${setup.account}", fill in account details relevant to a Conga (CPQ, CLM, Revenue Lifecycle Cloud) opportunity.
+
+IMPORTANT: Raw JSON only — no markdown, no code fences. Start with {.
+
+{"industry":"specific vertical","size":"employee count range e.g. 500-2000","revenue":"estimated ARR range e.g. $50M-$200M","crm":"most likely CRM (Salesforce/HubSpot/Dynamics/etc.)","erp":"most likely ERP (SAP/Oracle/NetSuite/Workday/etc.)","context":"2-3 sentences about company relevant to revenue lifecycle / contract management opportunity"}
+
+If uncertain, make reasonable estimates. No null fields.` }],
+        maxTokens: 600,
+      });
+      const parsed = safeParseJSON(extractText(data));
+      if (parsed) {
+        setSetup(prev => ({
+          ...prev,
+          industry: prev.industry || parsed.industry || '',
+          size:     prev.size     || parsed.size     || '',
+          revenue:  prev.revenue  || parsed.revenue  || '',
+          crm:      prev.crm      || parsed.crm      || '',
+          erp:      prev.erp      || parsed.erp      || '',
+          accountContext: parsed.context || prev.accountContext || '',
+        }));
+        setLookupStatus('✓ Account intel loaded');
+        setTimeout(() => setLookupStatus(''), 3000);
+      }
+    } catch { setLookupStatus(''); }
+    setLookupLoading(false);
+  };
 
   const handleChange = (field, value) => {
     setSetup(prev => ({...prev, [field]: value}));
@@ -1983,6 +2042,7 @@ function DealSetup({ dealState }) {
     { key: 'crm', label: 'CRM', type: 'text' },
     { key: 'erp', label: 'ERP', type: 'text' },
     { key: 'opportunity', label: 'Opportunity Name', type: 'text', full: true },
+    { key: 'accountContext', label: 'Account Context', type: 'textarea', full: true, placeholder: 'Auto-populated by AI research — edit as needed' },
     { key: 'stage', label: 'Stage', type: 'select', options: STAGE_OPTIONS },
     { key: 'products', label: 'Conga Products', type: 'text', placeholder: 'e.g. CLM, CPQ, Revenue Lifecycle Cloud' },
     { key: 'dealSize', label: 'Deal Size (ARR)', type: 'text', placeholder: 'e.g. $485,000' },
@@ -2000,7 +2060,12 @@ function DealSetup({ dealState }) {
       </div>
       <SaveIndicator show={saveShow} />
       <div className="card">
-        <div className="card-label">Account Information</div>
+        <div style={{display:'flex', alignItems:'center', justifyContent:'space-between', marginBottom: 12}}>
+          <div className="card-label" style={{marginBottom:0}}>Account Information</div>
+          {lookupLoading && <span style={{fontSize:11, fontFamily:'var(--f-mono)', color:'var(--amber)', display:'flex', alignItems:'center', gap:6}}><LoadingDots /> Researching account...</span>}
+          {lookupStatus && !lookupLoading && <span style={{fontSize:11, fontFamily:'var(--f-mono)', color:'var(--green)', animation:'fadeIn 0.2s ease'}}>{lookupStatus}</span>}
+          {!lookupLoading && !lookupStatus && setup.account && <button className="btn-sm" onClick={runAccountLookup} style={{background:'transparent',border:'1px solid var(--border-md)',color:'var(--tmuted)',padding:'3px 10px',fontSize:10,fontFamily:'var(--f-mono)',cursor:'pointer',clipPath:'var(--clip-sm)',letterSpacing:'0.04em'}}>↻ Re-research</button>}
+        </div>
         <div className="form-grid">
           {fields.map(f => (
             <div key={f.key} className={`form-group ${f.full ? 'full' : ''}`}>
@@ -2014,6 +2079,16 @@ function DealSetup({ dealState }) {
                 >
                   {f.options.map(o => <option key={o} value={o}>{o}</option>)}
                 </select>
+              ) : f.type === 'textarea' ? (
+                <textarea
+                  className="form-input"
+                  value={setup[f.key] || ''}
+                  onChange={(e) => handleChange(f.key, e.target.value)}
+                  onBlur={handleBlur}
+                  placeholder={f.placeholder || ''}
+                  rows={2}
+                  style={{resize:'vertical', minHeight:52}}
+                />
               ) : (
                 <input
                   className="form-input"
@@ -2651,7 +2726,7 @@ function CallHub({ dealState }) {
   const [debriefResult, setDebriefResult] = usePersistedState(`winroom_${dealState.activeDealId}_debriefResult`, null);
   const [debriefLoading, setDebriefLoading] = useState(false);
   const [debriefError, setDebriefError] = useState('');
-  const [debriefForm, setDebriefForm] = useState({ callType: '', callDate: '', attendees: '', notes: '' });
+  const [debriefForm, setDebriefForm] = useState({ callType: '', callDate: new Date().toISOString().split('T')[0], attendees: '', notes: '' });
   const [debriefFiles, setDebriefFiles] = useState([]);
   const [debriefTranscriptText, setDebriefTranscriptText] = useState('');
 
@@ -3047,6 +3122,17 @@ function CallDebrief({ dealState, debriefResult, setDebriefResult, loading, setL
     setFiles(prev => [...prev, ...readFiles]);
     const textContent = readFiles.filter(f => f.type === 'text').map(f => f.text).join('\n\n');
     if (textContent) setTranscriptText(prev => prev ? prev + '\n\n' + textContent : textContent);
+    // Auto-suggest call date from first uploaded filename if date field is still today's default
+    const today = new Date().toISOString().split('T')[0];
+    if (readFiles.length > 0) {
+      for (const f of readFiles) {
+        const extracted = extractDateFromFilename(f.name);
+        if (extracted) {
+          setForm(prev => ({ ...prev, callDate: extracted }));
+          break;
+        }
+      }
+    }
   };
 
   const removeFile = (idx) => setFiles(prev => prev.filter((_, i) => i !== idx));
@@ -3072,6 +3158,7 @@ Analyze everything above and output as JSON. You MUST include meddpicc updates b
 {
   "inferredCallType": "infer the call type from content",
   "inferredAttendees": "names mentioned in transcript",
+  "inferredDate": "date of this call in YYYY-MM-DD format extracted from transcript content or filename — null if not found",
   "callSummary": "3-5 sentence summary of what happened",
   "performanceFeedback": {
     "strengths": ["3-5 specific things done well, with evidence from transcript"],
@@ -3121,7 +3208,7 @@ Analyze everything above and output as JSON. You MUST include meddpicc updates b
     const newCall = {
       id: genId(),
       type: result.inferredCallType || form.callType || 'Follow-up',
-      date: form.callDate || new Date().toISOString().split('T')[0],
+      date: form.callDate || result.inferredDate || new Date().toISOString().split('T')[0],
       attendees: result.inferredAttendees || form.attendees || '',
       summary: result.callSummary || form.notes,
       transcript: transcriptText?.slice(0, 20000),
@@ -3184,14 +3271,14 @@ Analyze everything above and output as JSON. You MUST include meddpicc updates b
     dealState.updateDealIndex();
 
     // Clear form for next call (but keep result visible)
-    setForm({ callType: '', callDate: '', attendees: '', notes: '' });
+    setForm({ callType: '', callDate: new Date().toISOString().split('T')[0], attendees: '', notes: '' });
     setFiles([]);
     setTranscriptText('');
   };
 
   const clearResults = () => {
     setDebriefResult(null);
-    setForm({ callType: '', callDate: '', attendees: '', notes: '' });
+    setForm({ callType: '', callDate: new Date().toISOString().split('T')[0], attendees: '', notes: '' });
     setFiles([]);
     setTranscriptText('');
   };
