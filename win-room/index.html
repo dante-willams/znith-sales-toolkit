@@ -1935,21 +1935,278 @@ function DealSetup({ dealState }) {
       {/* Deal Documents */}
       <DealDocuments dealState={dealState} />
 
-      <div style={{display: 'flex', gap: 10, marginTop: 8}}>
-        <button className="btn btn-secondary" onClick={() => {
-          try {
-            const history = JSON.parse(localStorage.getItem('conga_hub_history'));
-            if (history && history.length) {
-              alert('Found Sales Hub history! Import feature coming soon.');
-            } else {
-              alert('No Sales Hub history found in this browser.');
-            }
-          } catch { alert('No Sales Hub history found in this browser.'); }
-        }}>Import from Sales Hub</button>
-        <button className="btn btn-secondary" onClick={() => {
-          alert('Mid-Deal Catchup: Bulk transcript upload coming soon. Use Call Hub Debrief to add calls one at a time.');
-        }}>Mid-Deal Catchup</button>
+      {/* Import + Catchup */}
+      <ImportFromSalesHub dealState={dealState} />
+      <MidDealCatchup dealState={dealState} />
+    </div>
+  );
+}
+
+// ─── Import from Sales Hub ───
+function ImportFromSalesHub({ dealState }) {
+  const [hubHistory, setHubHistory] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('conga_hub_history') || '[]'); } catch { return []; }
+  });
+  const [expanded, setExpanded] = useState(false);
+  const [importing, setImporting] = useState(false);
+
+  if (!hubHistory.length) return null;
+
+  const doImport = (entry) => {
+    setImporting(true);
+    // Pre-fill setup with account info
+    dealState.setSetup(prev => ({
+      ...prev,
+      account: entry.account || prev.account,
+      stage: entry.stage || prev.stage,
+    }));
+    // Store the raw outputs for AI context
+    const existingDocs = (() => { try { return JSON.parse(localStorage.getItem(`winroom_${dealState.activeDealId}_docs`) || '[]'); } catch { return []; } })();
+    const importedDocs = Object.entries(entry.outputs || {}).map(([key, markdown]) => ({
+      id: genId(), name: `Sales Hub — ${key}.md`, type: 'text', text: markdown, uploadedAt: new Date().toISOString(),
+    }));
+    localStorage.setItem(`winroom_${dealState.activeDealId}_docs`, JSON.stringify([...existingDocs, ...importedDocs]));
+    setImporting(false);
+    setExpanded(false);
+  };
+
+  return (
+    <div className="card">
+      <div className="card-label" style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} onClick={() => setExpanded(!expanded)}>
+        <span>Import from Sales Hub</span>
+        <span style={{fontSize: 12, color: 'var(--blue)'}}>{hubHistory.length} session{hubHistory.length !== 1 ? 's' : ''} found {expanded ? '▾' : '▸'}</span>
       </div>
+      {expanded && (
+        <div style={{marginTop: 8}}>
+          <p style={{fontSize: 12, color: 'var(--tmuted)', marginBottom: 10}}>Pull in Account Briefs, Value Maps, and other outputs generated in Sales Hub.</p>
+          {hubHistory.map((entry, i) => (
+            <div key={entry.id || i} style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 12px', background: 'var(--surf-2)', marginBottom: 6, clipPath: 'polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px)'}}>
+              <div>
+                <div style={{fontSize: 13, fontWeight: 500, color: 'var(--text)'}}>{entry.account}</div>
+                <div style={{fontSize: 11, color: 'var(--tmuted)'}}>{entry.modules?.map(m => m.label).join(', ') || 'Unknown modules'}</div>
+              </div>
+              <button className="btn-sm approve" onClick={() => doImport(entry)} disabled={importing}>Import</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Mid-Deal Catchup (bulk transcript upload + AI reconstruction) ───
+function MidDealCatchup({ dealState }) {
+  const [expanded, setExpanded] = useState(false);
+  const [files, setFiles] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState('');
+  const [error, setError] = useState('');
+  const fileInputRef = useRef(null);
+
+  const handleFiles = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const droppedFiles = Array.from(e.dataTransfer?.files || e.target?.files || []);
+    const readFiles = [];
+    for (const f of droppedFiles) {
+      try { readFiles.push(await readFile(f)); } catch (err) { console.error(err); }
+    }
+    setFiles(prev => [...prev, ...readFiles]);
+  };
+
+  const removeFile = (idx) => setFiles(prev => prev.filter((_, i) => i !== idx));
+
+  const runCatchup = async () => {
+    if (!files.length) return;
+    setLoading(true);
+    setError('');
+
+    try {
+      // Step 1: Analyze each file individually with Haiku (fast)
+      setProgress(`Analyzing ${files.length} file${files.length !== 1 ? 's' : ''} individually...`);
+      const fileAnalyses = [];
+      for (let i = 0; i < files.length; i++) {
+        setProgress(`Analyzing file ${i + 1} of ${files.length}: ${files[i].name}`);
+        const fileContent = files[i].type === 'text' ? files[i].text?.slice(0, 20000) : '[PDF document — base64 content]';
+        const data = await callAPI({
+          model: API_CONFIG.fastModel,
+          system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
+          messages: [{ role: 'user', content: `Analyze this call transcript/document for deal: ${dealState.setup.account || 'Unknown'} — ${dealState.setup.opportunity || 'Unknown'}
+
+FILE: ${files[i].name}
+CONTENT:
+${fileContent}
+
+Extract as JSON:
+{
+  "date": "best guess date or null",
+  "type": "Discovery|Technical Deep-Dive|Demo|Scoping|Executive/EB Meeting|Negotiation|Legal/Procurement|Follow-up",
+  "attendees": "comma-separated names and titles mentioned",
+  "summary": "3-5 sentence summary of what happened",
+  "stakeholders": [{"name": "", "title": "", "role": "", "sentiment": ""}],
+  "meddpiccSignals": {"metrics": "", "economicBuyer": "", "decisionCriteria": "", "decisionProcess": "", "implicatePain": "", "champion": "", "competition": "", "paperProcess": ""},
+  "keyOutcomes": "what was decided or agreed"
+}` }],
+          maxTokens: 4000,
+        });
+        fileAnalyses.push({ file: files[i].name, analysis: extractText(data) });
+      }
+
+      // Step 2: Synthesize into complete deal state with Sonnet
+      setProgress('Synthesizing deal state from all files...');
+      const synthData = await callAPI({
+        model: API_CONFIG.synthesisModel,
+        system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
+        messages: [{ role: 'user', content: `You are reconstructing the full state of a deal from ${fileAnalyses.length} call transcripts/documents.
+
+Account: ${dealState.setup.account || 'Unknown'}
+Opportunity: ${dealState.setup.opportunity || 'Unknown'}
+Products: ${dealState.setup.products || 'Unknown'}
+
+INDIVIDUAL FILE ANALYSES:
+${fileAnalyses.map((a, i) => `--- File ${i + 1}: ${a.file} ---\n${a.analysis}`).join('\n\n')}
+
+Synthesize into a complete deal state. Use EXACTLY these MEDDPICC keys: metrics, economicBuyer, decisionCriteria, decisionProcess, implicatePain, champion, competition, paperProcess
+
+Output as JSON:
+{
+  "calls": [{"type": "", "date": "", "attendees": "", "summary": "", "outcomes": ""}],
+  "stakeholders": [{"name": "", "title": "", "role": "Champion|Economic Buyer|Technical Evaluator|Decision Maker|Influencer|Coach|Blocker|End User", "engagement": "High|Medium|Low|No access", "sentiment": "Positive|Supportive|Neutral|Negative|Unknown", "notes": ""}],
+  "meddpicc": {
+    "metrics": {"status": "green|yellow|red", "evidence": ""},
+    "economicBuyer": {"status": "green|yellow|red", "evidence": ""},
+    "decisionCriteria": {"status": "green|yellow|red", "evidence": ""},
+    "decisionProcess": {"status": "green|yellow|red", "evidence": ""},
+    "implicatePain": {"status": "green|yellow|red", "evidence": ""},
+    "champion": {"status": "green|yellow|red", "evidence": ""},
+    "competition": {"status": "green|yellow|red", "evidence": ""},
+    "paperProcess": {"status": "green|yellow|red", "evidence": ""}
+  },
+  "msp": {"milestones": [{"name": "", "target": "", "owner": "", "status": "Done|Overdue|At Risk|Upcoming"}]},
+  "dealStateSummary": "Comprehensive 300-500 word rolling summary of where this deal stands right now. Reference specific people, dates, and outcomes."
+}
+
+Sort calls chronologically. Deduplicate stakeholders. Score MEDDPICC based on ALL evidence across ALL files.` }],
+        maxTokens: 8000,
+      });
+
+      const result = safeParseJSON(extractText(synthData));
+      if (!result) throw new Error('Failed to parse AI response');
+
+      // Step 3: Apply everything
+      setProgress('Applying deal state...');
+
+      // Add calls
+      if (result.calls) {
+        const newCalls = result.calls.map(c => ({
+          id: genId(), type: c.type || 'Follow-up',
+          date: c.date || '', attendees: c.attendees || '',
+          summary: c.summary || '', transcript: '', notes: c.outcomes || '',
+        }));
+        dealState.setCalls(prev => [...prev, ...newCalls]);
+      }
+
+      // Add stakeholders (deduplicate against existing)
+      if (result.stakeholders) {
+        const existingNames = dealState.stakeholders.map(s => s.name.toLowerCase());
+        const newStakeholders = result.stakeholders
+          .filter(s => s.name && !existingNames.includes(s.name.toLowerCase()))
+          .map(s => ({
+            id: genId(), name: s.name, title: s.title || '',
+            role: s.role || 'Influencer', engagement: s.engagement || 'Medium',
+            sentiment: s.sentiment || 'Unknown', notes: s.notes || '',
+          }));
+        if (newStakeholders.length) dealState.setStakeholders(prev => [...prev, ...newStakeholders]);
+      }
+
+      // Set MEDDPICC
+      if (result.meddpicc) {
+        dealState.setMeddpicc(prev => {
+          const updated = {...prev};
+          Object.entries(result.meddpicc).forEach(([key, val]) => {
+            if (updated[key] && val.status) {
+              updated[key] = { status: val.status, evidence: val.evidence || '' };
+            }
+          });
+          return updated;
+        });
+      }
+
+      // Set milestones
+      if (result.msp?.milestones) {
+        const newMilestones = result.msp.milestones.filter(m => m.name).map(m => ({
+          id: genId(), name: m.name, target: m.target || '',
+          owner: m.owner || '', status: m.status || 'Upcoming',
+        }));
+        if (newMilestones.length) dealState.setMsp(prev => ({ ...prev, milestones: [...prev.milestones, ...newMilestones] }));
+      }
+
+      // Set summary
+      if (result.dealStateSummary) dealState.setSummary(result.dealStateSummary);
+
+      dealState.updateDealIndex();
+      setProgress('');
+      setFiles([]);
+      setExpanded(false);
+
+    } catch (err) {
+      setError(err.message);
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="card">
+      <div className="card-label" style={{cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center'}} onClick={() => setExpanded(!expanded)}>
+        <span>Mid-Deal Catchup</span>
+        <span style={{fontSize: 12, color: 'var(--blue)'}}>{expanded ? '▾' : '▸'}</span>
+      </div>
+      {expanded && (
+        <div style={{marginTop: 8}}>
+          <p style={{fontSize: 12, color: 'var(--tmuted)', marginBottom: 10}}>
+            Already mid-deal? Upload all your call transcripts, notes, and customer documents at once. AI will reconstruct your full deal state — calls, stakeholders, MEDDPICC, milestones, and summary.
+          </p>
+          <div
+            className="upload-zone"
+            onDrop={handleFiles}
+            onDragOver={(e) => { e.preventDefault(); e.currentTarget.style.borderColor = 'var(--blue)'; }}
+            onDragLeave={(e) => { e.currentTarget.style.borderColor = ''; }}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <div className="upload-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            </div>
+            <div className="upload-text">Drop all call transcripts & documents or <span className="upload-link">browse</span></div>
+            <div className="upload-formats">PDF, DOCX, TXT, VTT, SRT — upload multiple files at once</div>
+            <input ref={fileInputRef} type="file" accept=".txt,.vtt,.srt,.pdf,.doc,.docx,.md,.rtf,.csv" multiple style={{display: 'none'}} onChange={handleFiles} />
+          </div>
+          {files.length > 0 && (
+            <div className="file-list">
+              {files.map((f, i) => (
+                <div className="file-item" key={i}>
+                  <span>{f.name}</span>
+                  <button className="remove-btn" onClick={() => removeFile(i)}>×</button>
+                </div>
+              ))}
+            </div>
+          )}
+          {files.length > 0 && (
+            <div style={{marginTop: 12}}>
+              <button className="btn btn-primary" onClick={runCatchup} disabled={loading} style={{width: '100%', padding: 12}}>
+                {loading ? <><LoadingDots /> {progress}</> : `Reconstruct Deal from ${files.length} File${files.length !== 1 ? 's' : ''}`}
+              </button>
+              <div style={{textAlign: 'center', fontSize: 11, color: 'var(--tfaint)', marginTop: 6, fontFamily: 'var(--f-mono)'}}>
+                Estimated time: {files.length <= 2 ? '1-2 minutes' : files.length <= 5 ? '2-4 minutes' : '3-6 minutes'}
+              </div>
+            </div>
+          )}
+          {error && (
+            <div style={{marginTop: 10, padding: '10px 14px', borderLeft: '3px solid var(--red)', color: 'var(--red)', fontSize: 13}}>
+              {error}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
