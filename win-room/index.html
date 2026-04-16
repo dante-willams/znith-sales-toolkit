@@ -1487,20 +1487,23 @@ function getStatusColor(status) {
 }
 
 function safeParseJSON(text) {
-  try {
-    return JSON.parse(text);
-  } catch {
-    const match = text.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (match) {
-      try { return JSON.parse(match[1].trim()); } catch {}
+  if (!text) return null;
+  // 1. Direct parse
+  try { return JSON.parse(text); } catch {}
+  // 2. Strip markdown code fences (greedy to handle nested backticks)
+  const fenceMatch = text.match(/```(?:json)?\s*([\s\S]+?)```\s*$/);
+  if (fenceMatch) { try { return JSON.parse(fenceMatch[1].trim()); } catch {} }
+  // 3. Extract outermost { } — find first { and match its closing }
+  const firstBrace = text.indexOf('{');
+  if (firstBrace !== -1) {
+    let depth = 0, end = -1;
+    for (let i = firstBrace; i < text.length; i++) {
+      if (text[i] === '{') depth++;
+      else if (text[i] === '}') { depth--; if (depth === 0) { end = i; break; } }
     }
-    const start = text.indexOf('{');
-    const end = text.lastIndexOf('}');
-    if (start !== -1 && end > start) {
-      try { return JSON.parse(text.slice(start, end + 1)); } catch {}
-    }
-    return null;
+    if (end !== -1) { try { return JSON.parse(text.slice(firstBrace, end + 1)); } catch {} }
   }
+  return null;
 }
 
 function buildDealContext({ setup, stakeholders, calls, meddpicc, msp, summary }) {
@@ -2334,7 +2337,7 @@ function DealDocuments({ dealState }) {
       // Step 1: Analyze each file with Haiku
       const fileAnalyses = [];
       for (let i = 0; i < textDocs.length; i++) {
-        setCatchupProgress(`Analyzing file ${i + 1} of ${textDocs.length}: ${textDocs[i].name}`);
+        setCatchupProgress(`Analyzing file ${i + 1} of ${docs.length}${docs.length !== textDocs.length ? ` (${docs.length - textDocs.length} PDF skipped)` : ''}: ${textDocs[i].name}`);
         const data = await callAPI({
           model: API_CONFIG.fastModel,
           system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
@@ -2428,7 +2431,7 @@ Output JSON:
         <span style={{fontSize: 11, color: 'var(--tfaint)', fontFamily: 'var(--f-mono)'}}>{docs.length} file{docs.length !== 1 ? 's' : ''} uploaded</span>
         {textDocCount > 0 && !catchupLoading && (
           <button className="btn btn-primary" onClick={runCatchup} style={{fontSize: 11, padding: '6px 14px'}}>
-            Reconstruct Deal from {textDocCount} File{textDocCount !== 1 ? 's' : ''}
+            Reconstruct Deal from {docs.length} File{docs.length !== 1 ? 's' : ''}{docs.length !== textDocCount ? ` (${docs.length - textDocCount} PDF skipped)` : ''}
           </button>
         )}
       </div>
@@ -2883,13 +2886,14 @@ function CallPrep({ dealState, prepResult, setPrepResult, loading, setLoading, e
     const prompt = `Based on the deal context above, generate call prep for the next call.
 ${dealState.calls.length > 0 ? `This is call #${dealState.calls.length + 1} in the deal cycle. Infer the most logical call type and attendees from context.` : 'This appears to be the first call.'}
 
-Output as JSON:
+IMPORTANT: Respond with ONLY raw JSON — no markdown code blocks, no preamble, no explanation. Start your response with { and end with }.
+
 {
   "inferredCallType": "what type of call this should be",
   "inferredAttendees": "who should be on this call based on deal context",
   "overview": "2-3 sentence strategic framing of what this call should accomplish",
-  "topics": [{"num": 1, "text": "topic with specific talk track in italics", "rationale": "why this matters now"}],
-  "coachNudges": [{"severity": "red|yellow|green", "category": "MEDDPICC element or strategic area", "message": "the specific issue", "suggestion": "exact thing to say or do, in quotes"}],
+  "topics": [{"num": 1, "text": "topic with specific talk track", "rationale": "why this matters now"}],
+  "coachNudges": [{"severity": "red|yellow|green", "category": "MEDDPICC element or strategic area", "message": "the specific issue", "suggestion": "exact thing to say or do"}],
   "landmines": ["specific thing to avoid and why"]
 }`;
 
@@ -2905,7 +2909,7 @@ Output as JSON:
       if (parsed) {
         setPrepResult(parsed);
       } else {
-        setPrepResult({ overview: text, topics: [], coachNudges: [], landmines: [] });
+        throw new Error('Could not parse AI response. Try regenerating.');
       }
     } catch (err) {
       setError(err.message);
@@ -2954,6 +2958,10 @@ Output as JSON:
 
       {prepResult && (
         <>
+          {/* Regenerate bar */}
+          <div style={{display:'flex', justifyContent:'flex-end', marginBottom:8}}>
+            <button className="btn-sm" onClick={() => { setPrepResult(null); setError(''); }} style={{background:'transparent',border:'1px solid var(--border-md)',color:'var(--tmuted)',padding:'4px 12px',fontSize:11,fontFamily:'var(--f-mono)',cursor:'pointer',clipPath:'var(--clip-sm)'}}>↻ Regenerate</button>
+          </div>
           {/* Overview */}
           <div className="card">
             <div className="card-label">Strategic Overview</div>
