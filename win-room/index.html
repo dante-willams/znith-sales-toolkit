@@ -4051,20 +4051,32 @@ function DealLandingPage({ dealState, onOpenDeal, onCreateDeal }) {
 
 function App() {
   const dealState = useDealState();
-  const [view, setView] = useState(() => dealState.activeDealId ? 'deal' : 'home');
+  const [view, setView] = useState('home');
   const [activeSection, setActiveSection] = useState('call-hub');
   const [chatOpen, setChatOpen] = useState(false);
+  const [pendingDealId, setPendingDealId] = useState(null);
+  const [pendingSection, setPendingSection] = useState('call-hub');
+
+  // When a deal is requested, wait for activeDealId to match before showing deal view
+  useEffect(() => {
+    if (pendingDealId && dealState.activeDealId === pendingDealId) {
+      // Deal state is loaded — safe to show
+      setView('deal');
+      setActiveSection(pendingSection);
+      setPendingDealId(null);
+    }
+  }, [dealState.activeDealId, pendingDealId, pendingSection]);
 
   const openDeal = (id) => {
+    setPendingSection('call-hub');
+    setPendingDealId(id);
     dealState.switchDeal(id);
-    setView('deal');
-    setActiveSection('call-hub');
   };
 
   const createAndOpenDeal = (name) => {
-    dealState.createDeal(name);
-    setView('deal');
-    setActiveSection('deal-setup');
+    const id = dealState.createDeal(name);
+    setPendingSection('deal-setup');
+    setPendingDealId(id);
   };
 
   const goHome = () => {
@@ -4077,12 +4089,7 @@ function App() {
     return <DealLandingPage dealState={dealState} onOpenDeal={openDeal} onCreateDeal={createAndOpenDeal} />;
   }
 
-  // If somehow we're in deal view with no active deal, go home on next tick
-  useEffect(() => {
-    if (view === 'deal' && !dealState.activeDealId) setView('home');
-  }, [view, dealState.activeDealId]);
-
-  if (view === 'deal' && !dealState.activeDealId) return null;
+  if (!dealState.activeDealId) return <DealLandingPage dealState={dealState} onOpenDeal={openDeal} onCreateDeal={createAndOpenDeal} />;
 
   return (
     <>
