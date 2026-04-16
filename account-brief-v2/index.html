@@ -3485,7 +3485,7 @@ async function exportWord() {
   const coverBanner = new Table({
     width: {size:W, type:WidthType.DXA}, columnWidths:[W],
     rows:[row([cell([
-      p('CONGA · ACCOUNT BRIEF', {bold:true, size:17, color:LAV, before:0, after:40}),
+      p('CONGA · ACCOUNT BRIEF', {bold:true, size:17, color:WHITE, before:0, after:40}),
       new Paragraph({spacing:{before:0,after:60}, children:[
         new TextRun({text: company, size: 52, bold: true, color: WHITE, font:'Arial'})
       ]}),
@@ -3730,28 +3730,64 @@ async function exportWord() {
     ]:[])
   ];
 
+  // ── PRICING & PACKAGING (Word) ────────────────────────────────
+  const pricingSection = co.pricingModel ? [
+    p('',{before:80}),
+    new Table({width:{size:W,type:WidthType.DXA},columnWidths:[W],rows:[
+      row([cell([
+        p('How They Price & Package'+(co.pricingModelAssumed?' (Assumed)':''),{bold:true,size:17,color:PUR}),
+        p(co.pricingModel||'—',{size:19,it:co.pricingModelAssumed}),
+        ...(co.pricingComplexity?[p('Conga Signal: '+co.pricingComplexity,{size:17,color:PUR,it:true})]:[])
+      ],{w:W})])
+    ]})
+  ] : [];
+
+  // ── READ ADDENDA CHECKBOX STATE ───────────────────────────────
+  const addendaState = {
+    contacts:        document.getElementById('addenda-contacts')?.checked !== false,
+    industry:        document.getElementById('addenda-industry')?.checked !== false,
+    competitive:     document.getElementById('addenda-competitive')?.checked !== false,
+    deal:            document.getElementById('addenda-deal')?.checked !== false,
+    recommendations: document.getElementById('addenda-recommendations')?.checked !== false,
+  };
+
   // ── ASSEMBLE DOCUMENT ─────────────────────────────────────────
+  // Order: Cover → Account Intel → POV → Call Strategy → Addenda
   const allChildren = [
+    // Cover
     coverBanner, p('',{before:60,after:60}),
     coverMeta,   p('',{before:60,after:60}),
     ...peNotesBlock,
     confBar,
+
+    // ── ACCOUNT INTEL ──
     ...whatTheyDo,
-    ...competitorsSection,
-    ...((co.integrationPartners||[]).filter(x=>x&&x!=='No information available').length ? [
-      ...secHead('Integration Partners'),
-      ...(co.integrationPartners||[]).filter(x=>x&&x!=='No information available').map(p2=>bul(p2,'bul'))
-    ]:[]),
+    ...pricingSection,
+    p('',{before:80}),
     ...secHead('Recent News & Developments'),
     ...(co.recentNews||[]).map(n=>bul(n,'bul')),
-    ...contactsSection,
-    ...dealSection,
+
+    // ── CONGA POV ──
     new Paragraph({children:[new PageBreak()]}),
-    ...indSection,
     ...povSection,
+
+    // ── CALL STRATEGY ──
     ...stratSection,
     ...stakeSection,
+
+    // ── ADDENDA (conditional) ──
+    ...(addendaState.contacts ? contactsSection : []),
+    ...(addendaState.industry ? [new Paragraph({children:[new PageBreak()]}), ...indSection] : []),
+    ...(addendaState.competitive ? [
+      ...competitorsSection,
+      ...((co.integrationPartners||[]).filter(x=>x&&x!=='No information available').length ? [
+        ...secHead('Integration Partners'),
+        ...(co.integrationPartners||[]).filter(x=>x&&x!=='No information available').map(p2=>bul(p2,'bul'))
+      ]:[])
+    ] : []),
+    ...(addendaState.deal ? dealSection : []),
     ...intelSection,
+
     // Footer spacer
     p('',{before:400,after:0}),
     new Paragraph({
