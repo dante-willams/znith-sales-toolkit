@@ -2329,44 +2329,50 @@ function DealDocuments({ dealState }) {
   const removeDoc = (id) => setDocs(prev => prev.filter(d => d.id !== id));
 
   const runCatchup = async () => {
-    const textDocs = docs.filter(d => d.type === 'text' && d.text);
-    if (!textDocs.length) return;
+    if (!docs.length) return;
+    // Estimate time: ~15s per file + ~25s synthesis
+    const estSecs = docs.length * 15 + 25;
+    const estLabel = estSecs >= 60 ? `~${Math.ceil(estSecs / 60)} min` : `~${estSecs}s`;
     setCatchupLoading(true);
     setCatchupError('');
     try {
-      // Step 1: Analyze each file with Haiku
+      // Step 1: Analyze each file with Haiku (PDFs sent as native document blocks)
       const fileAnalyses = [];
-      for (let i = 0; i < textDocs.length; i++) {
-        setCatchupProgress(`Analyzing file ${i + 1} of ${docs.length}${docs.length !== textDocs.length ? ` (${docs.length - textDocs.length} PDF skipped)` : ''}: ${textDocs[i].name}`);
+      for (let i = 0; i < docs.length; i++) {
+        const doc = docs[i];
+        const elapsed = i * 15;
+        const remaining = Math.max(5, estSecs - elapsed);
+        const remLabel = remaining >= 60 ? `~${Math.ceil(remaining / 60)} min left` : `~${remaining}s left`;
+        setCatchupProgress(`Analyzing file ${i + 1} of ${docs.length}: ${doc.name} — ${remLabel}`);
+        // Build content: PDF → document block, text → text block
+        const userContent = doc.type === 'pdf' && doc.base64
+          ? [
+              { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: doc.base64 } },
+              { type: 'text', text: `Analyze this document for deal: ${dealState.setup.account || 'Unknown'}\nFILE: ${doc.name}\n\nExtract as JSON (raw JSON only, no markdown):\n{"date":"exact date or best guess","type":"Discovery|Technical Deep-Dive|Demo|Scoping|Executive/EB Meeting|Negotiation|Follow-up","attendees":"comma-separated names and titles","summary":"3-5 sentences","stakeholders":[{"name":"","title":"","role":"","sentiment":""}],"meddpiccSignals":{"metrics":"","economicBuyer":"","decisionCriteria":"","decisionProcess":"","implicatePain":"","champion":"","competition":"","paperProcess":""},"keyOutcomes":""}` }
+            ]
+          : `Analyze this document for deal: ${dealState.setup.account || 'Unknown'}\n\nFILE: ${doc.name}\nCONTENT:\n${doc.text.slice(0, 20000)}\n\nExtract as JSON (raw JSON only, no markdown):\n{"date":"exact date or best guess","type":"Discovery|Technical Deep-Dive|Demo|Scoping|Executive/EB Meeting|Negotiation|Follow-up","attendees":"comma-separated names and titles","summary":"3-5 sentences","stakeholders":[{"name":"","title":"","role":"","sentiment":""}],"meddpiccSignals":{"metrics":"","economicBuyer":"","decisionCriteria":"","decisionProcess":"","implicatePain":"","champion":"","competition":"","paperProcess":""},"keyOutcomes":""}`;
         const data = await callAPI({
           model: API_CONFIG.fastModel,
           system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
-          messages: [{ role: 'user', content: `Analyze this document for deal: ${dealState.setup.account || 'Unknown'}
-
-FILE: ${textDocs[i].name}
-CONTENT:
-${textDocs[i].text.slice(0, 20000)}
-
-Extract as JSON:
-{"date":"","type":"Discovery|Technical Deep-Dive|Demo|Scoping|Executive/EB Meeting|Negotiation|Follow-up","attendees":"","summary":"3-5 sentences","stakeholders":[{"name":"","title":"","role":"","sentiment":""}],"meddpiccSignals":{"metrics":"","economicBuyer":"","decisionCriteria":"","decisionProcess":"","implicatePain":"","champion":"","competition":"","paperProcess":""},"keyOutcomes":""}` }],
+          messages: [{ role: 'user', content: userContent }],
           maxTokens: 4000,
         });
-        fileAnalyses.push({ file: textDocs[i].name, analysis: extractText(data) });
+        fileAnalyses.push({ file: doc.name, analysis: extractText(data) });
       }
       // Step 2: Synthesize with Sonnet
-      setCatchupProgress('Synthesizing complete deal state...');
+      setCatchupProgress('Synthesizing complete deal state — ~25s left...');
       const synthData = await callAPI({
         model: API_CONFIG.synthesisModel,
         system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
-        messages: [{ role: 'user', content: `Reconstruct deal state from ${fileAnalyses.length} files.
+        messages: [{ role: 'user', content: `Reconstruct deal state from ${fileAnalyses.length} files. IMPORTANT: Respond with ONLY raw JSON — no markdown code fences, no preamble. Start your response with { and end with }.
+
 Account: ${dealState.setup.account || 'Unknown'} | Products: ${dealState.setup.products || 'Unknown'}
 
 ${fileAnalyses.map((a, i) => `--- File ${i+1}: ${a.file} ---\n${a.analysis}`).join('\n\n')}
 
-Use EXACTLY these MEDDPICC keys: metrics, economicBuyer, decisionCriteria, decisionProcess, implicatePain, champion, competition, paperProcess
+Use EXACTLY these MEDDPICC keys: metrics, economicBuyer, decisionCriteria, decisionProcess, implicatePain, champion, competition, paperProcess. Extract exact dates from file content wherever possible.
 
-Output JSON:
-{"calls":[{"type":"","date":"","attendees":"","summary":"","outcomes":""}],"stakeholders":[{"name":"","title":"","role":"Champion|Economic Buyer|Technical Evaluator|Decision Maker|Influencer","engagement":"High|Medium|Low|No access","sentiment":"Positive|Supportive|Neutral|Unknown","notes":""}],"meddpicc":{"metrics":{"status":"green|yellow|red","evidence":""},"economicBuyer":{"status":"","evidence":""},"decisionCriteria":{"status":"","evidence":""},"decisionProcess":{"status":"","evidence":""},"implicatePain":{"status":"","evidence":""},"champion":{"status":"","evidence":""},"competition":{"status":"","evidence":""},"paperProcess":{"status":"","evidence":""}},"msp":{"milestones":[{"name":"","target":"","owner":"","status":"Done|Overdue|At Risk|Upcoming"}]},"dealStateSummary":"300-500 word summary"}` }],
+{"calls":[{"type":"","date":"exact date from file content","attendees":"","summary":"","outcomes":""}],"stakeholders":[{"name":"","title":"","role":"Champion|Economic Buyer|Technical Evaluator|Decision Maker|Influencer","engagement":"High|Medium|Low|No access","sentiment":"Positive|Supportive|Neutral|Unknown","notes":""}],"meddpicc":{"metrics":{"status":"green|yellow|red","evidence":""},"economicBuyer":{"status":"","evidence":""},"decisionCriteria":{"status":"","evidence":""},"decisionProcess":{"status":"","evidence":""},"implicatePain":{"status":"","evidence":""},"champion":{"status":"","evidence":""},"competition":{"status":"","evidence":""},"paperProcess":{"status":"","evidence":""}},"msp":{"milestones":[{"name":"","target":"","owner":"","status":"Done|Overdue|At Risk|Upcoming"}]},"dealStateSummary":"300-500 word summary"}` }],
         maxTokens: 8000,
       });
       const result = safeParseJSON(extractText(synthData));
@@ -2388,7 +2394,7 @@ Output JSON:
     setCatchupLoading(false);
   };
 
-  const textDocCount = docs.filter(d => d.type === 'text' && d.text).length;
+  const textDocCount = docs.length; // all file types now supported (PDFs via Claude document API)
 
   return (
     <div className="card">
@@ -2431,7 +2437,7 @@ Output JSON:
         <span style={{fontSize: 11, color: 'var(--tfaint)', fontFamily: 'var(--f-mono)'}}>{docs.length} file{docs.length !== 1 ? 's' : ''} uploaded</span>
         {textDocCount > 0 && !catchupLoading && (
           <button className="btn btn-primary" onClick={runCatchup} style={{fontSize: 11, padding: '6px 14px'}}>
-            Reconstruct Deal from {docs.length} File{docs.length !== 1 ? 's' : ''}{docs.length !== textDocCount ? ` (${docs.length - textDocCount} PDF skipped)` : ''}
+            Reconstruct Deal from {docs.length} File{docs.length !== 1 ? 's' : ''}
           </button>
         )}
       </div>
