@@ -4077,10 +4077,12 @@ function App() {
     return <DealLandingPage dealState={dealState} onOpenDeal={openDeal} onCreateDeal={createAndOpenDeal} />;
   }
 
-  if (!dealState.activeDealId) {
-    setView('home');
-    return null;
-  }
+  // If somehow we're in deal view with no active deal, go home on next tick
+  useEffect(() => {
+    if (view === 'deal' && !dealState.activeDealId) setView('home');
+  }, [view, dealState.activeDealId]);
+
+  if (view === 'deal' && !dealState.activeDealId) return null;
 
   return (
     <>
