@@ -1772,9 +1772,10 @@ function useSaveIndicator() {
 }
 
 // ─── Section Save Button ───
-function SectionSaveBtn({ dealState }) {
+function SectionSaveBtn({ dealState, onSave }) {
   const [saved, setSaved] = useState(false);
   const handleSave = () => {
+    if (onSave) onSave();
     dealState.updateDealIndex();
     setSaved(true);
     setTimeout(() => setSaved(false), 1600);
@@ -3584,6 +3585,21 @@ function MutualPlanSection({ dealState }) {
     setMsp(prev => ({...prev, milestones: prev.milestones.filter(m => m.id !== id)}));
   };
 
+  // Sort milestones by target date: future first, past last, undated at end
+  const sortMilestonesByDate = () => {
+    setMsp(prev => ({
+      ...prev,
+      milestones: [...prev.milestones].sort((a, b) => {
+        const da = a.target ? new Date(a.target) : null;
+        const db = b.target ? new Date(b.target) : null;
+        if (!da && !db) return 0;
+        if (!da) return 1;   // undated goes to end
+        if (!db) return -1;
+        return da - db;      // ascending: nearest date first (future → past)
+      })
+    }));
+  };
+
   const statusToClass = (s) => {
     if (s === 'Done') return 'done';
     if (s === 'Overdue') return 'overdue';
@@ -3598,7 +3614,7 @@ function MutualPlanSection({ dealState }) {
           <h2>Mutual Success Plan</h2>
           <p>Shared milestones and timeline with {dealState.setup.account || 'the customer'}</p>
         </div>
-        <SectionSaveBtn dealState={dealState} />
+        <SectionSaveBtn dealState={dealState} onSave={sortMilestonesByDate} />
       </div>
 
       {/* Visual Timeline */}
