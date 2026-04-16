@@ -136,24 +136,30 @@ body {
   align-items: center;
 }
 .nav-item {
-  width: 48px; height: 48px;
+  width: 56px; height: 52px;
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
-  gap: 2px;
+  gap: 3px;
   border-radius: 8px;
   cursor: pointer;
   transition: all var(--transition);
   position: relative;
   color: var(--tmuted);
   font-size: 18px;
+  overflow: visible;
 }
-.nav-item svg { width: 20px; height: 20px; }
+.nav-item svg { width: 18px; height: 18px; }
 .nav-item .nav-label {
   font-family: var(--f-mono);
-  font-size: 8px; font-weight: 500;
+  font-size: 7px; font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   opacity: 0.7;
+  white-space: nowrap;
+  max-width: 58px;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .nav-item:hover { background: var(--surf-2); color: #374151; }
 .nav-item.active {
@@ -1161,10 +1167,19 @@ body {
 @keyframes dotPulse { 0%,80%,100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1); } }
 
 .generating-overlay {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  padding: 20px; color: var(--accent); font-family: var(--f-mono);
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding: 32px 20px; color: var(--accent); font-family: var(--f-mono);
   font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em;
+  flex-direction: column;
 }
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
 .suggested-update {
   background: var(--surf); border: 1px solid var(--border);
@@ -1681,6 +1696,14 @@ const CONGA_LOGO_PATH = "M568.721,606.067c-40.866,15.972-87.452,23.937-139.791,2
 function LoadingDots() {
   return <span className="loading-dots"><span></span><span></span><span></span></span>;
 }
+function Spinner({ text }) {
+  return (
+    <div className="generating-overlay">
+      <div className="spinner"></div>
+      {text && <div style={{marginTop: 4}}>{text}</div>}
+    </div>
+  );
+}
 
 // ─── Welcome Screen ───
 function WelcomeScreen({ onCreate, deals, onSelect }) {
@@ -1909,12 +1932,11 @@ function DealSetup({ dealState }) {
           ))}
         </div>
       </div>
-      {/* Deal Documents */}
+      {/* Deal Documents + Mid-Deal Catchup (consolidated) */}
       <DealDocuments dealState={dealState} />
 
-      {/* Import + Catchup */}
+      {/* Import from Sales Hub */}
       <ImportFromSalesHub dealState={dealState} />
-      <MidDealCatchup dealState={dealState} />
     </div>
   );
 }
@@ -2188,10 +2210,12 @@ Sort calls chronologically. Deduplicate stakeholders. Score MEDDPICC based on AL
   );
 }
 
-// ─── Deal Documents (general file uploads) ───
+// ─── Deal Documents + Mid-Deal Catchup (consolidated) ───
 function DealDocuments({ dealState }) {
   const [docs, setDocs] = usePersistedState(`winroom_${dealState.activeDealId}_docs`, []);
-  const dropRef = useRef(null);
+  const [catchupLoading, setCatchupLoading] = useState(false);
+  const [catchupProgress, setCatchupProgress] = useState('');
+  const [catchupError, setCatchupError] = useState('');
 
   const handleFiles = async (files) => {
     const newDocs = [];
@@ -2208,20 +2232,80 @@ function DealDocuments({ dealState }) {
 
   const removeDoc = (id) => setDocs(prev => prev.filter(d => d.id !== id));
 
+  const runCatchup = async () => {
+    const textDocs = docs.filter(d => d.type === 'text' && d.text);
+    if (!textDocs.length) return;
+    setCatchupLoading(true);
+    setCatchupError('');
+    try {
+      // Step 1: Analyze each file with Haiku
+      const fileAnalyses = [];
+      for (let i = 0; i < textDocs.length; i++) {
+        setCatchupProgress(`Analyzing file ${i + 1} of ${textDocs.length}: ${textDocs[i].name}`);
+        const data = await callAPI({
+          model: API_CONFIG.fastModel,
+          system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
+          messages: [{ role: 'user', content: `Analyze this document for deal: ${dealState.setup.account || 'Unknown'}
+
+FILE: ${textDocs[i].name}
+CONTENT:
+${textDocs[i].text.slice(0, 20000)}
+
+Extract as JSON:
+{"date":"","type":"Discovery|Technical Deep-Dive|Demo|Scoping|Executive/EB Meeting|Negotiation|Follow-up","attendees":"","summary":"3-5 sentences","stakeholders":[{"name":"","title":"","role":"","sentiment":""}],"meddpiccSignals":{"metrics":"","economicBuyer":"","decisionCriteria":"","decisionProcess":"","implicatePain":"","champion":"","competition":"","paperProcess":""},"keyOutcomes":""}` }],
+          maxTokens: 4000,
+        });
+        fileAnalyses.push({ file: textDocs[i].name, analysis: extractText(data) });
+      }
+      // Step 2: Synthesize with Sonnet
+      setCatchupProgress('Synthesizing complete deal state...');
+      const synthData = await callAPI({
+        model: API_CONFIG.synthesisModel,
+        system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
+        messages: [{ role: 'user', content: `Reconstruct deal state from ${fileAnalyses.length} files.
+Account: ${dealState.setup.account || 'Unknown'} | Products: ${dealState.setup.products || 'Unknown'}
+
+${fileAnalyses.map((a, i) => `--- File ${i+1}: ${a.file} ---\n${a.analysis}`).join('\n\n')}
+
+Use EXACTLY these MEDDPICC keys: metrics, economicBuyer, decisionCriteria, decisionProcess, implicatePain, champion, competition, paperProcess
+
+Output JSON:
+{"calls":[{"type":"","date":"","attendees":"","summary":"","outcomes":""}],"stakeholders":[{"name":"","title":"","role":"Champion|Economic Buyer|Technical Evaluator|Decision Maker|Influencer","engagement":"High|Medium|Low|No access","sentiment":"Positive|Supportive|Neutral|Unknown","notes":""}],"meddpicc":{"metrics":{"status":"green|yellow|red","evidence":""},"economicBuyer":{"status":"","evidence":""},"decisionCriteria":{"status":"","evidence":""},"decisionProcess":{"status":"","evidence":""},"implicatePain":{"status":"","evidence":""},"champion":{"status":"","evidence":""},"competition":{"status":"","evidence":""},"paperProcess":{"status":"","evidence":""}},"msp":{"milestones":[{"name":"","target":"","owner":"","status":"Done|Overdue|At Risk|Upcoming"}]},"dealStateSummary":"300-500 word summary"}` }],
+        maxTokens: 8000,
+      });
+      const result = safeParseJSON(extractText(synthData));
+      if (!result) throw new Error('Failed to parse AI response');
+      // Step 3: Apply
+      setCatchupProgress('Applying...');
+      if (result.calls) dealState.setCalls(prev => [...prev, ...result.calls.map(c => ({ id: genId(), type: c.type || 'Follow-up', date: c.date || '', attendees: c.attendees || '', summary: c.summary || '', transcript: '', notes: c.outcomes || '' }))]);
+      if (result.stakeholders) {
+        const existing = dealState.stakeholders.map(s => s.name.toLowerCase());
+        const newS = result.stakeholders.filter(s => s.name && !existing.includes(s.name.toLowerCase())).map(s => ({ id: genId(), name: s.name, title: s.title || '', role: s.role || 'Influencer', engagement: s.engagement || 'Medium', sentiment: s.sentiment || 'Unknown', notes: s.notes || '' }));
+        if (newS.length) dealState.setStakeholders(prev => [...prev, ...newS]);
+      }
+      if (result.meddpicc) dealState.setMeddpicc(prev => { const u = {...prev}; Object.entries(result.meddpicc).forEach(([k,v]) => { if (u[k] && v.status) u[k] = { status: v.status, evidence: v.evidence || '' }; }); return u; });
+      if (result.msp?.milestones) dealState.setMsp(prev => ({ ...prev, milestones: [...prev.milestones, ...result.msp.milestones.filter(m => m.name).map(m => ({ id: genId(), name: m.name, target: m.target || '', owner: m.owner || '', status: m.status || 'Upcoming' }))] }));
+      if (result.dealStateSummary) dealState.setSummary(result.dealStateSummary);
+      dealState.updateDealIndex();
+      setCatchupProgress('');
+    } catch (err) { setCatchupError(err.message); }
+    setCatchupLoading(false);
+  };
+
+  const textDocCount = docs.filter(d => d.type === 'text' && d.text).length;
+
   return (
     <div className="card">
-      <div className="card-label">Deal Documents</div>
+      <div className="card-label">Deal Documents & Transcripts</div>
       <p style={{fontSize: 12, color: 'var(--tmuted)', marginBottom: 12}}>
-        Upload customer documents, proposals, RFPs, org charts, or any files relevant to this deal. These will be available as context for AI coaching.
+        Upload call transcripts, customer documents, RFPs, proposals, org charts — anything relevant. Use "Reconstruct Deal" to auto-populate stakeholders, MEDDPICC, and call history from uploaded files.
       </p>
       <div
         className="upload-zone"
-        ref={dropRef}
         onClick={() => {
           const input = document.createElement('input');
-          input.type = 'file';
-          input.multiple = true;
-          input.accept = '.pdf,.txt,.docx,.doc,.xlsx,.csv,.pptx,.md,.rtf';
+          input.type = 'file'; input.multiple = true;
+          input.accept = '.pdf,.txt,.docx,.doc,.xlsx,.csv,.pptx,.md,.rtf,.vtt,.srt';
           input.onchange = (e) => handleFiles(Array.from(e.target.files));
           input.click();
         }}
@@ -2231,13 +2315,11 @@ function DealDocuments({ dealState }) {
       >
         <div className="upload-icon">
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="17 8 12 3 7 8"/>
-            <line x1="12" y1="3" x2="12" y2="15"/>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
           </svg>
         </div>
         <div className="upload-text">Drop files here or <span className="upload-link">browse</span></div>
-        <div className="upload-formats">PDF, DOCX, XLSX, PPTX, TXT, CSV, MD</div>
+        <div className="upload-formats">Transcripts, RFPs, proposals, emails — PDF, DOCX, TXT, VTT, XLSX, PPTX</div>
       </div>
       {docs.length > 0 && (
         <div className="file-list">
@@ -2249,9 +2331,16 @@ function DealDocuments({ dealState }) {
           ))}
         </div>
       )}
-      <div style={{fontSize: 11, color: 'var(--tfaint)', marginTop: 8, fontFamily: 'var(--f-mono)'}}>
-        {docs.length} file{docs.length !== 1 ? 's' : ''} uploaded
+      <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 10}}>
+        <span style={{fontSize: 11, color: 'var(--tfaint)', fontFamily: 'var(--f-mono)'}}>{docs.length} file{docs.length !== 1 ? 's' : ''} uploaded</span>
+        {textDocCount > 0 && !catchupLoading && (
+          <button className="btn btn-primary" onClick={runCatchup} style={{fontSize: 11, padding: '6px 14px'}}>
+            Reconstruct Deal from {textDocCount} File{textDocCount !== 1 ? 's' : ''}
+          </button>
+        )}
       </div>
+      {catchupLoading && <Spinner text={catchupProgress} />}
+      {catchupError && <div style={{marginTop: 10, padding: '10px 14px', borderLeft: '3px solid var(--red)', color: 'var(--red)', fontSize: 13}}>{catchupError}</div>}
     </div>
   );
 }
@@ -2301,9 +2390,16 @@ function StakeholderSection({ dealState }) {
   };
 
   // Group stakeholders by tier for org chart
-  const topTier = stakeholders.filter(s => ['Economic Buyer', 'Decision Maker'].includes(s.role));
-  const midTier = stakeholders.filter(s => ['Champion', 'Influencer', 'Coach'].includes(s.role));
-  const bottomTier = stakeholders.filter(s => ['Technical Evaluator', 'End User', 'Blocker'].includes(s.role));
+  // Users can set tier via the 'tier' field, or it defaults based on role
+  const getTier = (s) => {
+    if (s.tier) return s.tier;
+    if (['Economic Buyer', 'Decision Maker'].includes(s.role)) return 'executive';
+    if (['Champion', 'Influencer', 'Coach'].includes(s.role)) return 'management';
+    return 'operational';
+  };
+  const topTier = stakeholders.filter(s => getTier(s) === 'executive');
+  const midTier = stakeholders.filter(s => getTier(s) === 'management');
+  const bottomTier = stakeholders.filter(s => getTier(s) === 'operational');
 
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
@@ -2327,6 +2423,7 @@ function StakeholderSection({ dealState }) {
                 <th>Role</th>
                 <th>Engagement</th>
                 <th>Sentiment</th>
+                <th>Org Tier</th>
                 <th>Notes</th>
                 <th style={{width: 40}}></th>
               </tr>
@@ -2351,12 +2448,20 @@ function StakeholderSection({ dealState }) {
                       {SENTIMENT_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
                     </select>
                   </td>
+                  <td>
+                    <select className="form-input" value={s.tier || ''} onChange={e => updateStakeholder(s.id, 'tier', e.target.value)}>
+                      <option value="">Auto</option>
+                      <option value="executive">Executive</option>
+                      <option value="management">Management</option>
+                      <option value="operational">Operational</option>
+                    </select>
+                  </td>
                   <td><input className="form-input" value={s.notes || ''} onChange={e => updateStakeholder(s.id, 'notes', e.target.value)} placeholder="Notes" /></td>
                   <td><button className="remove-row-btn" onClick={() => removeStakeholder(s.id)} title="Remove">&times;</button></td>
                 </tr>
               ))}
               {stakeholders.length === 0 && (
-                <tr><td colSpan="7" style={{textAlign: 'center', padding: 24, color: 'var(--tmuted)'}}>No stakeholders yet. Add your first contact below.</td></tr>
+                <tr><td colSpan="8" style={{textAlign: 'center', padding: 24, color: 'var(--tmuted)'}}>No stakeholders yet. Add your first contact below.</td></tr>
               )}
             </tbody>
           </table>
@@ -2605,11 +2710,7 @@ Output as JSON:
         </div>
       )}
 
-      {loading && (
-        <div className="generating-overlay">
-          <LoadingDots /> Analyzing deal context and generating prep...
-        </div>
-      )}
+      {loading && <Spinner text="Analyzing deal context and generating call prep..." />}
 
       {error && (
         <div className="card" style={{borderColor: 'var(--red)', color: 'var(--red)', fontSize: 13}}>
@@ -2943,12 +3044,7 @@ Analyze everything above and output as JSON. You MUST include meddpicc updates b
         </>
       )}
 
-      {loading && (
-        <div className="generating-overlay" style={{marginTop: 16, flexDirection: 'column', gap: 4}}>
-          <div style={{display: 'flex', alignItems: 'center', gap: 10}}><LoadingDots /> Analyzing call transcript and generating feedback...</div>
-          <div style={{fontSize: 10, color: 'var(--tfaint)'}}>This typically takes 30-60 seconds</div>
-        </div>
-      )}
+      {loading && <Spinner text="Analyzing call transcript and generating feedback... (30-60 sec)" />}
 
       {error && (
         <div className="card" style={{borderColor: 'var(--red)', color: 'var(--red)', fontSize: 13, marginTop: 16}}>
