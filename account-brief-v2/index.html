@@ -301,6 +301,14 @@ input[type=text]:focus, input[type=url]:focus, select:focus, textarea:focus{
 input::placeholder, textarea::placeholder{color:rgba(113,128,150,0.45);}
 /* select + textarea rules moved to .input-wrap context above */
 
+/* Deal context bar */
+.deal-context-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(184,134,11,0.06);border:1px solid rgba(184,134,11,0.2);border-radius:8px;margin-bottom:16px;}
+.deal-context-label{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap;letter-spacing:0.04em;text-transform:uppercase;}
+.deal-context-label svg{opacity:0.8;}
+.deal-select-wrap{flex:1;min-width:0;}
+.deal-picker-hint{font-size:11px;color:var(--white-dim);white-space:nowrap;}
+[data-theme="dark"] .deal-context-bar{background:rgba(184,134,11,0.08);border-color:rgba(184,134,11,0.25);}
+
 /* Product chips */
 .product-grid{display:flex;flex-wrap:wrap;gap:8px;}
 .product-chip{
@@ -1594,6 +1602,20 @@ input[type=checkbox].chip-check{display:none;}
       </button>
     </div>
 
+    <!-- ── DEAL CONTEXT ── -->
+    <div class="deal-context-bar" id="dealContextBar">
+      <div class="deal-context-label">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Attach to Deal
+      </div>
+      <div class="input-wrap deal-select-wrap">
+        <select id="dealPicker" onchange="onDealPickerChange()">
+          <option value="">— Create new deal —</option>
+        </select>
+      </div>
+      <span id="dealPickerHint" class="deal-picker-hint"></span>
+    </div>
+
     <div id="intake-error" class="error-box">Please enter a Company Name and Meeting Type to continue.</div>
 
     <div class="btn-row">
@@ -1996,6 +2018,7 @@ input[type=checkbox].chip-check{display:none;}
   </div>
 </div>
 
+<script src="../shared/dealStore.js"></script>
 <script>
 // ════════════════════════════════════════════════════
 // THEME TOGGLE
@@ -2020,6 +2043,7 @@ function toggleTheme() {
 // ════════════════════════════════════════════════════
 const state = {
   apiKey: '',
+  activeDealId: null,
   contacts: [],
   contactIdCounter: 0,
   selectedProducts: [],
@@ -2125,6 +2149,7 @@ async function startResearch() {
     renderOutput();
     showScreen(3);
     saveBrief();
+    syncToDeal(company);
   } catch(err) {
     const errBox = document.getElementById('research-error');
     errBox.textContent = 'Something went wrong: ' + err.message + '. Please check your API key and try again.';
@@ -3698,6 +3723,126 @@ function openChatWithPrompt(prompt) {
 }
 
 // ════════════════════════════════════════════════════
+// DEAL STORE INTEGRATION
+// ════════════════════════════════════════════════════
+
+function populateDealPicker() {
+  const picker = document.getElementById('dealPicker');
+  const hint   = document.getElementById('dealPickerHint');
+  if (!picker) return;
+
+  const company = document.getElementById('companyName')?.value.trim().toLowerCase();
+  const deals   = dealStore.list();
+
+  // Rebuild options
+  picker.innerHTML = '<option value="">— Create new deal —</option>';
+  deals.forEach(d => {
+    const opt      = document.createElement('option');
+    opt.value      = d.id;
+    opt.textContent = `${d.context.account_name}  ·  ${dealStore.stageLabel(d.context.stage)}`;
+    // Pre-select if company name matches an existing deal
+    if (company && d.context.account_name.toLowerCase() === company) opt.selected = true;
+    picker.appendChild(opt);
+  });
+
+  // Restore previously active deal if set
+  if (state.activeDealId) picker.value = state.activeDealId;
+
+  updateDealPickerHint();
+}
+
+function onDealPickerChange() {
+  const id = document.getElementById('dealPicker').value;
+  state.activeDealId = id || null;
+
+  if (id) {
+    const deal = dealStore.get(id);
+    if (deal) {
+      // Pre-fill company name from the selected deal
+      const nameEl = document.getElementById('companyName');
+      if (nameEl && !nameEl.value.trim()) nameEl.value = deal.context.account_name;
+    }
+  }
+
+  updateDealPickerHint();
+}
+
+function updateDealPickerHint() {
+  const hint = document.getElementById('dealPickerHint');
+  if (!hint) return;
+  const id = document.getElementById('dealPicker')?.value;
+  if (!id) { hint.textContent = 'New deal will be created on research'; return; }
+  const deal = dealStore.get(id);
+  if (!deal) { hint.textContent = ''; return; }
+  const researchAge = deal.research?.generated_at
+    ? Math.round((Date.now() - new Date(deal.research.generated_at)) / 3600000)
+    : null;
+  hint.textContent = researchAge !== null
+    ? `Research ${researchAge < 1 ? 'just run' : researchAge + 'h ago'} · ${dealStore.needsResearch(id) ? 'will re-run' : 'cached'}`
+    : 'No research yet';
+}
+
+function syncToDeal(company) {
+  // Get existing deal or create a new one
+  let deal = state.activeDealId ? dealStore.get(state.activeDealId) : null;
+  if (!deal) {
+    deal = dealStore.create(company, {
+      stage:    'discovery',
+      products: state.selectedProducts
+    });
+    state.activeDealId = deal.id;
+    // Update picker to reflect the new deal
+    populateDealPicker();
+    document.getElementById('dealPicker').value = deal.id;
+  }
+
+  // Update context
+  deal.context.account_name = company;
+  deal.context.products     = [...state.selectedProducts];
+
+  // Map contacts → stakeholders
+  if (state.results.contacts?.length) {
+    deal.stakeholders = state.results.contacts.map(c => ({
+      name:      c.name  || '',
+      title:     c.title || '',
+      role:      'unknown',
+      sentiment: 'unknown',
+      notes:     c.bio   || ''
+    }));
+  }
+
+  // Map all research output to deal.research
+  deal.research = {
+    research_hash: null, // stamped below
+    generated_at:  new Date().toISOString(),
+    company_profile: state.results.company   || null,
+    industry:        state.results.industry  || null,
+    exec_pov:        state.results.congaPOV  || null,
+    call_strategy:   state.results.callStrategy || null,
+    deal_brief:      state.results.dealBrief || null,
+    // News pulled from company profile — gets its own TTL
+    news: {
+      last_checked: new Date().toISOString(),
+      items: state.results.company?.recentNews || []
+    }
+  };
+
+  // Map uploaded documents
+  deal.documents = state.uploadedDocuments.map(d => ({
+    id:             String(d.id),
+    name:           d.name  || '',
+    type:           d.type  || 'other',
+    uploaded_at:    new Date().toISOString(),
+    extracted_text: d.content || ''
+  }));
+
+  dealStore.save(deal);
+  dealStore.stampResearchHash(deal.id);
+  updateDealPickerHint();
+  return deal;
+}
+
+// ════════════════════════════════════════════════════
 // SAVED BRIEFS (localStorage)
 // ════════════════════════════════════════════════════
 function getSavedBriefs() {
@@ -4711,6 +4856,10 @@ function resetChat() {
 addContact(); // Start with one empty contact
 updateBriefsBadge();
 updateChatSuggestions(1);
+populateDealPicker();
+
+// Refresh deal picker suggestions as the rep types the company name
+document.getElementById('companyName')?.addEventListener('input', populateDealPicker);
 
 // ── ADDENDA TOGGLES — hide/show optional sections ──
 document.addEventListener('change', function(e) {
