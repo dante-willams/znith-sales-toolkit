@@ -1245,17 +1245,34 @@ input[type=checkbox].chip-check{display:none;}
 }
 .pov-pitch-text{
   margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 .pov-bullet{
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
   font-family: var(--f-ui);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--navy);
-  line-height: 1.5;
-  padding: 4px 0;
-  letter-spacing: -0.01em;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.55;
+  padding: 10px 14px;
+  background: var(--navy-mid);
+  border: 1px solid var(--navy-border);
+  border-left: 3px solid var(--accent);
+  clip-path: polygon(4px 0%,calc(100% - 4px) 0%,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0% calc(100% - 4px),0% 4px);
 }
-[data-theme="dark"] .pov-bullet{ color: rgba(255,255,255,0.92); }
+.pov-bullet-dot{
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-top: 6px;
+}
+[data-theme="dark"] .pov-bullet{ color: rgba(255,255,255,0.88); }
 .pov-copy-btn{
   display: inline-flex;
   align-items: center;
@@ -2569,13 +2586,27 @@ function renderPOVBuilder(pov) {
   if (!pitch) { section.style.display = 'none'; return; }
   section.style.display = '';
 
-  // Render as bullet list if it contains bullet markers, otherwise split by sentence
+  // Render as bullet list — split on newlines, bullet chars, or ,• patterns
   const pitchEl = document.getElementById('pov-pitch-text');
-  if (pitch.includes('•') || pitch.includes('\n')) {
-    const bullets = pitch.split(/\n|•/).map(s => s.trim()).filter(s => s.length > 2);
-    pitchEl.innerHTML = bullets.map(b => `<div class="pov-bullet">• ${b.replace(/^•\s*/,'')}</div>`).join('');
+  const hasBullets = pitch.includes('•') || pitch.includes('\n');
+  if (hasBullets) {
+    const bullets = pitch
+      .split(/\n|,?\s*•/)
+      .map(s => s.replace(/^[•\-–]\s*/, '').replace(/,\s*$/, '').trim())
+      .filter(s => s.length > 4);
+    pitchEl.innerHTML = bullets.map(b =>
+      `<div class="pov-bullet"><div class="pov-bullet-dot"></div><span>${b}</span></div>`
+    ).join('');
   } else {
-    pitchEl.textContent = pitch;
+    // Single string — try splitting on '. ' as sentences
+    const sentences = pitch.split(/\.\s+/).map(s => s.replace(/\.$/, '').trim()).filter(s => s.length > 4);
+    if (sentences.length > 1) {
+      pitchEl.innerHTML = sentences.map(b =>
+        `<div class="pov-bullet"><div class="pov-bullet-dot"></div><span>${b}</span></div>`
+      ).join('');
+    } else {
+      pitchEl.innerHTML = `<div class="pov-bullet"><div class="pov-bullet-dot"></div><span>${pitch}</span></div>`;
+    }
   }
 
   if (driver) {
