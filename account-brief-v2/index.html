@@ -4228,16 +4228,22 @@ async function exportWord() {
           spacing:{before:0,after:80},
           children:[new TextRun({text:'WHAT YOU KNOW GOING IN', size:15, bold:true, color:WHITE, font:'Arial', characterSpacing:120})]
         }),
-        // Pitch bullets
-        ...(pov.povPitch||'').split(/\n|•/).map(s=>s.trim()).filter(s=>s.length>2).map(b=>
-          new Paragraph({
-            spacing:{before:60,after:40},
-            children:[
-              new TextRun({text:'• ', bold:true, size:22, color:LAV, font:'Arial'}),
-              new TextRun({text:b.replace(/^•\s*/,''), bold:true, size:22, color:WHITE, font:'Arial'})
-            ]
-          })
-        ),
+        // Pitch bullets — handle array or string
+        ...(() => {
+          const raw = pov.povPitch;
+          const bullets = Array.isArray(raw)
+            ? raw.map(s=>String(s).replace(/^[•\-–]\s*/,'').replace(/,\s*$/,'').trim()).filter(s=>s.length>2)
+            : String(raw||'').split(/\n|,?\s*•/).map(s=>s.replace(/^[•\-–]\s*/,'').replace(/,\s*$/,'').trim()).filter(s=>s.length>2);
+          return bullets.map(b=>
+            new Paragraph({
+              spacing:{before:60,after:40},
+              children:[
+                new TextRun({text:'• ', bold:true, size:22, color:LAV, font:'Arial'}),
+                new TextRun({text:b, bold:true, size:22, color:WHITE, font:'Arial'})
+              ]
+            })
+          );
+        })(),
         ...(pov.povDriver ? [
           new Paragraph({spacing:{before:120,after:20},children:[new TextRun({text:'SIGNAL', size:14, bold:true, color:LAV, font:'Arial', characterSpacing:80})]}),
           new Paragraph({spacing:{before:0,after:60},children:[new TextRun({text:pov.povDriver, size:18, color:WHITE, font:'Arial', italics:true})]})
@@ -4313,7 +4319,9 @@ async function exportWord() {
     })
   ];
 
-  const doc = new Document({
+  let doc;
+  try {
+  doc = new Document({
     numbering:{config:[
       {reference:'bul',levels:[{level:0,format:LevelFormat.BULLET,text:'•',alignment:AlignmentType.LEFT,style:{paragraph:{indent:{left:720,hanging:360}}}}]},
       {reference:'num',levels:[{level:0,format:LevelFormat.DECIMAL,text:'%1.',alignment:AlignmentType.LEFT,style:{paragraph:{indent:{left:720,hanging:360}}}}]}
@@ -4323,6 +4331,11 @@ async function exportWord() {
       children: allChildren
     }]
   });
+  } catch(buildErr) {
+    setStatus('Export failed: ' + buildErr.message);
+    console.error('exportWord build error:', buildErr);
+    return;
+  }
 
   try {
     const blob = await window.docx.Packer.toBlob(doc);
