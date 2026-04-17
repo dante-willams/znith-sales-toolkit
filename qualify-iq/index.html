@@ -10,6 +10,7 @@
   <link rel="manifest" href="site.webmanifest">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="../shared/dealStore.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -554,6 +555,7 @@ async function startGeneration(){
       meddpicc
     };
     saveAnalysis(entry);
+    syncToDeal(entry);
     renderResults(entry);
     showView('results');
     openChatIfReady(entry);
@@ -661,15 +663,19 @@ ${analysis}
 
 Output this exact JSON schema:
 {
-  "metrics": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list" },
-  "economic_buyer": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "name/title/authority or best hypothesis" },
-  "decision_criteria": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list" },
-  "decision_process": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "step-by-step with owners and timeline" },
-  "identify_pain": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list; each item: [pain] — [business impact]" },
-  "champion": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "name/title/advocacy evidence or 'Not yet identified'" },
-  "competition": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list of vendors, alternatives, or status quo" },
-  "paper_process": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "procurement and legal steps, or 'Not discussed — typical process: [hypothesis]'" }
+  "metrics": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list" },
+  "economic_buyer": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "name/title/authority or best hypothesis" },
+  "decision_criteria": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list" },
+  "decision_process": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "step-by-step with owners and timeline" },
+  "identify_pain": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list; each item: [pain] — [business impact]" },
+  "champion": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "name/title/advocacy evidence or 'Not yet identified'" },
+  "competition": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list of vendors, alternatives, or status quo" },
+  "paper_process": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "procurement and legal steps, or 'Not discussed — typical process: [hypothesis]'" }
 }
+
+SCORE RULES (0-100 integer):
+- high confidence = 70-100, medium = 35-69, low = 0-34
+- Score reflects strength of evidence, not just presence
 
 CONFIDENCE SCORING — apply these field-specific criteria:
 - metrics: high=specific quantified targets confirmed (%, $, days); medium=general improvement goals stated; low=no metrics mentioned
@@ -991,6 +997,61 @@ TONE: Concise, confident, sales-oriented. Bullets where helpful. Under 300 words
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.getElementById('chatTab').style.display = 'flex';
+
+// ── DEAL STORE INTEGRATION ────────────────────────────────────────────────────
+
+// Map Qualify IQ key → deal entity key (identify_pain → implicate_pain)
+const DIM_MAP = {
+  metrics:          'metrics',
+  economic_buyer:   'economic_buyer',
+  decision_criteria:'decision_criteria',
+  decision_process: 'decision_process',
+  identify_pain:    'implicate_pain',
+  champion:         'champion',
+  competition:      'competition',
+};
+
+function syncToDeal(entry) {
+  const deal = dealStore.getFromUrl();
+  if (!deal) return;
+
+  const meddpicc = {};
+  let scoreSum = 0, scoreCount = 0;
+  const priorityGaps = [];
+
+  Object.entries(DIM_MAP).forEach(([qiqKey, dealKey]) => {
+    const d = entry.meddpicc[qiqKey] || {};
+    const score = typeof d.score === 'number' ? d.score : (d.confidence === 'high' ? 75 : d.confidence === 'medium' ? 50 : 20);
+    meddpicc[dealKey] = {
+      score,
+      evidence: d.confidence_rationale || '',
+      gaps:     score < 50 ? [d.content || 'Insufficient evidence'] : []
+    };
+    scoreSum += score;
+    scoreCount++;
+    if (score < 50) {
+      priorityGaps.push({ dimension: dealKey, score, evidence: d.confidence_rationale || '' });
+    }
+  });
+
+  const overallScore = scoreCount ? Math.round(scoreSum / scoreCount) : 0;
+  priorityGaps.sort((a, b) => a.score - b.score);
+
+  dealStore.patch(deal.id, 'qualification', {
+    generated_at:  new Date().toISOString(),
+    meddpicc,
+    overall_score: overallScore,
+    priority_gaps: priorityGaps
+  });
+}
+
+// Hydrate account name from ?deal=uuid on load
+(function hydrateFromUrl() {
+  const deal = dealStore.getFromUrl();
+  if (!deal) return;
+  const nameEl = document.getElementById('accountName');
+  if (nameEl && deal.context.account_name) nameEl.value = deal.context.account_name;
+})();
 </script>
 <footer class="znith-footer">
   <div class="znith-wordmark">
