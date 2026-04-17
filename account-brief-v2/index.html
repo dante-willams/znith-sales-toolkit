@@ -4856,7 +4856,34 @@ function resetChat() {
 addContact(); // Start with one empty contact
 updateBriefsBadge();
 updateChatSuggestions(1);
-populateDealPicker();
+
+// Hydrate form from ?deal=uuid if arriving from the dashboard
+(function hydrateFromUrl() {
+  const deal = dealStore.getFromUrl();
+  if (!deal) { populateDealPicker(); return; }
+
+  state.activeDealId = deal.id;
+
+  // Pre-fill company name
+  const nameEl = document.getElementById('companyName');
+  if (nameEl && deal.context.account_name) nameEl.value = deal.context.account_name;
+
+  // Pre-fill meeting type if stage maps to one
+  const stageToMeeting = {
+    discovery:   'Discovery',
+    demo:        'Demo / Evaluation',
+    proposal:    'Proposal / Commercial',
+    negotiation: 'Proposal / Commercial',
+  };
+  const meetingEl = document.getElementById('meetingType');
+  if (meetingEl && stageToMeeting[deal.context.stage]) {
+    // Only set if the option exists in the select
+    const opt = Array.from(meetingEl.options).find(o => o.value === stageToMeeting[deal.context.stage]);
+    if (opt) meetingEl.value = opt.value;
+  }
+
+  populateDealPicker();
+})();
 
 // Refresh deal picker suggestions as the rep types the company name
 document.getElementById('companyName')?.addEventListener('input', populateDealPicker);
