@@ -1244,15 +1244,18 @@ input[type=checkbox].chip-check{display:none;}
   margin-bottom: 10px;
 }
 .pov-pitch-text{
-  font-family: var(--f-brand);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--navy);
-  line-height: 1.5;
-  letter-spacing: -0.01em;
   margin-bottom: 16px;
 }
-[data-theme="dark"] .pov-pitch-text{ color: rgba(255,255,255,0.92); }
+.pov-bullet{
+  font-family: var(--f-ui);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.5;
+  padding: 4px 0;
+  letter-spacing: -0.01em;
+}
+[data-theme="dark"] .pov-bullet{ color: rgba(255,255,255,0.92); }
 .pov-copy-btn{
   display: inline-flex;
   align-items: center;
@@ -1358,6 +1361,21 @@ input[type=checkbox].chip-check{display:none;}
   border: 1px solid rgba(184,134,11,0.3);
   padding: 4px 12px;
   clip-path: var(--clip-sm);
+}
+.btn-parse-contacts{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--accent-faint);border:1px solid var(--accent-muted);
+  color:var(--accent);font-family:var(--f-mono);font-size:10px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;padding:7px 14px;
+  clip-path:var(--clip-sm);cursor:pointer;transition:var(--transition);
+}
+.btn-parse-contacts:hover{background:var(--accent-muted);}
+.section-badge{
+  font-family:var(--f-mono);font-size:9px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;
+  background:var(--amber-faint);color:var(--amber);
+  border:1px solid rgba(184,134,11,0.25);
+  padding:2px 8px;clip-path:var(--clip-sm);margin-left:8px;
 }
 </style>
 </head>
@@ -1559,6 +1577,13 @@ input[type=checkbox].chip-check{display:none;}
           <div class="card-subtitle">Add up to 5 people you'll be meeting with</div>
         </div>
       </div>
+      <div id="parse-contacts-bar" style="margin-bottom:12px;display:none;">
+        <button class="btn-parse-contacts" id="parseContactsBtn" onclick="parseContactsFromDocs()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Parse Contacts from Uploaded Docs
+        </button>
+        <span id="parse-contacts-status" style="font-size:12px;color:var(--tmuted);margin-left:10px;"></span>
+      </div>
       <div class="contacts-list" id="contactsList"></div>
       <button class="btn-add-contact" id="addContactBtn" onclick="addContact()">
         + Add Contact
@@ -1632,7 +1657,7 @@ input[type=checkbox].chip-check{display:none;}
 
     <!-- ── POV BUILDER ── -->
     <div class="pov-builder-card" id="pov-builder-section" style="display:none;">
-      <div class="pov-builder-eyebrow">⚡ POV Builder — Lead With This</div>
+      <div class="pov-builder-eyebrow">⚡ What You Know Going In</div>
       <div class="pov-pitch-text" id="pov-pitch-text"></div>
       <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
         <button class="pov-copy-btn" id="povCopyBtn" onclick="copyPOV()">
@@ -1689,6 +1714,16 @@ input[type=checkbox].chip-check{display:none;}
           <div class="pricing-signal"><span class="signal-label">Conga Signal:</span> <span id="out-pricing-signal">—</span></div>
         </div>
       </div>
+    </div>
+
+    <!-- ── PUBLIC COMPANY INTEL ── -->
+    <div class="output-section" id="out-public-intel-section" style="display:none;">
+      <div class="section-label">
+        <span class="section-icon">📊</span>Public Company Intel
+        <span class="section-badge">10-K · Earnings</span>
+      </div>
+      <div id="out-public-intel-summary" class="deep-dive-value" style="margin-bottom:14px;font-style:italic;"></div>
+      <div id="out-public-intel-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
     </div>
 
     <!-- 1d. Competitors -->
@@ -2141,6 +2176,8 @@ IMPORTANT RULES FOR DATA ACCURACY:
 - For pricing/packaging: focus on HOW they structure and package their offerings — not specific dollar amounts. Look for signals on their website, G2/Capterra reviews, job postings, press releases, and product pages. Pricing model (e.g. "per-seat SaaS", "usage-based", "tiered bundles", "custom enterprise contracts") is almost always inferable even when exact prices aren't listed. Set pricingModelAssumed to true if inferred rather than explicitly stated. Only use "Pricing model unclear — probe in discovery" if you truly cannot determine the structure after searching.
 - If you must infer something from partial evidence, set the corresponding *Assumed field to true (e.g., pricingModelAssumed: true) and note the inference in the value.
 - Never fabricate specific numbers (revenue, headcount, dates) without a source.
+- If the company appears to be publicly traded, explicitly search for: their most recent 10-K or annual report on SEC EDGAR, recent earnings call transcripts or summaries, and investor presentations. Extract any language that signals operational pain relevant to revenue operations, quoting, contracting, or document processes. Add these as signals in the financialDisclosureSignals field.
+- For private companies, set financialDisclosureSignals to null.
 
 Return ONLY valid JSON, no markdown, starting with {:
 {
@@ -2160,7 +2197,8 @@ Return ONLY valid JSON, no markdown, starting with {:
   "pricingModel": "plain text description of how they structure and package their offerings — e.g. 'Per-seat SaaS with annual and monthly tiers' or 'Usage-based with volume discounts' or 'Custom enterprise contracts with professional services'. Focus on model structure, not dollar amounts. Mark pricingModelAssumed true if inferred.",
   "pricingModelAssumed": false,
   "pricingComplexity": "one sentence: what this pricing model means for their internal quoting/contracting pain and which Conga products it signals (e.g., 'Tiered + usage pricing typically means complex quoting — strong CPQ/RLM signal')",
-  "sources": ["source url or publication name"]
+  "sources": ["source url or publication name"],
+  "financialDisclosureSignals": "For public companies only: 1-2 sentences of direct language from 10-K risk factors, earnings calls, or investor decks that signals operational pain relevant to Conga (quoting complexity, contract management, revenue recognition, sales process manual work). Use direct quotes where possible. null for private companies."
 }
 Current date: ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}.`;
 
@@ -2270,6 +2308,42 @@ Return ONLY valid JSON starting with {:
         state.results.industry = { tailwinds:['Industry data unavailable — verify company name and retry'], headwinds:['Industry data unavailable'], relevantTrends:[], benchmarks:[], congaRelevanceNote:'' };
       }
       addLog('done', 'Industry analysis complete');
+    })(),
+
+    // ── PASS 1c: Public Company Intel (only if public) ─────────
+    (async () => {
+      if (!state.results.company || !['Public','public'].some(p => (state.results.company.ownership||'').includes(p))) return;
+      addLog('run', 'Scanning 10-K filings and earnings calls…');
+      const co = state.results.company;
+      const publicIntelPrompt = `You are analyzing ${company} as a public company for a sales rep at Conga (revenue lifecycle management software).
+
+Search for and analyze:
+1. Their most recent 10-K or annual report (SEC EDGAR or investor relations page)
+2. Their most recent earnings call transcript or summary (last 2 quarters)
+3. Any recent investor presentations or analyst day materials
+
+Extract ONLY language that signals operational pain or opportunity relevant to Conga's products:
+- CPQ: complex quoting, pricing configuration, quote-to-cash, sales process
+- CLM: contract management, legal review bottlenecks, contract lifecycle
+- Document Automation: manual document generation, proposal creation
+- Revenue Lifecycle Management: revenue recognition, billing complexity, subscription management
+
+Return ONLY valid JSON starting with {:
+{
+  "operationalRiskLanguage": ["direct quote or close paraphrase from filing that signals pain, with source", "second signal if found"],
+  "earningsThemes": ["theme from earnings call relevant to Conga — e.g. 'CFO mentioned need to improve quote-to-cash efficiency'", "second theme if found"],
+  "guidanceSignals": ["growth commitment that implies operational scaling need — e.g. 'targeting 40% revenue growth requires scalable contracting'"],
+  "publicIntelSummary": "1-2 sentence synthesis: what does their public financial disclosure tell a Conga rep about where the pain is?"
+}
+
+If you cannot find relevant signals in the filings, return null values for each field. Do NOT fabricate quotes.`;
+
+      const rawPubIntel = await callClaude(publicIntelPrompt, 'You are a financial document analyst. Return ONLY valid JSON starting with {. Only include signals actually found in public filings — do not invent quotes.', true);
+      const pubIntel = safeParseJSON(rawPubIntel);
+      if (pubIntel) {
+        state.results.company.publicIntel = pubIntel;
+      }
+      addLog('done', 'Public company intel complete');
     })()
 
   ]); // end parallel block
@@ -2314,7 +2388,7 @@ Conga product descriptions (for ${company}'s OWN internal use):
 Return ONLY valid JSON starting with {:
 {
   "overarchingNarrative": "2 sentences: why Conga is relevant to ${company}'s own internal revenue and contract operations right now",
-  "povPitch": "2-3 sentences the rep can say out loud walking into this call. Must be grounded in a specific, verifiable signal from the research — recent funding, growth event, pricing complexity, news item. Lead with the situation, then the internal implication. NOT generic. If no strong signal exists, say so honestly.",
+  "povPitch": "3-5 raw insight bullets (NOT full sentences). Each bullet is one sharp thing the rep now knows that most reps walking in don't. Grounded in specific research signals. Format: short noun phrase or fragment — e.g. '• Tripled enterprise headcount post-Series C' or '• 4 pricing tiers + channel partners = quoting chaos' or '• CLM risk: closing government contracts manually'. Rep internalizes these and delivers in their own words.",
   "povDriver": "The specific signal(s) that drove this POV — e.g. 'Post-Series C enterprise sales expansion' or 'Complex tiered pricing + channel partners'. 1 sentence max.",
   "povLogicChain": [
     {"signal": "specific thing observed in research", "implication": "what it means for their internal operations", "product": "Conga product name that addresses it"}
@@ -2510,7 +2584,14 @@ function renderPOVBuilder(pov) {
   if (!pitch) { section.style.display = 'none'; return; }
   section.style.display = '';
 
-  document.getElementById('pov-pitch-text').textContent = pitch;
+  // Render as bullet list if it contains bullet markers, otherwise split by sentence
+  const pitchEl = document.getElementById('pov-pitch-text');
+  if (pitch.includes('•') || pitch.includes('\n')) {
+    const bullets = pitch.split(/\n|•/).map(s => s.trim()).filter(s => s.length > 2);
+    pitchEl.innerHTML = bullets.map(b => `<div class="pov-bullet">• ${b.replace(/^•\s*/,'')}</div>`).join('');
+  } else {
+    pitchEl.textContent = pitch;
+  }
 
   if (driver) {
     document.getElementById('pov-driver-text').textContent = driver;
@@ -2611,6 +2692,7 @@ function renderOutput() {
 
   // Pricing & Packaging
   renderPricingPackaging(c);
+  renderPublicIntel(c);
 
   // Competitors
   const compList = document.getElementById('out-competitors-list');
@@ -3310,6 +3392,65 @@ function addContact() {
   renderContacts();
 }
 
+async function parseContactsFromDocs() {
+  if (!state.uploadedDocuments.length) return;
+  const btn = document.getElementById('parseContactsBtn');
+  const status = document.getElementById('parse-contacts-status');
+  btn.disabled = true;
+  btn.textContent = 'Parsing…';
+  if (status) status.textContent = '';
+
+  // Build document content for the prompt
+  const docTexts = state.uploadedDocuments.map(d => {
+    if (d.textContent) return `[${d.name}]\n${d.textContent.slice(0, 3000)}`;
+    return `[${d.name}] (PDF — no text extracted)`;
+  }).join('\n\n---\n\n');
+
+  const prompt = `From the following documents, extract every person mentioned who could be a relevant business contact. For each person return their full name, job title/role, and company if mentioned.
+
+Documents:
+${docTexts}
+
+Return ONLY valid JSON array starting with [:
+[
+  {"name": "Full Name", "title": "Job Title / Role", "linkedin": ""},
+  {"name": "Full Name 2", "title": "Job Title 2", "linkedin": ""}
+]
+
+Only include real people with names. Exclude generic references like "the CEO" with no name. If no contacts found, return [].`;
+
+  try {
+    const raw = await callClaude(prompt, 'You are a contact extraction assistant. Return ONLY a valid JSON array starting with [. Extract real named people only.', false);
+    const contacts = safeParseJSON(raw);
+    if (Array.isArray(contacts) && contacts.length > 0) {
+      let added = 0;
+      contacts.forEach(c => {
+        if (c.name && state.contacts.length < 20) {
+          // Check for duplicates by name
+          const exists = state.contacts.some(existing =>
+            existing.name.toLowerCase().trim() === c.name.toLowerCase().trim()
+          );
+          if (!exists) {
+            const id = ++state.contactIdCounter;
+            state.contacts.push({ id, name: c.name, title: c.title||'', linkedin: c.linkedin||'' });
+            added++;
+          }
+        }
+      });
+      renderContacts();
+      if (status) status.textContent = `✓ Found ${added} contact${added !== 1 ? 's' : ''}`;
+    } else {
+      if (status) status.textContent = 'No contacts found in documents';
+    }
+  } catch(e) {
+    if (status) status.textContent = 'Parse failed — try again';
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Parse Contacts from Uploaded Docs';
+  }
+}
+
 function removeContact(id) {
   state.contacts = state.contacts.filter(c => c.id !== id);
   renderContacts();
@@ -3455,6 +3596,8 @@ function removeDocument(id) {
 
 function renderFileChips() {
   const container = document.getElementById('fileChips');
+  const parseBar = document.getElementById('parse-contacts-bar');
+  if (parseBar) parseBar.style.display = state.uploadedDocuments.length > 0 ? 'block' : 'none';
   if (!state.uploadedDocuments.length) { container.innerHTML = ''; return; }
   container.innerHTML = state.uploadedDocuments.map(doc => {
     const statusLabel = { ready:'Ready', reading:'Reading…', error:'Failed' }[doc.status];
@@ -4067,6 +4210,51 @@ async function exportWord() {
     recommendations: document.getElementById('addenda-recommendations')?.checked !== false,
   };
 
+  // ── POV BUILDER (Word) ────────────────────────────────────
+  const povBuilderSection = (pov.povPitch || pov.povDriver) ? [
+    new Table({width:{size:W,type:WidthType.DXA},columnWidths:[W],rows:[
+      row([cell([
+        new Paragraph({
+          spacing:{before:0,after:80},
+          children:[new TextRun({text:'WHAT YOU KNOW GOING IN', size:15, bold:true, color:WHITE, font:'Arial', characterSpacing:120})]
+        }),
+        // Pitch bullets
+        ...(pov.povPitch||'').split(/\n|•/).map(s=>s.trim()).filter(s=>s.length>2).map(b=>
+          new Paragraph({
+            spacing:{before:60,after:40},
+            children:[
+              new TextRun({text:'• ', bold:true, size:22, color:LAV, font:'Arial'}),
+              new TextRun({text:b.replace(/^•\s*/,''), bold:true, size:22, color:WHITE, font:'Arial'})
+            ]
+          })
+        ),
+        ...(pov.povDriver ? [
+          new Paragraph({spacing:{before:120,after:20},children:[new TextRun({text:'SIGNAL', size:14, bold:true, color:LAV, font:'Arial', characterSpacing:80})]}),
+          new Paragraph({spacing:{before:0,after:60},children:[new TextRun({text:pov.povDriver, size:18, color:WHITE, font:'Arial', italics:true})]})
+        ] : []),
+        // Logic chain
+        ...((pov.povLogicChain||[]).length ? [
+          new Paragraph({spacing:{before:100,after:30},children:[new TextRun({text:'REASONING CHAIN', size:14, bold:true, color:LAV, font:'Arial', characterSpacing:80})]})
+        ] : []),
+        ...(pov.povLogicChain||[]).map(item=>
+          new Paragraph({
+            spacing:{before:40,after:40},
+            children:[
+              new TextRun({text:(item.signal||''), size:18, color:WHITE, font:'Arial'}),
+              new TextRun({text:'  →  ', size:18, color:LAV, font:'Arial'}),
+              new TextRun({text:(item.implication||''), size:18, color:WHITE, font:'Arial', italics:true}),
+              new TextRun({text:'  ['+(item.product||'')+']', size:16, bold:true, color:LAV, font:'Arial'})
+            ]
+          })
+        ),
+        ...(pov.leadProducts&&pov.leadProducts.length ? [
+          new Paragraph({spacing:{before:100,after:20},children:[new TextRun({text:'LEAD WITH: '+pov.leadProducts.join(' · '), size:16, bold:true, color:LAV, font:'Arial'})]}),
+        ] : [])
+      ], {fill:NAVY, purBorder:true, mt:160, mb:160})])
+    ]),
+    p('',{before:60,after:60})
+  ] : [];
+
   // ── ASSEMBLE DOCUMENT ─────────────────────────────────────────
   // Order: Cover → Account Intel → POV → Call Strategy → Addenda
   const allChildren = [
@@ -4075,6 +4263,8 @@ async function exportWord() {
     coverMeta,   p('',{before:60,after:60}),
     ...peNotesBlock,
     confBar,
+    // POV Builder — first thing after cover
+    ...povBuilderSection,
 
     // ── ACCOUNT INTEL ──
     ...whatTheyDo,
@@ -4509,6 +4699,33 @@ document.addEventListener('change', function(e) {
     });
   }
 });
+
+// ── RENDER PUBLIC COMPANY INTEL ──
+function renderPublicIntel(company) {
+  const section = document.getElementById('out-public-intel-section');
+  if (!section) return;
+  const intel = company && company.publicIntel;
+  if (!intel || (!intel.operationalRiskLanguage?.length && !intel.earningsThemes?.length)) {
+    section.style.display = 'none'; return;
+  }
+  section.style.display = '';
+  const summaryEl = document.getElementById('out-public-intel-summary');
+  if (summaryEl && intel.publicIntelSummary) summaryEl.textContent = intel.publicIntelSummary;
+
+  const grid = document.getElementById('out-public-intel-grid');
+  const makeCard = (title, items, color) => {
+    if (!items || !items.length) return '';
+    return `<div style="background:var(--surf-2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:14px 16px;">
+      <div style="font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:${color};margin-bottom:8px;">${title}</div>
+      ${items.map(item=>`<div style="font-size:13px;color:var(--tmuted);padding:4px 0;border-bottom:1px solid var(--border);line-height:1.5;">"${item}"</div>`).join('')}
+    </div>`;
+  };
+  grid.innerHTML = [
+    makeCard('From 10-K / Annual Report', intel.operationalRiskLanguage, 'var(--accent)'),
+    makeCard('From Earnings Calls', intel.earningsThemes, 'var(--amber)'),
+    makeCard('Guidance Signals', intel.guidanceSignals, 'var(--green)'),
+  ].filter(Boolean).join('');
+}
 
 // ── RENDER PRICING & PACKAGING ──
 function renderPricingPackaging(company) {
