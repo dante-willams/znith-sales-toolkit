@@ -1224,6 +1224,141 @@ input[type=checkbox].chip-check{display:none;}
   text-transform: uppercase;
   margin-right: 4px;
 }
+
+/* ── POV BUILDER ── */
+.pov-builder-card{
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  clip-path: var(--clip-lg);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+}
+.pov-builder-eyebrow{
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.pov-pitch-text{
+  font-family: var(--f-brand);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+[data-theme="dark"] .pov-pitch-text{ color: rgba(255,255,255,0.92); }
+.pov-copy-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--amber-faint);
+  border: 1px solid rgba(184,134,11,0.25);
+  color: var(--amber);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  clip-path: var(--clip-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 20px;
+}
+.pov-copy-btn:hover{ background: var(--amber-muted); }
+.pov-copy-btn.copied{ color: var(--accent); background: var(--accent-faint); border-color: var(--accent-muted); }
+.pov-driver-toggle{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tmuted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 12px;
+  transition: var(--transition);
+}
+.pov-driver-toggle:hover{ color: var(--accent); }
+.pov-reasoning{
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--surf-2);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  display: none;
+}
+.pov-reasoning.open{ display: block; }
+.pov-reasoning-label{
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--tmuted);
+  margin-bottom: 8px;
+}
+.pov-driver-text{
+  font-size: 13px;
+  color: var(--tmuted);
+  font-style: italic;
+  margin-bottom: 12px;
+}
+.pov-logic-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.pov-logic-row:last-child{ border-bottom: none; }
+.pov-logic-signal{ color: var(--text); }
+.pov-logic-arrow{ color: var(--tfaint); }
+.pov-logic-implication{ color: var(--tmuted); }
+.pov-logic-product{
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-faint);
+  border: 1px solid var(--accent-muted);
+  padding: 2px 8px;
+  clip-path: var(--clip-sm);
+  text-align: center;
+  align-self: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.pov-lead-products{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.pov-lead-chip{
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: var(--amber-faint);
+  border: 1px solid rgba(184,134,11,0.3);
+  padding: 4px 12px;
+  clip-path: var(--clip-sm);
+}
 </style>
 </head>
 <body>
@@ -1492,6 +1627,27 @@ input[type=checkbox].chip-check{display:none;}
         <label class="addenda-toggle"><input type="checkbox" id="addenda-competitive" checked> Competitive Landscape</label>
         <label class="addenda-toggle"><input type="checkbox" id="addenda-deal" checked> Deal Brief</label>
         <label class="addenda-toggle"><input type="checkbox" id="addenda-recommendations" checked> Deal Recommendations</label>
+      </div>
+    </div>
+
+    <!-- ── POV BUILDER ── -->
+    <div class="pov-builder-card" id="pov-builder-section" style="display:none;">
+      <div class="pov-builder-eyebrow">⚡ POV Builder — Lead With This</div>
+      <div class="pov-pitch-text" id="pov-pitch-text"></div>
+      <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+        <button class="pov-copy-btn" id="povCopyBtn" onclick="copyPOV()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy POV
+        </button>
+        <button class="pov-driver-toggle" id="povDriverToggle" onclick="togglePOVReasoning()">
+          Why this works ▾
+        </button>
+      </div>
+      <div class="pov-reasoning" id="povReasoning">
+        <div class="pov-reasoning-label">Signal → Implication → Conga Fit</div>
+        <div class="pov-driver-text" id="pov-driver-text"></div>
+        <div id="pov-logic-chain"></div>
+        <div class="pov-lead-products" id="pov-lead-products"></div>
       </div>
     </div>
 
@@ -2126,7 +2282,9 @@ Return ONLY valid JSON starting with {:
   const compContext = state.results.company.summary || '';
   const indContext = (state.results.industry.tailwinds||[]).join('; ');
 
-  const povPrompt = `You are a Conga Account Executive building a point-of-view deck to sell Conga to ${company} for THEIR OWN INTERNAL use.
+  const povPrompt = `Your primary job is to generate a selling narrative, not a summary. Transform the research into a point of view a rep can walk into a room with. Lead with the conclusion. Show the reasoning. Ground everything in specific signals from the research provided — do not invent signals. If the research is thin, produce a thinner POV honestly rather than a confident-sounding fabrication.
+
+You are a Conga Account Executive building a point-of-view deck to sell Conga to ${company} for THEIR OWN INTERNAL use.
 
 ACCURACY RULES:
 - Base all pain point claims on what you actually know about this company from the research context provided.
@@ -2156,6 +2314,12 @@ Conga product descriptions (for ${company}'s OWN internal use):
 Return ONLY valid JSON starting with {:
 {
   "overarchingNarrative": "2 sentences: why Conga is relevant to ${company}'s own internal revenue and contract operations right now",
+  "povPitch": "2-3 sentences the rep can say out loud walking into this call. Must be grounded in a specific, verifiable signal from the research — recent funding, growth event, pricing complexity, news item. Lead with the situation, then the internal implication. NOT generic. If no strong signal exists, say so honestly.",
+  "povDriver": "The specific signal(s) that drove this POV — e.g. 'Post-Series C enterprise sales expansion' or 'Complex tiered pricing + channel partners'. 1 sentence max.",
+  "povLogicChain": [
+    {"signal": "specific thing observed in research", "implication": "what it means for their internal operations", "product": "Conga product name that addresses it"}
+  ],
+  "leadProducts": ["product name 1", "product name 2"],
   "productPOV": [
     {
       "product": "product name",
@@ -2334,7 +2498,81 @@ Every recommendation must be specific to ${company} and this deal — no generic
 // ════════════════════════════════════════════════════
 // RENDER OUTPUT
 // ════════════════════════════════════════════════════
+function renderPOVBuilder(pov) {
+  const section = document.getElementById('pov-builder-section');
+  if (!section || !pov) return;
+
+  const pitch = pov.povPitch;
+  const driver = pov.povDriver;
+  const chain = pov.povLogicChain || [];
+  const leads = pov.leadProducts || [];
+
+  if (!pitch) { section.style.display = 'none'; return; }
+  section.style.display = '';
+
+  document.getElementById('pov-pitch-text').textContent = pitch;
+
+  if (driver) {
+    document.getElementById('pov-driver-text').textContent = driver;
+  }
+
+  const chainEl = document.getElementById('pov-logic-chain');
+  chainEl.innerHTML = chain.map(item => `
+    <div class="pov-logic-row">
+      <div class="pov-logic-signal">${item.signal||''}</div>
+      <div class="pov-logic-implication">${item.implication||''}</div>
+      <div class="pov-logic-product">${item.product||''}</div>
+    </div>
+  `).join('');
+
+  const leadsEl = document.getElementById('pov-lead-products');
+  leadsEl.innerHTML = leads.map(p => `<span class="pov-lead-chip">${p}</span>`).join('');
+}
+
+function copyPOV() {
+  const pov = state.results.congaPOV || {};
+  const str = state.results.callStrategy || {};
+  const lines = [];
+
+  if (pov.povPitch) lines.push(pov.povPitch);
+  if (pov.povDriver) lines.push('\nDriver: ' + pov.povDriver);
+  if ((pov.leadProducts||[]).length) lines.push('Lead with: ' + pov.leadProducts.join(', '));
+  if (str.openingHook) lines.push('\nOpening Hook: ' + str.openingHook);
+  if ((str.discoveryQuestions||[]).length) {
+    lines.push('\nDiscovery Questions:');
+    str.discoveryQuestions.slice(0,3).forEach((q,i) => lines.push(`${i+1}. ${q}`));
+  }
+
+  const text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('povCopyBtn');
+    btn.classList.add('copied');
+    btn.innerHTML = '✓ Copied';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy POV';
+    }, 2000);
+  }).catch(() => {
+    // fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+function togglePOVReasoning() {
+  const el = document.getElementById('povReasoning');
+  const btn = document.getElementById('povDriverToggle');
+  el.classList.toggle('open');
+  btn.textContent = el.classList.contains('open') ? 'Why this works ▴' : 'Why this works ▾';
+}
+
 function renderOutput() {
+  renderPOVBuilder(state.results.congaPOV);
+
   const company = document.getElementById('companyName').value.trim();
   const meetingType = document.getElementById('meetingType').value;
   const oppStage = document.getElementById('oppStage').value;
