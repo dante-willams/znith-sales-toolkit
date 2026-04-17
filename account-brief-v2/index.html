@@ -1982,7 +1982,7 @@ async function runResearch(company) {
 IMPORTANT RULES FOR DATA ACCURACY:
 - Only include facts you found via web search results.
 - If you cannot verify a specific fact (revenue, employee count, founding year, etc.), set the field to null — do NOT estimate or guess.
-- For pricing/packaging: research their public pricing page or press releases. If no public pricing is found, set pricingModel to "Pricing not publicly available — probe in discovery" and set pricingModelAssumed to false.
+- For pricing/packaging: focus on HOW they structure and package their offerings — not specific dollar amounts. Look for signals on their website, G2/Capterra reviews, job postings, press releases, and product pages. Pricing model (e.g. "per-seat SaaS", "usage-based", "tiered bundles", "custom enterprise contracts") is almost always inferable even when exact prices aren't listed. Set pricingModelAssumed to true if inferred rather than explicitly stated. Only use "Pricing model unclear — probe in discovery" if you truly cannot determine the structure after searching.
 - If you must infer something from partial evidence, set the corresponding *Assumed field to true (e.g., pricingModelAssumed: true) and note the inference in the value.
 - Never fabricate specific numbers (revenue, headcount, dates) without a source.
 
@@ -2001,7 +2001,7 @@ Return ONLY valid JSON, no markdown, starting with {:
   "ownership": "Public / Private / PE-Backed / Subsidiary",
   "peOwner": "PE firm name if PE-backed, or null",
   "peOwnerNotes": "1 sentence on PE firm's strategy or portfolio focus if PE-backed, else null",
-  "pricingModel": "how the company prices and packages its own products/services (e.g., 'subscription SaaS with per-seat + usage tiers', 'custom enterprise licensing', 'one-time + maintenance'). If not publicly available, use: 'Pricing not publicly available — probe in discovery'",
+  "pricingModel": "plain text description of how they structure and package their offerings — e.g. 'Per-seat SaaS with annual and monthly tiers' or 'Usage-based with volume discounts' or 'Custom enterprise contracts with professional services'. Focus on model structure, not dollar amounts. Mark pricingModelAssumed true if inferred.",
   "pricingModelAssumed": false,
   "pricingComplexity": "one sentence: what this pricing model means for their internal quoting/contracting pain and which Conga products it signals (e.g., 'Tiered + usage pricing typically means complex quoting — strong CPQ/RLM signal')",
   "sources": ["source url or publication name"]
@@ -2010,6 +2010,14 @@ Current date: ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeri
 
   const compRaw = await callClaude(companyPrompt, 'You are a business intelligence analyst. Return ONLY valid JSON starting with {. If data is unavailable for a field, omit it or use null rather than guessing.', true);
   state.results.company = safeParseJSON(compRaw) || { industry: industry||'Unknown', revenue:'No information available', employees:'No information available', hq:'Unknown', founded:'Unknown', ownership:'Unknown', peOwner:null, peOwnerNotes:null, summary:'', financialTrend:'', recentNews:[], competitors:[], integrationPartners:[], sources:[] };
+  // Strip any markdown/code artifacts from pricingModel
+  if (state.results.company.pricingModel) {
+    state.results.company.pricingModel = state.results.company.pricingModel
+      .replace(/```[\w]*\n?/g, '')
+      .replace(/^\s*[\{\["].*?[\}\]"]\s*$/s, '')
+      .trim();
+    if (!state.results.company.pricingModel) delete state.results.company.pricingModel;
+  }
   if (state.results.company.sources) state.results.allSources.push(...state.results.company.sources);
   addLog('done', 'Company profile complete');
 
