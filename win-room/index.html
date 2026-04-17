@@ -2451,8 +2451,10 @@ function DealDocuments({ dealState }) {
       const SYNTH_SYSTEM = `You are a B2B deal analyst. Reconstruct deal state from file analyses. Output ONLY raw JSON starting with { and ending with }. Use EXACTLY these MEDDPICC keys: metrics, economicBuyer, decisionCriteria, decisionProcess, implicatePain, champion, competition, paperProcess.`;
       const ACCOUNT_HDR = `Account: ${dealState.setup.account || 'Unknown'} | Products: ${dealState.setup.products || 'Unknown'}`;
 
-      // Truncate each analysis to keep synthesis prompt manageable (~1500 chars each)
-      const truncatedAnalyses = fileAnalyses.map((a, i) => `--- File ${i+1}: ${a.file} ---\n${a.analysis.slice(0, 1500)}`);
+      // Scale analysis truncation by file count — more files = less per file
+      const n = fileAnalyses.length;
+      const charsPerFile = n <= 4 ? 20000 : n <= 9 ? 6000 : n <= 14 ? 3000 : n <= 19 ? 1500 : 800;
+      const truncatedAnalyses = fileAnalyses.map((a, i) => `--- File ${i+1}: ${a.file} ---\n${a.analysis.slice(0, charsPerFile)}`);
 
       let result = null;
 
