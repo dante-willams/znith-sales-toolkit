@@ -2586,26 +2586,26 @@ function renderPOVBuilder(pov) {
   if (!pitch) { section.style.display = 'none'; return; }
   section.style.display = '';
 
-  // Render as bullet list — split on newlines, bullet chars, or ,• patterns
   const pitchEl = document.getElementById('pov-pitch-text');
-  const hasBullets = pitch.includes('•') || pitch.includes('\n');
-  if (hasBullets) {
-    const bullets = pitch
-      .split(/\n|,?\s*•/)
-      .map(s => s.replace(/^[•\-–]\s*/, '').replace(/,\s*$/, '').trim())
-      .filter(s => s.length > 4);
-    pitchEl.innerHTML = bullets.map(b =>
-      `<div class="pov-bullet"><div class="pov-bullet-dot"></div><span>${b}</span></div>`
-    ).join('');
+  const makeBullets = arr =>
+    arr.map(b => `<div class="pov-bullet"><div class="pov-bullet-dot"></div><span>${b}</span></div>`).join('');
+
+  // AI may return array or string — handle both
+  if (Array.isArray(pitch)) {
+    const bullets = pitch.map(s => String(s).replace(/^[•\-–]\s*/, '').replace(/,\s*$/, '').trim()).filter(s => s.length > 2);
+    pitchEl.innerHTML = makeBullets(bullets);
   } else {
-    // Single string — try splitting on '. ' as sentences
-    const sentences = pitch.split(/\.\s+/).map(s => s.replace(/\.$/, '').trim()).filter(s => s.length > 4);
-    if (sentences.length > 1) {
-      pitchEl.innerHTML = sentences.map(b =>
-        `<div class="pov-bullet"><div class="pov-bullet-dot"></div><span>${b}</span></div>`
-      ).join('');
+    const str = String(pitch);
+    const hasBullets = str.includes('•') || str.includes('\n');
+    if (hasBullets) {
+      const bullets = str
+        .split(/\n|,?\s*•/)
+        .map(s => s.replace(/^[•\-–]\s*/, '').replace(/,\s*$/, '').trim())
+        .filter(s => s.length > 4);
+      pitchEl.innerHTML = makeBullets(bullets);
     } else {
-      pitchEl.innerHTML = `<div class="pov-bullet"><div class="pov-bullet-dot"></div><span>${pitch}</span></div>`;
+      const sentences = str.split(/\.\s+/).map(s => s.replace(/\.$/, '').trim()).filter(s => s.length > 4);
+      pitchEl.innerHTML = makeBullets(sentences.length > 1 ? sentences : [str]);
     }
   }
 
