@@ -2446,24 +2446,56 @@ function DealDocuments({ dealState }) {
         });
         fileAnalyses.push({ file: doc.name, analysis: extractText(data) });
       }
-      // Step 2: Synthesize with Sonnet
-      setCatchupProgress('Synthesizing complete deal state — ~25s left...');
-      const synthData = await callAPI({
-        model: API_CONFIG.synthesisModel,
-        system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
-        messages: [{ role: 'user', content: `Reconstruct deal state from ${fileAnalyses.length} files. IMPORTANT: Respond with ONLY raw JSON — no markdown code fences, no preamble. Start your response with { and end with }.
+      // Step 2: Synthesize — batch for large file counts to avoid context overflow
+      const SYNTH_SCHEMA = `{"calls":[{"type":"","date":"","attendees":"","summary":"","outcomes":""}],"stakeholders":[{"name":"","title":"","role":"Champion|Economic Buyer|Technical Evaluator|Decision Maker|Influencer","engagement":"High|Medium|Low|No access","sentiment":"Positive|Supportive|Neutral|Unknown","notes":""}],"meddpicc":{"metrics":{"status":"green|yellow|red","evidence":""},"economicBuyer":{"status":"","evidence":""},"decisionCriteria":{"status":"","evidence":""},"decisionProcess":{"status":"","evidence":""},"implicatePain":{"status":"","evidence":""},"champion":{"status":"","evidence":""},"competition":{"status":"","evidence":""},"paperProcess":{"status":"","evidence":""}},"msp":{"milestones":[{"name":"","target":"","owner":"","status":"Done|Overdue|At Risk|Upcoming"}]},"dealStateSummary":"300-500 word summary"}`;
+      const SYNTH_SYSTEM = `You are a B2B deal analyst. Reconstruct deal state from file analyses. Output ONLY raw JSON starting with { and ending with }. Use EXACTLY these MEDDPICC keys: metrics, economicBuyer, decisionCriteria, decisionProcess, implicatePain, champion, competition, paperProcess.`;
+      const ACCOUNT_HDR = `Account: ${dealState.setup.account || 'Unknown'} | Products: ${dealState.setup.products || 'Unknown'}`;
 
-Account: ${dealState.setup.account || 'Unknown'} | Products: ${dealState.setup.products || 'Unknown'}
+      // Truncate each analysis to keep synthesis prompt manageable (~1500 chars each)
+      const truncatedAnalyses = fileAnalyses.map((a, i) => `--- File ${i+1}: ${a.file} ---\n${a.analysis.slice(0, 1500)}`);
 
-${fileAnalyses.map((a, i) => `--- File ${i+1}: ${a.file} ---\n${a.analysis}`).join('\n\n')}
+      let result = null;
 
-Use EXACTLY these MEDDPICC keys: metrics, economicBuyer, decisionCriteria, decisionProcess, implicatePain, champion, competition, paperProcess. Extract exact dates from file content wherever possible.
+      if (fileAnalyses.length <= 10) {
+        // Single-pass synthesis
+        setCatchupProgress('Synthesizing deal state...');
+        const synthData = await callAPI({
+          model: API_CONFIG.synthesisModel,
+          system: [{ type: 'text', text: SYNTH_SYSTEM, cache_control: { type: 'ephemeral' } }],
+          messages: [{ role: 'user', content: `Reconstruct deal state from ${fileAnalyses.length} files. ${ACCOUNT_HDR}\n\n${truncatedAnalyses.join('\n\n')}\n\nSchema: ${SYNTH_SCHEMA}` }],
+          maxTokens: 16000,
+        });
+        result = safeParseJSON(extractText(synthData));
+      } else {
+        // Two-pass: batch into groups of 6, then merge
+        const BATCH = 6;
+        const batchResults = [];
+        for (let i = 0; i < truncatedAnalyses.length; i += BATCH) {
+          const batchNum = Math.floor(i / BATCH) + 1;
+          const total = Math.ceil(truncatedAnalyses.length / BATCH);
+          setCatchupProgress(`Synthesizing batch ${batchNum} of ${total}...`);
+          const batchSlice = truncatedAnalyses.slice(i, i + BATCH);
+          const bd = await callAPI({
+            model: API_CONFIG.synthesisModel,
+            system: [{ type: 'text', text: SYNTH_SYSTEM, cache_control: { type: 'ephemeral' } }],
+            messages: [{ role: 'user', content: `Reconstruct deal state from files ${i+1}–${Math.min(i+BATCH, fileAnalyses.length)}. ${ACCOUNT_HDR}\n\n${batchSlice.join('\n\n')}\n\nSchema: ${SYNTH_SCHEMA}` }],
+            maxTokens: 12000,
+          });
+          const br = safeParseJSON(extractText(bd));
+          if (br) batchResults.push(JSON.stringify(br).slice(0, 3000));
+        }
+        // Final merge pass
+        setCatchupProgress('Merging all batches into final deal state...');
+        const mergeData = await callAPI({
+          model: API_CONFIG.synthesisModel,
+          system: [{ type: 'text', text: SYNTH_SYSTEM, cache_control: { type: 'ephemeral' } }],
+          messages: [{ role: 'user', content: `Merge these ${batchResults.length} partial deal states into one complete deal state. Deduplicate calls and stakeholders. ${ACCOUNT_HDR}\n\n${batchResults.map((b,i)=>`--- Batch ${i+1} ---\n${b}`).join('\n\n')}\n\nSchema: ${SYNTH_SCHEMA}` }],
+          maxTokens: 16000,
+        });
+        result = safeParseJSON(extractText(mergeData));
+      }
 
-{"calls":[{"type":"","date":"exact date from file content","attendees":"","summary":"","outcomes":""}],"stakeholders":[{"name":"","title":"","role":"Champion|Economic Buyer|Technical Evaluator|Decision Maker|Influencer","engagement":"High|Medium|Low|No access","sentiment":"Positive|Supportive|Neutral|Unknown","notes":""}],"meddpicc":{"metrics":{"status":"green|yellow|red","evidence":""},"economicBuyer":{"status":"","evidence":""},"decisionCriteria":{"status":"","evidence":""},"decisionProcess":{"status":"","evidence":""},"implicatePain":{"status":"","evidence":""},"champion":{"status":"","evidence":""},"competition":{"status":"","evidence":""},"paperProcess":{"status":"","evidence":""}},"msp":{"milestones":[{"name":"","target":"","owner":"","status":"Done|Overdue|At Risk|Upcoming"}]},"dealStateSummary":"300-500 word summary"}` }],
-        maxTokens: 8000,
-      });
-      const result = safeParseJSON(extractText(synthData));
-      if (!result) throw new Error('Failed to parse AI response');
+      if (!result) throw new Error('Failed to parse AI response. Try with fewer files or check the API.');
       // Step 3: Apply
       setCatchupProgress('Applying...');
       if (result.calls) dealState.setCalls(prev => [...prev, ...result.calls.map(c => ({ id: genId(), type: c.type || 'Follow-up', date: c.date || '', attendees: c.attendees || '', summary: c.summary || '', transcript: '', notes: c.outcomes || '' }))]);
