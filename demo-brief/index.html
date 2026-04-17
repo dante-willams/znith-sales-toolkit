@@ -13,6 +13,7 @@
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="../shared/dealStore.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -518,7 +519,8 @@ function getApiHeaders(){
 const S = {
   company:'', products:[], personas:[],
   timeline:'', current:'', context:'', competitors:'', sf:'', notes:'',
-  files:[], brief:null, risks:[], flow:[], chatHistory:[]
+  files:[], brief:null, risks:[], flow:[], chatHistory:[],
+  activeDealId: null
 };
 
 // =========================================================
@@ -580,6 +582,29 @@ function saveCurrentBrief() {
     personas: S.personas
   });
   saveBriefs(briefs);
+}
+
+function syncToDeal() {
+  if (!S.brief) return;
+  const deal = dealStore.getFromUrl();
+  if (!deal) return;
+  const prep = {
+    id: Date.now().toString(),
+    created_at: new Date().toISOString(),
+    products: S.products,
+    personas: S.personas,
+    brief: S.brief,
+    flow: S.flow,
+    risks: S.risks
+  };
+  if (!deal.meeting_preps) deal.meeting_preps = [];
+  // Replace existing prep for same product set, or append
+  const idx = deal.meeting_preps.findIndex(p =>
+    JSON.stringify(p.products) === JSON.stringify(S.products)
+  );
+  if (idx >= 0) deal.meeting_preps[idx] = prep;
+  else deal.meeting_preps.unshift(prep);
+  dealStore.save(deal);
 }
 
 function loadBriefById(id) {
@@ -950,6 +975,7 @@ async function startGenerate(){
     for(let i=1;i<=6;i++) gStep(i,'done');
     renderReview();
     saveCurrentBrief();
+    syncToDeal();
     openChatWhenReady();
     S.chatHistory = [];
     goTo('review');
@@ -2418,6 +2444,7 @@ When updating: preserve every unchanged section exactly. Only modify what was ex
       S.flow   = [...(parsed.brief.demoFlow||[])];
       renderReview();
       saveCurrentBrief();
+      syncToDeal();
       const msgEl = addChatMsg('assistant', parsed.summary || '\u2713 Brief updated.');
       const pill = document.createElement('div');
       pill.className = 'chat-edit-pill';
@@ -2443,6 +2470,35 @@ When updating: preserve every unchanged section exactly. Only modify what was ex
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
+  // Hydrate from deal context if ?deal=uuid present
+  (() => {
+    const deal = dealStore.getFromUrl();
+    if (!deal) return;
+    const nameEl = document.getElementById('iCompany');
+    if (nameEl && !nameEl.value) nameEl.value = deal.context.account_name || '';
+    // Pre-select products from deal
+    if (deal.context.products?.length) {
+      deal.context.products.forEach(prod => {
+        const btn = document.querySelector(`[onclick*="toggleProd"][onclick*="${prod}"]`);
+        if (btn && !btn.classList.contains('active')) btn.click();
+      });
+    }
+    // Pre-populate personas from stakeholders
+    if (deal.stakeholders?.length) {
+      deal.stakeholders.forEach(s => {
+        if (!s.name && !s.title) return;
+        addPersona();
+        const tb = document.getElementById('persona-body');
+        const row = tb.lastElementChild;
+        if (row) {
+          row.querySelector('.pname').value = s.name || '';
+          row.querySelector('.ptitle').value = s.title || '';
+        }
+      });
+    }
+    S.activeDealId = deal.id;
+  })();
+
   // Auto-open sidebar with greeting
   setTimeout(()=>{
     toggleChat();
