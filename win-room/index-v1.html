@@ -1637,8 +1637,6 @@ function useDealState() {
   const [msp, _setMsp] = useState(() => readSlice('msp', { milestones: [] }));
   const [summary, _setSummary] = useState(() => readSlice('summary', ''));
   const [chatHistory, _setChatHistory] = useState(() => readSlice('chat', []));
-  const [coaching, _setCoaching] = useState(() => readSlice('coaching', null));
-  const [coachingTs, _setCoachingTs] = useState(() => readSlice('coachingTs', null));
 
   // Write-through setters: update React state AND localStorage in one shot
   const setSetup = (v) => { _setSetup(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('setup', val); return val; }); };
@@ -1648,8 +1646,6 @@ function useDealState() {
   const setMsp = (v) => { _setMsp(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('msp', val); return val; }); };
   const setSummary = (v) => { _setSummary(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('summary', val); return val; }); };
   const setChatHistory = (v) => { _setChatHistory(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('chat', val); return val; }); };
-  const setCoaching = (v) => { _setCoaching(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('coaching', val); return val; }); };
-  const setCoachingTs = (v) => { _setCoachingTs(prev => { const val = typeof v === 'function' ? v(prev) : v; writeSlice('coachingTs', val); return val; }); };
 
   // Re-load slices when activeDealId changes
   useEffect(() => {
@@ -1661,8 +1657,6 @@ function useDealState() {
     _setMsp(readSlice('msp', { milestones: [] }, activeDealId));
     _setSummary(readSlice('summary', '', activeDealId));
     _setChatHistory(readSlice('chat', [], activeDealId));
-    _setCoaching(readSlice('coaching', null, activeDealId));
-    _setCoachingTs(readSlice('coachingTs', null, activeDealId));
   }, [activeDealId]);
 
   const createDeal = useCallback((name) => {
@@ -1679,8 +1673,6 @@ function useDealState() {
     localStorage.setItem(`winroom_${id}_summary`, JSON.stringify(''));
     localStorage.setItem(`winroom_${id}_chat`, JSON.stringify([]));
     localStorage.setItem(`winroom_${id}_docs`, JSON.stringify([]));
-    localStorage.setItem(`winroom_${id}_coaching`, JSON.stringify(null));
-    localStorage.setItem(`winroom_${id}_coachingTs`, JSON.stringify(null));
     // Force-reset React state immediately
     _setSetup(freshSetup);
     _setStakeholders([]);
@@ -1689,8 +1681,6 @@ function useDealState() {
     _setMsp({ milestones: [] });
     _setSummary('');
     _setChatHistory([]);
-    _setCoaching(null);
-    _setCoachingTs(null);
     // Update ref and index
     dealIdRef.current = id;
     setDeals(prev => [...prev, newDeal]);
@@ -1716,7 +1706,6 @@ function useDealState() {
     calls, setCalls, meddpicc, setMeddpicc,
     msp, setMsp, summary, setSummary,
     chatHistory, setChatHistory, dealContext,
-    coaching, setCoaching, coachingTs, setCoachingTs,
   };
 }
 
@@ -1731,7 +1720,7 @@ const NAV_ICONS = {
   'call-hub': <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
   'strategy': <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
   'mutual-plan': <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>,
-  'deal-review': <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  'deal-review': <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
   'deal-brief': <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
 };
 
@@ -1741,7 +1730,7 @@ const NAV_LABELS = {
   'call-hub': 'Call-Hub',
   'strategy': 'MEDDIC',
   'mutual-plan': 'Plan',
-  'deal-review': 'Coach',
+  'deal-review': 'Review',
   'deal-brief': 'Brief',
 };
 
@@ -2540,7 +2529,7 @@ Use EXACTLY these MEDDPICC keys: metrics, economicBuyer, decisionCriteria, decis
 // ═══════════════════════════════════════════════════════════════════
 
 function StakeholderSection({ dealState }) {
-  const { stakeholders, setStakeholders, coaching } = dealState;
+  const { stakeholders, setStakeholders } = dealState;
   const [view, setView] = useState('list');
 
   const addStakeholder = () => {
@@ -2599,18 +2588,6 @@ function StakeholderSection({ dealState }) {
         </div>
         <SectionSaveBtn dealState={dealState} />
       </div>
-
-      {coaching?.stakeholderGaps?.length > 0 && (
-        <div style={{marginBottom:16,padding:'12px 16px',background:'rgba(234,88,12,0.06)',borderLeft:'3px solid var(--yellow)',clipPath:'var(--clip-sm)'}}>
-          <div style={{fontFamily:'var(--f-mono)',fontSize:10,fontWeight:500,textTransform:'uppercase',letterSpacing:'0.08em',color:'var(--yellow)',marginBottom:8}}>Coaching — Stakeholder Gaps</div>
-          {coaching.stakeholderGaps.map((g, i) => (
-            <div key={i} style={{fontSize:12,color:'var(--text)',marginBottom:i < coaching.stakeholderGaps.length-1 ? 8 : 0}}>
-              <strong>{g.gap}</strong>
-              {g.suggestion && <span style={{color:'var(--tmuted)'}}> → {g.suggestion}</span>}
-            </div>
-          ))}
-        </div>
-      )}
 
       <div className="view-toggle">
         <button className={`view-btn ${view === 'list' ? 'active' : ''}`} onClick={() => setView('list')}>List</button>
@@ -3472,24 +3449,10 @@ Analyze everything above and output as JSON. You MUST include meddpicc updates b
 // ═══════════════════════════════════════════════════════════════════
 
 function StrategySection({ dealState }) {
-  const { meddpicc, setMeddpicc, coaching } = dealState;
+  const { meddpicc, setMeddpicc } = dealState;
   const [compLoading, setCompLoading] = useState(false);
   const [compResult, setCompResult] = useState(null);
   const [compError, setCompError] = useState('');
-  const [appliedScores, setAppliedScores] = useState(false);
-
-  const applyCoachingScores = () => {
-    if (!coaching?.meddpiccScores) return;
-    setMeddpicc(prev => {
-      const updated = {...prev};
-      Object.entries(coaching.meddpiccScores).forEach(([key, val]) => {
-        if (updated[key] && val.status) updated[key] = { status: val.status, evidence: val.evidence || updated[key].evidence || '' };
-      });
-      return updated;
-    });
-    dealState.updateDealIndex();
-    setAppliedScores(true);
-  };
 
   const cycleStatus = (key) => {
     const order = ['red', 'yellow', 'green'];
@@ -3534,16 +3497,6 @@ function StrategySection({ dealState }) {
         </div>
         <SectionSaveBtn dealState={dealState} />
       </div>
-
-      {coaching?.meddpiccScores && !appliedScores && (
-        <div style={{padding:'12px 16px',background:'var(--accent-faint)',borderLeft:'3px solid var(--accent)',marginBottom:16,display:'flex',alignItems:'center',justifyContent:'space-between',clipPath:'var(--clip-sm)'}}>
-          <div>
-            <div style={{fontSize:13,fontWeight:500,color:'var(--text)'}}>AI coaching scores are available from the Deal Coach.</div>
-            <div style={{fontSize:11,color:'var(--tmuted)',marginTop:2}}>Apply them to pre-fill statuses and evidence, then edit as needed.</div>
-          </div>
-          <button className="btn-sm approve" onClick={applyCoachingScores} style={{flexShrink:0,marginLeft:16}}>Apply AI Scores</button>
-        </div>
-      )}
 
       <div className="card">
         <div className="card-label">MEDDPICC Scorecard</div>
@@ -3714,448 +3667,247 @@ function MutualPlanSection({ dealState }) {
 
 
 // ═══════════════════════════════════════════════════════════════════
-// DEAL COACH (AI-powered coaching engine)
+// DEAL REVIEW (Phase 5 - Computed from state)
 // ═══════════════════════════════════════════════════════════════════
 
 function DealReviewSection({ dealState }) {
-  const { coaching, setCoaching, coachingTs, setCoachingTs, meddpicc, setMeddpicc, dealContext, setup } = dealState;
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const { meddpicc, calls, msp, setup } = dealState;
+  const healthScore = computeHealthScore(meddpicc);
 
-  const runCoaching = async () => {
-    setLoading(true);
-    setError('');
-    try {
-      const data = await callAPI({
-        model: API_CONFIG.synthesisModel,
-        system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
-        messages: [{ role: 'user', content: `${dealContext}
-
-Run a complete deal coaching session. Output ONLY raw JSON — no markdown, no code fences, start with {:
-{"diagnosis":"2-3 paragraph plain-English assessment of where this deal actually stands. Reference specific people by name, specific dates, specific events. Be direct about problems.","forecast":"Commit|Best Case|Pipeline|At Risk","forecastReason":"1-2 sentences explaining the forecast with specific evidence. Name the account.","topRisks":[{"risk":"short risk title","detail":"what is actually happening and why it matters","mitigation":"specific next step — who does what","severity":"red|yellow"}],"nextActions":[{"action":"short action title","detail":"how to execute this specifically","why":"why this is the priority right now","priority":1}],"meddpiccScores":{"metrics":{"status":"green|yellow|red","evidence":"specific evidence","coaching":"what to do next"},"economicBuyer":{"status":"","evidence":"","coaching":""},"decisionCriteria":{"status":"","evidence":"","coaching":""},"decisionProcess":{"status":"","evidence":"","coaching":""},"implicatePain":{"status":"","evidence":"","coaching":""},"champion":{"status":"","evidence":"","coaching":""},"competition":{"status":"","evidence":"","coaching":""},"paperProcess":{"status":"","evidence":"","coaching":""}},"stakeholderGaps":[{"gap":"specific gap","suggestion":"specific action to close it"}],"executiveSummary":"3-4 paragraph executive narrative for VP review. Include deal stage, health, key stakeholders, top risks, next milestone, and forecast. Use specific names and numbers."}
-
-Rules: max 5 topRisks, max 5 nextActions sorted priority 1=highest. Reference ${setup.account || 'the account'} by name. Generic output = failure.` }],
-        maxTokens: 4000,
-      });
-      const result = safeParseJSON(extractText(data));
-      if (!result) throw new Error('Failed to parse coaching response. Try again.');
-      setCoaching(result);
-      setCoachingTs(new Date().toISOString());
-      dealState.updateDealIndex();
-    } catch (err) {
-      setError(err.message);
+  // Compute risks
+  const risks = [];
+  Object.entries(meddpicc).forEach(([key, val]) => {
+    if (val.status === 'red') {
+      risks.push({ severity: 'red', title: `${MEDDPICC_LABELS[key]} is RED`, detail: val.evidence || 'No evidence captured' });
     }
-    setLoading(false);
-  };
+  });
+  (msp.milestones || []).forEach(m => {
+    if (m.status === 'Overdue') {
+      risks.push({ severity: 'yellow', title: `Overdue milestone: ${m.name}`, detail: `Target: ${m.target}` });
+    }
+    if (m.status === 'At Risk') {
+      risks.push({ severity: 'red', title: `At-risk milestone: ${m.name}`, detail: `Target: ${m.target}` });
+    }
+  });
 
-  const applyMeddpiccScores = () => {
-    if (!coaching?.meddpiccScores) return;
-    setMeddpicc(prev => {
-      const updated = {...prev};
-      Object.entries(coaching.meddpiccScores).forEach(([key, val]) => {
-        if (updated[key] && val.status) updated[key] = { status: val.status, evidence: val.evidence || updated[key].evidence || '' };
-      });
-      return updated;
-    });
-    dealState.updateDealIndex();
-  };
+  // Forecast
+  const redCount = Object.values(meddpicc).filter(v => v.status === 'red').length;
+  const greenCount = Object.values(meddpicc).filter(v => v.status === 'green').length;
+  let forecastCat = 'Pipeline';
+  let forecastColor = 'var(--tmuted)';
+  let forecastReason = 'Not enough data to forecast.';
 
-  const fcColor = { 'Commit': 'var(--green)', 'Best Case': 'var(--yellow)', 'Pipeline': 'var(--amber)', 'At Risk': 'var(--red)' };
+  if (calls.length >= 2) {
+    if (greenCount >= 6) {
+      forecastCat = 'Commit';
+      forecastColor = 'var(--green)';
+      forecastReason = `${greenCount}/8 MEDDPICC elements green. Strong deal progression over ${calls.length} calls.`;
+    } else if (greenCount >= 4) {
+      forecastCat = 'Best Case';
+      forecastColor = 'var(--yellow)';
+      forecastReason = `${greenCount}/8 green, ${redCount} red. Key gaps need attention before commit.`;
+    } else if (redCount >= 5) {
+      forecastCat = 'At Risk';
+      forecastColor = 'var(--red)';
+      forecastReason = `${redCount}/8 elements still red after ${calls.length} calls. Major gaps in deal qualification.`;
+    } else {
+      forecastCat = 'Pipeline';
+      forecastColor = 'var(--yellow)';
+      forecastReason = `Mixed signals. ${greenCount} green, ${redCount} red across ${calls.length} calls.`;
+    }
+  }
 
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
         <div className="section-header-text">
-          <h2>Deal Coach</h2>
-          <p>AI-powered diagnosis, risk assessment, and next actions for {setup.account || 'this deal'}</p>
+          <h2>Deal Review</h2>
+          <p>Health dashboard and risk assessment</p>
         </div>
-        <div style={{display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0}}>
-          {coachingTs && (
-            <span style={{fontFamily: 'var(--f-mono)', fontSize: 10, color: 'var(--tfaint)', textTransform: 'uppercase', letterSpacing: '0.04em'}}>
-              {new Date(coachingTs).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})} {new Date(coachingTs).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}
-            </span>
-          )}
-          <button className="btn btn-primary" onClick={runCoaching} disabled={loading} style={{whiteSpace: 'nowrap'}}>
-            {loading ? <><LoadingDots /> Coaching...</> : coaching ? '↻ Re-run' : 'Run Coaching'}
-          </button>
+        <SectionSaveBtn dealState={dealState} />
+      </div>
+
+      <div className="health-dashboard">
+        <div className="health-card">
+          <div className={`big-num ${healthScore >= 70 ? 'green' : healthScore >= 40 ? 'yellow' : 'red'}`}>{healthScore}%</div>
+          <div className="sub">Deal Health</div>
+        </div>
+        <div className="health-card">
+          <div className="big-num" style={{color: 'var(--text)'}}>{setup.dealSize || '--'}</div>
+          <div className="sub">Deal Size</div>
+        </div>
+        <div className="health-card">
+          <div className="big-num" style={{color: 'var(--accent)'}}>{calls.length}</div>
+          <div className="sub">Calls Logged</div>
+        </div>
+        <div className="health-card">
+          <div className={`big-num ${risks.length > 3 ? 'red' : risks.length > 0 ? 'yellow' : 'green'}`}>{risks.length}</div>
+          <div className="sub">Red Flags</div>
         </div>
       </div>
 
-      {error && <div style={{padding: '12px 16px', borderLeft: '3px solid var(--red)', color: 'var(--red)', fontSize: 13, marginBottom: 16, background: 'rgba(220,38,38,0.04)'}}>{error}</div>}
-      {loading && <Spinner text="Analyzing deal — this takes 20–30 seconds..." />}
-
-      {!loading && !coaching && !error && (
-        <div className="empty-state" style={{padding: '60px 20px'}}>
-          <h3>No coaching session yet</h3>
-          <p>Run coaching to get AI-powered diagnosis, risk assessment, MEDDPICC scoring, and prioritized next actions specific to {setup.account || 'this deal'}.</p>
-          <button className="btn btn-primary" onClick={runCoaching} style={{marginTop: 8}}>Run Coaching</button>
+      {/* Risks */}
+      {risks.length > 0 && (
+        <div className="card">
+          <div className="card-label" style={{color: 'var(--red)'}}>Risk Assessment</div>
+          <div className="risk-list">
+            {risks.map((r, i) => (
+              <div className="risk-item" key={i}>
+                <span className="risk-icon" style={{color: r.severity === 'red' ? 'var(--red)' : 'var(--yellow)'}}>&#x26A0;</span>
+                <div>
+                  <span className="risk-title">{r.title}</span>
+                  {r.detail}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
-      {!loading && coaching && (
-        <>
-          <div className="card" style={{borderLeft: `3px solid ${fcColor[coaching.forecast] || 'var(--amber)'}`, marginBottom: 16}}>
-            <div style={{display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8}}>
-              <span style={{fontFamily: 'var(--f-brand)', fontSize: 24, fontWeight: 800, color: fcColor[coaching.forecast] || 'var(--amber)'}}>{coaching.forecast || 'Pipeline'}</span>
-              <span style={{fontFamily: 'var(--f-mono)', fontSize: 9, fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '3px 8px', background: 'var(--surf-2)', color: 'var(--tmuted)', clipPath: 'var(--clip-sm)'}}>Forecast</span>
-            </div>
-            <div style={{fontSize: 13, color: 'var(--tmuted)', lineHeight: 1.6}}>{coaching.forecastReason}</div>
-          </div>
-
-          <div className="card">
-            <div className="card-label">Deal Diagnosis</div>
-            <div style={{fontSize: 13, color: 'var(--tmuted)', lineHeight: 1.8}}>
-              {(coaching.diagnosis || '').split('\n').filter(Boolean).map((p, i) => <p key={i} style={{marginBottom: 10}}>{p}</p>)}
-            </div>
-          </div>
-
-          {coaching.topRisks?.length > 0 && (
-            <div className="card">
-              <div className="card-label" style={{color: 'var(--red)'}}>Top Risks</div>
-              <div className="risk-list">
-                {coaching.topRisks.map((r, i) => (
-                  <div className="risk-item" key={i} style={{flexDirection: 'column', alignItems: 'flex-start', gap: 6}}>
-                    <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
-                      <span className="risk-icon" style={{color: r.severity === 'red' ? 'var(--red)' : 'var(--yellow)', fontSize: 13}}>⚠</span>
-                      <span className="risk-title">{r.risk}</span>
-                    </div>
-                    <div style={{fontSize: 12, color: 'var(--tmuted)', lineHeight: 1.5, paddingLeft: 22}}>{r.detail}</div>
-                    <div style={{fontSize: 12, color: 'var(--text)', background: 'var(--surf-2)', borderLeft: '2px solid var(--accent)', padding: '6px 10px', borderRadius: '0 4px 4px 0', marginLeft: 22, width: 'calc(100% - 22px)'}}>→ {r.mitigation}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {coaching.nextActions?.length > 0 && (
-            <div className="card">
-              <div className="card-label" style={{color: 'var(--green)'}}>Next Actions</div>
-              <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-                {[...coaching.nextActions].sort((a, b) => (a.priority || 99) - (b.priority || 99)).map((a, i) => (
-                  <div key={i} style={{display: 'flex', gap: 14, padding: '12px 14px', background: 'var(--surf-2)', clipPath: 'var(--clip-sm)'}}>
-                    <div style={{fontFamily: 'var(--f-mono)', fontSize: 14, fontWeight: 700, color: 'var(--accent)', flexShrink: 0, width: 20, paddingTop: 1}}>{i + 1}</div>
-                    <div style={{flex: 1}}>
-                      <div style={{fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 3}}>{a.action}</div>
-                      {a.detail && <div style={{fontSize: 12, color: 'var(--tmuted)', lineHeight: 1.5, marginBottom: 4}}>{a.detail}</div>}
-                      {a.why && <div style={{fontSize: 10, color: 'var(--accent)', fontFamily: 'var(--f-mono)', textTransform: 'uppercase', letterSpacing: '0.04em'}}>Why now: {a.why}</div>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {coaching.meddpiccScores && (
-            <div className="card">
-              <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14}}>
-                <div className="card-label" style={{marginBottom: 0}}>AI MEDDPICC Analysis</div>
-                <button className="btn-sm approve" onClick={applyMeddpiccScores}>Apply to Scorecard</button>
-              </div>
-              <div className="scorecard">
-                {Object.entries(MEDDPICC_LABELS).map(([key, label]) => {
-                  const score = coaching.meddpiccScores[key];
-                  if (!score) return null;
-                  return (
-                    <div className="score-row" key={key}>
-                      <div className="score-element">{label}</div>
-                      <div className="score-status">
-                        <span className={`dot dot-${score.status || 'red'}`} style={{width: 10, height: 10, borderRadius: '50%', display: 'inline-block'}}></span>
-                        <span style={{color: getStatusColor(score.status || 'red'), textTransform: 'uppercase', fontFamily: 'var(--f-mono)', fontSize: 11}}>{score.status || 'red'}</span>
-                      </div>
-                      <div style={{flex: 1}}>
-                        <div style={{fontSize: 12, color: 'var(--tmuted)', marginBottom: score.coaching ? 4 : 0}}>{score.evidence}</div>
-                        {score.coaching && <div style={{fontSize: 11, color: 'var(--accent)', fontFamily: 'var(--f-mono)', letterSpacing: '0.02em'}}>↑ {score.coaching}</div>}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {coaching.stakeholderGaps?.length > 0 && (
-            <div className="card">
-              <div className="card-label" style={{color: 'var(--yellow)'}}>Stakeholder Gaps</div>
-              <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
-                {coaching.stakeholderGaps.map((g, i) => (
-                  <div key={i} style={{padding: '10px 14px', background: 'var(--surf-2)', borderLeft: '3px solid var(--yellow)', clipPath: 'var(--clip-sm)'}}>
-                    <div style={{fontSize: 13, fontWeight: 500, color: 'var(--text)', marginBottom: 4}}>{g.gap}</div>
-                    {g.suggestion && <div style={{fontSize: 12, color: 'var(--tmuted)'}}>→ {g.suggestion}</div>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </>
-      )}
+      {/* Forecast */}
+      <div className="forecast-rec">
+        <h3>Forecast Recommendation</h3>
+        <div className="forecast-cat" style={{color: forecastColor}}>{forecastCat}</div>
+        <div className="forecast-reason">{forecastReason}</div>
+      </div>
     </div>
   );
 }
 
 
 // ═══════════════════════════════════════════════════════════════════
-// DEAL BRIEF
+// DEAL BRIEF (Phase 5 - Functional)
 // ═══════════════════════════════════════════════════════════════════
 
 function DealBriefSection({ dealState }) {
-  const { setup, stakeholders, meddpicc, calls, msp, summary, coaching, dealContext } = dealState;
-  const [aiNarrative, setAiNarrative] = useState('');
-  const [briefLoading, setBriefLoading] = useState(false);
-  const [copyMsg, setCopyMsg] = useState('');
+  const { setup, stakeholders, meddpicc, calls, msp, summary } = dealState;
+  const [sections, setSections] = useState({
+    overview: true, stakeholders: true, meddpicc: true,
+    callHistory: true, plan: true, risks: true,
+  });
 
-  // Sync from coaching if available and we don't have a local narrative yet
-  useEffect(() => {
-    if (coaching?.executiveSummary && !aiNarrative) setAiNarrative(coaching.executiveSummary);
-  }, [coaching]);
+  const toggleSection = (key) => {
+    setSections(prev => ({...prev, [key]: !prev[key]}));
+  };
 
-  const generateNarrative = async () => {
-    if (coaching?.executiveSummary) { setAiNarrative(coaching.executiveSummary); return; }
-    setBriefLoading(true);
-    try {
-      const data = await callAPI({
-        model: API_CONFIG.synthesisModel,
-        system: [{ type: 'text', text: DEAL_COACH_BRAIN, cache_control: { type: 'ephemeral' } }],
-        messages: [{ role: 'user', content: `${dealContext}\n\nWrite a 3-4 paragraph executive deal brief for a VP of Sales review. Professional narrative tone. Include: deal stage and health, key stakeholders and champion status, top 2-3 risks, next critical milestone, and recommended forecast category. Reference specific names, numbers, and dates from the deal context. Do not use headers — write in flowing paragraphs.` }],
-        maxTokens: 1500,
+  const buildBriefText = () => {
+    let brief = `# Deal Brief: ${setup.account || 'Unnamed Deal'}\n\n`;
+
+    if (sections.overview) {
+      brief += `## Overview\n`;
+      brief += `- Opportunity: ${setup.opportunity || 'N/A'}\n`;
+      brief += `- Stage: ${setup.stage} | Deal Size: ${setup.dealSize || 'N/A'} | Close Target: ${setup.closeTarget || 'N/A'}\n`;
+      brief += `- Products: ${setup.products || 'N/A'}\n`;
+      brief += `- Industry: ${setup.industry || 'N/A'} | Size: ${setup.size || 'N/A'} | Revenue: ${setup.revenue || 'N/A'}\n\n`;
+    }
+
+    if (sections.stakeholders && stakeholders.length) {
+      brief += `## Stakeholders (${stakeholders.length})\n`;
+      stakeholders.forEach(s => {
+        brief += `- **${s.name}** - ${s.title} | ${s.role} | ${s.engagement} engagement | ${s.sentiment}\n`;
       });
-      setAiNarrative(extractText(data));
-    } catch(e) {}
-    setBriefLoading(false);
+      brief += '\n';
+    }
+
+    if (sections.meddpicc) {
+      brief += `## MEDDPICC Scorecard\n`;
+      Object.entries(MEDDPICC_LABELS).forEach(([key, label]) => {
+        const m = meddpicc[key];
+        brief += `- ${label}: ${m.status.toUpperCase()}${m.evidence ? ' -- ' + m.evidence : ''}\n`;
+      });
+      brief += '\n';
+    }
+
+    if (sections.callHistory && calls.length) {
+      brief += `## Call History (${calls.length} calls)\n`;
+      [...calls].sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(c => {
+        brief += `- ${c.date}: ${c.type} -- ${c.summary?.slice(0, 100) || 'No summary'}\n`;
+      });
+      brief += '\n';
+    }
+
+    if (sections.plan && msp.milestones?.length) {
+      brief += `## Mutual Success Plan\n`;
+      msp.milestones.forEach(m => {
+        brief += `- ${m.name} | Target: ${m.target} | Owner: ${m.owner} | ${m.status}\n`;
+      });
+      brief += '\n';
+    }
+
+    if (sections.risks) {
+      const reds = Object.entries(meddpicc).filter(([_, v]) => v.status === 'red');
+      if (reds.length) {
+        brief += `## Key Risks\n`;
+        reds.forEach(([key, val]) => {
+          brief += `- ${MEDDPICC_LABELS[key]}: ${val.evidence || 'No evidence'}\n`;
+        });
+        brief += '\n';
+      }
+    }
+
+    if (summary) {
+      brief += `## Deal State Summary\n${summary}\n`;
+    }
+
+    return brief;
+  };
+
+  const [copyMsg, setCopyMsg] = useState('');
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(buildBriefText()).then(() => {
+      setCopyMsg('Copied to clipboard!');
+      setTimeout(() => setCopyMsg(''), 3000);
+    });
   };
 
   const exportPDF = () => {
     const win = window.open('', '_blank');
-    const statusClass = (s) => s === 'green' ? 'st-g' : s === 'yellow' ? 'st-y' : 'st-r';
-    const milestoneStatusClass = (s) => s === 'Done' ? 'st-g' : (s === 'Overdue' || s === 'At Risk') ? 'st-r' : 'st-y';
-    win.document.write(`<!DOCTYPE html><html><head>
-<title>Deal Brief — ${setup.account || 'Deal'}</title>
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Barlow',sans-serif;color:#2D3748;background:#fff;padding:48px;max-width:820px;margin:0 auto;font-size:14px;line-height:1.7;}
-.hdr{border-bottom:3px solid #B8860B;padding-bottom:20px;margin-bottom:32px;}
-.hdr h1{font-family:'Epilogue',sans-serif;font-size:28px;font-weight:800;color:#1A2332;margin-bottom:8px;}
-.meta{display:flex;flex-wrap:wrap;gap:16px;font-size:11px;color:#718096;}
-.meta span{background:#F4F5F6;padding:3px 10px;border-radius:3px;}
-.sec{margin-bottom:28px;}
-.sec h2{font-family:'Epilogue',sans-serif;font-size:15px;font-weight:700;color:#1A2332;border-bottom:1px solid #E2E5E9;padding-bottom:6px;margin-bottom:14px;text-transform:uppercase;letter-spacing:0.04em;}
-.narrative p{font-size:14px;line-height:1.85;color:#4A5568;margin-bottom:12px;}
-table{width:100%;border-collapse:collapse;font-size:12px;}
-th{text-align:left;padding:8px 10px;background:#F4F5F6;color:#718096;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;font-size:10px;}
-td{padding:10px;border-bottom:1px solid #E2E5E9;vertical-align:top;}
-.st{display:inline-block;padding:2px 8px;border-radius:3px;font-weight:700;font-size:10px;text-transform:uppercase;}
-.st-g{background:rgba(22,163,74,.12);color:#15803d;}
-.st-y{background:rgba(234,88,12,.1);color:#EA580C;}
-.st-r{background:rgba(220,38,38,.1);color:#dc2626;}
-.forecast-box{display:inline-block;font-family:'Epilogue',sans-serif;font-size:22px;font-weight:800;padding:12px 24px;background:#F4F5F6;border-left:4px solid #B8860B;margin-bottom:12px;}
-.risk-box{padding:10px 14px;border-left:3px solid;margin-bottom:8px;background:#F4F5F6;}
-.risk-r{border-color:#dc2626;}.risk-y{border-color:#EA580C;}
-.action-row{display:flex;gap:10px;padding:10px;background:#F4F5F6;margin-bottom:6px;}
-.action-num{font-family:monospace;font-weight:700;color:#B8860B;min-width:20px;}
-.ftr{margin-top:40px;padding-top:16px;border-top:1px solid #E2E5E9;font-size:11px;color:#A0AEC0;display:flex;justify-content:space-between;}
-@media print{body{padding:32px;}}
-</style></head><body>
-<div class="hdr">
-  <h1>${setup.account || 'Deal Brief'}</h1>
-  <div class="meta">
-    <span>Stage: ${setup.stage || 'N/A'}</span>
-    <span>Deal Size: ${setup.dealSize || 'N/A'}</span>
-    <span>Close Target: ${setup.closeTarget || 'N/A'}</span>
-    <span>Products: ${setup.products || 'N/A'}</span>
-    <span>Generated: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</span>
-  </div>
-</div>`);
-
-    if (aiNarrative) {
-      win.document.write(`<div class="sec"><h2>Executive Summary</h2><div class="narrative">${aiNarrative.split(/\n+/).filter(Boolean).map(p=>`<p>${p}</p>`).join('')}</div></div>`);
-    }
-
-    if (coaching?.forecast) {
-      win.document.write(`<div class="sec"><h2>Forecast</h2><div class="forecast-box">${coaching.forecast}</div><p style="font-size:13px;color:#4A5568;">${coaching.forecastReason||''}</p></div>`);
-    }
-
-    if (stakeholders.length) {
-      win.document.write(`<div class="sec"><h2>Stakeholders (${stakeholders.length})</h2><table><thead><tr><th>Name</th><th>Title</th><th>Role</th><th>Engagement</th><th>Sentiment</th></tr></thead><tbody>`);
-      stakeholders.forEach(s => win.document.write(`<tr><td><strong>${s.name}</strong></td><td style="color:#718096">${s.title}</td><td>${s.role}</td><td>${s.engagement}</td><td>${s.sentiment}</td></tr>`));
-      win.document.write(`</tbody></table></div>`);
-    }
-
-    win.document.write(`<div class="sec"><h2>MEDDPICC Scorecard</h2><table><thead><tr><th>Element</th><th>Status</th><th>Evidence</th></tr></thead><tbody>`);
-    Object.entries(MEDDPICC_LABELS).forEach(([key, label]) => {
-      const m = meddpicc[key];
-      win.document.write(`<tr><td><strong>${label}</strong></td><td><span class="st ${statusClass(m.status)}">${m.status.toUpperCase()}</span></td><td style="color:#718096">${m.evidence||'—'}</td></tr>`);
-    });
-    win.document.write(`</tbody></table></div>`);
-
-    if (coaching?.topRisks?.length) {
-      win.document.write(`<div class="sec"><h2>Key Risks</h2>`);
-      coaching.topRisks.forEach(r => {
-        win.document.write(`<div class="risk-box risk-${r.severity}"><strong>${r.risk}</strong><p style="font-size:12px;color:#718096;margin-top:4px">${r.detail}</p><p style="font-size:12px;margin-top:6px"><strong>→</strong> ${r.mitigation}</p></div>`);
-      });
-      win.document.write(`</div>`);
-    }
-
-    if (coaching?.nextActions?.length) {
-      win.document.write(`<div class="sec"><h2>Next Actions</h2>`);
-      [...coaching.nextActions].sort((a,b)=>(a.priority||99)-(b.priority||99)).forEach((a,i) => {
-        win.document.write(`<div class="action-row"><span class="action-num">${i+1}</span><div><strong>${a.action}</strong>${a.detail?`<p style="font-size:12px;color:#718096;margin-top:3px">${a.detail}</p>`:''}</div></div>`);
-      });
-      win.document.write(`</div>`);
-    }
-
-    if (msp.milestones?.length) {
-      win.document.write(`<div class="sec"><h2>Mutual Success Plan</h2><table><thead><tr><th>Milestone</th><th>Target</th><th>Owner</th><th>Status</th></tr></thead><tbody>`);
-      msp.milestones.forEach(m => win.document.write(`<tr><td>${m.name}</td><td>${m.target}</td><td>${m.owner}</td><td><span class="st ${milestoneStatusClass(m.status)}">${m.status}</span></td></tr>`));
-      win.document.write(`</tbody></table></div>`);
-    }
-
-    win.document.write(`<div class="ftr"><span>Conga Win Room — Confidential</span><span>${new Date().toLocaleDateString()}</span></div></body></html>`);
+    win.document.write(`<html><head><title>Deal Brief - ${setup.account}</title>
+      <style>body{font-family:sans-serif;padding:40px;max-width:800px;margin:0 auto;color:#333;line-height:1.6;}
+      h1{font-size:24px;border-bottom:2px solid #B8860B;padding-bottom:8px;}
+      h2{font-size:16px;margin-top:20px;color:#5F6B7A;}
+      li{margin-bottom:4px;}strong{color:#1A1D23;}</style></head><body>`);
+    win.document.write(renderMarkdown(buildBriefText()));
+    win.document.write('</body></html>');
     win.document.close();
-    setTimeout(() => win.print(), 600);
+    setTimeout(() => win.print(), 500);
   };
 
-  const copyToClipboard = () => {
-    const lines = [
-      `# Deal Brief: ${setup.account || 'Unnamed Deal'}`,
-      `Stage: ${setup.stage} | Size: ${setup.dealSize||'N/A'} | Close: ${setup.closeTarget||'N/A'}`,
-      '',
-    ];
-    if (aiNarrative) lines.push('## Executive Summary', aiNarrative, '');
-    if (coaching?.forecast) lines.push(`## Forecast: ${coaching.forecast}`, coaching.forecastReason||'', '');
-    if (stakeholders.length) {
-      lines.push(`## Stakeholders (${stakeholders.length})`);
-      stakeholders.forEach(s => lines.push(`- ${s.name} | ${s.title} | ${s.role} | ${s.sentiment}`));
-      lines.push('');
-    }
-    lines.push('## MEDDPICC');
-    Object.entries(MEDDPICC_LABELS).forEach(([k,l]) => {
-      const m = meddpicc[k];
-      lines.push(`- ${l}: ${m.status.toUpperCase()}${m.evidence?' — '+m.evidence:''}`);
-    });
-    navigator.clipboard.writeText(lines.join('\n')).then(() => {
-      setCopyMsg('Copied!');
-      setTimeout(() => setCopyMsg(''), 2000);
-    });
-  };
-
-  const hasCoaching = !!coaching;
+  const briefSections = [
+    { key: 'overview', label: 'Deal Overview', preview: `${setup.opportunity || setup.account || 'N/A'} | ${setup.stage} | ${setup.dealSize || 'N/A'}` },
+    { key: 'stakeholders', label: 'Stakeholders', preview: `${stakeholders.length} contacts mapped` },
+    { key: 'meddpicc', label: 'MEDDPICC Scorecard', preview: `${Object.values(meddpicc).filter(v => v.status === 'green').length} green, ${Object.values(meddpicc).filter(v => v.status === 'red').length} red` },
+    { key: 'callHistory', label: 'Call History', preview: `${calls.length} calls logged` },
+    { key: 'plan', label: 'Mutual Success Plan', preview: `${(msp.milestones || []).length} milestones` },
+    { key: 'risks', label: 'Key Risks', preview: `${Object.values(meddpicc).filter(v => v.status === 'red').length} red flags` },
+  ];
 
   return (
     <div style={{animation: 'fadeIn 0.25s ease'}}>
       <div className="section-header">
         <div className="section-header-text">
           <h2>Deal Brief</h2>
-          <p>AI-written executive narrative and exportable deal summary</p>
+          <p>Exportable summary for leadership review</p>
         </div>
+        <SectionSaveBtn dealState={dealState} />
       </div>
 
-      {/* AI Narrative */}
-      <div className="card">
-        <div style={{display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14}}>
-          <div className="card-label" style={{marginBottom: 0}}>Executive Narrative</div>
-          <button className="btn btn-primary" onClick={generateNarrative} disabled={briefLoading} style={{fontSize: 11, padding: '6px 14px'}}>
-            {briefLoading ? <><LoadingDots /> Writing...</> : aiNarrative ? '↻ Regenerate' : hasCoaching ? 'Use Coaching Summary' : 'Generate AI Brief'}
-          </button>
-        </div>
-        {briefLoading && <div style={{padding: '20px 0', textAlign: 'center', color: 'var(--accent)', fontFamily: 'var(--f-mono)', fontSize: 12}}>Writing executive narrative...</div>}
-        {!briefLoading && aiNarrative ? (
-          <div style={{fontSize: 13, color: 'var(--tmuted)', lineHeight: 1.85}}>
-            {aiNarrative.split(/\n+/).filter(Boolean).map((p, i) => <p key={i} style={{marginBottom: 10}}>{p}</p>)}
+      {briefSections.map(s => (
+        <div className="brief-section" key={s.key} onClick={() => toggleSection(s.key)}>
+          <div className="brief-header">
+            <h4>{s.label}</h4>
+            <div className={`brief-toggle ${sections[s.key] ? '' : 'off'}`}></div>
           </div>
-        ) : !briefLoading && (
-          <div style={{fontSize: 13, color: 'var(--tfaint)', fontStyle: 'italic', textAlign: 'center', padding: '20px 0'}}>
-            {hasCoaching ? 'Coaching session available — click "Use Coaching Summary" to populate.' : 'Run coaching first for best results, or click "Generate AI Brief" for a standalone narrative.'}
-          </div>
-        )}
-      </div>
-
-      {/* Forecast from coaching */}
-      {coaching?.forecast && (
-        <div className="card" style={{borderLeft: `3px solid ${{'Commit':'var(--green)','Best Case':'var(--yellow)','Pipeline':'var(--amber)','At Risk':'var(--red)'}[coaching.forecast]||'var(--amber)'}`}}>
-          <div className="card-label" style={{marginBottom: 8}}>Forecast</div>
-          <div style={{fontFamily: 'var(--f-brand)', fontSize: 20, fontWeight: 800, color: {Commit:'var(--green)','Best Case':'var(--yellow)',Pipeline:'var(--amber)','At Risk':'var(--red)'}[coaching.forecast]||'var(--amber)', marginBottom: 6}}>{coaching.forecast}</div>
-          <div style={{fontSize: 13, color: 'var(--tmuted)', lineHeight: 1.5}}>{coaching.forecastReason}</div>
+          {sections[s.key] && (
+            <div className="brief-preview">{s.preview}</div>
+          )}
         </div>
-      )}
-
-      {/* Stakeholders summary */}
-      {stakeholders.length > 0 && (
-        <div className="card">
-          <div className="card-label">Stakeholders ({stakeholders.length})</div>
-          <table className="stake-table">
-            <thead><tr><th>Name</th><th>Role</th><th>Engagement</th><th>Sentiment</th></tr></thead>
-            <tbody>
-              {stakeholders.map(s => (
-                <tr key={s.id}>
-                  <td><div className="stake-name">{s.name}</div><div className="stake-title">{s.title}</div></td>
-                  <td>{s.role}</td>
-                  <td>{s.engagement}</td>
-                  <td><span className={`sentiment-tag sentiment-${(s.sentiment||'unknown').toLowerCase()}`}>{s.sentiment}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {/* MEDDPICC scorecard */}
-      <div className="card">
-        <div className="card-label">MEDDPICC Scorecard</div>
-        <div className="scorecard">
-          {Object.entries(MEDDPICC_LABELS).map(([key, label]) => {
-            const m = meddpicc[key];
-            return (
-              <div className="score-row" key={key} style={{gridTemplateColumns: '140px 80px 1fr'}}>
-                <div className="score-element">{label}</div>
-                <div className="score-status">
-                  <span className={`dot dot-${m.status}`} style={{width:10,height:10,borderRadius:'50%',display:'inline-block'}}></span>
-                  <span style={{color:getStatusColor(m.status),textTransform:'uppercase',fontFamily:'var(--f-mono)',fontSize:11}}>{m.status}</span>
-                </div>
-                <div className="score-evidence">{m.evidence||<span style={{color:'var(--tfaint)'}}>No evidence</span>}</div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Top risks from coaching */}
-      {coaching?.topRisks?.length > 0 && (
-        <div className="card">
-          <div className="card-label" style={{color:'var(--red)'}}>Key Risks</div>
-          {coaching.topRisks.map((r, i) => (
-            <div key={i} style={{padding:'10px 14px',borderLeft:`3px solid ${r.severity==='red'?'var(--red)':'var(--yellow)'}`,background:'var(--surf-2)',marginBottom:8,clipPath:'var(--clip-sm)'}}>
-              <div style={{fontSize:13,fontWeight:600,color:'var(--text)',marginBottom:3}}>{r.risk}</div>
-              <div style={{fontSize:12,color:'var(--tmuted)',marginBottom:4}}>{r.detail}</div>
-              <div style={{fontSize:12,color:'var(--text)'}}>→ {r.mitigation}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Mutual Plan */}
-      {msp.milestones?.length > 0 && (
-        <div className="card">
-          <div className="card-label">Mutual Success Plan</div>
-          <table className="stake-table">
-            <thead><tr><th>Milestone</th><th>Target</th><th>Owner</th><th>Status</th></tr></thead>
-            <tbody>
-              {msp.milestones.map(m => (
-                <tr key={m.id}>
-                  <td style={{fontWeight:500}}>{m.name}</td>
-                  <td style={{color:'var(--tmuted)'}}>{m.target}</td>
-                  <td style={{color:'var(--tmuted)'}}>{m.owner}</td>
-                  <td><span className={`plan-status ${m.status?.toLowerCase().replace(' ','-')}`}>{m.status}</span></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      ))}
 
       <div className="brief-actions">
         <button className="btn btn-primary" onClick={exportPDF}>Export as PDF</button>
         <button className="btn btn-secondary" onClick={copyToClipboard}>Copy to Clipboard</button>
-        {copyMsg && <span style={{fontSize:12,color:'var(--green)',marginLeft:8,fontFamily:'var(--f-mono)'}}>{copyMsg}</span>}
+        {copyMsg && <span style={{fontSize: 12, color: 'var(--green)', marginLeft: 8, fontFamily: 'var(--f-mono)'}}>{copyMsg}</span>}
       </div>
     </div>
   );
@@ -4167,7 +3919,7 @@ td{padding:10px;border-bottom:1px solid #E2E5E9;vertical-align:top;}
 // ═══════════════════════════════════════════════════════════════════
 
 function ContextPanel({ dealState }) {
-  const { setup, stakeholders, meddpicc, calls, coaching } = dealState;
+  const { setup, stakeholders, meddpicc, calls } = dealState;
   const healthScore = computeHealthScore(meddpicc);
 
   const getInitials = (name) => {
@@ -4200,31 +3952,6 @@ function ContextPanel({ dealState }) {
           <div className="health-label">Deal Health</div>
         </div>
       </div>
-
-      {/* Coaching: Forecast + Next Actions */}
-      {coaching?.forecast && (
-        <div className="ctx-section">
-          <div className="ctx-title">Forecast</div>
-          <div style={{
-            fontFamily: 'var(--f-brand)', fontSize: 16, fontWeight: 800,
-            color: {Commit:'var(--green)','Best Case':'var(--yellow)',Pipeline:'var(--amber)','At Risk':'var(--red)'}[coaching.forecast]||'var(--amber)',
-            marginBottom: 4,
-          }}>{coaching.forecast}</div>
-          <div style={{fontSize: 11, color: 'var(--tfaint)', lineHeight: 1.4}}>{coaching.forecastReason?.slice(0, 100)}{coaching.forecastReason?.length > 100 ? '...' : ''}</div>
-        </div>
-      )}
-
-      {coaching?.nextActions?.length > 0 && (
-        <div className="ctx-section">
-          <div className="ctx-title">Next Actions</div>
-          {[...coaching.nextActions].sort((a,b)=>(a.priority||99)-(b.priority||99)).slice(0, 3).map((a, i) => (
-            <div key={i} style={{display:'flex',gap:8,paddingBottom:8,marginBottom:8,borderBottom:'1px solid var(--border)',fontSize:12}}>
-              <span style={{fontFamily:'var(--f-mono)',fontSize:11,fontWeight:700,color:'var(--accent)',flexShrink:0}}>{i+1}</span>
-              <span style={{color:'var(--text)',lineHeight:1.4}}>{a.action}</span>
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* MEDDPICC Quick */}
       <div className="ctx-section">
@@ -4413,7 +4140,7 @@ function DealLandingPage({ dealState, onOpenDeal, onCreateDeal }) {
       const updated = dealState.deals.filter(d => d.id !== id);
       localStorage.setItem('winroom_deals', JSON.stringify(updated));
       // Clean up localStorage for this deal
-      ['setup','stakeholders','calls','meddpicc','msp','summary','chat','docs','prepResult','debriefResult','coaching','coachingTs'].forEach(suffix => {
+      ['setup','stakeholders','calls','meddpicc','msp','summary','chat','docs','prepResult','debriefResult'].forEach(suffix => {
         localStorage.removeItem(`winroom_${id}_${suffix}`);
       });
       window.location.reload();
