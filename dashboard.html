@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Znith · Deals</title>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --f-brand:'Epilogue',sans-serif;
+  --f-ui:'Barlow',sans-serif;
+  --f-mono:'IBM Plex Mono',monospace;
+  --amber:#B8860B;
+  --amber-glow:rgba(184,134,11,0.22);
+  --amber-muted:rgba(184,134,11,0.12);
+  --amber-faint:rgba(184,134,11,0.07);
+  --bg:#05070F;
+  --surf:#0F1520;
+  --surf-2:#0A0E1A;
+  --surf-3:#070A13;
+  --border:rgba(255,255,255,0.08);
+  --border-md:rgba(255,255,255,0.14);
+  --text:rgba(255,255,255,0.88);
+  --tmuted:rgba(255,255,255,0.50);
+  --tfaint:rgba(255,255,255,0.28);
+  --transition:all 0.18s ease;
+  --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;min-height:100vh;}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,14,26,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.header-logo{display:flex;align-items:center;gap:14px;}
+.logo-mark{width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-mark svg{width:36px;height:36px;}
+.logo-divider{width:1px;height:24px;background:var(--border);}
+.logo-text{font-family:var(--f-ui);font-size:13px;font-weight:600;color:var(--text);letter-spacing:0.04em;text-transform:uppercase;}
+.logo-text span{color:var(--amber);font-weight:400;letter-spacing:0.06em;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.theme-toggle-btn{
+  background:transparent;border:1px solid var(--border-md);
+  color:var(--tmuted);padding:5px 10px;clip-path:var(--clip-sm);
+  cursor:pointer;font-size:15px;line-height:1;transition:var(--transition);
+}
+.theme-toggle-btn:hover{border-color:var(--amber);color:var(--amber);}
+.btn-new-deal{
+  display:flex;align-items:center;gap:7px;
+  background:var(--amber);color:#0A0E1A;
+  border:none;padding:9px 18px;
+  clip-path:var(--clip-sm);
+  font-family:var(--f-ui);font-size:13px;font-weight:700;
+  letter-spacing:0.04em;text-transform:uppercase;
+  cursor:pointer;transition:var(--transition);
+}
+.btn-new-deal:hover{background:#d4a012;transform:translateY(-1px);}
+/* ── HEADER SEARCH ── */
+.header-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surf);border:1px solid var(--border);
+  padding:7px 14px;clip-path:var(--clip-sm);
+  opacity:0.45;cursor:not-allowed;
+  position:relative;
+}
+.header-search svg{opacity:0.4;flex-shrink:0;}
+.header-search span{font-size:12px;color:var(--tfaint);letter-spacing:0.02em;white-space:nowrap;}
+.search-coming-soon{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--surf);border:1px solid var(--border-md);
+  padding:5px 10px;clip-path:var(--clip-sm);
+  font-size:11px;color:var(--tmuted);white-space:nowrap;
+  pointer-events:none;opacity:0;transition:opacity 0.15s;
+}
+.header-search:hover .search-coming-soon{opacity:1;}
+
+/* ── PIPELINE SECTION ── */
+.section-divider{
+  display:flex;align-items:center;gap:16px;
+  margin:52px 0 24px;
+}
+.section-divider-line{flex:1;height:1px;background:var(--border);}
+.section-divider-label{
+  font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--tfaint);white-space:nowrap;
+}
+.pipeline-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.pipeline-card{
+  background:var(--surf);border:1px solid var(--border);
+  clip-path:var(--clip-lg);padding:24px;
+  display:flex;flex-direction:column;gap:10px;
+  text-decoration:none;transition:var(--transition);cursor:pointer;
+}
+.pipeline-card:hover{border-color:var(--border-md);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.pipeline-card-icon{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--amber-muted);border:1px solid rgba(184,134,11,0.2);
+  display:flex;align-items:center;justify-content:center;
+}
+.pipeline-card-icon svg{opacity:0.9;}
+.pipeline-card-title{font-family:var(--f-brand);font-size:15px;font-weight:700;color:var(--text);}
+.pipeline-card-sub{font-size:12px;color:var(--tmuted);line-height:1.5;}
+.pipeline-card-cta{
+  margin-top:4px;font-size:11px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;color:var(--amber);
+  display:flex;align-items:center;gap:5px;
+}
+
+/* ── MAIN ── */
+.main{max-width:1100px;margin:0 auto;padding:48px 40px 100px;}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:36px;}
+.page-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+.page-title{font-family:var(--f-brand);font-size:32px;font-weight:800;color:var(--text);line-height:1.15;margin-bottom:6px;}
+.page-title span{color:var(--amber);}
+.page-subtitle{font-size:14px;color:var(--tmuted);line-height:1.5;}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+.filter-btn{
+  padding:6px 14px;font-size:12px;font-weight:600;letter-spacing:0.04em;
+  background:transparent;border:1px solid var(--border);
+  color:var(--tmuted);cursor:pointer;clip-path:var(--clip-sm);
+  transition:var(--transition);font-family:var(--f-ui);
+}
+.filter-btn:hover{border-color:var(--border-md);color:var(--text);}
+.filter-btn.active{background:var(--amber-muted);border-color:var(--amber);color:var(--amber);}
+.filter-count{
+  margin-left:auto;font-size:12px;color:var(--tfaint);
+  font-family:var(--f-mono);letter-spacing:0.06em;
+}
+
+/* ── DEAL GRID ── */
+.deal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+
+/* ── DEAL CARD ── */
+.deal-card{
+  background:var(--surf);border:1px solid var(--border);
+  clip-path:var(--clip-lg);
+  padding:20px;cursor:pointer;
+  transition:var(--transition);
+  display:flex;flex-direction:column;gap:14px;
+  position:relative;
+}
+.deal-card:hover{border-color:var(--border-md);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.deal-card:hover .deal-card-actions{opacity:1;}
+
+.deal-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.deal-company{font-family:var(--f-brand);font-size:18px;font-weight:700;color:var(--text);line-height:1.2;}
+.deal-stage-pill{
+  flex-shrink:0;padding:3px 10px;font-size:10px;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;clip-path:var(--clip-sm);
+  white-space:nowrap;
+}
+
+/* Stage colors */
+.stage-discovery  {background:rgba(99,179,237,0.15);color:#63B3ED;}
+.stage-demo       {background:var(--amber-muted);color:var(--amber);}
+.stage-proposal   {background:rgba(167,139,250,0.15);color:#A78BFA;}
+.stage-negotiation{background:rgba(251,146,60,0.15);color:#FB923C;}
+.stage-closed_won {background:rgba(52,211,153,0.15);color:#34D399;}
+.stage-closed_lost{background:rgba(255,255,255,0.06);color:var(--tfaint);}
+
+/* ── DEAL META ── */
+.deal-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tfaint);}
+.meta-item svg{opacity:0.6;}
+
+/* ── MEDDPICC SCORE ── */
+.meddpicc-row{display:flex;align-items:center;gap:8px;}
+.meddpicc-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--tfaint);}
+.meddpicc-bar-wrap{flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.meddpicc-bar{height:100%;border-radius:2px;transition:width 0.6s ease;}
+.meddpicc-score-val{font-family:var(--f-mono);font-size:11px;font-weight:500;min-width:28px;text-align:right;}
+.score-low  {background:#EF4444;color:#EF4444;}
+.score-mid  {background:#F59E0B;color:#F59E0B;}
+.score-high {background:#34D399;color:#34D399;}
+.score-none {background:var(--border);color:var(--tfaint);}
+
+/* ── TOOL LINKS ── */
+.deal-tools{display:flex;gap:6px;flex-wrap:wrap;}
+.tool-btn{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 10px;font-size:11px;font-weight:600;
+  letter-spacing:0.03em;text-decoration:none;
+  background:var(--surf-2);border:1px solid var(--border);
+  color:var(--tmuted);clip-path:var(--clip-sm);
+  transition:var(--transition);
+}
+.tool-btn:hover{border-color:var(--border-md);color:var(--text);}
+.tool-btn.has-data{border-color:rgba(255,255,255,0.14);color:var(--text);}
+.tool-btn.has-data svg circle, .tool-btn.has-data svg path{stroke:var(--amber);}
+.tool-btn svg{flex-shrink:0;opacity:0.7;}
+
+/* ── CARD ACTIONS (hover) ── */
+.deal-card-actions{
+  display:flex;gap:8px;opacity:0;transition:opacity 0.18s;
+  justify-content:flex-end;
+}
+.action-btn{
+  background:transparent;border:1px solid var(--border);
+  color:var(--tfaint);font-size:11px;padding:4px 10px;
+  clip-path:var(--clip-sm);cursor:pointer;
+  transition:var(--transition);font-family:var(--f-ui);
+}
+.action-btn:hover{border-color:var(--border-md);color:var(--text);}
+.action-btn.danger:hover{border-color:rgba(239,68,68,0.5);color:#EF4444;}
+
+/* ── EMPTY STATE ── */
+.empty-state{
+  text-align:center;padding:80px 40px;
+  border:1px dashed var(--border);
+  clip-path:var(--clip-lg);
+  background:var(--surf-3);
+}
+.empty-icon{font-size:40px;margin-bottom:16px;opacity:0.4;}
+.empty-title{font-family:var(--f-brand);font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.empty-sub{font-size:13px;color:var(--tmuted);margin-bottom:24px;line-height:1.6;}
+.btn-empty-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--amber);color:#0A0E1A;
+  border:none;padding:11px 24px;
+  clip-path:var(--clip-sm);
+  font-family:var(--f-ui);font-size:13px;font-weight:700;
+  letter-spacing:0.04em;text-transform:uppercase;
+  cursor:pointer;transition:var(--transition);text-decoration:none;
+}
+.btn-empty-cta:hover{background:#d4a012;}
+
+/* ── NEW DEAL MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(4px);z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--surf);border:1px solid var(--border-md);
+  clip-path:var(--clip-lg);padding:32px;width:100%;max-width:480px;
+  transform:translateY(8px);transition:transform 0.2s;
+}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-title{font-family:var(--f-brand);font-size:20px;font-weight:700;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--tmuted);margin-bottom:24px;}
+.modal-field{margin-bottom:16px;}
+.modal-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--tmuted);margin-bottom:6px;display:block;}
+.modal-input{
+  width:100%;background:var(--surf-2);border:1px solid var(--border);
+  color:var(--text);padding:10px 14px;font-family:var(--f-ui);font-size:14px;
+  clip-path:var(--clip-sm);outline:none;transition:var(--transition);
+}
+.modal-input:focus{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-faint);}
+.modal-input::placeholder{color:var(--tfaint);}
+.modal-row{display:flex;gap:10px;margin-top:8px;}
+.modal-actions{display:flex;gap:10px;margin-top:24px;}
+.btn-modal-primary{
+  flex:1;background:var(--amber);color:#0A0E1A;
+  border:none;padding:11px 20px;
+  clip-path:var(--clip-sm);font-family:var(--f-ui);font-size:13px;font-weight:700;
+  letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;transition:var(--transition);
+}
+.btn-modal-primary:hover{background:#d4a012;}
+.btn-modal-cancel{
+  background:transparent;color:var(--tmuted);
+  border:1px solid var(--border);padding:11px 20px;
+  clip-path:var(--clip-sm);font-family:var(--f-ui);font-size:13px;font-weight:600;
+  cursor:pointer;transition:var(--transition);
+}
+.btn-modal-cancel:hover{border-color:var(--border-md);color:var(--text);}
+
+/* ── LIGHT THEME ── */
+[data-theme="light"]{
+  --bg:#F4F5F6;--surf:#FFFFFF;--surf-2:#F4F5F6;--surf-3:#ECEEF0;
+  --border:#E2E5E9;--border-md:#CBD0D8;
+  --text:#1A2332;--tmuted:#6B7280;--tfaint:#9CA3AF;
+}
+[data-theme="light"] header{background:rgba(255,255,255,0.92);border-bottom-color:#E2E5E9;}
+[data-theme="light"] .deal-card{background:#FFFFFF;}
+[data-theme="light"] .tool-btn{background:#F4F5F6;}
+[data-theme="light"] .empty-state{background:#ECEEF0;}
+[data-theme="light"] .modal{background:#FFFFFF;}
+[data-theme="light"] .modal-input{background:#F4F5F6;color:#1A2332;}
+
+/* ── ZNITH FOOTER ── */
+.znith-footer{
+  position:fixed;bottom:0;left:0;right:0;z-index:90;
+  height:34px;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surf);
+  border-top:2px solid var(--amber);
+}
+.znith-wordmark{display:flex;align-items:center;gap:1px;font-family:var(--f-brand);font-size:12px;font-weight:800;line-height:1;}
+.znith-footer-meta{display:flex;align-items:center;gap:8px;}
+.znith-footer-pip{width:4px;height:4px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber-glow);}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#99f6e4">
+        <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
+      </svg>
+    </div>
+    <div class="logo-divider"></div>
+    <div class="logo-text">Conga <span>Sales Intelligence</span></div>
+  </div>
+  <div class="header-right">
+    <div class="header-search" title="Search coming with backend">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span>Search deals…</span>
+      <div class="search-coming-soon">Available when backend is connected</div>
+    </div>
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+    <button class="btn-new-deal" onclick="openNewDealModal()">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      New Deal
+    </button>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <div class="page-header">
+    <p class="page-eyebrow">Deal Workspace</p>
+    <h1 class="page-title">Your <span>active deals.</span></h1>
+    <p class="page-subtitle">Click a deal to jump back in. Research runs once — all tools share the same context.</p>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" data-filter="discovery" onclick="setFilter('discovery')">Discovery</button>
+    <button class="filter-btn" data-filter="demo" onclick="setFilter('demo')">Demo</button>
+    <button class="filter-btn" data-filter="proposal" onclick="setFilter('proposal')">Proposal</button>
+    <button class="filter-btn" data-filter="negotiation" onclick="setFilter('negotiation')">Negotiation</button>
+    <button class="filter-btn" data-filter="closed_won" onclick="setFilter('closed_won')">Won</button>
+    <span class="filter-count" id="dealCount"></span>
+  </div>
+
+  <!-- Deal grid -->
+  <div class="deal-grid" id="dealGrid"></div>
+
+  <!-- ── PIPELINE SECTION ── -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">Pipeline Building</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="pipeline-grid">
+    <a href="./prospecting-agent/index.html" target="_blank" rel="noopener" class="pipeline-card">
+      <div class="pipeline-card-icon">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#B8860B" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+      </div>
+      <div class="pipeline-card-title">Prospecting Agent</div>
+      <div class="pipeline-card-sub">Upload your territory list. Score accounts against ICP, rank by fit, and generate dossiers for your top targets.</div>
+      <div class="pipeline-card-cta">
+        Launch
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+    <div class="pipeline-card" style="opacity:0.45;cursor:not-allowed;" title="Available when backend is connected">
+      <div class="pipeline-card-icon" style="background:rgba(255,255,255,0.04);border-color:var(--border);">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.3)" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+      </div>
+      <div class="pipeline-card-title" style="color:var(--tmuted);">Territory Assignment</div>
+      <div class="pipeline-card-sub">Assign scored accounts to reps, track territory coverage, and monitor pipeline health across the team.</div>
+      <div class="pipeline-card-cta" style="color:var(--tfaint);">
+        Coming with backend
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── NEW DEAL MODAL ── -->
+<div class="modal-overlay" id="newDealModal" onclick="handleModalOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-title">Start a new deal</div>
+    <div class="modal-sub">Fill in what you know — you can update everything later.</div>
+
+    <div class="modal-field">
+      <label class="modal-label">Company Name *</label>
+      <input class="modal-input" id="nd-company" type="text" placeholder="e.g. Salesforce, Acme Corp" autofocus>
+    </div>
+
+    <div class="modal-row">
+      <div class="modal-field" style="flex:1">
+        <label class="modal-label">Stage</label>
+        <select class="modal-input" id="nd-stage">
+          <option value="discovery">Discovery</option>
+          <option value="demo">Demo</option>
+          <option value="proposal">Proposal</option>
+          <option value="negotiation">Negotiation</option>
+        </select>
+      </div>
+      <div class="modal-field" style="flex:1">
+        <label class="modal-label">Deal Value (optional)</label>
+        <input class="modal-input" id="nd-value" type="text" placeholder="e.g. 120000">
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeNewDealModal()">Cancel</button>
+      <button class="btn-modal-primary" onclick="createDealAndGo()">
+        Create &amp; Start Research →
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer class="znith-footer">
+  <div class="znith-wordmark">
+    <span style="font-family:var(--f-mono);color:var(--amber);font-weight:700;">/</span>
+    <span style="font-family:var(--f-brand);font-weight:800;color:var(--amber);">Z</span>
+    <span style="font-family:var(--f-brand);font-weight:800;color:rgba(255,255,255,0.25);">nith</span>
+  </div>
+  <div class="znith-footer-meta">
+    <span style="font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">Sales Intelligence</span>
+    <div class="znith-footer-pip"></div>
+    <span style="font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">v1.0</span>
+  </div>
+</footer>
+
+<script src="./shared/dealStore.js"></script>
+<script>
+
+// ── THEME ─────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem('znith-theme', next);
+  document.getElementById('themeToggle').textContent = next === 'dark' ? '🌙' : '☀️';
+}
+(function initTheme() {
+  const saved = localStorage.getItem('znith-theme') || 'dark';
+  document.documentElement.dataset.theme = saved;
+  document.getElementById('themeToggle').textContent = saved === 'dark' ? '🌙' : '☀️';
+})();
+
+// ── FILTER ────────────────────────────────────────────────────────────────────
+let activeFilter = 'all';
+
+function setFilter(f) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+  renderDeals();
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+const TOOLS = [
+  { key: 'research',      label: 'Research',     path: './account-brief-v2/index.html', dataKey: 'research' },
+  { key: 'qualify',       label: 'Qualify',      path: './qualify-iq/index.html',       dataKey: 'qualification' },
+  { key: 'meeting-prep',  label: 'Meeting Prep', path: './demo-brief/index.html',       dataKey: 'meeting_preps' },
+  { key: 'business-case', label: 'Biz Case',     path: './value-map/index.html',        dataKey: 'value_map' },
+  { key: 'intelligence',  label: 'Intelligence', path: './win-room/index.html',         dataKey: null },
+];
+
+function getMeddpiccScore(deal) {
+  const q = deal.qualification?.meddpicc;
+  if (!q) return null;
+  const scores = Object.values(q).map(d => d.score || 0);
+  if (!scores.length) return null;
+  return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+}
+
+function scoreClass(score) {
+  if (score === null) return 'score-none';
+  if (score >= 70) return 'score-high';
+  if (score >= 40) return 'score-mid';
+  return 'score-low';
+}
+
+function timeAgo(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1)  return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
+function dealCardHTML(deal) {
+  const score    = getMeddpiccScore(deal);
+  const sc       = scoreClass(score);
+  const stageKey = deal.context.stage || 'discovery';
+
+  const toolBtns = TOOLS.map(t => {
+    const hasData = t.dataKey === null
+      ? true
+      : (Array.isArray(deal[t.dataKey]) ? deal[t.dataKey].length > 0 : !!deal[t.dataKey]);
+    const url = `${t.path}?deal=${deal.id}`;
+    return `<a href="${url}" class="tool-btn${hasData ? ' has-data' : ''}" onclick="event.stopPropagation()" title="${t.label}">
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
+      </svg>
+      ${t.label}
+    </a>`;
+  }).join('');
+
+  const valueStr = deal.context.deal_value
+    ? `$${Number(deal.context.deal_value).toLocaleString()}`
+    : null;
+
+  return `
+  <div class="deal-card" onclick="openDeal('${deal.id}')">
+    <div class="deal-card-top">
+      <div class="deal-company">${deal.context.account_name}</div>
+      <div class="deal-stage-pill stage-${stageKey}">${dealStore.stageLabel(stageKey)}</div>
+    </div>
+
+    <div class="deal-meta">
+      <div class="meta-item">
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ${timeAgo(deal.updated_at)}
+      </div>
+      ${valueStr ? `<div class="meta-item">
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        ${valueStr}
+      </div>` : ''}
+      ${deal.research ? `<div class="meta-item">
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>
+        Research ready
+      </div>` : ''}
+    </div>
+
+    <div class="meddpicc-row">
+      <div class="meddpicc-label">MEDDPICC</div>
+      <div class="meddpicc-bar-wrap">
+        <div class="meddpicc-bar ${sc}" style="width:${score ?? 0}%"></div>
+      </div>
+      <div class="meddpicc-score-val ${sc}">${score !== null ? score : '—'}</div>
+    </div>
+
+    <div class="deal-tools">${toolBtns}</div>
+
+    <div class="deal-card-actions">
+      <button class="action-btn" onclick="event.stopPropagation();editStage('${deal.id}')">Edit stage</button>
+      <button class="action-btn danger" onclick="event.stopPropagation();deleteDeal('${deal.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+function renderDeals() {
+  const grid  = document.getElementById('dealGrid');
+  const count = document.getElementById('dealCount');
+  let deals   = dealStore.list();
+
+  if (activeFilter !== 'all') {
+    deals = deals.filter(d => d.context.stage === activeFilter);
+  }
+
+  count.textContent = `${deals.length} deal${deals.length !== 1 ? 's' : ''}`;
+
+  if (!deals.length) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">◈</div>
+        <div class="empty-title">${activeFilter === 'all' ? 'No deals yet' : 'No ' + dealStore.stageLabel(activeFilter) + ' deals'}</div>
+        <div class="empty-sub">${activeFilter === 'all'
+          ? 'Create your first deal to start building account intelligence,<br>qualifying opportunities, and prepping for meetings.'
+          : 'No deals in this stage. Try a different filter.'}</div>
+        ${activeFilter === 'all' ? `<button class="btn-empty-cta" onclick="openNewDealModal()">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Start Your First Deal
+        </button>` : ''}
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = deals.map(dealCardHTML).join('');
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────────────────
+function openDeal(id) {
+  // Navigate to Account Brief with deal context — best starting point
+  const deal = dealStore.get(id);
+  if (!deal) return;
+  const target = deal.research
+    ? `./win-room/index.html?deal=${id}`
+    : `./account-brief-v2/index.html?deal=${id}`;
+  window.location.href = target;
+}
+
+function deleteDeal(id) {
+  const deal = dealStore.get(id);
+  if (!deal) return;
+  if (!confirm(`Delete deal for ${deal.context.account_name}? This cannot be undone.`)) return;
+  dealStore.delete(id);
+  renderDeals();
+}
+
+function editStage(id) {
+  const deal  = dealStore.get(id);
+  if (!deal) return;
+  const stage = prompt(
+    `Change stage for ${deal.context.account_name}:\n\ndiscovery · demo · proposal · negotiation · closed_won · closed_lost`,
+    deal.context.stage
+  );
+  if (!stage) return;
+  const valid = dealStore.STAGES.map(s => s.id);
+  if (!valid.includes(stage.trim())) { alert('Invalid stage. Use one of: ' + valid.join(', ')); return; }
+  dealStore.patch(id, 'context.stage', stage.trim());
+  renderDeals();
+}
+
+// ── NEW DEAL MODAL ────────────────────────────────────────────────────────────
+function openNewDealModal() {
+  document.getElementById('newDealModal').classList.add('open');
+  setTimeout(() => document.getElementById('nd-company').focus(), 50);
+}
+
+function closeNewDealModal() {
+  document.getElementById('newDealModal').classList.remove('open');
+  document.getElementById('nd-company').value = '';
+  document.getElementById('nd-value').value = '';
+}
+
+function handleModalOverlayClick(e) {
+  if (e.target === document.getElementById('newDealModal')) closeNewDealModal();
+}
+
+function createDealAndGo() {
+  const company = document.getElementById('nd-company').value.trim();
+  if (!company) { document.getElementById('nd-company').focus(); return; }
+  const stage   = document.getElementById('nd-stage').value;
+  const rawVal  = document.getElementById('nd-value').value.replace(/[^0-9.]/g, '');
+  const value   = rawVal ? parseFloat(rawVal) : null;
+  const deal    = dealStore.create(company, { stage, deal_value: value });
+  window.location.href = `./account-brief-v2/index.html?deal=${deal.id}`;
+}
+
+// Enter key in modal
+document.getElementById('nd-company').addEventListener('keydown', e => {
+  if (e.key === 'Enter') createDealAndGo();
+});
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+renderDeals();
+
+</script>
+</body>
+</html>
