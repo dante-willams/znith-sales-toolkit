@@ -11,29 +11,37 @@
 
 <style>
 :root {
-  /* ── Znith Design System v1 — Account Brief (Teal) ── */
+  /* ── Znith Design System v2 — Account Brief (Teal) ── */
 
-  /* Module accent — Account Brief = Teal */
-  --accent:       #0a7a72;
-  --accent-glow:  rgba(10,122,114,0.22);
-  --accent-muted: rgba(10,122,114,0.10);
+  /* Fonts */
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui:    'Barlow', sans-serif;
+  --f-mono:  'IBM Plex Mono', monospace;
+
+  /* Module accent — Account Brief teal */
+  --accent:       #0D9488;
+  --accent-glow:  rgba(13,148,136,0.22);
+  --accent-muted: rgba(13,148,136,0.12);
+  --accent-faint: rgba(13,148,136,0.08);
   --accent-light: #0e9689;
 
-  /* Znith system amber — CTAs, metric values, nav active */
+  /* System amber */
   --amber:        #B8860B;
-  --amber-glow:   rgba(184,134,11,0.28);
+  --amber-glow:   rgba(184,134,11,0.22);
   --amber-muted:  rgba(184,134,11,0.12);
+  --amber-faint:  rgba(184,134,11,0.08);
+  --amber-bg:     #FDF3DC;
 
   /* Base palette */
-  --navy:         #0e0d0b;
-  --navy-mid:     #222018;
-  --navy-light:   #181714;
-  --navy-border:  rgba(255,255,255,0.07);
-
-  /* Typography */
-  --white:        rgba(255,255,255,0.85);
-  --white-dim:    rgba(255,255,255,0.45);
-  --white-faint:  rgba(255,255,255,0.2);
+  --navy:         #1A2332;
+  --bg:           #F4F5F6;
+  --surf:         #FFFFFF;
+  --surf-2:       #F4F5F6;
+  --border:       #E2E5E9;
+  --border-md:    #CBD0D8;
+  --text:         #2D3748;
+  --tmuted:       #4A5568;
+  --tfaint:       #718096;
 
   /* Status colors */
   --teal:         #2dd4bf;
@@ -49,25 +57,26 @@
   --orange:       #fb923c;
   --orange-dim:   rgba(251,146,60,0.12);
 
-  /* Legacy aliases — keep for compatibility */
-  --gold:         #0a7a72;
+  /* Legacy aliases — ~17% of original darkness */
+  --navy-mid:     #DBDDE0;
+  --navy-light:   #D8DADC;
+  --navy-border:  var(--border);
+  --white:        var(--text);
+  --white-dim:    var(--tmuted);
+  --white-faint:  rgba(0,0,0,0.04);
+  --gold:         #0D9488;
   --gold-light:   #0e9689;
-  --gold-dim:     rgba(10,122,114,0.12);
-  --gold-glow:    rgba(10,122,114,0.07);
-  --conga-purple: #0a7a72;
-  --conga-lavender: #5eead4;
+  --gold-dim:     rgba(13,148,136,0.12);
+  --gold-glow:    rgba(13,148,136,0.08);
+  --conga-purple: #0D9488;
+  --conga-lavender: #2dd4bf;
   --conga-deep:   #0a5c56;
 
-  /* Typography system */
-  --f-brand: 'Epilogue', sans-serif;
-  --f-ui:    'Barlow', sans-serif;
-  --f-mono:  'IBM Plex Mono', monospace;
+  /* Geometry */
+  --clip-lg: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 
-  /* Corners */
-  --clip-lg: 10px;
-  --clip-sm: 5px;
-
-  /* Transitions */
+  /* Motion */
   --transition: 220ms cubic-bezier(0.4,0,0.2,1);
   --spring:     400ms cubic-bezier(0.34,1.56,0.64,1);
 }
@@ -80,12 +89,15 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 
 body{
-  background:#0e0d0b;
-  color:var(--white);
+  background:var(--bg);
+  color:var(--text);
   font-family:var(--f-ui);
+  font-size:15px;
+  line-height:1.6;
   font-weight:400;
   min-height:100vh;
   overflow-x:hidden;
+  margin:0;
 }
 
 body::before{
@@ -111,6 +123,57 @@ header{
   display:flex;align-items:center;justify-content:space-between;
   height:64px;
 }
+
+/* ── DARK THEME — full v1 palette ── */
+[data-theme="dark"]{
+  /* Core page */
+  --bg:          #0A0E1A;
+  --surf:        #1A2332;
+  --surf-2:      #151C2B;
+  --border:      rgba(255,255,255,0.08);
+  --border-md:   rgba(255,255,255,0.15);
+  --text:        rgba(255,255,255,0.88);
+  --tmuted:      rgba(255,255,255,0.50);
+  --tfaint:      rgba(255,255,255,0.28);
+  /* Legacy card aliases */
+  --navy-mid:    #1E2A3C;
+  --navy-light:  #1A2332;
+  --navy-border: rgba(255,255,255,0.10);
+  --white:       rgba(255,255,255,0.88);
+  --white-dim:   rgba(255,255,255,0.50);
+  --white-faint: rgba(255,255,255,0.08);
+}
+[data-theme="dark"] body { background: var(--bg); }
+[data-theme="dark"] .phase-title  { color: rgba(255,255,255,0.92); }
+[data-theme="dark"] .phase-subtitle { color: rgba(255,255,255,0.45); }
+[data-theme="dark"] .card-title   { color: rgba(255,255,255,0.92); }
+[data-theme="dark"] .form-label   { color: rgba(255,255,255,0.50); }
+[data-theme="dark"] .addenda-controls,
+[data-theme="dark"] .addenda-toggle { background: var(--surf); border-color: var(--border); color: var(--tmuted); }
+[data-theme="dark"] input[type=text],
+[data-theme="dark"] input[type=url],
+[data-theme="dark"] input[type=email],
+[data-theme="dark"] select,
+[data-theme="dark"] textarea { color: rgba(255,255,255,0.88); }
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder { color: rgba(240,244,255,0.22); }
+[data-theme="dark"] .input-wrap { background: #1E2A3C; border-color: rgba(255,255,255,0.10); }
+[data-theme="dark"] .input-wrap:focus-within { background: #243448; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-faint); }
+[data-theme="dark"] .input-wrap select option { background: #1A2332; }
+
+.theme-toggle-btn{
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.15);
+  color:rgba(255,255,255,0.5);
+  padding:5px 10px;
+  clip-path:var(--clip-sm);
+  cursor:pointer;
+  font-size:15px;
+  line-height:1;
+  transition:var(--transition);
+  margin-right:8px;
+}
+.theme-toggle-btn:hover{ border-color:var(--amber); color:var(--amber); }
 .header-logo{display:flex;align-items:center;gap:14px;}
 .logo-mark{
   width:36px;height:36px;
@@ -156,11 +219,11 @@ header{
   text-transform:uppercase;color:var(--amber);margin-bottom:12px;
 }
 .phase-title{
-  font-family:var(--f-brand);font-size:36px;font-weight:700;
-  line-height:1.2;color:var(--white);margin-bottom:12px;
+  font-family:var(--f-brand);font-size:36px;font-weight:800;
+  line-height:1.2;color:var(--navy);margin-bottom:12px;letter-spacing:-0.01em;
 }
 .phase-subtitle{
-  font-size:15px;color:var(--white-dim);max-width:560px;
+  font-size:14px;color:var(--tmuted);max-width:560px;
   line-height:1.65;margin-bottom:40px;
 }
 
@@ -171,15 +234,22 @@ header{
   transition:all 0.2s;filter:drop-shadow(0 4px 16px var(--amber-glow));:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);padding:24px;margin-bottom:16px;
 }
 .card-header{
-  display:flex;align-items:center;gap:10px;margin-bottom:20px;
+  display:flex;align-items:center;gap:14px;
+  padding-bottom:16px;margin-bottom:20px;
+  border-bottom:1px solid var(--navy-border);
+  border-left:3px solid var(--accent);
+  padding-left:14px;
 }
 .card-icon{
-  width:28px;height:28px;clip-path:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
-  display:flex;align-items:center;justify-content:center;font-size:14px;
-  background:var(--accent-muted);flex-shrink:0;
+  width:36px;height:36px;clip-path:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+  background:var(--accent-faint);border:1px solid var(--accent-muted);flex-shrink:0;
 }
-.card-title{font-size:14px;font-weight:600;color:var(--white);}
-.card-subtitle{font-size:12px;color:var(--white-dim);margin-top:1px;}
+.card-title{
+  font-family:var(--f-brand);font-size:18px;font-weight:800;
+  color:var(--navy);letter-spacing:-0.01em;line-height:1.2;
+}
+.card-subtitle{font-size:13px;color:var(--white-dim);margin-top:3px;}
 .optional-badge{
   font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
   color:var(--white-dim);background:var(--white-faint);
@@ -190,13 +260,13 @@ header{
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
 .form-row.single{grid-template-columns:1fr;}
 .form-group{display:flex;flex-direction:column;gap:6px;}
-.form-label{font-size:12px;font-weight:500;color:var(--white-dim);}
+.form-label{font-size:14px;font-weight:500;color:var(--white-dim);}
 .form-label span{color:var(--gold);margin-left:2px;}
 
 input[type=text], input[type=url], input[type=email], select, textarea{
   background:transparent;
   border:none;
-  color:var(--white);
+  color:var(--text);
   font-family:var(--f-ui);font-size:14px;
   padding:10px 14px;outline:none;
   transition:color 0.2s;width:100%;
@@ -216,7 +286,8 @@ input[type=text]:focus, input[type=url]:focus, select:focus, textarea:focus{
 }
 .input-wrap:focus-within{
   border-color:var(--accent);
-  background:rgba(18,28,44,0.95);
+  background:var(--surf);
+  box-shadow:0 0 0 3px var(--accent-faint);
 }
 /* select still needs its arrow and padding-right */
 .input-wrap select{
@@ -227,7 +298,7 @@ input[type=text]:focus, input[type=url]:focus, select:focus, textarea:focus{
 }
 .input-wrap select option{background:var(--navy-mid);}
 .input-wrap textarea{resize:vertical;min-height:80px;line-height:1.6;}
-input::placeholder, textarea::placeholder{color:rgba(240,244,255,0.25);}
+input::placeholder, textarea::placeholder{color:rgba(113,128,150,0.45);}
 /* select + textarea rules moved to .input-wrap context above */
 
 /* Product chips */
@@ -1054,22 +1125,257 @@ input[type=checkbox].chip-check{display:none;}
 /* ── ZNITH FOOTER ── */
 .znith-footer{
   position:fixed;bottom:0;left:0;right:0;z-index:90;
-  height:38px;padding:0 40px;
+  height:34px;padding:0 16px;
   display:flex;align-items:center;justify-content:space-between;
-  background:rgba(10,14,26,0.92);
-  backdrop-filter:blur(16px);
-  border-top:1px solid var(--navy-border);
+  background:var(--navy);
+  border-top:2px solid var(--amber);
 }
 .znith-wordmark{
   display:flex;align-items:center;gap:1px;
-  font-size:13px;line-height:1;
+  font-family:var(--f-brand);font-size:12px;font-weight:800;line-height:1;
 }
 .znith-footer-meta{
   display:flex;align-items:center;gap:8px;
 }
 .znith-footer-pip{
-  width:3px;height:3px;border-radius:50%;
-  background:var(--white-faint);
+  width:4px;height:4px;border-radius:50%;
+  background:var(--amber);
+  box-shadow:0 0 6px var(--amber-glow);
+}
+
+/* ── ASSUMED BADGE ── */
+.assumed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--f-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #92400E;
+  background: #FEF3C7;
+  border: 1px solid #F59E0B;
+  padding: 2px 8px;
+  clip-path: var(--clip-sm);
+  margin-left: 6px;
+}
+.assumed { color: var(--tfaint); font-style: italic; }
+
+/* ── ADDENDA CONTROLS ── */
+.addenda-controls {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  padding: 16px 20px;
+  margin-bottom: 24px;
+}
+.addenda-controls .section-label {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+  display: block;
+}
+.addenda-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.addenda-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--surf-2);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--f-ui);
+  font-size: 12px;
+  color: var(--tmuted);
+}
+.addenda-toggle input[type="checkbox"] { margin: 0; accent-color: var(--accent); }
+.addenda-toggle:has(input:checked) {
+  background: var(--accent-faint);
+  border-color: var(--accent-muted);
+  color: var(--accent);
+}
+
+/* ── PRICING SIGNAL ── */
+.pricing-signal {
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-faint);
+  border: 1px solid var(--accent-muted);
+  padding: 6px 10px;
+  clip-path: var(--clip-sm);
+}
+.signal-label {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-right: 4px;
+}
+
+/* ── POV BUILDER ── */
+.pov-builder-card{
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  clip-path: var(--clip-lg);
+  padding: 28px 32px;
+  margin-bottom: 24px;
+}
+.pov-builder-eyebrow{
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.pov-pitch-text{
+  margin-bottom: 16px;
+}
+.pov-bullet{
+  font-family: var(--f-ui);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--navy);
+  line-height: 1.5;
+  padding: 4px 0;
+  letter-spacing: -0.01em;
+}
+[data-theme="dark"] .pov-bullet{ color: rgba(255,255,255,0.92); }
+.pov-copy-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--amber-faint);
+  border: 1px solid rgba(184,134,11,0.25);
+  color: var(--amber);
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  clip-path: var(--clip-sm);
+  cursor: pointer;
+  transition: var(--transition);
+  margin-bottom: 20px;
+}
+.pov-copy-btn:hover{ background: var(--amber-muted); }
+.pov-copy-btn.copied{ color: var(--accent); background: var(--accent-faint); border-color: var(--accent-muted); }
+.pov-driver-toggle{
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tmuted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 12px;
+  transition: var(--transition);
+}
+.pov-driver-toggle:hover{ color: var(--accent); }
+.pov-reasoning{
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--surf-2);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  display: none;
+}
+.pov-reasoning.open{ display: block; }
+.pov-reasoning-label{
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--tmuted);
+  margin-bottom: 8px;
+}
+.pov-driver-text{
+  font-size: 13px;
+  color: var(--tmuted);
+  font-style: italic;
+  margin-bottom: 12px;
+}
+.pov-logic-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr 120px;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.pov-logic-row:last-child{ border-bottom: none; }
+.pov-logic-signal{ color: var(--text); }
+.pov-logic-arrow{ color: var(--tfaint); }
+.pov-logic-implication{ color: var(--tmuted); }
+.pov-logic-product{
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  background: var(--accent-faint);
+  border: 1px solid var(--accent-muted);
+  padding: 2px 8px;
+  clip-path: var(--clip-sm);
+  text-align: center;
+  align-self: center;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.pov-lead-products{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.pov-lead-chip{
+  font-family: var(--f-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: var(--amber-faint);
+  border: 1px solid rgba(184,134,11,0.3);
+  padding: 4px 12px;
+  clip-path: var(--clip-sm);
+}
+.btn-parse-contacts{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--accent-faint);border:1px solid var(--accent-muted);
+  color:var(--accent);font-family:var(--f-mono);font-size:10px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;padding:7px 14px;
+  clip-path:var(--clip-sm);cursor:pointer;transition:var(--transition);
+}
+.btn-parse-contacts:hover{background:var(--accent-muted);}
+.section-badge{
+  font-family:var(--f-mono);font-size:9px;font-weight:700;
+  letter-spacing:0.1em;text-transform:uppercase;
+  background:var(--amber-faint);color:var(--amber);
+  border:1px solid rgba(184,134,11,0.25);
+  padding:2px 8px;clip-path:var(--clip-sm);margin-left:8px;
 }
 </style>
 </head>
@@ -1092,6 +1398,7 @@ input[type=checkbox].chip-check{display:none;}
     <div class="step-dot" id="dot-3"></div>
   </div>
   <div class="header-right">
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
     <button class="header-briefs-btn" id="briefsBtn" onclick="showSavedBriefs()">
       📋 All Account Briefs <span class="briefs-count-badge" id="briefsCount">0</span>
     </button>
@@ -1253,7 +1560,7 @@ input[type=checkbox].chip-check{display:none;}
         ondrop="handleDrop(event)">
         <div class="drop-zone-icon">📂</div>
         <div class="drop-zone-title">Drop files here or click to browse</div>
-        <div class="drop-zone-sub">Up to 5 files · Contents are read and used to sharpen every section</div>
+        <div class="drop-zone-sub">Up to 20 files · Contents are read and used to sharpen every section</div>
         <div class="drop-zone-types">.pdf · .txt · .docx · .md · .csv</div>
       </div>
       <input type="file" id="fileInput" multiple accept=".pdf,.txt,.docx,.md,.csv,.eml"
@@ -1269,6 +1576,13 @@ input[type=checkbox].chip-check{display:none;}
           <div class="card-title">Contacts</div>
           <div class="card-subtitle">Add up to 5 people you'll be meeting with</div>
         </div>
+      </div>
+      <div id="parse-contacts-bar" style="margin-bottom:12px;display:none;">
+        <button class="btn-parse-contacts" id="parseContactsBtn" onclick="parseContactsFromDocs()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Parse Contacts from Uploaded Docs
+        </button>
+        <span id="parse-contacts-status" style="font-size:12px;color:var(--tmuted);margin-left:10px;"></span>
       </div>
       <div class="contacts-list" id="contactsList"></div>
       <button class="btn-add-contact" id="addContactBtn" onclick="addContact()">
@@ -1329,22 +1643,36 @@ input[type=checkbox].chip-check{display:none;}
       </div>
     </div>
 
-    <!-- 0. Executive Summary -->
-    <div class="section" id="out-summary-section">
-      <div class="summary-card">
-        <div class="summary-header">
-          <div class="summary-header-icon">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-          </div>
-          <div>
-            <div class="summary-title">5 Things to Know Before This Call</div>
-            <div class="summary-subtitle">Most critical context — generated after full analysis</div>
-          </div>
-          <div id="out-summary-health" style="margin-left:auto;"></div>
-        </div>
-        <div class="summary-items" id="out-summary-items">
-          <div style="font-size:13px;color:var(--white-dim);opacity:0.5;font-style:italic;">Generating after brief is complete…</div>
-        </div>
+    <!-- Addenda Controls -->
+    <div class="addenda-controls" id="addendaControls">
+      <span class="section-label">Optional Addenda — include in export</span>
+      <div class="addenda-grid">
+        <label class="addenda-toggle"><input type="checkbox" id="addenda-contacts" checked> Contact Intelligence</label>
+        <label class="addenda-toggle"><input type="checkbox" id="addenda-industry" checked> Industry Pulse</label>
+        <label class="addenda-toggle"><input type="checkbox" id="addenda-competitive" checked> Competitive Landscape</label>
+        <label class="addenda-toggle"><input type="checkbox" id="addenda-deal" checked> Deal Brief</label>
+        <label class="addenda-toggle"><input type="checkbox" id="addenda-recommendations" checked> Deal Recommendations</label>
+      </div>
+    </div>
+
+    <!-- ── POV BUILDER ── -->
+    <div class="pov-builder-card" id="pov-builder-section" style="display:none;">
+      <div class="pov-builder-eyebrow">⚡ What You Know Going In</div>
+      <div class="pov-pitch-text" id="pov-pitch-text"></div>
+      <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap;">
+        <button class="pov-copy-btn" id="povCopyBtn" onclick="copyPOV()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy POV
+        </button>
+        <button class="pov-driver-toggle" id="povDriverToggle" onclick="togglePOVReasoning()">
+          Why this works ▾
+        </button>
+      </div>
+      <div class="pov-reasoning" id="povReasoning">
+        <div class="pov-reasoning-label">Signal → Implication → Conga Fit</div>
+        <div class="pov-driver-text" id="pov-driver-text"></div>
+        <div id="pov-logic-chain"></div>
+        <div class="pov-lead-products" id="pov-lead-products"></div>
       </div>
     </div>
 
@@ -1375,7 +1703,30 @@ input[type=checkbox].chip-check{display:none;}
       </div>
     </div>
 
-    <!-- 1c. Competitors -->
+    <!-- 1c. Pricing & Packaging -->
+    <div class="section" id="out-pricing-section" style="display:none;">
+      <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>How They Price &amp; Package <span id="out-pricing-assumed"></span></div>
+      <div class="deep-dive-grid">
+        <div class="deep-dive-card" style="grid-column:1/-1;">
+          <div class="deep-dive-value" id="out-pricing-model">—</div>
+        </div>
+        <div class="deep-dive-card" style="grid-column:1/-1;" id="out-pricing-signal-wrap" style="display:none;">
+          <div class="pricing-signal"><span class="signal-label">Conga Signal:</span> <span id="out-pricing-signal">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PUBLIC COMPANY INTEL ── -->
+    <div class="output-section" id="out-public-intel-section" style="display:none;">
+      <div class="section-label">
+        <span class="section-icon">📊</span>Public Company Intel
+        <span class="section-badge">10-K · Earnings</span>
+      </div>
+      <div id="out-public-intel-summary" class="deep-dive-value" style="margin-bottom:14px;font-style:italic;"></div>
+      <div id="out-public-intel-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
+    </div>
+
+    <!-- 1d. Competitors -->
     <div class="section">
       <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Competitors</div>
       <div class="competitors-list" id="out-competitors-list"></div>
@@ -1393,94 +1744,14 @@ input[type=checkbox].chip-check{display:none;}
       <div class="news-list" id="out-news-list"></div>
     </div>
 
-    <!-- 3. Industry Pulse -->
-    <div class="section">
-      <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Industry Pulse</div>
-      <div class="two-col" id="out-industry-cols"></div>
-      <div id="out-benchmarks" style="margin-top:8px;"></div>
-    </div>
-
-    <!-- 4. Contact Intelligence -->
-    <div class="section" id="out-contacts-section">
-      <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg></span>Contact Intelligence</div>
-      <div class="contacts-output" id="out-contacts-grid"></div>
-    </div>
-
-    <!-- Deal Brief -->
-    <div class="section" id="out-deal-brief-section">
-      <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Deal Brief</div>
-
-      <!-- Health + Status Row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="out-deal-status-grid"></div>
-
-      <!-- Where We Stand -->
-      <div class="deal-assessment" style="margin-bottom:10px;">
-        <div class="deal-assessment-label">Where We Stand</div>
-        <div class="deal-assessment-text" id="out-where-we-stand">—</div>
-      </div>
-
-      <!-- Transcript Insights -->
-      <div class="deal-assessment" style="margin-bottom:10px;border-color:rgba(61,224,200,0.2);">
-        <div class="deal-assessment-label" style="color:var(--teal);">Call / Transcript Insights</div>
-        <div class="deal-assessment-text" id="out-transcript-insights">Upload a call transcript in Supporting Documents for specific deal signals.</div>
-      </div>
-
-      <!-- Critical Gaps -->
-      <div class="deal-assessment" style="margin-bottom:10px;border-color:rgba(248,113,113,0.2);">
-        <div class="deal-assessment-label" style="color:var(--red);">Critical Gaps — What We Don't Know Yet</div>
-        <div id="out-critical-gaps"></div>
-      </div>
-
-      <!-- What Must Happen Next -->
-      <div class="deal-assessment" style="margin-bottom:14px;border-color:rgba(139,92,246,0.2);">
-        <div class="deal-assessment-label">What Must Happen Next</div>
-        <div id="out-what-next"></div>
-      </div>
-
-      <!-- Deal Recommendations -->
-      <div class="section-label" style="margin-top:4px;"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Deal Recommendations</div>
-      <div class="deal-rec-cards" id="out-deal-recs"></div>
-
-      <!-- Coaching Prompts -->
-      <div class="section-label" style="margin-top:20px;"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></span>Coaching Prompts — Do These Now, Not Later</div>
-      <div style="font-size:12px;color:var(--white-dim);margin-bottom:12px;opacity:0.7;">Click any prompt to open it in the Assistant — or use as a conversation checklist.</div>
-      <div class="deal-prompts-grid" id="out-deal-prompts">
-        <button class="deal-prompt-btn" onclick="openChatWithPrompt('How do I identify and qualify a champion at ' + document.getElementById('out-company-name').textContent + '? What questions should I ask and what signals should I look for?')">
-          <div class="deal-prompt-category cat-champion">Champion</div>
-          <div class="deal-prompt-text">Identify & qualify a champion — what questions to ask, what signals to look for</div>
-        </button>
-        <button class="deal-prompt-btn" onclick="openChatWithPrompt('Who is likely the economic buyer / budget owner at ' + document.getElementById('out-company-name').textContent + ' for a ' + document.getElementById('out-meeting-type').textContent + ' deal? How do I get access to them without going around my champion?')">
-          <div class="deal-prompt-category cat-power">Economic Buyer</div>
-          <div class="deal-prompt-text">Find the economic buyer — how to identify, access, and not alienate your champion doing it</div>
-        </button>
-        <button class="deal-prompt-btn" onclick="openChatWithPrompt('What seeds should I be planting NOW in this early stage with ' + document.getElementById('out-company-name').textContent + ' that will matter later? Think: executive access, proof of value, internal champion enablement, competitive positioning.')">
-          <div class="deal-prompt-category cat-late">Plant Late-Stage Seeds</div>
-          <div class="deal-prompt-text">What to do NOW to avoid late-stage surprises — executive access, PoV, competitive traps</div>
-        </button>
-        <button class="deal-prompt-btn" onclick="openChatWithPrompt('Help me understand the decision-making process at ' + document.getElementById('out-company-name').textContent + '. What questions uncover: who has final say, what their evaluation criteria are, what the approval process looks like, and what could kill this deal internally?')">
-          <div class="deal-prompt-category cat-qualify">Decision Process</div>
-          <div class="deal-prompt-text">Map the decision process — who has final say, evaluation criteria, internal kill factors</div>
-        </button>
-        <button class="deal-prompt-btn" onclick="openChatWithPrompt('What proof of value or mutual success plan should I put in front of ' + document.getElementById('out-company-name').textContent + ' at this stage? How do I get them to co-own the path to a decision?')">
-          <div class="deal-prompt-category cat-champion">Mutual Success Plan</div>
-          <div class="deal-prompt-text">Build a mutual success plan — get them to co-own the path to a decision early</div>
-        </button>
-        <button class="deal-prompt-btn" onclick="openChatWithPrompt('How should I multi-thread at ' + document.getElementById('out-company-name').textContent + '? I currently only have one contact. What is the risk, who else should I be talking to, and how do I expand without looking like I am going around my contact?')">
-          <div class="deal-prompt-category cat-power">Multi-Threading</div>
-          <div class="deal-prompt-text">Multi-thread the deal — who else to engage and how to do it without burning your contact</div>
-        </button>
-      </div>
-    </div>
-
-
-    <!-- 5. Conga POV -->
+    <!-- 3. Conga POV (always visible — core brief) -->
     <div class="section">
       <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>Conga Point of View</div>
-      <div id="out-pov-narrative" style="font-size:14px;color:var(--white-dim);line-height:1.6;margin-bottom:14px;padding:0 4px;"></div>
+      <div id="out-pov-narrative" style="font-size:14px;color:var(--tmuted);line-height:1.6;margin-bottom:14px;padding:0 4px;"></div>
       <div class="pov-cards" id="out-pov-cards"></div>
     </div>
 
-    <!-- 6. Call Strategy -->
+    <!-- 4. Call Strategy (always visible — core brief) -->
     <div class="section">
       <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>Opening Hook</div>
       <div class="strategy-card">
@@ -1508,20 +1779,115 @@ input[type=checkbox].chip-check{display:none;}
       </div>
     </div>
 
-    <!-- 6b. Suggested Stakeholders -->
     <div class="section">
       <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Suggested Stakeholders to Engage</div>
       <div class="stakeholders-list" id="out-stakeholders"></div>
     </div>
 
-    <!-- 7. Deal Intel -->
     <div class="section">
-      <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>Deal Intel & Watch-outs</div>
+      <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span>Deal Intel &amp; Watch-outs</div>
       <div class="strategy-card">
         <div class="deal-flags" id="out-deal-flags"></div>
         <div class="alumni-check" id="out-alumni">
           <span>🔗</span>
           <span id="out-alumni-text">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADDENDA (optional, toggle-controlled) ── -->
+
+    <!-- Addendum: Contact Intelligence -->
+    <div class="addendum" data-addendum="contacts">
+      <div class="section" id="out-contacts-section">
+        <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="23" y1="11" x2="17" y2="11"/><line x1="20" y1="8" x2="20" y2="14"/></svg></span>Contact Intelligence</div>
+        <div class="contacts-output" id="out-contacts-grid"></div>
+      </div>
+    </div>
+
+    <!-- Addendum: Industry Pulse -->
+    <div class="addendum" data-addendum="industry">
+      <div class="section">
+        <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Industry Pulse</div>
+        <div class="two-col" id="out-industry-cols"></div>
+        <div id="out-benchmarks" style="margin-top:8px;"></div>
+      </div>
+    </div>
+
+    <!-- Addendum: Competitive Landscape -->
+    <div class="addendum" data-addendum="competitive">
+      <!-- Competitive section is rendered inline within Account Intel above; this wrapper is for export toggle -->
+    </div>
+
+    <!-- Addendum: Deal Brief -->
+    <div class="addendum" data-addendum="deal">
+      <div class="section" id="out-deal-brief-section">
+        <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Deal Brief</div>
+
+        <!-- Health + Status Row -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="out-deal-status-grid"></div>
+
+        <!-- Where We Stand -->
+        <div class="deal-assessment" style="margin-bottom:10px;">
+          <div class="deal-assessment-label">Where We Stand</div>
+          <div class="deal-assessment-text" id="out-where-we-stand">—</div>
+        </div>
+
+        <!-- Transcript Insights -->
+        <div class="deal-assessment" style="margin-bottom:10px;border-color:rgba(61,224,200,0.2);">
+          <div class="deal-assessment-label" style="color:var(--teal);">Call / Transcript Insights</div>
+          <div class="deal-assessment-text" id="out-transcript-insights">Upload a call transcript in Supporting Documents for specific deal signals.</div>
+        </div>
+
+        <!-- Critical Gaps -->
+        <div class="deal-assessment" style="margin-bottom:10px;border-color:rgba(248,113,113,0.2);">
+          <div class="deal-assessment-label" style="color:var(--red);">Critical Gaps — What We Don't Know Yet</div>
+          <div id="out-critical-gaps"></div>
+        </div>
+
+        <!-- What Must Happen Next -->
+        <div class="deal-assessment" style="margin-bottom:14px;border-color:rgba(139,92,246,0.2);">
+          <div class="deal-assessment-label">What Must Happen Next</div>
+          <div id="out-what-next"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Addendum: Deal Recommendations -->
+    <div class="addendum" data-addendum="recommendations">
+      <div class="section">
+        <!-- Deal Recommendations -->
+        <div class="section-label" style="margin-top:4px;"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Deal Recommendations</div>
+        <div class="deal-rec-cards" id="out-deal-recs"></div>
+
+        <!-- Coaching Prompts -->
+        <div class="section-label" style="margin-top:20px;"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg></span>Coaching Prompts — Do These Now, Not Later</div>
+        <div style="font-size:12px;color:var(--tmuted);margin-bottom:12px;opacity:0.7;">Click any prompt to open it in the Assistant — or use as a conversation checklist.</div>
+        <div class="deal-prompts-grid" id="out-deal-prompts">
+          <button class="deal-prompt-btn" onclick="openChatWithPrompt('How do I identify and qualify a champion at ' + document.getElementById('out-company-name').textContent + '? What questions should I ask and what signals should I look for?')">
+            <div class="deal-prompt-category cat-champion">Champion</div>
+            <div class="deal-prompt-text">Identify &amp; qualify a champion — what questions to ask, what signals to look for</div>
+          </button>
+          <button class="deal-prompt-btn" onclick="openChatWithPrompt('Who is likely the economic buyer / budget owner at ' + document.getElementById('out-company-name').textContent + ' for a ' + document.getElementById('out-meeting-type').textContent + ' deal? How do I get access to them without going around my champion?')">
+            <div class="deal-prompt-category cat-power">Economic Buyer</div>
+            <div class="deal-prompt-text">Find the economic buyer — how to identify, access, and not alienate your champion doing it</div>
+          </button>
+          <button class="deal-prompt-btn" onclick="openChatWithPrompt('What seeds should I be planting NOW in this early stage with ' + document.getElementById('out-company-name').textContent + ' that will matter later? Think: executive access, proof of value, internal champion enablement, competitive positioning.')">
+            <div class="deal-prompt-category cat-late">Plant Late-Stage Seeds</div>
+            <div class="deal-prompt-text">What to do NOW to avoid late-stage surprises — executive access, PoV, competitive traps</div>
+          </button>
+          <button class="deal-prompt-btn" onclick="openChatWithPrompt('Help me understand the decision-making process at ' + document.getElementById('out-company-name').textContent + '. What questions uncover: who has final say, what their evaluation criteria are, what the approval process looks like, and what could kill this deal internally?')">
+            <div class="deal-prompt-category cat-qualify">Decision Process</div>
+            <div class="deal-prompt-text">Map the decision process — who has final say, evaluation criteria, internal kill factors</div>
+          </button>
+          <button class="deal-prompt-btn" onclick="openChatWithPrompt('What proof of value or mutual success plan should I put in front of ' + document.getElementById('out-company-name').textContent + ' at this stage? How do I get them to co-own the path to a decision?')">
+            <div class="deal-prompt-category cat-champion">Mutual Success Plan</div>
+            <div class="deal-prompt-text">Build a mutual success plan — get them to co-own the path to a decision early</div>
+          </button>
+          <button class="deal-prompt-btn" onclick="openChatWithPrompt('How should I multi-thread at ' + document.getElementById('out-company-name').textContent + '? I currently only have one contact. What is the risk, who else should I be talking to, and how do I expand without looking like I am going around my contact?')">
+            <div class="deal-prompt-category cat-power">Multi-Threading</div>
+            <div class="deal-prompt-text">Multi-thread the deal — who else to engage and how to do it without burning your contact</div>
+          </button>
         </div>
       </div>
     </div>
@@ -1628,6 +1994,24 @@ input[type=checkbox].chip-check{display:none;}
 </div>
 
 <script>
+// ════════════════════════════════════════════════════
+// THEME TOGGLE
+// ════════════════════════════════════════════════════
+(function(){
+  const saved = localStorage.getItem('ab-theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
+})();
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('ab-theme', next);
+  document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+
 // ════════════════════════════════════════════════════
 // STATE
 // ════════════════════════════════════════════════════
@@ -1786,15 +2170,22 @@ async function runResearch(company) {
   // ── PASS 1a: Company Facts (web search) ─────────────
   const companyPrompt = `Research the company "${company}"${website ? ' (website: '+website+')' : ''}${industry ? ', industry: '+industry : ''}.
 
-Use your training knowledge freely. For revenue/employees, give your best estimate with source if known — write "~$X (est.)" rather than refusing to answer. Only write "No information available" for truly unknown private companies with zero public profile.
+IMPORTANT RULES FOR DATA ACCURACY:
+- Only include facts you found via web search results.
+- If you cannot verify a specific fact (revenue, employee count, founding year, etc.), set the field to null — do NOT estimate or guess.
+- For pricing/packaging: focus on HOW they structure and package their offerings — not specific dollar amounts. Look for signals on their website, G2/Capterra reviews, job postings, press releases, and product pages. Pricing model (e.g. "per-seat SaaS", "usage-based", "tiered bundles", "custom enterprise contracts") is almost always inferable even when exact prices aren't listed. Set pricingModelAssumed to true if inferred rather than explicitly stated. Only use "Pricing model unclear — probe in discovery" if you truly cannot determine the structure after searching.
+- If you must infer something from partial evidence, set the corresponding *Assumed field to true (e.g., pricingModelAssumed: true) and note the inference in the value.
+- Never fabricate specific numbers (revenue, headcount, dates) without a source.
+- If the company appears to be publicly traded, explicitly search for: their most recent 10-K or annual report on SEC EDGAR, recent earnings call transcripts or summaries, and investor presentations. Extract any language that signals operational pain relevant to revenue operations, quoting, contracting, or document processes. Add these as signals in the financialDisclosureSignals field.
+- For private companies, set financialDisclosureSignals to null.
 
 Return ONLY valid JSON, no markdown, starting with {:
 {
   "industry": "specific industry vertical",
-  "revenue": "e.g. '$215M ARR (Crunchbase 2024)' or '~$50M (est.)' — never blank",
-  "employees": "e.g. '~1,200 (LinkedIn)' or '~500 (est.)' — never blank",
+  "revenue": "e.g. '$215M ARR (Crunchbase 2024)' — null if unverified",
+  "employees": "e.g. '~1,200 (LinkedIn)' — null if unverified",
   "hq": "HQ city, country",
-  "founded": "founding year",
+  "founded": "founding year or null if unverified",
   "summary": "2 sentence company overview",
   "financialTrend": "1 sentence on recent trajectory",
   "recentNews": ["specific real news item with approximate date", "news item 2", "news item 3"],
@@ -1803,12 +2194,24 @@ Return ONLY valid JSON, no markdown, starting with {:
   "ownership": "Public / Private / PE-Backed / Subsidiary",
   "peOwner": "PE firm name if PE-backed, or null",
   "peOwnerNotes": "1 sentence on PE firm's strategy or portfolio focus if PE-backed, else null",
-  "sources": ["source url or publication name"]
+  "pricingModel": "plain text description of how they structure and package their offerings — e.g. 'Per-seat SaaS with annual and monthly tiers' or 'Usage-based with volume discounts' or 'Custom enterprise contracts with professional services'. Focus on model structure, not dollar amounts. Mark pricingModelAssumed true if inferred.",
+  "pricingModelAssumed": false,
+  "pricingComplexity": "one sentence: what this pricing model means for their internal quoting/contracting pain and which Conga products it signals (e.g., 'Tiered + usage pricing typically means complex quoting — strong CPQ/RLM signal')",
+  "sources": ["source url or publication name"],
+  "financialDisclosureSignals": "For public companies only: 1-2 sentences of direct language from 10-K risk factors, earnings calls, or investor decks that signals operational pain relevant to Conga (quoting complexity, contract management, revenue recognition, sales process manual work). Use direct quotes where possible. null for private companies."
 }
 Current date: ${new Date().toLocaleDateString('en-US',{month:'long',year:'numeric'})}.`;
 
   const compRaw = await callClaude(companyPrompt, 'You are a business intelligence analyst. Return ONLY valid JSON starting with {. If data is unavailable for a field, omit it or use null rather than guessing.', true);
   state.results.company = safeParseJSON(compRaw) || { industry: industry||'Unknown', revenue:'No information available', employees:'No information available', hq:'Unknown', founded:'Unknown', ownership:'Unknown', peOwner:null, peOwnerNotes:null, summary:'', financialTrend:'', recentNews:[], competitors:[], integrationPartners:[], sources:[] };
+  // Strip any markdown/code artifacts from pricingModel
+  if (state.results.company.pricingModel) {
+    state.results.company.pricingModel = state.results.company.pricingModel
+      .replace(/```[\w]*\n?/g, '')
+      .replace(/^\s*[\{\["].*?[\}\]"]\s*$/s, '')
+      .trim();
+    if (!state.results.company.pricingModel) delete state.results.company.pricingModel;
+  }
   if (state.results.company.sources) state.results.allSources.push(...state.results.company.sources);
   addLog('done', 'Company profile complete');
 
@@ -1905,6 +2308,42 @@ Return ONLY valid JSON starting with {:
         state.results.industry = { tailwinds:['Industry data unavailable — verify company name and retry'], headwinds:['Industry data unavailable'], relevantTrends:[], benchmarks:[], congaRelevanceNote:'' };
       }
       addLog('done', 'Industry analysis complete');
+    })(),
+
+    // ── PASS 1c: Public Company Intel (only if public) ─────────
+    (async () => {
+      if (!state.results.company || !['Public','public'].some(p => (state.results.company.ownership||'').includes(p))) return;
+      addLog('run', 'Scanning 10-K filings and earnings calls…');
+      const co = state.results.company;
+      const publicIntelPrompt = `You are analyzing ${company} as a public company for a sales rep at Conga (revenue lifecycle management software).
+
+Search for and analyze:
+1. Their most recent 10-K or annual report (SEC EDGAR or investor relations page)
+2. Their most recent earnings call transcript or summary (last 2 quarters)
+3. Any recent investor presentations or analyst day materials
+
+Extract ONLY language that signals operational pain or opportunity relevant to Conga's products:
+- CPQ: complex quoting, pricing configuration, quote-to-cash, sales process
+- CLM: contract management, legal review bottlenecks, contract lifecycle
+- Document Automation: manual document generation, proposal creation
+- Revenue Lifecycle Management: revenue recognition, billing complexity, subscription management
+
+Return ONLY valid JSON starting with {:
+{
+  "operationalRiskLanguage": ["direct quote or close paraphrase from filing that signals pain, with source", "second signal if found"],
+  "earningsThemes": ["theme from earnings call relevant to Conga — e.g. 'CFO mentioned need to improve quote-to-cash efficiency'", "second theme if found"],
+  "guidanceSignals": ["growth commitment that implies operational scaling need — e.g. 'targeting 40% revenue growth requires scalable contracting'"],
+  "publicIntelSummary": "1-2 sentence synthesis: what does their public financial disclosure tell a Conga rep about where the pain is?"
+}
+
+If you cannot find relevant signals in the filings, return null values for each field. Do NOT fabricate quotes.`;
+
+      const rawPubIntel = await callClaude(publicIntelPrompt, 'You are a financial document analyst. Return ONLY valid JSON starting with {. Only include signals actually found in public filings — do not invent quotes.', true);
+      const pubIntel = safeParseJSON(rawPubIntel);
+      if (pubIntel) {
+        state.results.company.publicIntel = pubIntel;
+      }
+      addLog('done', 'Public company intel complete');
     })()
 
   ]); // end parallel block
@@ -1917,7 +2356,15 @@ Return ONLY valid JSON starting with {:
   const compContext = state.results.company.summary || '';
   const indContext = (state.results.industry.tailwinds||[]).join('; ');
 
-  const povPrompt = `You are a Conga Account Executive building a point-of-view deck to sell Conga to ${company} for THEIR OWN INTERNAL use.
+  const povPrompt = `Your primary job is to generate a selling narrative, not a summary. Transform the research into a point of view a rep can walk into a room with. Lead with the conclusion. Show the reasoning. Ground everything in specific signals from the research provided — do not invent signals. If the research is thin, produce a thinner POV honestly rather than a confident-sounding fabrication.
+
+You are a Conga Account Executive building a point-of-view deck to sell Conga to ${company} for THEIR OWN INTERNAL use.
+
+ACCURACY RULES:
+- Base all pain point claims on what you actually know about this company from the research context provided.
+- If you don't have specific evidence for a pain point, frame it as "Companies like ${company} with [pricing model type] typically face..." — do not present inferences as confirmed facts.
+- Mark any inferred claim with a note: prefix with "Likely:" if assumed, confirmed facts need no prefix.
+- Do not invent specific metrics (e.g., "saves 40% of time") unless they are cited industry benchmarks.
 
 CRITICAL: You are selling to ${company}'s internal business operations teams — NOT positioning Conga as a product ${company} would resell or build into their own product.
 Focus on: ${company}'s own sales team quoting process, their own legal/contract management, their own document generation, their own revenue operations.
@@ -1941,6 +2388,12 @@ Conga product descriptions (for ${company}'s OWN internal use):
 Return ONLY valid JSON starting with {:
 {
   "overarchingNarrative": "2 sentences: why Conga is relevant to ${company}'s own internal revenue and contract operations right now",
+  "povPitch": "3-5 raw insight bullets (NOT full sentences). Each bullet is one sharp thing the rep now knows that most reps walking in don't. Grounded in specific research signals. Format: short noun phrase or fragment — e.g. '• Tripled enterprise headcount post-Series C' or '• 4 pricing tiers + channel partners = quoting chaos' or '• CLM risk: closing government contracts manually'. Rep internalizes these and delivers in their own words.",
+  "povDriver": "The specific signal(s) that drove this POV — e.g. 'Post-Series C enterprise sales expansion' or 'Complex tiered pricing + channel partners'. 1 sentence max.",
+  "povLogicChain": [
+    {"signal": "specific thing observed in research", "implication": "what it means for their internal operations", "product": "Conga product name that addresses it"}
+  ],
+  "leadProducts": ["product name 1", "product name 2"],
   "productPOV": [
     {
       "product": "product name",
@@ -1965,6 +2418,11 @@ Include one entry per product: ${productList}`;
   const povSummary = (state.results.congaPOV.productPOV||[]).map(p=>p.product+': '+p.challenge).join('; ');
 
   const strategyPrompt = `You are an expert enterprise sales coach. Build a call strategy for a Conga AE selling to ${company}.
+
+ACCURACY RULES:
+- Discovery questions must be genuinely open-ended — do not presuppose pain that hasn't been confirmed.
+- Opening hook must reference a real, verifiable recent news item from the research provided. If no recent news was found, use the company's stated business model as the hook anchor instead.
+- Deal flags must be based on actual gaps in the information provided, not hypothetical risks.
 
 CRITICAL FRAMING: All discovery questions must focus on ${company}'s OWN internal operations — their own quoting, contracting, and document processes. Do NOT ask about their customers or suggest Conga is something they would resell.
 Good: "How does your sales team currently generate and send quotes?" (their internal process)
@@ -2028,6 +2486,11 @@ Many deals die because reps don't identify these early enough.`;
     callClaude(`You are a senior enterprise sales coach specializing in complex B2B SaaS deals.
 Analyze the deal situation for a Conga AE selling to ${company}. Focus ONLY on the situational assessment — health, where we stand, and stakeholder clarity.
 
+ACCURACY RULES:
+- If SDR notes or call context are sparse, explicitly note "Limited context available — assessment based on [what was available]."
+- Do not fabricate deal history, champion names, or specific objections that weren't mentioned in the context.
+- Health score rationale must cite specific evidence from the inputs provided.
+
 ${dealContext}
 
 Return ONLY valid JSON starting with {:
@@ -2047,6 +2510,11 @@ Return ONLY valid JSON starting with {:
     // ── PASS 6B: Critical Gaps, Actions + Recommendations ─────────────────
     callClaude(`You are a senior enterprise sales coach specializing in complex B2B SaaS deals.
 Analyze the deal situation for a Conga AE selling to ${company}. Focus ONLY on what's missing, what must happen next, and specific coaching recommendations.
+
+ACCURACY RULES:
+- If SDR notes or call context are sparse, explicitly note "Limited context available — assessment based on [what was available]."
+- Do not fabricate deal history, champion names, or specific objections that weren't mentioned in the context.
+- Health score rationale must cite specific evidence from the inputs provided.
 
 ${dealContext}
 
@@ -2094,44 +2562,7 @@ Every recommendation must be specific to ${company} and this deal — no generic
     criticalGaps: parsedB.criticalGaps || [],
     whatMustHappenNext: parsedB.whatMustHappenNext || [],
     dealRecommendations: parsedB.dealRecommendations || [],
-    executiveSummary: []
   };
-  addLog('done', 'Deal health and recommendations complete');
-
-  // ── PASS 6C: Executive Summary (synthesizes 6A + 6B) ──────────────────────
-  addLog('active', 'Synthesizing executive summary…');
-  const summaryRaw = await callClaude(
-    `You are a senior enterprise sales coach. A Conga AE is about to meet with ${company}.
-Write the 5 most critical things they must know walking into this meeting — drawn from the complete deal assessment below.
-
-Deal assessment:
-- Health: ${state.results.dealBrief.dealHealthScore} — ${state.results.dealBrief.dealHealthReason}
-- Where we stand: ${state.results.dealBrief.whereWeStand}
-- Champion: ${state.results.dealBrief.championStatus}
-- Economic buyer: ${state.results.dealBrief.economicBuyerStatus}
-- Decision process: ${state.results.dealBrief.decisionProcessClarity}
-- Competitive exposure: ${state.results.dealBrief.competitiveExposure}
-- Critical gaps: ${(state.results.dealBrief.criticalGaps||[]).join('; ')}
-- What must happen next: ${(state.results.dealBrief.whatMustHappenNext||[]).join('; ')}
-- Conga POV: ${povSummary}
-- Meeting type: ${meetingType}
-
-Return ONLY valid JSON starting with {:
-{
-  "executiveSummary": [
-    "Most critical thing #1 — company, deal, or relationship context the rep must know before this meeting",
-    "Most critical thing #2 — a key risk, gap, or opportunity specific to this deal at ${company}",
-    "Most critical thing #3 — the single most important action to take on or before this call",
-    "Most critical thing #4 — something about the competitive or stakeholder landscape that could make or break this deal",
-    "Most critical thing #5 — the Conga angle or value hook most likely to resonate with ${company} specifically"
-  ]
-}
-Each item must be a complete, standalone insight — specific to ${company} and this deal, not generic sales advice.`,
-    'You are a senior enterprise sales coach. Return ONLY valid JSON starting with {. Be direct and specific — no generic advice.',
-    false, [], 3000
-  );
-  const parsedC = safeParseJSON(summaryRaw) || {};
-  state.results.dealBrief.executiveSummary = parsedC.executiveSummary || [];
   addLog('done', 'Deal brief complete');
 
   updateStatus('Brief ready. ✓');
@@ -2141,7 +2572,88 @@ Each item must be a complete, standalone insight — specific to ${company} and 
 // ════════════════════════════════════════════════════
 // RENDER OUTPUT
 // ════════════════════════════════════════════════════
+function renderPOVBuilder(pov) {
+  const section = document.getElementById('pov-builder-section');
+  if (!section || !pov) return;
+
+  const pitch = pov.povPitch;
+  const driver = pov.povDriver;
+  const chain = pov.povLogicChain || [];
+  const leads = pov.leadProducts || [];
+
+  if (!pitch) { section.style.display = 'none'; return; }
+  section.style.display = '';
+
+  // Render as bullet list if it contains bullet markers, otherwise split by sentence
+  const pitchEl = document.getElementById('pov-pitch-text');
+  if (pitch.includes('•') || pitch.includes('\n')) {
+    const bullets = pitch.split(/\n|•/).map(s => s.trim()).filter(s => s.length > 2);
+    pitchEl.innerHTML = bullets.map(b => `<div class="pov-bullet">• ${b.replace(/^•\s*/,'')}</div>`).join('');
+  } else {
+    pitchEl.textContent = pitch;
+  }
+
+  if (driver) {
+    document.getElementById('pov-driver-text').textContent = driver;
+  }
+
+  const chainEl = document.getElementById('pov-logic-chain');
+  chainEl.innerHTML = chain.map(item => `
+    <div class="pov-logic-row">
+      <div class="pov-logic-signal">${item.signal||''}</div>
+      <div class="pov-logic-implication">${item.implication||''}</div>
+      <div class="pov-logic-product">${item.product||''}</div>
+    </div>
+  `).join('');
+
+  const leadsEl = document.getElementById('pov-lead-products');
+  leadsEl.innerHTML = leads.map(p => `<span class="pov-lead-chip">${p}</span>`).join('');
+}
+
+function copyPOV() {
+  const pov = state.results.congaPOV || {};
+  const str = state.results.callStrategy || {};
+  const lines = [];
+
+  if (pov.povPitch) lines.push(pov.povPitch);
+  if (pov.povDriver) lines.push('\nDriver: ' + pov.povDriver);
+  if ((pov.leadProducts||[]).length) lines.push('Lead with: ' + pov.leadProducts.join(', '));
+  if (str.openingHook) lines.push('\nOpening Hook: ' + str.openingHook);
+  if ((str.discoveryQuestions||[]).length) {
+    lines.push('\nDiscovery Questions:');
+    str.discoveryQuestions.slice(0,3).forEach((q,i) => lines.push(`${i+1}. ${q}`));
+  }
+
+  const text = lines.join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('povCopyBtn');
+    btn.classList.add('copied');
+    btn.innerHTML = '✓ Copied';
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy POV';
+    }, 2000);
+  }).catch(() => {
+    // fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+function togglePOVReasoning() {
+  const el = document.getElementById('povReasoning');
+  const btn = document.getElementById('povDriverToggle');
+  el.classList.toggle('open');
+  btn.textContent = el.classList.contains('open') ? 'Why this works ▴' : 'Why this works ▾';
+}
+
 function renderOutput() {
+  renderPOVBuilder(state.results.congaPOV);
+
   const company = document.getElementById('companyName').value.trim();
   const meetingType = document.getElementById('meetingType').value;
   const oppStage = document.getElementById('oppStage').value;
@@ -2177,6 +2689,10 @@ function renderOutput() {
   document.getElementById('out-what-they-do').textContent = c.whatTheyDo || 'No information available';
   document.getElementById('out-customer-value').textContent = c.customerValue || 'No information available';
   document.getElementById('out-business-model').textContent = c.businessModel || 'No information available';
+
+  // Pricing & Packaging
+  renderPricingPackaging(c);
+  renderPublicIntel(c);
 
   // Competitors
   const compList = document.getElementById('out-competitors-list');
@@ -2499,7 +3015,9 @@ function downloadPDF() {
 <head>
 <meta charset="UTF-8">
 <title>Conga Account Brief — ${company}</title>
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
 
 /* ── ZNITH CLIP-PATH UTILITIES ── */
@@ -2874,6 +3392,65 @@ function addContact() {
   renderContacts();
 }
 
+async function parseContactsFromDocs() {
+  if (!state.uploadedDocuments.length) return;
+  const btn = document.getElementById('parseContactsBtn');
+  const status = document.getElementById('parse-contacts-status');
+  btn.disabled = true;
+  btn.textContent = 'Parsing…';
+  if (status) status.textContent = '';
+
+  // Build document content for the prompt
+  const docTexts = state.uploadedDocuments.map(d => {
+    if (d.textContent) return `[${d.name}]\n${d.textContent.slice(0, 3000)}`;
+    return `[${d.name}] (PDF — no text extracted)`;
+  }).join('\n\n---\n\n');
+
+  const prompt = `From the following documents, extract every person mentioned who could be a relevant business contact. For each person return their full name, job title/role, and company if mentioned.
+
+Documents:
+${docTexts}
+
+Return ONLY valid JSON array starting with [:
+[
+  {"name": "Full Name", "title": "Job Title / Role", "linkedin": ""},
+  {"name": "Full Name 2", "title": "Job Title 2", "linkedin": ""}
+]
+
+Only include real people with names. Exclude generic references like "the CEO" with no name. If no contacts found, return [].`;
+
+  try {
+    const raw = await callClaude(prompt, 'You are a contact extraction assistant. Return ONLY a valid JSON array starting with [. Extract real named people only.', false);
+    const contacts = safeParseJSON(raw);
+    if (Array.isArray(contacts) && contacts.length > 0) {
+      let added = 0;
+      contacts.forEach(c => {
+        if (c.name && state.contacts.length < 20) {
+          // Check for duplicates by name
+          const exists = state.contacts.some(existing =>
+            existing.name.toLowerCase().trim() === c.name.toLowerCase().trim()
+          );
+          if (!exists) {
+            const id = ++state.contactIdCounter;
+            state.contacts.push({ id, name: c.name, title: c.title||'', linkedin: c.linkedin||'' });
+            added++;
+          }
+        }
+      });
+      renderContacts();
+      if (status) status.textContent = `✓ Found ${added} contact${added !== 1 ? 's' : ''}`;
+    } else {
+      if (status) status.textContent = 'No contacts found in documents';
+    }
+  } catch(e) {
+    if (status) status.textContent = 'Parse failed — try again';
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Parse Contacts from Uploaded Docs';
+  }
+}
+
 function removeContact(id) {
   state.contacts = state.contacts.filter(c => c.id !== id);
   renderContacts();
@@ -2921,7 +3498,7 @@ function updateContact(id, field, value) {
 // DOCUMENT UPLOAD
 // ════════════════════════════════════════════════════
 const FILE_ICONS = { pdf:'📄', txt:'📝', md:'📝', docx:'📋', doc:'📋', csv:'📊', eml:'📧', default:'📎' };
-const FILE_LIMITS = { maxFiles: 5, maxSizeMB: 10 };
+const FILE_LIMITS = { maxFiles: 20, maxSizeMB: 10 };
 
 function getFileExt(name) { return name.split('.').pop().toLowerCase(); }
 function getFileIcon(name) { return FILE_ICONS[getFileExt(name)] || FILE_ICONS.default; }
@@ -2950,7 +3527,7 @@ function handleFileInputChange(fileList) {
 
 function handleFiles(files) {
   const remaining = FILE_LIMITS.maxFiles - state.uploadedDocuments.length;
-  if (remaining <= 0) { alert('Maximum 5 files reached. Remove a file to add another.'); return; }
+  if (remaining <= 0) { alert('Maximum 20 files reached. Remove a file to add another.'); return; }
   files.slice(0, remaining).forEach(file => {
     if (file.size > FILE_LIMITS.maxSizeMB * 1048576) {
       alert(`"${file.name}" exceeds the ${FILE_LIMITS.maxSizeMB}MB limit and was skipped.`); return;
@@ -3019,6 +3596,8 @@ function removeDocument(id) {
 
 function renderFileChips() {
   const container = document.getElementById('fileChips');
+  const parseBar = document.getElementById('parse-contacts-bar');
+  if (parseBar) parseBar.style.display = state.uploadedDocuments.length > 0 ? 'block' : 'none';
   if (!state.uploadedDocuments.length) { container.innerHTML = ''; return; }
   container.innerHTML = state.uploadedDocuments.map(doc => {
     const statusLabel = { ready:'Ready', reading:'Reading…', error:'Failed' }[doc.status];
@@ -3075,24 +3654,6 @@ function renderDealBrief() {
   document.getElementById('out-what-next').innerHTML = nexts.length
     ? nexts.map((n,i)=>`<div class="q-item" style="margin-bottom:6px;"><div class="q-num">${i+1}</div><div class="q-text">${n}</div></div>`).join('')
     : '<div style="font-size:13px;color:var(--white-dim);opacity:0.6;">No actions identified.</div>';
-
-  // Executive Summary — render at top
-  const sumItems = db.executiveSummary || [];
-  const sumEl = document.getElementById('out-summary-items');
-  if (sumEl && sumItems.length) {
-    sumEl.innerHTML = sumItems.map((s, i) =>
-      `<div class="summary-item">
-        <div class="summary-num">${i+1}</div>
-        <div class="summary-text">${s}</div>
-      </div>`
-    ).join('');
-  }
-  // Health badge in summary header
-  const sumHealthEl = document.getElementById('out-summary-health');
-  if (sumHealthEl && db.dealHealthScore) {
-    const hc = { Green:'var(--green)', Yellow:'var(--orange)', Red:'var(--red)' }[db.dealHealthScore] || 'var(--white-dim)';
-    sumHealthEl.innerHTML = `<div style="font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:${hc};background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);padding:4px 12px;clip-path:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);">${db.dealHealthScore} Deal</div>`;
-  }
 
   // Deal recommendations
   const urgencyClass = { 'Do This Now':'urgency-now', 'Do This Soon':'urgency-soon', 'Plant This Seed':'urgency-plant' };
@@ -3383,7 +3944,7 @@ async function exportWord() {
   const coverBanner = new Table({
     width: {size:W, type:WidthType.DXA}, columnWidths:[W],
     rows:[row([cell([
-      p('CONGA · ACCOUNT BRIEF', {bold:true, size:17, color:LAV, before:0, after:40}),
+      p('CONGA · ACCOUNT BRIEF', {bold:true, size:17, color:WHITE, before:0, after:40}),
       new Paragraph({spacing:{before:0,after:60}, children:[
         new TextRun({text: company, size: 52, bold: true, color: WHITE, font:'Arial'})
       ]}),
@@ -3628,39 +4189,111 @@ async function exportWord() {
     ]:[])
   ];
 
+  // ── PRICING & PACKAGING (Word) ────────────────────────────────
+  const pricingSection = co.pricingModel ? [
+    p('',{before:80}),
+    new Table({width:{size:W,type:WidthType.DXA},columnWidths:[W],rows:[
+      row([cell([
+        p('How They Price & Package'+(co.pricingModelAssumed?' (Assumed)':''),{bold:true,size:17,color:PUR}),
+        p(co.pricingModel||'—',{size:19,it:co.pricingModelAssumed}),
+        ...(co.pricingComplexity?[p('Conga Signal: '+co.pricingComplexity,{size:17,color:PUR,it:true})]:[])
+      ],{w:W})])
+    ]})
+  ] : [];
+
+  // ── READ ADDENDA CHECKBOX STATE ───────────────────────────────
+  const addendaState = {
+    contacts:        document.getElementById('addenda-contacts')?.checked !== false,
+    industry:        document.getElementById('addenda-industry')?.checked !== false,
+    competitive:     document.getElementById('addenda-competitive')?.checked !== false,
+    deal:            document.getElementById('addenda-deal')?.checked !== false,
+    recommendations: document.getElementById('addenda-recommendations')?.checked !== false,
+  };
+
+  // ── POV BUILDER (Word) ────────────────────────────────────
+  const povBuilderSection = (pov.povPitch || pov.povDriver) ? [
+    new Table({width:{size:W,type:WidthType.DXA},columnWidths:[W],rows:[
+      row([cell([
+        new Paragraph({
+          spacing:{before:0,after:80},
+          children:[new TextRun({text:'WHAT YOU KNOW GOING IN', size:15, bold:true, color:WHITE, font:'Arial', characterSpacing:120})]
+        }),
+        // Pitch bullets
+        ...(pov.povPitch||'').split(/\n|•/).map(s=>s.trim()).filter(s=>s.length>2).map(b=>
+          new Paragraph({
+            spacing:{before:60,after:40},
+            children:[
+              new TextRun({text:'• ', bold:true, size:22, color:LAV, font:'Arial'}),
+              new TextRun({text:b.replace(/^•\s*/,''), bold:true, size:22, color:WHITE, font:'Arial'})
+            ]
+          })
+        ),
+        ...(pov.povDriver ? [
+          new Paragraph({spacing:{before:120,after:20},children:[new TextRun({text:'SIGNAL', size:14, bold:true, color:LAV, font:'Arial', characterSpacing:80})]}),
+          new Paragraph({spacing:{before:0,after:60},children:[new TextRun({text:pov.povDriver, size:18, color:WHITE, font:'Arial', italics:true})]})
+        ] : []),
+        // Logic chain
+        ...((pov.povLogicChain||[]).length ? [
+          new Paragraph({spacing:{before:100,after:30},children:[new TextRun({text:'REASONING CHAIN', size:14, bold:true, color:LAV, font:'Arial', characterSpacing:80})]})
+        ] : []),
+        ...(pov.povLogicChain||[]).map(item=>
+          new Paragraph({
+            spacing:{before:40,after:40},
+            children:[
+              new TextRun({text:(item.signal||''), size:18, color:WHITE, font:'Arial'}),
+              new TextRun({text:'  →  ', size:18, color:LAV, font:'Arial'}),
+              new TextRun({text:(item.implication||''), size:18, color:WHITE, font:'Arial', italics:true}),
+              new TextRun({text:'  ['+(item.product||'')+']', size:16, bold:true, color:LAV, font:'Arial'})
+            ]
+          })
+        ),
+        ...(pov.leadProducts&&pov.leadProducts.length ? [
+          new Paragraph({spacing:{before:100,after:20},children:[new TextRun({text:'LEAD WITH: '+pov.leadProducts.join(' · '), size:16, bold:true, color:LAV, font:'Arial'})]}),
+        ] : [])
+      ], {fill:NAVY, purBorder:true, mt:160, mb:160})])
+    ]}),
+    p('',{before:60,after:60})
+  ] : [];
+
   // ── ASSEMBLE DOCUMENT ─────────────────────────────────────────
+  // Order: Cover → Account Intel → POV → Call Strategy → Addenda
   const allChildren = [
+    // Cover
     coverBanner, p('',{before:60,after:60}),
     coverMeta,   p('',{before:60,after:60}),
     ...peNotesBlock,
     confBar,
-    ...((db.executiveSummary||[]).length ? [
-      ...secHead('5 Things to Know Before This Call'),
-      ...(db.executiveSummary||[]).map((s,i) => new Paragraph({
-        spacing:{before:60,after:60},
-        children:[
-          new TextRun({text:`${i+1}.  `, bold:true, size:19, color:PUR, font:'Arial'}),
-          new TextRun({text:s, size:19, color:BODY_TXT, font:'Arial'})
-        ]
-      })),
-      p('',{before:60})
-    ]:[]),
+    // POV Builder — first thing after cover
+    ...povBuilderSection,
+
+    // ── ACCOUNT INTEL ──
     ...whatTheyDo,
-    ...competitorsSection,
-    ...((co.integrationPartners||[]).filter(x=>x&&x!=='No information available').length ? [
-      ...secHead('Integration Partners'),
-      ...(co.integrationPartners||[]).filter(x=>x&&x!=='No information available').map(p2=>bul(p2,'bul'))
-    ]:[]),
+    ...pricingSection,
+    p('',{before:80}),
     ...secHead('Recent News & Developments'),
     ...(co.recentNews||[]).map(n=>bul(n,'bul')),
-    ...contactsSection,
-    ...dealSection,
+
+    // ── CONGA POV ──
     new Paragraph({children:[new PageBreak()]}),
-    ...indSection,
     ...povSection,
+
+    // ── CALL STRATEGY ──
     ...stratSection,
     ...stakeSection,
+
+    // ── ADDENDA (conditional) ──
+    ...(addendaState.contacts ? contactsSection : []),
+    ...(addendaState.industry ? [new Paragraph({children:[new PageBreak()]}), ...indSection] : []),
+    ...(addendaState.competitive ? [
+      ...competitorsSection,
+      ...((co.integrationPartners||[]).filter(x=>x&&x!=='No information available').length ? [
+        ...secHead('Integration Partners'),
+        ...(co.integrationPartners||[]).filter(x=>x&&x!=='No information available').map(p2=>bul(p2,'bul'))
+      ]:[])
+    ] : []),
+    ...(addendaState.deal ? dealSection : []),
     ...intelSection,
+
     // Footer spacer
     p('',{before:400,after:0}),
     new Paragraph({
@@ -4056,6 +4689,67 @@ function resetChat() {
 addContact(); // Start with one empty contact
 updateBriefsBadge();
 updateChatSuggestions(1);
+
+// ── ADDENDA TOGGLES — hide/show optional sections ──
+document.addEventListener('change', function(e) {
+  if (e.target.matches('.addenda-toggle input[type="checkbox"]')) {
+    const key = e.target.id.replace('addenda-', '');
+    document.querySelectorAll(`.addendum[data-addendum="${key}"]`).forEach(el => {
+      el.style.display = e.target.checked ? '' : 'none';
+    });
+  }
+});
+
+// ── RENDER PUBLIC COMPANY INTEL ──
+function renderPublicIntel(company) {
+  const section = document.getElementById('out-public-intel-section');
+  if (!section) return;
+  const intel = company && company.publicIntel;
+  if (!intel || (!intel.operationalRiskLanguage?.length && !intel.earningsThemes?.length)) {
+    section.style.display = 'none'; return;
+  }
+  section.style.display = '';
+  const summaryEl = document.getElementById('out-public-intel-summary');
+  if (summaryEl && intel.publicIntelSummary) summaryEl.textContent = intel.publicIntelSummary;
+
+  const grid = document.getElementById('out-public-intel-grid');
+  const makeCard = (title, items, color) => {
+    if (!items || !items.length) return '';
+    return `<div style="background:var(--surf-2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:14px 16px;">
+      <div style="font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:${color};margin-bottom:8px;">${title}</div>
+      ${items.map(item=>`<div style="font-size:13px;color:var(--tmuted);padding:4px 0;border-bottom:1px solid var(--border);line-height:1.5;">"${item}"</div>`).join('')}
+    </div>`;
+  };
+  grid.innerHTML = [
+    makeCard('From 10-K / Annual Report', intel.operationalRiskLanguage, 'var(--accent)'),
+    makeCard('From Earnings Calls', intel.earningsThemes, 'var(--amber)'),
+    makeCard('Guidance Signals', intel.guidanceSignals, 'var(--green)'),
+  ].filter(Boolean).join('');
+}
+
+// ── RENDER PRICING & PACKAGING ──
+function renderPricingPackaging(company) {
+  const section = document.getElementById('out-pricing-section');
+  const modelEl = document.getElementById('out-pricing-model');
+  const signalWrap = document.getElementById('out-pricing-signal-wrap');
+  const signalEl = document.getElementById('out-pricing-signal');
+  const assumedEl = document.getElementById('out-pricing-assumed');
+  if (!section || !company) return;
+  if (!company.pricingModel) { section.style.display = 'none'; return; }
+  section.style.display = '';
+  modelEl.textContent = company.pricingModel;
+  modelEl.className = 'deep-dive-value' + (company.pricingModelAssumed ? ' assumed' : '');
+  if (assumedEl) {
+    assumedEl.innerHTML = company.pricingModelAssumed
+      ? '<span class="assumed-badge">Assumed</span>' : '';
+  }
+  if (company.pricingComplexity && signalWrap && signalEl) {
+    signalEl.textContent = company.pricingComplexity;
+    signalWrap.style.display = '';
+  } else if (signalWrap) {
+    signalWrap.style.display = 'none';
+  }
+}
 </script>
 
 <!-- ── ZNITH FOOTER ── -->
