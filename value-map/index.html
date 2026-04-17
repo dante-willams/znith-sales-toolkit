@@ -1458,6 +1458,7 @@
 </div>
 
 <script src="../shared/dealStore.js"></script>
+<script src="../shared/deal-nav.js"></script>
 <script>
   // ── STATE ──
   let state = {
@@ -2585,6 +2586,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
     localStorage.setItem(STORAGE_KEY, JSON.stringify(maps));
     updateMapsCount();
     syncToDeal();
+    const _vd = dealStore.getFromUrl(); if (_vd) dealNav.showNext('Win Room', dealStore.urlFor('../win-room/', _vd.id));
     toast('✓ Saved to All Maps');
   }
 

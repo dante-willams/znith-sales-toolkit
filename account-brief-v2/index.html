@@ -2019,6 +2019,7 @@ input[type=checkbox].chip-check{display:none;}
 </div>
 
 <script src="../shared/dealStore.js"></script>
+<script src="../shared/deal-nav.js"></script>
 <script>
 // ════════════════════════════════════════════════════
 // THEME TOGGLE
@@ -2113,15 +2114,26 @@ async function callClaude(userPrompt, systemPrompt = 'You are a helpful analyst.
   return text;
 }
 
+function stripCiteTags(val) {
+  if (typeof val === 'string') return val.replace(/<cite[^>]*>([\s\S]*?)<\/cite>/g, '$1').trim();
+  if (Array.isArray(val)) return val.map(stripCiteTags);
+  if (val && typeof val === 'object') {
+    const out = {};
+    for (const k in val) out[k] = stripCiteTags(val[k]);
+    return out;
+  }
+  return val;
+}
+
 function safeParseJSON(text) {
   try {
     const clean = text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-    return JSON.parse(clean);
+    return stripCiteTags(JSON.parse(clean));
   } catch(e) {
     // Attempt to extract JSON object from text
     const match = text.match(/\{[\s\S]*\}/);
     if (match) {
-      try { return JSON.parse(match[0]); } catch(e2) {}
+      try { return stripCiteTags(JSON.parse(match[0])); } catch(e2) {}
     }
     return null;
   }
@@ -2150,6 +2162,7 @@ async function startResearch() {
     showScreen(3);
     saveBrief();
     syncToDeal(company);
+    if (state.activeDealId) dealNav.showNext('Qualify IQ', dealStore.urlFor('../qualify-iq/', state.activeDealId));
   } catch(err) {
     const errBox = document.getElementById('research-error');
     errBox.textContent = 'Something went wrong: ' + err.message + '. Please check your API key and try again.';
