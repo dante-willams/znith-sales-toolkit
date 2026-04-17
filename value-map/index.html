@@ -1457,6 +1457,7 @@
   ✓ Copied to clipboard
 </div>
 
+<script src="../shared/dealStore.js"></script>
 <script>
   // ── STATE ──
   let state = {
@@ -2583,6 +2584,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
     if (idx >= 0) maps[idx] = entry; else maps.unshift(entry);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(maps));
     updateMapsCount();
+    syncToDeal();
     toast('✓ Saved to All Maps');
   }
 
@@ -2601,6 +2603,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
     if (idx >= 0) maps[idx] = entry; else maps.unshift(entry);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(maps));
     updateMapsCount();
+    syncToDeal();
   }
 
   function showSavedMaps() {
@@ -3222,6 +3225,43 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
     const btn = document.getElementById('pill-edit');
     if (btn) btn.style.display = state.valueMap ? 'flex' : 'none';
   }
+
+  function syncToDeal() {
+    if (!state.valueMap) return;
+    const deal = dealStore.getFromUrl();
+    if (!deal) return;
+    dealStore.patch(deal.id, 'value_map', {
+      company: state.company,
+      industry: state.industry,
+      stage: state.stage,
+      products: state.products,
+      valueMap: state.valueMap,
+      generated_at: new Date().toISOString()
+    });
+  }
+
+  // Hydrate from deal context if ?deal=uuid present
+  (() => {
+    const deal = dealStore.getFromUrl();
+    if (!deal) return;
+    const nameEl = document.getElementById('companyName');
+    if (nameEl && !nameEl.value) nameEl.value = deal.context.account_name || '';
+    // Select matching stage pill
+    const stageMap = { discovery: 'Discovery', demo: 'Qualification', proposal: 'Validation', negotiation: 'Negotiation', closed_won: 'Closed Won' };
+    const mappedStage = stageMap[deal.context.stage] || '';
+    if (mappedStage) {
+      document.querySelectorAll('.stage-pill').forEach(p => {
+        p.classList.toggle('selected', p.dataset.val === mappedStage);
+      });
+    }
+    // Select matching product tags
+    if (deal.context.products?.length) {
+      document.querySelectorAll('#productTags .tag').forEach(t => {
+        const match = deal.context.products.some(p => t.dataset.val.toLowerCase().includes(p.toLowerCase()) || p.toLowerCase().includes(t.dataset.val.toLowerCase()));
+        if (match) t.classList.add('selected');
+      });
+    }
+  })();
 </script>
 <script>/* JSZip inlined */
 /*!
