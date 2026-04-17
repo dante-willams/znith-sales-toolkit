@@ -1469,19 +1469,6 @@ input[type=checkbox].chip-check{display:none;}
             <option value="Other">Other</option>
           </select></div>
         </div>
-        <div class="form-group">
-          <div class="form-label">Opportunity Stage</div>
-          <div class="input-wrap"><select id="oppStage">
-            <option value="">Select stage…</option>
-            <option value="Prospecting">Prospecting</option>
-            <option value="Qualification">Qualification</option>
-            <option value="Discovery">Discovery</option>
-            <option value="Demo / Evaluation">Demo / Evaluation</option>
-            <option value="Proposal Sent">Proposal Sent</option>
-            <option value="Negotiation">Negotiation</option>
-            <option value="Renewal">Renewal</option>
-          </select></div>
-        </div>
       </div>
       <div class="form-row single">
         <div class="form-group">
@@ -1622,7 +1609,6 @@ input[type=checkbox].chip-check{display:none;}
         <div class="output-company-name" id="out-company-name">—</div>
         <div class="output-meta">
           <span id="out-meeting-type">—</span>
-          <span id="out-stage">—</span>
           <span id="out-date">—</span>
         </div>
       </div>
@@ -2135,7 +2121,6 @@ async function runResearch(company) {
   const industry = document.getElementById('companyIndustry').value.trim();
   const techStack = document.getElementById('techStack').value.trim();
   const meetingType = document.getElementById('meetingType').value;
-  const oppStage = document.getElementById('oppStage').value;
   const callGoal = document.getElementById('callGoal').value.trim();
   const competitors = document.getElementById('competitors').value.trim();
   const sdrNotes = document.getElementById('sdrNotes').value.trim();
@@ -2428,7 +2413,7 @@ CRITICAL FRAMING: All discovery questions must focus on ${company}'s OWN interna
 Good: "How does your sales team currently generate and send quotes?" (their internal process)
 Bad: "How do your customers handle contracts?" (wrong — about their customers)
 
-Meeting: ${meetingType} | Stage: ${oppStage||'Unknown'} | AE Goal: ${callGoal||'Qualify opportunity'}
+Meeting: ${meetingType} | AE Goal: ${callGoal||'Qualify opportunity'}
 Products: ${productList} | Known competitors: ${competitors||'None'}
 Company intel: ${companyJSON}
 Conga challenges identified: ${povSummary}
@@ -2466,7 +2451,7 @@ Include 3-5 stakeholders specific to ${productList} at a ${detectedIndustry} com
   // Shared context string reused across all three deal brief calls
   const dealContext = `Deal Context:
 - Meeting type: ${meetingType}
-- Stage: ${oppStage || 'Early/Unknown'}
+- Meeting Type: ${meetingType}
 - AE goal: ${callGoal || 'Qualify opportunity'}
 - Products: ${productList}
 - SDR notes: ${sdrNotes || 'None'}
@@ -2656,7 +2641,6 @@ function renderOutput() {
 
   const company = document.getElementById('companyName').value.trim();
   const meetingType = document.getElementById('meetingType').value;
-  const oppStage = document.getElementById('oppStage').value;
   const c = state.results.company || {};
   const ind = state.results.industry || {};
   const pov = state.results.congaPOV || {};
@@ -2665,7 +2649,7 @@ function renderOutput() {
   // Header
   document.getElementById('out-company-name').textContent = company;
   document.getElementById('out-meeting-type').textContent = meetingType;
-  document.getElementById('out-stage').textContent = oppStage || '';
+  document.getElementById('out-stage').textContent = '';
   document.getElementById('out-date').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
 
   // Snapshot grid
@@ -2900,14 +2884,13 @@ function renderOutput() {
 function buildPDFTemplate() {
   const company = document.getElementById('companyName').value.trim();
   const meetingType = document.getElementById('meetingType').value;
-  const oppStage = document.getElementById('oppStage').value;
   const c = state.results.company || {};
   const ind = state.results.industry || {};
   const pov = state.results.congaPOV || {};
   const strat = state.results.callStrategy || {};
 
   document.getElementById('pdf-company').textContent = company;
-  document.getElementById('pdf-meta').textContent = meetingType + (oppStage ? ' · ' + oppStage : '');
+  document.getElementById('pdf-meta').textContent = meetingType;
   const dateStr = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   document.getElementById('pdf-date').innerHTML = 'Generated ' + dateStr + '<br>Conga Confidential';
   document.getElementById('pdf-footer-date').textContent = dateStr;
@@ -2970,7 +2953,6 @@ function downloadPDF() {
 
   const company = document.getElementById('companyName').value.trim();
   const meetingType = document.getElementById('meetingType').value;
-  const oppStage = document.getElementById('oppStage').value;
   const dateStr = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const co = state.results.company || {};
   const ind = state.results.industry || {};
@@ -3118,7 +3100,7 @@ body{background:#0d0b1a;color:#f4f0ff;font-family:var(--f-ui);font-size:9.5px;li
       CONGA · ACCOUNT BRIEF
     </div>
     <div class="hdr-co">${company}</div>
-    <div class="hdr-meta">${meetingType}${oppStage?' · '+oppStage:''}</div>
+    <div class="hdr-meta">${meetingType}</div>
   </div>
   <div class="hdr-right">Generated ${dateStr}<br>Conga Confidential</div>
 </div>
@@ -3725,7 +3707,6 @@ function saveBrief() {
       companyIndustry: document.getElementById('companyIndustry').value,
       techStack: document.getElementById('techStack').value,
       meetingType: document.getElementById('meetingType').value,
-      oppStage: document.getElementById('oppStage').value,
       callGoal: document.getElementById('callGoal').value,
       competitors: document.getElementById('competitors').value,
       sdrNotes: document.getElementById('sdrNotes').value,
@@ -3754,7 +3735,7 @@ function loadBrief(id) {
   if (!brief) return;
   // Restore intake fields
   const fi = brief.intake || {};
-  ['companyName','companyWebsite','companyIndustry','techStack','meetingType','oppStage','callGoal','competitors','sdrNotes'].forEach(k => {
+  ['companyName','companyWebsite','companyIndustry','techStack','meetingType','callGoal','competitors','sdrNotes'].forEach(k => {
     const el = document.getElementById(k);
     if (el && fi[k] !== undefined) el.value = fi[k];
   });
@@ -3862,7 +3843,6 @@ async function exportWord() {
 
   const company  = document.getElementById('companyName').value.trim();
   const meetType = document.getElementById('meetingType').value;
-  const stage    = document.getElementById('oppStage').value;
   const dateStr  = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const co  = state.results.company   || {};
   const ind = state.results.industry  || {};
@@ -3948,7 +3928,7 @@ async function exportWord() {
       new Paragraph({spacing:{before:0,after:60}, children:[
         new TextRun({text: company, size: 52, bold: true, color: WHITE, font:'Arial'})
       ]}),
-      p(`${meetType}${stage?' · '+stage:''}  ·  ${dateStr}`, {size:18, color:LAV, before:0})
+      p(`${meetType}  ·  ${dateStr}`, {size:18, color:LAV, before:0})
     ], {fill:NAVY, purBorder:true})])]
   });
 
@@ -3970,8 +3950,8 @@ async function exportWord() {
       row([
         cell([p('Founded',{bold:true,size:17,color:PUR})],{fill:'F8F6FF',w:2000}),
         cell([p(co.founded||'—',{size:18})],{w:2680}),
-        cell([p('Deal Stage',{bold:true,size:17,color:PUR})],{fill:'F8F6FF',w:2000}),
-        cell([p(stage||'—',{size:18})],{w:2680}),
+        cell([p('Meeting Type',{bold:true,size:17,color:PUR})],{fill:'F8F6FF',w:2000}),
+        cell([p(meetType||'—',{size:18})],{w:2680}),
       ]),
       row([
         cell([p('Ownership',{bold:true,size:17,color:PUR})],{fill:'F8F6FF',w:2000}),
@@ -4476,7 +4456,6 @@ Rep Notes - Questions: ${notes.questions || 'None'}
 Rep Notes - Flags: ${notes.flags || 'None'}
 
 Meeting Type: ${document.getElementById('meetingType')?.value || '—'}
-Opportunity Stage: ${document.getElementById('oppStage')?.value || '—'}
 Rep Goal: ${document.getElementById('callGoal')?.value || '—'}
 Known Competitors in Deal: ${document.getElementById('competitors')?.value || 'None'}
 Tech Stack: ${document.getElementById('techStack')?.value || 'Unknown'}
