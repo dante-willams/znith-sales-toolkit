@@ -186,20 +186,33 @@ header{
 .score-high {background:#34D399;color:#34D399;}
 .score-none {background:var(--border);color:var(--tfaint);}
 
-/* ── TOOL LINKS ── */
-.deal-tools{display:flex;gap:6px;flex-wrap:wrap;}
+/* ── TOOL GRID ── */
+.deal-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
 .tool-btn{
-  display:flex;align-items:center;gap:5px;
-  padding:5px 10px;font-size:11px;font-weight:600;
-  letter-spacing:0.03em;text-decoration:none;
+  display:flex;align-items:center;gap:7px;
+  padding:7px 10px;font-size:11px;font-weight:600;
+  letter-spacing:0.02em;text-decoration:none;
   background:var(--surf-2);border:1px solid var(--border);
-  color:var(--tmuted);clip-path:var(--clip-sm);
+  color:var(--tfaint);clip-path:var(--clip-sm);
   transition:var(--transition);
 }
 .tool-btn:hover{border-color:var(--border-md);color:var(--text);}
-.tool-btn.has-data{border-color:rgba(255,255,255,0.14);color:var(--text);}
-.tool-btn.has-data svg circle, .tool-btn.has-data svg path{stroke:var(--amber);}
-.tool-btn svg{flex-shrink:0;opacity:0.7;}
+.tool-btn.done{color:var(--text);border-color:rgba(255,255,255,0.12);}
+.tool-status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.12);}
+.tool-btn.done .tool-status-dot{background:#34D399;}
+
+/* ── WIN ROOM CTA ── */
+.win-room-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 14px;font-size:11px;font-weight:700;
+  letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;
+  clip-path:var(--clip-sm);transition:var(--transition);
+  border:1px solid var(--border);color:var(--tfaint);
+  background:var(--surf-2);
+}
+.win-room-btn.active{background:var(--amber-muted);border-color:rgba(184,134,11,0.3);color:var(--amber);}
+.win-room-btn.active:hover{background:rgba(184,134,11,0.25);}
+.win-room-btn:not(.active):hover{border-color:var(--border-md);color:var(--text);}
 
 /* ── CARD ACTIONS (hover) ── */
 .deal-card-actions{
@@ -277,6 +290,93 @@ header{
   cursor:pointer;transition:var(--transition);
 }
 .btn-modal-cancel:hover{border-color:var(--border-md);color:var(--text);}
+
+/* ── DEAL DRAWER ── */
+.drawer-overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.drawer-overlay.open{opacity:1;pointer-events:all;}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;z-index:301;
+  width:500px;max-width:95vw;
+  background:var(--surf);border-left:1px solid var(--border-md);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform 0.25s ease;
+}
+.drawer-overlay.open .drawer{transform:translateX(0);}
+.drawer-header{padding:20px 24px 0;border-bottom:1px solid var(--border);flex-shrink:0;}
+.drawer-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.drawer-title-left{display:flex;flex-direction:column;gap:6px;}
+.drawer-company{font-family:var(--f-brand);font-size:20px;font-weight:700;color:var(--text);}
+.drawer-meta-row{display:flex;align-items:center;gap:8px;}
+.drawer-close{
+  background:transparent;border:1px solid var(--border);color:var(--tmuted);
+  width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  clip-path:var(--clip-sm);cursor:pointer;transition:var(--transition);flex-shrink:0;
+}
+.drawer-close:hover{border-color:var(--border-md);color:var(--text);}
+.drawer-tabs{display:flex;gap:0;overflow-x:auto;}
+.drawer-tab{
+  padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:0.07em;
+  text-transform:uppercase;cursor:pointer;color:var(--tmuted);
+  border-bottom:2px solid transparent;transition:var(--transition);white-space:nowrap;
+  background:transparent;border-left:none;border-right:none;border-top:none;
+  font-family:var(--f-ui);
+}
+.drawer-tab.active{color:var(--amber);border-bottom-color:var(--amber);}
+.drawer-tab:hover{color:var(--text);}
+.drawer-body{flex:1;overflow-y:auto;padding:22px 24px 40px;}
+.drawer-panel{display:none;}
+.drawer-panel.active{display:block;}
+.drawer-section{margin-bottom:22px;}
+.drawer-section-label{
+  font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:8px;
+}
+.drawer-text{font-size:13px;line-height:1.65;color:var(--text);}
+.drawer-empty{
+  text-align:center;padding:48px 20px;color:var(--tmuted);font-size:13px;line-height:1.6;
+}
+.drawer-open-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--amber);color:#0A0E1A;border:none;
+  padding:9px 18px;clip-path:var(--clip-sm);
+  font-family:var(--f-ui);font-size:11px;font-weight:700;
+  letter-spacing:0.05em;text-transform:uppercase;
+  cursor:pointer;transition:var(--transition);text-decoration:none;
+}
+.drawer-open-btn:hover{background:#d4a012;}
+.drawer-dim-list{display:flex;flex-direction:column;gap:0;}
+.drawer-dim-row{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 0;border-bottom:1px solid var(--border);
+}
+.drawer-dim-row:last-child{border-bottom:none;}
+.drawer-dim-name{font-size:11px;font-weight:600;color:var(--text);min-width:130px;}
+.drawer-dim-bar-wrap{flex:1;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.drawer-dim-bar{height:100%;border-radius:2px;}
+.drawer-dim-score{font-family:var(--f-mono);font-size:10px;min-width:24px;text-align:right;}
+.drawer-bullets{list-style:none;display:flex;flex-direction:column;gap:6px;margin:0;padding:0;}
+.drawer-bullets li{font-size:13px;color:var(--text);padding-left:14px;position:relative;line-height:1.5;}
+.drawer-bullets li::before{content:'·';position:absolute;left:0;color:var(--amber);}
+.drawer-checklist{display:flex;flex-direction:column;gap:10px;}
+.drawer-check-item{display:flex;align-items:center;gap:9px;font-size:13px;}
+.drawer-check-item.done{color:var(--text);}
+.drawer-check-item.pending{color:var(--tmuted);}
+.drawer-check-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.drawer-check-item.done .drawer-check-dot{background:#34D399;}
+.drawer-check-item.pending .drawer-check-dot{background:rgba(255,255,255,0.12);}
+.drawer-value-row{
+  display:flex;gap:12px;
+}
+.drawer-value-chip{
+  flex:1;background:var(--surf-2);border:1px solid var(--border);
+  clip-path:var(--clip-sm);padding:10px 12px;text-align:center;
+}
+.drawer-value-chip-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--tmuted);margin-bottom:4px;}
+.drawer-value-chip-val{font-family:var(--f-mono);font-size:16px;font-weight:700;color:var(--text);}
 
 /* ── LIGHT THEME ── */
 [data-theme="light"]{
@@ -442,6 +542,40 @@ header{
   </div>
 </footer>
 
+<!-- ── DEAL DRAWER ── -->
+<div class="drawer-overlay" id="dealDrawerOverlay" onclick="handleDrawerOverlayClick(event)">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div class="drawer-title-row">
+        <div class="drawer-title-left">
+          <div class="drawer-company" id="drawerCompany"></div>
+          <div class="drawer-meta-row">
+            <div class="deal-stage-pill" id="drawerStagePill"></div>
+            <div class="meta-item" id="drawerValue" style="display:none"></div>
+          </div>
+        </div>
+        <button class="drawer-close" onclick="closeDrawer()">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="drawer-tabs">
+        <button class="drawer-tab active" data-tab="overview" onclick="switchDrawerTab('overview')">Overview</button>
+        <button class="drawer-tab" data-tab="brief" onclick="switchDrawerTab('brief')">Account Brief</button>
+        <button class="drawer-tab" data-tab="qualify" onclick="switchDrawerTab('qualify')">Qualify IQ</button>
+        <button class="drawer-tab" data-tab="demo" onclick="switchDrawerTab('demo')">Demo Brief</button>
+        <button class="drawer-tab" data-tab="valuemap" onclick="switchDrawerTab('valuemap')">Value Map</button>
+      </div>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-panel active" id="drawer-overview"></div>
+      <div class="drawer-panel" id="drawer-brief"></div>
+      <div class="drawer-panel" id="drawer-qualify"></div>
+      <div class="drawer-panel" id="drawer-demo"></div>
+      <div class="drawer-panel" id="drawer-valuemap"></div>
+    </div>
+  </div>
+</div>
+
 <script src="./shared/dealStore.js"></script>
 <script>
 
@@ -469,12 +603,12 @@ function setFilter(f) {
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
 const TOOLS = [
-  { key: 'research',      label: 'Research',     path: './account-brief-v2/index.html', dataKey: 'research' },
-  { key: 'qualify',       label: 'Qualify',      path: './qualify-iq/index.html',       dataKey: 'qualification' },
-  { key: 'meeting-prep',  label: 'Meeting Prep', path: './demo-brief/index.html',       dataKey: 'meeting_preps' },
-  { key: 'business-case', label: 'Biz Case',     path: './value-map/index.html',        dataKey: 'value_map' },
-  { key: 'intelligence',  label: 'Intelligence', path: './win-room/index.html',         dataKey: null },
+  { key: 'research',     label: 'Account Brief', path: './account-brief-v2/index.html', dataKey: 'research' },
+  { key: 'qualify',      label: 'Qualify IQ',    path: './qualify-iq/index.html',       dataKey: 'qualification' },
+  { key: 'demo-brief',   label: 'Demo Brief',    path: './demo-brief/index.html',       dataKey: 'meeting_preps' },
+  { key: 'value-map',    label: 'Value Map',     path: './value-map/index.html',        dataKey: 'value_map' },
 ];
+const WIN_ROOM = { path: './win-room/index.html' };
 
 function getMeddpiccScore(deal) {
   const q = deal.qualification?.meddpicc;
@@ -507,24 +641,20 @@ function dealCardHTML(deal) {
   const stageKey = deal.context.stage || 'discovery';
 
   const toolBtns = TOOLS.map(t => {
-    const hasData = t.dataKey === null
-      ? true
-      : (Array.isArray(deal[t.dataKey]) ? deal[t.dataKey].length > 0 : !!deal[t.dataKey]);
+    const hasData = Array.isArray(deal[t.dataKey]) ? deal[t.dataKey].length > 0 : !!deal[t.dataKey];
     const url = `${t.path}?deal=${deal.id}`;
-    return `<a href="${url}" class="tool-btn${hasData ? ' has-data' : ''}" onclick="event.stopPropagation()" title="${t.label}">
-      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
-      </svg>
+    return `<a href="${url}" class="tool-btn${hasData ? ' done' : ''}" onclick="event.stopPropagation()" title="${t.label}">
+      <span class="tool-status-dot"></span>
       ${t.label}
     </a>`;
   }).join('');
 
-  const valueStr = deal.context.deal_value
-    ? `$${Number(deal.context.deal_value).toLocaleString()}`
-    : null;
+  const hasResearch = !!deal.research;
+  const winRoomUrl  = `${WIN_ROOM.path}?deal=${deal.id}`;
+  const valueStr    = deal.context.deal_value ? `$${Number(deal.context.deal_value).toLocaleString()}` : null;
 
   return `
-  <div class="deal-card" onclick="openDeal('${deal.id}')">
+  <div class="deal-card" onclick="openDrawer('${deal.id}')">
     <div class="deal-card-top">
       <div class="deal-company">${deal.context.account_name}</div>
       <div class="deal-stage-pill stage-${stageKey}">${dealStore.stageLabel(stageKey)}</div>
@@ -539,10 +669,6 @@ function dealCardHTML(deal) {
         <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
         ${valueStr}
       </div>` : ''}
-      ${deal.research ? `<div class="meta-item">
-        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><path d="M21 12c0 4.97-4.03 9-9 9s-9-4.03-9-9 4.03-9 9-9 9 4.03 9 9z"/></svg>
-        Research ready
-      </div>` : ''}
     </div>
 
     <div class="meddpicc-row">
@@ -553,7 +679,12 @@ function dealCardHTML(deal) {
       <div class="meddpicc-score-val ${sc}">${score !== null ? score : '—'}</div>
     </div>
 
-    <div class="deal-tools">${toolBtns}</div>
+    <div class="deal-tool-grid">${toolBtns}</div>
+
+    <a href="${winRoomUrl}" class="win-room-btn${hasResearch ? ' active' : ''}" onclick="event.stopPropagation()">
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      ${hasResearch ? 'Open Win Room' : 'Run Account Brief First'}
+    </a>
 
     <div class="deal-card-actions">
       <button class="action-btn" onclick="event.stopPropagation();editStage('${deal.id}')">Edit stage</button>
@@ -592,15 +723,210 @@ function renderDeals() {
   grid.innerHTML = deals.map(dealCardHTML).join('');
 }
 
+// ── DRAWER STATE ──────────────────────────────────────────────────────────────
+let activeDrawerDealId = null;
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderDrawerContent(deal) {
+  document.getElementById('drawerCompany').textContent = deal.context.account_name;
+  const stagePill = document.getElementById('drawerStagePill');
+  stagePill.textContent = dealStore.stageLabel(deal.context.stage || 'discovery');
+  stagePill.className = `deal-stage-pill stage-${deal.context.stage || 'discovery'}`;
+
+  const val = deal.context.deal_value ? `$${Number(deal.context.deal_value).toLocaleString()}` : null;
+  document.getElementById('drawerValue').textContent = val || '';
+  document.getElementById('drawerValue').style.display = val ? '' : 'none';
+
+  renderDrawerOverview(deal);
+  renderDrawerBrief(deal);
+  renderDrawerQualify(deal);
+  renderDrawerDemoBrief(deal);
+  renderDrawerValueMap(deal);
+
+  switchDrawerTab('overview');
+}
+
+function renderDrawerOverview(deal) {
+  const items = [
+    { label: 'Account Brief',  done: !!deal.research },
+    { label: 'Qualify IQ',     done: !!deal.qualification },
+    { label: 'Demo Brief',     done: !!(deal.meeting_preps?.length) },
+    { label: 'Value Map',      done: !!deal.value_map },
+  ];
+  const score = getMeddpiccScore(deal);
+  const sc    = scoreClass(score);
+
+  document.getElementById('drawer-overview').innerHTML = `
+    ${score !== null ? `<div class="drawer-section">
+      <div class="drawer-section-label">MEDDPICC Score</div>
+      <div class="drawer-value-row">
+        <div class="drawer-value-chip">
+          <div class="drawer-value-chip-label">Overall</div>
+          <div class="drawer-value-chip-val" style="color:${sc==='score-high'?'#34D399':sc==='score-mid'?'#F59E0B':'#EF4444'}">${score}</div>
+        </div>
+      </div>
+    </div>` : ''}
+    <div class="drawer-section">
+      <div class="drawer-section-label">Progress</div>
+      <div class="drawer-checklist">
+        ${items.map(i => `<div class="drawer-check-item ${i.done?'done':'pending'}">
+          <div class="drawer-check-dot"></div>
+          ${escHtml(i.label)}
+        </div>`).join('')}
+      </div>
+    </div>
+    ${deal.stakeholders?.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Stakeholders</div>
+      <ul class="drawer-bullets">
+        ${deal.stakeholders.slice(0,5).map(s => `<li>${escHtml(s.name||'')}${s.title?` — ${escHtml(s.title)}`:''}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <div style="margin-top:8px;">
+      <a href="./win-room/index.html?deal=${deal.id}" class="drawer-open-btn">
+        Open Win Room
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>`;
+}
+
+function renderDrawerBrief(deal) {
+  const panel = document.getElementById('drawer-brief');
+  const r = deal.research;
+  if (!r) {
+    panel.innerHTML = `<div class="drawer-empty">No research yet.<br><br>
+      <a href="./account-brief-v2/index.html?deal=${deal.id}" class="drawer-open-btn">Run Account Brief</a></div>`;
+    return;
+  }
+  const co = r.company_profile || r;
+  panel.innerHTML = `
+    ${co.summary ? `<div class="drawer-section">
+      <div class="drawer-section-label">Company Overview</div>
+      <div class="drawer-text">${escHtml(co.summary)}</div>
+    </div>` : ''}
+    ${co.industry ? `<div class="drawer-section">
+      <div class="drawer-section-label">Industry</div>
+      <div class="drawer-text">${escHtml(co.industry)}</div>
+    </div>` : ''}
+    ${r.news?.headlines?.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Recent News</div>
+      <ul class="drawer-bullets">
+        ${r.news.headlines.slice(0,4).map(h => `<li>${escHtml(typeof h === 'string' ? h : h.headline||h.title||'')}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <a href="./account-brief-v2/index.html?deal=${deal.id}" class="drawer-open-btn">
+      Open Account Brief
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>`;
+}
+
+function renderDrawerQualify(deal) {
+  const panel = document.getElementById('drawer-qualify');
+  const q = deal.qualification?.meddpicc;
+  if (!q) {
+    panel.innerHTML = `<div class="drawer-empty">No qualification yet.<br><br>
+      <a href="./qualify-iq/index.html?deal=${deal.id}" class="drawer-open-btn">Run Qualify IQ</a></div>`;
+    return;
+  }
+  const dimLabels = { metrics:'Metrics', economic_buyer:'Economic Buyer', decision_criteria:'Decision Criteria', decision_process:'Decision Process', implicate_pain:'Implicate Pain', champion:'Champion', competition:'Competition' };
+  const rows = Object.entries(dimLabels).map(([k, label]) => {
+    const d = q[k] || {};
+    const score = d.score ?? 0;
+    const color = score>=70?'#34D399':score>=40?'#F59E0B':'#EF4444';
+    return `<div class="drawer-dim-row">
+      <div class="drawer-dim-name">${label}</div>
+      <div class="drawer-dim-bar-wrap"><div class="drawer-dim-bar" style="width:${score}%;background:${color}"></div></div>
+      <div class="drawer-dim-score" style="color:${color}">${score}</div>
+    </div>`;
+  }).join('');
+  panel.innerHTML = `
+    <div class="drawer-section">
+      <div class="drawer-section-label">MEDDPICC Scores</div>
+      <div class="drawer-dim-list">${rows}</div>
+    </div>
+    ${deal.qualification.priority_gaps?.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Priority Gaps</div>
+      <ul class="drawer-bullets">
+        ${deal.qualification.priority_gaps.slice(0,3).map(g => `<li>${escHtml(typeof g==='string'?g:g.dimension||'')}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <a href="./qualify-iq/index.html?deal=${deal.id}" class="drawer-open-btn">
+      Open Qualify IQ
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>`;
+}
+
+function renderDrawerDemoBrief(deal) {
+  const panel = document.getElementById('drawer-demo');
+  const preps = deal.meeting_preps;
+  if (!preps?.length) {
+    panel.innerHTML = `<div class="drawer-empty">No demo brief yet.<br><br>
+      <a href="./demo-brief/index.html?deal=${deal.id}" class="drawer-open-btn">Run Demo Brief</a></div>`;
+    return;
+  }
+  const latest = preps[0];
+  const flow = latest.flow || latest.brief?.demoFlow || [];
+  panel.innerHTML = `
+    ${latest.products?.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Products</div>
+      <div class="drawer-text">${latest.products.map(escHtml).join(' · ')}</div>
+    </div>` : ''}
+    ${flow.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Demo Flow (${flow.length} scenes)</div>
+      <ul class="drawer-bullets">
+        ${flow.slice(0,4).map(s => `<li>${escHtml(typeof s==='string'?s:s.scene||s.title||s.step||'')}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <a href="./demo-brief/index.html?deal=${deal.id}" class="drawer-open-btn">
+      Open Demo Brief
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>`;
+}
+
+function renderDrawerValueMap(deal) {
+  const panel = document.getElementById('drawer-valuemap');
+  const vm = deal.value_map?.valueMap;
+  if (!vm) {
+    panel.innerHTML = `<div class="drawer-empty">No value map yet.<br><br>
+      <a href="./value-map/index.html?deal=${deal.id}" class="drawer-open-btn">Run Value Map</a></div>`;
+    return;
+  }
+  const initiatives = vm.initiatives || [];
+  panel.innerHTML = `
+    ${initiatives.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Business Initiatives (${initiatives.length})</div>
+      <ul class="drawer-bullets">
+        ${initiatives.slice(0,4).map(i => `<li>${escHtml(i.initiative||i.title||'')}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <a href="./value-map/index.html?deal=${deal.id}" class="drawer-open-btn">
+      Open Value Map
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>`;
+}
+
 // ── ACTIONS ──────────────────────────────────────────────────────────────────
-function openDeal(id) {
-  // Navigate to Account Brief with deal context — best starting point
+function openDrawer(id) {
   const deal = dealStore.get(id);
   if (!deal) return;
-  const target = deal.research
-    ? `./win-room/index.html?deal=${id}`
-    : `./account-brief-v2/index.html?deal=${id}`;
-  window.location.href = target;
+  activeDrawerDealId = id;
+  renderDrawerContent(deal);
+  document.getElementById('dealDrawerOverlay').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('dealDrawerOverlay').classList.remove('open');
+}
+
+function handleDrawerOverlayClick(e) {
+  if (e.target === document.getElementById('dealDrawerOverlay')) closeDrawer();
+}
+
+function switchDrawerTab(tab) {
+  document.querySelectorAll('.drawer-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.drawer-panel').forEach(p => p.classList.toggle('active', p.id === 'drawer-' + tab));
 }
 
 function deleteDeal(id) {
