@@ -1045,6 +1045,22 @@ function syncToDeal(entry) {
     overall_score: overallScore,
     priority_gaps: priorityGaps
   });
+
+  // Sync uploaded documents to deal
+  if (typeof files !== 'undefined' && files.length) {
+    const freshDeal = dealStore.get(deal.id);
+    const existing  = freshDeal?.documents || [];
+    const newDocs   = files.filter(f => f.text && !f.isImage).map(f => ({
+      id:             f.file.name + '-' + f.file.size,
+      name:           f.file.name,
+      type:           f.type || 'other',
+      uploaded_at:    new Date().toISOString(),
+      extracted_text: f.text || ''
+    }));
+    const merged = [...existing];
+    newDocs.forEach(nd => { if (!merged.find(d => d.name === nd.name)) merged.push(nd); });
+    dealStore.patch(deal.id, 'documents', merged);
+  }
 }
 
 // Hydrate account name from ?deal=uuid on load
