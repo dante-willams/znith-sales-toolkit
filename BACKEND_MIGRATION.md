@@ -1,14 +1,29 @@
 # Backend Migration Checklist
 
-When a backend is ready (Vercel serverless + Neon Postgres + Prisma + Clerk), these are the exact changes needed. Nothing else in the UI should need to touch.
+Target stack: Vercel serverless functions · Neon Postgres · Prisma · Clerk auth
+
+Last audited: 2026-04-17
 
 ---
 
-## 1. dealStore.js — Core swap (single file)
+## Status overview
+
+| Item | Status |
+|------|--------|
+| Anthropic API proxy (`/api/claude`) | ✅ Already done |
+| dealStore abstraction layer | ✅ Ready to swap |
+| Tool-specific localStorage caches | ⚠️ Need migration |
+| File/document binary storage | ⚠️ Need Vercel Blob |
+| Auth (Clerk) | ❌ Not started |
+| Multi-tenancy | ❌ Not started |
+
+---
+
+## 1. dealStore.js — Core swap (one file, ~6 lines)
 
 **File:** `shared/dealStore.js`
 
-The entire localStorage layer is isolated in two private functions. Swap these two and nothing else changes:
+Swap only `_all()` and `_write()`. Every tool, every public method, zero other changes.
 
 ```javascript
 // BEFORE (localStorage)
@@ -33,124 +48,154 @@ async function _write(deals) {
 }
 ```
 
-All public methods (create, get, list, save, patch, delete) call these two — no other changes needed.
+All public methods (create, get, list, save, patch, delete) are already async-compatible — they call these two functions internally.
 
 ---
 
-## 2. API Key handling
+## 2. Anthropic API key — ✅ ALREADY DONE
 
-**Current:** Each user pastes their Anthropic API key into the browser. It's stored in `localStorage` as `anthropic_api_key` and sent in `callClaude()` from the client.
+`/api/claude.js` already exists and proxies all Anthropic calls server-side. The key lives in Vercel environment variables as `ANTHROPIC_API_KEY`. All five tools (account-brief-v2, qualify-iq, demo-brief, value-map, win-room) already call `/api/claude` — no direct browser-to-Anthropic calls remain.
 
-**Migration:** Move the key server-side. Create a Vercel serverless function `/api/claude` that proxies requests. Client sends the prompt, server adds the key.
+**No changes needed here.**
+
+---
+
+## 3. Tool-specific localStorage caches — ⚠️ Needs migration
+
+Each tool maintains its own local brief history in addition to syncing to dealStore. These are "saved briefs" lists that let reps browse past runs within each tool.
+
+| Tool | Storage key | What's stored | Already in dealStore? |
+|------|-------------|---------------|----------------------|
+| account-brief-v2 | `conga_account_briefs` | Full brief history (max 20) | No — not synced |
+| qualify-iq | `qualifyiq_analyses` | MEDDPICC history (max 50) | Partial — latest synced |
+| demo-brief | `conga_demo_briefs` | Brief history | Partial — latest synced |
+| value-map | `conga_value_maps_v1` | Value map history | Partial — latest synced |
+
+**Migration path for each:**
+
+- `conga_account_briefs` → Add `deal.account_briefs[]` array to deal schema. Account Brief currently only syncs `deal.research` (the latest research output); full brief history needs its own field.
+- `qualifyiq_analyses`, `conga_demo_briefs`, `conga_value_maps_v1` → These are already mostly synced to dealStore (`deal.qualification`, `deal.meeting_preps[]`, `deal.value_map`). On migration, replace the localStorage read/write calls with backend queries against the deal record. The "all saved items" list view in each tool becomes a query filtered by `workspace_id`.
+
+**Decision needed before migration:** Keep separate history tables per tool, or always derive from the deal record? Recommended: derive from deal record (simpler, no sync issues).
+
+---
+
+## 4. File / document storage — ⚠️ Needs Vercel Blob
+
+**Current behaviour:**
+- Users upload PDFs, DOCX, TXT in account-brief-v2, qualify-iq, and value-map
+- `FileReader` extracts text client-side (pdf.js + mammoth.js)
+- Extracted text is saved to `deal.documents[].extracted_text` via dealStore
+- Binary files are never persisted — if the page reloads, the file is gone
+
+**Migration:**
+1. On file select, POST the binary to `/api/documents/upload` → store in Vercel Blob → get back a URL
+2. Save `{ name, type, url, extracted_text, uploaded_at }` to `deal.documents[]`
+3. Remove the 50k character truncation that exists today (blob removes the size constraint)
 
 **Files to update:**
-- Every `callClaude()` function across all tools — change the fetch target from `https://api.anthropic.com/v1/messages` to `/api/claude`
-- Remove the API key input UI from each tool's settings/header
-- Add the key to Vercel environment variables: `ANTHROPIC_API_KEY`
+- `account-brief-v2/index.html` — file upload handler, `syncToDeal()` documents mapping
+- `qualify-iq/index.html` — file upload handler (currently no dealStore sync — needs full wiring)
+- `value-map/index.html` — file upload handler (currently no dealStore sync — needs full wiring)
 
-**Security note:** This is the most important migration item. Keys in the browser are visible to anyone with DevTools.
+**Note:** qualify-iq and value-map don't currently save uploaded docs to dealStore at all. That's a gap to fix even before the backend (they should save extracted text to `deal.documents[]` the same way account-brief-v2 does).
 
 ---
 
-## 3. Document / file storage
+## 5. Auth — Clerk
 
-**Current:** Extracted text from uploaded files is stored in `deal.documents[]` in localStorage. Binary files are not stored at all — only extracted text. 5MB localStorage limit applies.
+**Current:** No auth. All deals are local to the browser — anyone on that machine sees all deals.
 
 **Migration:**
-- Upload binary files to Vercel Blob (or S3)
-- Store the blob URL in `deal.documents[].url`
-- Keep extracted text in the DB for prompt context
-- Remove the 50k character truncation limit
+- Add Clerk (`@clerk/clerk-js`) — pre-built sign-in UI, supports SSO/Google
+- Every API call includes the Clerk session token in the `Authorization` header
+- `authHeaders()` helper in dealStore: `{ Authorization: 'Bearer ' + clerk.session.getToken() }`
+- Dashboard shows only deals for the authenticated user's workspace
 
 ---
 
-## 4. Auth — Clerk
-
-**Current:** No auth. All deals are local to the browser.
-
-**Migration:**
-- Add Clerk for auth (pre-built UI, supports SSO)
-- Every DB table gets `workspace_id` and `user_id` columns
-- dealStore API calls include the Clerk session token in headers
-- Dashboard shows only deals belonging to the user's workspace
-
----
-
-## 5. Multi-tenancy
+## 6. Multi-tenancy
 
 **Current:** localStorage is per-browser — no sharing between reps.
 
-**Migration:** Every deal, document, and generated output gets a `workspace_id`. Reps in the same org see the same deals. Deal ownership stays on `user_id`.
+**Migration:** Every deal, document, and generated output gets `workspace_id` + `user_id`. Reps in the same org see shared deals. Deal ownership stays on `user_id`.
 
-**DB schema (Prisma):**
 ```prisma
 model Deal {
   id           String   @id @default(uuid())
   workspaceId  String
   userId       String
-  data         Json     // full deal entity
+  data         Json     // full deal entity (current shape preserved)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+
+  @@index([workspaceId])
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  dealId      String
+  workspaceId String
+  name        String
+  type        String
+  blobUrl     String
+  extractedText String? @db.Text
+  uploadedAt  DateTime @default(now())
 }
 ```
 
 ---
 
-## 6. Research caching
+## 7. Research caching
 
-**Current:** `research_hash` (djb2 of account name) is stored on the deal object. `needsResearch()` checks it before running a new research call.
+**Current:** `research_hash` (djb2 of lowercased account name) is stamped on the deal after research runs. `needsResearch()` checks it before triggering an expensive Claude call.
 
-**Migration:** Same logic, same hash — just lives in the DB instead of localStorage. No logic change needed, only storage layer swaps.
-
----
-
-## 7. News TTL
-
-**Current:** 24h TTL checked via `deal.research.news.last_checked` in localStorage.
-
-**Migration:** Same field, same logic, just in DB. Consider moving news refresh to a server-side cron (Vercel Cron Jobs) instead of client-triggered.
+**Migration:** Same hash, same logic — just lives in the DB instead of localStorage. No logic changes needed.
 
 ---
 
-## 8. Usage / analytics
+## 8. News TTL (24h refresh)
+
+**Current:** `deal.research.news.last_checked` is checked client-side. If older than 24h, news is re-fetched on tool open.
+
+**Migration:** Move news refresh to a Vercel Cron Job (`/api/cron/refresh-news`) that runs nightly. Removes the client-side check entirely. Cron can batch-refresh all deals in a workspace rather than triggering per-user-open.
+
+---
+
+## 9. Theme preferences
+
+**Current:** Theme (dark/light) is stored in localStorage under `znith-theme` (dashboard, win-room) and `ab-theme` (account-brief-v2). These are inconsistent key names.
+
+**Migration:** Standardize to one key, then move to a user profile field in the DB or a cookie. Low priority.
+
+---
+
+## 10. Usage analytics
 
 **Current:** Not tracked.
 
-**Migration:** Log tool usage events to a `events` table (which rep, which tool, which deal, timestamp). Enables rep coaching metrics and admin dashboards.
+**Migration:** Log events to an `events` table: `{ workspace_id, user_id, deal_id, tool, action, timestamp }`. Enables rep coaching metrics and manager dashboards.
 
 ---
 
-## 9. Sharing & collaboration
+## What does NOT need to change
 
-**Current:** Not possible — deals are browser-local.
-
-**Migration:** Add `deal.shared_with[]` (array of user IDs). Shared deals show up read-only for other reps. Full collaboration (comments, assignments) is Phase 2.
-
----
-
-## 10. localStorage size limit
-
-**Current:** ~5MB total. Long documents are truncated at ~50k characters in prompt context.
-
-**Migration:** No limit in DB. Remove truncation logic from document handling in all tools.
+- All tool HTML/UI — zero changes
+- `deal-nav.js`, shared CSS, fonts, theming
+- dealStore public API surface (create, get, list, save, patch, delete, urlFor, etc.)
+- All AI prompts — same prompts, same outputs
+- The deal entity schema shape — same JSON, just stored in Postgres instead of localStorage
+- Dashboard drawer + deal card logic
 
 ---
 
-## Non-changes (no migration needed)
+## Recommended migration order
 
-- All tool UI/HTML — zero changes
-- dealStore public API (create, get, list, save, patch, delete, urlFor, etc.)
-- AI prompts — all prompt logic stays client-side or proxied as-is
-- deal-nav.js, shared CSS, fonts, theming
-- The deal entity schema — same shape, just persisted in Postgres instead of localStorage
-
----
-
-## Migration order (recommended)
-
-1. API key proxy (security, do this first)
-2. Clerk auth + workspace setup
-3. dealStore swap (one file)
-4. File/blob storage
-5. Cron-based news refresh
-6. Sharing / collaboration
+1. ~~**API key proxy**~~ — ✅ Already done
+2. **Fix qualify-iq + value-map document sync** — save extracted text to `deal.documents[]` now, no backend needed (quick win, improves cross-tool context today)
+3. **Clerk auth + workspace setup** — blocks everything below
+4. **dealStore swap** (`_all` / `_write`) — single file change, instant data persistence
+5. **Vercel Blob file storage** — upload endpoint + update document handlers in 3 tools
+6. **Retire tool-specific localStorage caches** — replace with backend queries on deal record
+7. **Cron-based news refresh** — replace client-side TTL check
+8. **Usage analytics** — final phase
