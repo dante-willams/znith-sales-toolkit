@@ -604,11 +604,10 @@ Include 3-5 priority gaps (ranked high→low). Include 3-4 next actions. Keep co
 
     if (!synthesis) throw new Error('Could not parse synthesis response');
 
-    // Save health to deal
-    if (synthesis.health) {
-      dealStore.patch(deal.id, 'research.deal_brief.dealHealthScore', synthesis.health);
-      deal = dealStore.get(deal.id);
-    }
+    // Save health + win_room timestamp to deal
+    dealStore.patch(deal.id, 'research.deal_brief.dealHealthScore', synthesis.health || 'yellow');
+    dealStore.patch(deal.id, 'win_room', { last_run: new Date().toISOString(), health: synthesis.health || 'yellow' });
+    deal = dealStore.get(deal.id);
 
     renderTopbarHealth(synthesis.health);
     renderMain();

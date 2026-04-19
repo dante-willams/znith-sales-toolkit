@@ -35,7 +35,7 @@ const dealNav = (() => {
       id:   'win-room',
       label: 'Win Room',
       path:  '../win-room/',
-      done:  d => !!d.research,
+      done:  d => !!d.win_room,
     },
   ];
 

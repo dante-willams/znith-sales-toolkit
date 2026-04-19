@@ -2532,15 +2532,29 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
 
     // If a brief already exists for this deal, show it directly
+    let loadedExisting = false;
     if (deal.meeting_preps?.length) {
       const name = deal.context.account_name || '';
       const existing = loadBriefs().find(b => b.company.toLowerCase() === name.toLowerCase());
-      if (existing) loadBriefById(existing.id);
+      if (existing) { loadBriefById(existing.id); loadedExisting = true; }
     }
+    S._loadedExisting = loadedExisting;
   })();
 
-  // Auto-open sidebar with greeting
+  // Auto-open sidebar with greeting (skip if an existing brief was loaded)
   setTimeout(()=>{
+    if (S._loadedExisting) {
+      toggleChat();
+      addChatMsg('assistant',
+        'Brief loaded. I can help you refine any section:\n\n' +
+        '\u2022 Add or update competitors\n' +
+        '\u2022 Reframe scenes for specific personas\n' +
+        '\u2022 Adjust risks or open questions\n' +
+        '\u2022 Search the web for fresh intel\n\n' +
+        'What would you like to change?'
+      );
+      return;
+    }
     toggleChat();
     addChatMsg('assistant',
       'Hi! I\'m your AI brief assistant. I can help you:\n\n' +
