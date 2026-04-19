@@ -344,6 +344,11 @@
       <div class="ds">PDF, DOCX, PPTX, XLSX, CSV, TXT, MD, HTML, EML, PNG, JPG + more · No files? The AI will work from your context above</div>
     </div>
     <div class="flist" id="flist"></div>
+    <!-- Deal context indicator — shown when Account Brief docs are available -->
+    <div id="dealDocBanner" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.18);border-radius:3px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(99,179,237,0.7);margin-bottom:6px;">Also included in analysis</div>
+      <div id="dealDocList" style="display:flex;flex-direction:column;gap:4px;"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -521,7 +526,7 @@ const S = {
   company:'', products:[], personas:[],
   timeline:'', current:'', context:'', competitors:'', sf:'', notes:'',
   files:[], brief:null, risks:[], flow:[], chatHistory:[],
-  activeDealId: null
+  activeDealId: null, dealDocContext: null
 };
 
 // =========================================================
@@ -1085,7 +1090,8 @@ KEY PERSONAS:
 ${personas}
 
 SOURCE MATERIALS:
-${text ? text.substring(0,14000) : 'No files uploaded — work from intake context only.'}
+${text || 'No files uploaded — work from intake context only.'}
+${S.dealDocContext?.summary ? `\nDEAL INTELLIGENCE SUMMARY (${S.dealDocContext.doc_count} docs condensed from Account Brief):\n${S.dealDocContext.summary}` : S.dealDocContext?.docs?.length ? `\nDEAL DOCUMENTS:\n${S.dealDocContext.docs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n')}` : ''}
 
 INSTRUCTIONS:
 1. Extract every stated requirement, broken workflow, and pain point from the source materials. Quote the customer's own language where possible.
@@ -2499,6 +2505,38 @@ document.addEventListener('DOMContentLoaded', ()=>{
       });
     }
     S.activeDealId = deal.id;
+
+    // Load document context from Account Brief
+    if (deal.document_context?.summary) {
+      S.dealDocContext = deal.document_context;
+      document.getElementById('dealDocBanner').style.display = 'block';
+      document.getElementById('dealDocList').innerHTML =
+        `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+          <span style="color:#34D399;font-size:10px;">✓</span>
+          <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
+          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
+        </div>`;
+    } else {
+      const docs = (deal.documents || []).filter(d => d.extracted_text);
+      if (docs.length) {
+        S.dealDocContext = { docs };
+        document.getElementById('dealDocBanner').style.display = 'block';
+        document.getElementById('dealDocList').innerHTML = docs.map(d =>
+          `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+            <span style="color:#34D399;font-size:10px;">✓</span>
+            <span>${d.name}</span>
+            <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
+          </div>`
+        ).join('');
+      }
+    }
+
+    // If a brief already exists for this deal, show it directly
+    if (deal.meeting_preps?.length) {
+      const name = deal.context.account_name || '';
+      const existing = loadBriefs().find(b => b.company.toLowerCase() === name.toLowerCase());
+      if (existing) loadBriefById(existing.id);
+    }
   })();
 
   // Auto-open sidebar with greeting

@@ -261,6 +261,10 @@
         <div class="dz-sub">PDF, Word, TXT, images — call transcripts, RFPs, discovery notes, org charts</div>
       </div>
       <div class="flist" id="fileList"></div>
+      <div id="dealDocBanner" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.18);border-radius:3px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(99,179,237,0.7);margin-bottom:6px;">Also included in analysis</div>
+        <div id="dealDocList" style="display:flex;flex-direction:column;gap:4px;"></div>
+      </div>
     </div>
 
     <!-- Paste Transcript -->
@@ -522,15 +526,17 @@ async function startGeneration(){
   if(!acct){ showErr('Please enter an account name.'); return; }
 
 
-  const hasInput = files.length || document.getElementById('transcriptText').value.trim() || document.getElementById('manualNotes').value.trim();
+  const industry = document.getElementById('industryCtx').value.trim();
+  const transcriptPaste = document.getElementById('transcriptText').value.trim();
+  const manualNotes = document.getElementById('manualNotes').value.trim();
+  const dealCtxNow = dealStore.getFromUrl();
+  const dealDocs = (dealCtxNow?.documents || []).filter(d => d.extracted_text);
+
+  const hasInput = files.length || dealDocs.length || transcriptPaste || manualNotes;
   if(!hasInput){ showErr('Please provide at least one input: upload a file, paste a transcript, or add AE notes.'); return; }
 
   showView('gen');
   setGenStep(1);
-
-  const industry = document.getElementById('industryCtx').value.trim();
-  const transcriptPaste = document.getElementById('transcriptText').value.trim();
-  const manualNotes = document.getElementById('manualNotes').value.trim();
 
   try {
     // ── PASS 1: RESEARCH ──
@@ -540,7 +546,7 @@ async function startGeneration(){
     // ── PASS 2: TRANSCRIPT ANALYSIS ──
     setGenStep(2);
     updateGen('Analyzing documents & transcript...', 'Extracting MEDDPICC signals from all inputs');
-    const analysisResult = await callAnalysis(acct, researchResult, transcriptPaste, manualNotes);
+    const analysisResult = await callAnalysis(acct, researchResult, transcriptPaste, manualNotes, dealDocs);
 
     // ── PASS 3: SYNTHESIS ──
     setGenStep(3);
@@ -616,19 +622,31 @@ Keep each section brief (3–5 bullets). Focus on what's relevant to a contract 
   return await callAPI('claude-haiku-4-5-20251001', sys, prompt, true);
 }
 
-async function callAnalysis(acct, research, transcript, notes){
+async function callAnalysis(acct, research, transcript, notes, dealDocs=[]){
   // Build content array — handle images separately
   const textParts = [];
   const imageParts = [];
+
+  // Condensed deal intelligence summary (preferred over raw docs)
+  const dealCtxForDocs = dealStore.getFromUrl();
+  const docCtx = dealCtxForDocs?.document_context;
+  if (docCtx?.summary) {
+    textParts.push(`--- DEAL INTELLIGENCE SUMMARY (${docCtx.doc_count} docs: ${(docCtx.doc_names||[]).join(', ')}) ---\n${docCtx.summary}`);
+  } else {
+    // Fallback: raw extracted text, no artificial limit
+    dealDocs.forEach(d => {
+      textParts.push(`--- DEAL DOCUMENT: ${d.name} ---\n${d.extracted_text}`);
+    });
+  }
 
   files.forEach(f=>{
     if(f.isImage && f.text){
       imageParts.push({ type:'image', source:{ type:'base64', media_type: getMimeType(f.file.name), data: f.text }});
     } else if(f.text){
-      textParts.push(`--- FILE: ${f.file.name} ---\n${f.text.slice(0,8000)}`);
+      textParts.push(`--- FILE: ${f.file.name} ---\n${f.text}`);
     }
   });
-  if(transcript) textParts.push(`--- PASTED TRANSCRIPT ---\n${transcript.slice(0,6000)}`);
+  if(transcript) textParts.push(`--- PASTED TRANSCRIPT ---\n${transcript}`);
   if(notes) textParts.push(`--- AE MANUAL NOTES ---\n${notes}`);
 
   const sys = `You are an expert B2B sales analyst trained in MEDDPICC qualification. Extract evidence from all provided inputs with precision. For each finding, mark it as [CONFIRMED] if directly stated or [INFERRED] if derived from context. Quote directly when relevant. Name individuals and their apparent role/authority. Rate signal strength and flag gaps explicitly.`;
@@ -1063,12 +1081,45 @@ function syncToDeal(entry) {
   }
 }
 
-// Hydrate account name from ?deal=uuid on load
+// Hydrate from deal context on load
 (function hydrateFromUrl() {
   const deal = dealStore.getFromUrl();
   if (!deal) return;
+
   const nameEl = document.getElementById('accountName');
   if (nameEl && deal.context.account_name) nameEl.value = deal.context.account_name;
+
+  // Show deal document context banner
+  if (deal.document_context?.summary) {
+    document.getElementById('dealDocBanner').style.display = 'block';
+    document.getElementById('dealDocList').innerHTML =
+      `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#34D399;font-size:10px;">✓</span>
+        <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
+        <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
+      </div>`;
+  } else {
+    const docs = (deal.documents || []).filter(d => d.extracted_text);
+    if (docs.length) {
+      document.getElementById('dealDocBanner').style.display = 'block';
+      document.getElementById('dealDocList').innerHTML = docs.map(d =>
+        `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+          <span style="color:#34D399;font-size:10px;">✓</span>
+          <span>${d.name}</span>
+          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
+        </div>`
+      ).join('');
+    }
+  }
+
+  // If qualification already exists, show results directly
+  if (deal.qualification?.meddpicc) {
+    const existing = getAllAnalyses().find(a => a.accountName === deal.context.account_name);
+    if (existing) {
+      renderResults(existing);
+      showView('results');
+    }
+  }
 })();
 </script>
 <footer class="znith-footer">

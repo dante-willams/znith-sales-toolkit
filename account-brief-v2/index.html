@@ -2025,7 +2025,7 @@ input[type=checkbox].chip-check{display:none;}
 // THEME TOGGLE
 // ════════════════════════════════════════════════════
 (function(){
-  const saved = localStorage.getItem('ab-theme') || 'light';
+  const saved = localStorage.getItem('znith-theme') || localStorage.getItem('ab-theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
   const btn = document.getElementById('themeToggle');
   if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
@@ -2035,7 +2035,7 @@ function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme') || 'light';
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('ab-theme', next);
+  localStorage.setItem('znith-theme', next);
   document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
 }
 
@@ -2050,6 +2050,7 @@ const state = {
   selectedProducts: [],
   uploadedDocuments: [],
   docIdCounter: 0,
+  documentContext: null,
   repNotes: { observations:'', questions:'', flags:'' },
   results: {
     company: null,
@@ -2159,9 +2160,15 @@ async function startResearch() {
   try {
     await runResearch(company);
     renderOutput();
-    showScreen(3);
     saveBrief();
+    if (state.uploadedDocuments.filter(d => d.textContent).length > 0) {
+      updateStatus('Condensing uploaded documents for cross-tool context…');
+      addLog('active', 'Condensing documents into deal intelligence summary');
+      await condenseDocs();
+      addLog('done', 'Document context ready');
+    }
     syncToDeal(company);
+    showScreen(3);
     if (state.activeDealId) dealNav.showNext('Qualify IQ', dealStore.urlFor('../qualify-iq/', state.activeDealId));
   } catch(err) {
     const errBox = document.getElementById('research-error');
@@ -3390,6 +3397,61 @@ function updateStatus(msg) {
   document.getElementById('researchStatus').textContent = msg;
 }
 
+// ── DOCUMENT CONDENSATION ─────────────────────────────────────────────────────
+// Processes uploaded docs in batches of 5, extracts sales signals per batch,
+// then consolidates into a single structured "deal intelligence summary" stored
+// as deal.document_context. Downstream tools use this instead of raw text.
+async function condenseDocs() {
+  const BATCH_SIZE = 5;
+  const textDocs = state.uploadedDocuments.filter(d => d.textContent);
+  if (!textDocs.length) return;
+
+  const EXTRACT_SYSTEM = `You are a B2B enterprise sales intelligence analyst. Extract every sales-critical signal from the provided documents. Be exhaustive and specific — name every person mentioned, use exact numbers and quotes, never generalize. Missing a stakeholder or a metric is worse than being too detailed.`;
+
+  const EXTRACT_PROMPT = (batchText) =>
+    `Extract all sales-critical signals from the documents below. For each category, be exhaustive:\n\n` +
+    `STAKEHOLDERS: Every named person — full name, title/role, department, and what they said or implied (quote directly where possible)\n` +
+    `PAIN POINTS: Specific operational problems with evidence and who owns them\n` +
+    `METRICS & IMPACT: Every number, dollar amount, percentage, timeframe, or KPI mentioned\n` +
+    `BUDGET & APPROVAL: Any signals about budget size, approval process, fiscal year, or spend authority\n` +
+    `COMPETITIVE: Any mention of current vendors, alternatives being evaluated, or status quo tools\n` +
+    `DECISION PROCESS: Steps, stakeholders, timeline, and criteria they use to make decisions\n` +
+    `CHAMPION SIGNALS: Anyone who expressed urgency, advocated internally, or asked for materials\n` +
+    `COMMITMENTS & NEXT STEPS: Anything agreed upon, promised, or scheduled\n\n` +
+    `DOCUMENTS:\n\n${batchText}`;
+
+  const CONSOLIDATE_SYSTEM = `You are a B2B enterprise sales coach producing a deal intelligence summary for a Conga AE. Synthesize all extracted signals into a single structured document. De-duplicate across sources. Preserve all named people, exact numbers, and direct quotes. This document will be used by Qualify IQ, Value Map, and Win Room — every critical signal must be retained.`;
+
+  const CONSOLIDATE_PROMPT = (batches) =>
+    `Consolidate these extracted sales signals into a single Deal Intelligence Summary. ` +
+    `Organize into these sections: Stakeholders & Positions, Pain Points & Evidence, Metrics & Business Impact, ` +
+    `Budget & Approval Signals, Competitive Landscape, Decision Process & Timeline, Champion Signals, ` +
+    `Key Commitments & Next Steps. De-duplicate people and signals across batches. Preserve all names, ` +
+    `numbers, and quotes — do not summarize away specifics.\n\n` +
+    batches.map((b, i) => `=== BATCH ${i + 1} ===\n${b}`).join('\n\n');
+
+  const batchOutputs = [];
+  for (let i = 0; i < textDocs.length; i += BATCH_SIZE) {
+    const batch = textDocs.slice(i, i + BATCH_SIZE);
+    const batchText = batch.map(d => `=== ${d.name} ===\n${d.textContent}`).join('\n\n');
+    updateStatus(`Extracting signals from documents ${i + 1}–${Math.min(i + BATCH_SIZE, textDocs.length)} of ${textDocs.length}…`);
+    const result = await callClaude(EXTRACT_PROMPT(batchText), EXTRACT_SYSTEM, false, [], 4000);
+    batchOutputs.push(result);
+  }
+
+  updateStatus('Consolidating document intelligence…');
+  const consolidated = batchOutputs.length === 1
+    ? batchOutputs[0]
+    : await callClaude(CONSOLIDATE_PROMPT(batchOutputs), CONSOLIDATE_SYSTEM, false, [], 5000);
+
+  state.documentContext = {
+    summary: consolidated,
+    doc_count: textDocs.length,
+    doc_names: textDocs.map(d => d.name),
+    generated_at: new Date().toISOString()
+  };
+}
+
 function addLog(type, text) {
   const log = document.getElementById('researchLog');
   const entry = document.createElement('div');
@@ -3840,14 +3902,22 @@ function syncToDeal(company) {
     }
   };
 
-  // Map uploaded documents
-  deal.documents = state.uploadedDocuments.map(d => ({
-    id:             String(d.id),
-    name:           d.name  || '',
-    type:           d.type  || 'other',
-    uploaded_at:    new Date().toISOString(),
-    extracted_text: d.content || ''
-  }));
+  // Only overwrite documents if files were actually uploaded this run.
+  // Without this guard, re-running Account Brief without files would wipe
+  // documents saved by Qualify IQ and Value Map via dealStore.patch().
+  if (state.uploadedDocuments.length > 0) {
+    deal.documents = state.uploadedDocuments.map(d => ({
+      id:             String(d.id),
+      name:           d.name  || '',
+      type:           d.ext   || d.type || 'other',
+      uploaded_at:    new Date().toISOString(),
+      extracted_text: d.textContent || ''
+    }));
+  }
+
+  if (state.documentContext) {
+    deal.document_context = state.documentContext;
+  }
 
   dealStore.save(deal);
   dealStore.stampResearchHash(deal.id);
@@ -4880,6 +4950,21 @@ updateChatSuggestions(1);
   // Pre-fill company name
   const nameEl = document.getElementById('companyName');
   if (nameEl && deal.context.account_name) nameEl.value = deal.context.account_name;
+
+  // If research already exists, show results directly
+  if (deal.research) {
+    state.results = {
+      company:      deal.research.company_profile,
+      industry:     deal.research.industry,
+      congaPOV:     deal.research.exec_pov,
+      callStrategy: deal.research.call_strategy,
+      dealBrief:    deal.research.deal_brief,
+    };
+    renderOutput();
+    showScreen(3);
+    populateDealPicker();
+    return;
+  }
 
   // Pre-fill meeting type if stage maps to one
   const stageToMeeting = {

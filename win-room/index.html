@@ -323,6 +323,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
       <div class="side-label">Stakeholders</div>
       <div class="stakeholder-list" id="stakeholderList"></div>
     </div>
+
+    <!-- Document context -->
+    <div class="side-section" id="docContextSection" style="display:none">
+      <div class="side-label">Document Context</div>
+      <div id="docContextInfo"></div>
+    </div>
   </div>
 
 </div>
@@ -346,13 +352,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 
 // ── CONSTANTS ──────────────────────────────────────────────────────────────────
 
-const DEAL_COACH_BRAIN = `=== DEAL COACH BRAIN v2.0 ===
+const DEAL_COACH_BRAIN = `=== DEAL COACH BRAIN v2.1 ===
 You are an expert B2B enterprise sales coach embedded in the Conga Win Room.
 You coach reps on deal strategy using MEDDPICC methodology.
 
 YOUR ROLE: Direct, specific, and honest. You don't sugarcoat.
 When something is a risk, say so clearly and give an actionable next step.
-ALWAYS reference actual company names, people, and evidence. Generic output = failure.
+ALWAYS reference actual company names, people, and evidence from the context provided. Generic output = failure.
+If call transcripts, RFPs, or discovery notes are provided, extract and reference specific quotes, pain points, and commitments.
 
 MEDDPICC FRAMEWORK:
 - Metrics (M): Quantified business impact. GREEN=dollarized tied to exec priorities. YELLOW=pain identified not dollarized. RED=no metrics.
@@ -366,12 +373,15 @@ MEDDPICC FRAMEWORK:
 CONGA POSITIONING:
 Revenue Lifecycle Management platform: CPQ → CLM → DocGen → Revenue Management.
 Key wins: vs Ironclad (CLM-only), vs DocuSign CLM (acquisition patchwork), vs Icertis (12-18mo impl), vs Salesforce Revenue Cloud (SF uses Conga CPQ internally — killshot).
+When a Value Map is available, anchor the business case to those specific initiatives and metrics — not generic Conga benefits.
 
 COACHING PRINCIPLES:
 1. Champion testing: they must sell for you when you're not in the room
 2. EB access: 4+ calls with no EB = always #1 risk
 3. Competing event > compelling event: deadlines they can't move beat aspirational timelines
-4. Never discuss price before value + EB engagement`;
+4. Never discuss price before value + EB engagement
+5. Stage play: coaching must be specific to where the deal actually is — discovery coaching ≠ proposal coaching
+6. Document intelligence: if transcripts or RFPs are in context, surface the most important signals from them`;
 
 const MEDDPICC_DIMS = [
   { key: 'metrics',          label: 'Metrics',         abbr: 'M' },
@@ -492,6 +502,62 @@ function buildDealContext(d) {
     ctx += '\n';
   }
 
+  // Value Map — business initiatives and ROI
+  const vm = d.value_map?.valueMap;
+  if (vm?.initiatives?.length) {
+    ctx += `### Value Map — Business Initiatives\n`;
+    vm.initiatives.forEach(ini => {
+      ctx += `- **${ini.initiative||ini.name||'Initiative'}**`;
+      if (ini.metric) ctx += `: ${ini.metric}`;
+      if (ini.roi)    ctx += ` (ROI: ${ini.roi})`;
+      if (ini.owner)  ctx += ` — Owner: ${ini.owner}`;
+      ctx += '\n';
+    });
+    if (vm.totalAnnualValue) ctx += `Total Annual Value: ${vm.totalAnnualValue}\n`;
+    ctx += '\n';
+  }
+
+  // Demo Brief — latest meeting prep
+  const preps = d.meeting_preps;
+  if (preps?.length) {
+    const latest = preps[preps.length - 1];
+    ctx += `### Latest Demo Brief\n`;
+    if (latest.products?.length) ctx += `Products: ${latest.products.join(', ')}\n`;
+    if (latest.objective)        ctx += `Objective: ${latest.objective}\n`;
+    if (latest.agenda?.length) {
+      ctx += `Flow:\n`;
+      latest.agenda.forEach(step => ctx += `- ${typeof step === 'string' ? step : step.step||JSON.stringify(step)}\n`);
+    }
+    if (latest.risks?.length) {
+      ctx += `Risks:\n`;
+      latest.risks.forEach(r => ctx += `- ${typeof r === 'string' ? r : r.risk||JSON.stringify(r)}\n`);
+    }
+    ctx += '\n';
+  }
+
+  // Document intelligence — prefer condensed summary, fall back to raw docs
+  if (d.document_context?.summary) {
+    ctx += `### Document Intelligence (${d.document_context.doc_count} docs condensed)\n`;
+    ctx += d.document_context.summary.slice(0, 20000);
+    if (d.document_context.summary.length > 20000) ctx += '\n[...truncated at 20k]';
+    ctx += '\n\n';
+  } else {
+    const docs = d.documents?.filter(doc => doc.extracted_text);
+    if (docs?.length) {
+      ctx += `### Uploaded Documents\n`;
+      docs.slice(0, 4).forEach(doc => {
+        ctx += `**${doc.name}** (${doc.type}):\n`;
+        ctx += doc.extracted_text.slice(0, 5000);
+        ctx += '\n\n';
+      });
+    }
+  }
+
+  // Rep notes
+  if (d.context?.notes) {
+    ctx += `### Rep Notes\n${d.context.notes}\n\n`;
+  }
+
   return ctx;
 }
 
@@ -519,6 +585,8 @@ Return ONLY valid JSON, no preamble, no markdown fences:
   "situation": "2-3 sentence verdict on where this deal stands right now. Lead with the most important thing.",
   "health": "green|yellow|red",
   "health_reason": "one sentence explaining the health rating",
+  "value_case": "The single strongest ROI or business case angle for this deal — reference specific initiatives or metrics from the Value Map if available, otherwise derive from research. 1-2 sentences, specific and dollar-anchored where possible.",
+  "stage_play": "What the rep must do at this exact stage to advance the deal. Be prescriptive — specific activities, specific people, specific asks. 2-3 sentences.",
   "priority_gaps": [
     { "gap": "short gap title", "severity": "high|medium|low", "evidence": "specific signal or quote supporting this", "action": "specific next step to address this" }
   ],
@@ -621,6 +689,35 @@ function renderSidebar() {
         </div>
       </div>`).join('');
   }
+
+  // Document context indicator
+  const docSec  = document.getElementById('docContextSection');
+  const docInfo = document.getElementById('docContextInfo');
+  if (deal.document_context?.summary) {
+    docSec.style.display = 'block';
+    const dc = deal.document_context;
+    const age = dc.generated_at
+      ? Math.round((Date.now() - new Date(dc.generated_at)) / 3600000)
+      : null;
+    docInfo.innerHTML = `
+      <div style="font-size:12px;color:var(--text);margin-bottom:4px;">
+        <span style="color:var(--green);">●</span> ${dc.doc_count} doc${dc.doc_count !== 1 ? 's' : ''} condensed
+      </div>
+      <div style="font-size:11px;color:var(--tfaint);">${(dc.summary.length/1000).toFixed(1)}k chars · ${age !== null ? (age < 1 ? 'just now' : age + 'h ago') : 'unknown time'}</div>
+      <div style="font-size:11px;color:var(--tfaint);margin-top:4px;">${(dc.doc_names||[]).join(', ')}</div>`;
+  } else {
+    const rawDocs = (deal.documents||[]).filter(d => d.extracted_text);
+    if (rawDocs.length) {
+      docSec.style.display = 'block';
+      docInfo.innerHTML = `
+        <div style="font-size:12px;color:var(--text);margin-bottom:4px;">
+          <span style="color:var(--yellow);">●</span> ${rawDocs.length} raw doc${rawDocs.length !== 1 ? 's' : ''}
+        </div>
+        <div style="font-size:11px;color:var(--tfaint);">Re-run Account Brief with uploads to generate a condensed summary</div>`;
+    } else {
+      docSec.style.display = 'none';
+    }
+  }
 }
 
 function renderMEDDPICC() {
@@ -703,6 +800,24 @@ function renderMain() {
       ${s.health_reason ? `<div class="health-reason">${s.health_reason}</div>` : ''}
     </div>
   </div>`;
+
+  // Value Case + Stage Play (side by side)
+  if (s.value_case || s.stage_play) {
+    html += `<div class="section" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">`;
+    if (s.value_case) {
+      html += `<div>
+        <div class="section-eyebrow">Value Case</div>
+        <div class="info-card" style="border-color:rgba(184,134,11,0.2);background:var(--amber-faint);">${s.value_case}</div>
+      </div>`;
+    }
+    if (s.stage_play) {
+      html += `<div>
+        <div class="section-eyebrow">Stage Play</div>
+        <div class="info-card" style="border-color:rgba(59,130,246,0.2);background:rgba(59,130,246,0.05);">${s.stage_play}</div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
 
   // Priority Gaps
   if (s.priority_gaps?.length) {

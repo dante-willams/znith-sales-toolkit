@@ -1320,6 +1320,12 @@
       <!-- File chip list -->
       <div id="fileChipList"></div>
 
+      <!-- Deal context indicator — shown below local files -->
+      <div id="dealDocBanner" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.18);border-radius:3px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(99,179,237,0.7);margin-bottom:6px;">Also included in analysis</div>
+        <div id="dealDocList" style="display:flex;flex-direction:column;gap:4px;"></div>
+      </div>
+
       <!-- Divider -->
       <div class="notes-divider"><span>or type / paste below</span></div>
 
@@ -1463,7 +1469,7 @@
   // ── STATE ──
   let state = {
     company: '', industry: '', stakeholders: [], notes: '', tools: '',
-    stage: '', products: [],
+    stage: '', products: [], dealDocs: [], docContext: null,
     research: '', sources: [], valueMap: null
   };
   let previousPhase = 1;
@@ -1660,6 +1666,7 @@
 COMPANY: ${state.company}
 REP'S DISCOVERY NOTES: ${state.notes || 'None provided'}
 CURRENT TOOLS: ${state.tools || 'Unknown'}
+${state.docContext ? '\nDEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary : state.dealDocs.length ? '\nDEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') : ''}
 
 Using web search, find and synthesize:
 0. The company's industry and sub-sector (output this first as: INDUSTRY: [your answer])
@@ -1715,8 +1722,8 @@ FIELD GUIDANCE:
 
 COMPANY: ${state.company} | INDUSTRY: ${state.industry}
 STAKEHOLDERS: ${stakeholderList}
-NOTES: ${(state.notes || 'None').slice(0, 500)}
-TOOLS: ${state.tools || 'Unknown'}
+NOTES: ${(state.notes || 'None').slice(0, 2000)}
+${state.docContext ? 'DEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary + '\n' : state.dealDocs.length ? 'DEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') + '\n' : ''}TOOLS: ${state.tools || 'Unknown'}
 ${stageContext}
 ${productContext}
 RESEARCH: ${researchSnippet}
@@ -2536,7 +2543,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
   }
 
   function resetApp() {
-    state = { company:'', industry:'', stakeholders:[], notes:'', tools:'', research:'', sources:[], valueMap:null };
+    state = { company:'', industry:'', stakeholders:[], notes:'', tools:'', research:'', sources:[], valueMap:null, dealDocs:[], docContext:null };
     document.getElementById('companyName').value = '';
     document.getElementById('discoveryNotes').value = '';
     document.getElementById('currentTools').value = '';
@@ -3284,6 +3291,42 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
         const match = deal.context.products.some(p => t.dataset.val.toLowerCase().includes(p.toLowerCase()) || p.toLowerCase().includes(t.dataset.val.toLowerCase()));
         if (match) t.classList.add('selected');
       });
+    }
+    // Prefer condensed document_context; fall back to raw documents
+    if (deal.document_context?.summary) {
+      state.docContext = deal.document_context;
+      document.getElementById('dealDocBanner').style.display = 'block';
+      document.getElementById('dealDocList').innerHTML =
+        `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+          <span style="color:#34D399;font-size:10px;">✓</span>
+          <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
+          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
+        </div>`;
+    } else {
+      const docs = (deal.documents || []).filter(d => d.extracted_text);
+      if (docs.length) {
+        state.dealDocs = docs;
+        document.getElementById('dealDocBanner').style.display = 'block';
+        document.getElementById('dealDocList').innerHTML = docs.map(d =>
+          `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+            <span style="color:#34D399;font-size:10px;">✓</span>
+            <span>${d.name}</span>
+            <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
+          </div>`
+        ).join('');
+      }
+    }
+
+    // If value map already exists, show results directly
+    if (deal.value_map?.valueMap) {
+      state.company  = deal.value_map.company  || deal.context.account_name || '';
+      state.industry = deal.value_map.industry || '';
+      state.stage    = deal.value_map.stage    || '';
+      state.products = deal.value_map.products || [];
+      state.valueMap = deal.value_map.valueMap;
+      setPhase(4);
+      renderValueMap();
+      maybeShowEditTab();
     }
   })();
 </script>
