@@ -4972,6 +4972,7 @@ updateChatSuggestions(1);
       congaPOV:     deal.research.exec_pov,
       callStrategy: deal.research.call_strategy,
       dealBrief:    deal.research.deal_brief,
+      contacts:     deal.stakeholders?.map(s => ({ name: s.name, title: s.title, bio: s.notes })) || [],
     };
     renderOutput();
     showScreen(3);
