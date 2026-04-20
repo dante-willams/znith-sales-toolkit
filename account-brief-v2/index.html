@@ -570,6 +570,10 @@ input[type=checkbox].chip-check{display:none;}
 .tag-doc{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(96,165,250,0.3);}
 .tag-price{background:var(--green-dim);color:var(--green);border:1px solid rgba(74,222,128,0.3);}
 .tag-ai{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(251,146,60,0.3);}
+.src-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;padding:1px 5px;border-radius:2px;vertical-align:middle;margin-left:4px;white-space:nowrap;}
+.src-verified{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+.src-rep{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.3);}
+.src-inferred{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
 .pov-narrative{font-size:13px;color:var(--white-dim);line-height:1.5;}
 .pov-card-body{
   display:grid;grid-template-columns:1fr 1fr;gap:0;
@@ -2433,6 +2437,13 @@ Conga product descriptions (for ${company}'s OWN internal use):
 - Price Optimization: Optimizes ${company}'s own pricing strategy and deal desk workflows
 - AI / AiMe: AI analysis of ${company}'s own contracts for risk, compliance, and obligations
 
+SOURCE CONFIDENCE TAGGING — add inline after key claims in narrative and text fields:
+- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
+- [REP_STATED] — came from rep notes or verbal input only, not in a document
+- [INFERRED] — your synthesis or hypothesis; no direct source
+Example: "Their quoting process is manual and fragmented [VERIFIED] — estimated 3-week cycle [INFERRED]"
+Tag substantive claims only. Skip tags on generic statements.
+
 Return ONLY valid JSON starting with {:
 {
   "overarchingNarrative": "2 sentences: why Conga is relevant to ${company}'s own internal revenue and contract operations right now",
@@ -2481,6 +2492,12 @@ Products: ${productList} | Known competitors: ${competitors||'None'}
 Company intel: ${companyJSON}
 Conga challenges identified: ${povSummary}
 SDR notes: ${sdrNotes||'None'}${getTextDocContext()}
+
+SOURCE CONFIDENCE TAGGING — add inline after key claims in text fields:
+- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
+- [REP_STATED] — came from rep notes or verbal input only
+- [INFERRED] — your synthesis; no direct source
+Tag substantive claims only. Skip generic or obvious statements.
 
 Return ONLY valid JSON starting with {:
 {
@@ -2713,6 +2730,13 @@ function togglePOVReasoning() {
   btn.textContent = el.classList.contains('open') ? 'Why this works ▴' : 'Why this works ▾';
 }
 
+function renderWithBadges(html) {
+  return html
+    .replace(/\[VERIFIED\]/g, '<span class="src-badge src-verified">VERIFIED</span>')
+    .replace(/\[REP_STATED\]/g, '<span class="src-badge src-rep">REP STATED</span>')
+    .replace(/\[INFERRED\]/g, '<span class="src-badge src-inferred">INFERRED</span>');
+}
+
 function renderOutput() {
   renderPOVBuilder(state.results.congaPOV);
 
@@ -2843,7 +2867,7 @@ function renderOutput() {
   }
 
   // Conga POV
-  document.getElementById('out-pov-narrative').textContent = pov.overarchingNarrative || '';
+  document.getElementById('out-pov-narrative').innerHTML = renderWithBadges(pov.overarchingNarrative || '');
   const productTagMap = {
     'RLM':'tag-rlm','CPQ':'tag-cpq','CLM':'tag-clm',
     'Doc Automation':'tag-doc','Price Optimization':'tag-price','AI / AiMe':'tag-ai'
@@ -2857,49 +2881,49 @@ function renderOutput() {
       <div class="pov-card">
         <div class="pov-card-header">
           <div class="product-tag ${tagClass}">${p.product}</div>
-          <div class="pov-narrative">${p.challenge||''}</div>
+          <div class="pov-narrative">${renderWithBadges(p.challenge||'')}</div>
         </div>
         <div class="pov-card-body">
           <div class="pov-cell">
             <div class="pov-cell-label">How Conga Solves It</div>
-            <div class="pov-cell-value">${p.howCongaSolves||'—'}</div>
+            <div class="pov-cell-value">${renderWithBadges(p.howCongaSolves||'—')}</div>
           </div>
           <div class="pov-cell">
             <div class="pov-cell-label">Proof Point</div>
-            <div class="pov-cell-value">${p.proofPoint||'—'}</div>
+            <div class="pov-cell-value">${renderWithBadges(p.proofPoint||'—')}</div>
           </div>
           <div class="pov-cell" style="border-bottom:none;grid-column:1/-1;">
             <div class="pov-cell-label">Quantified Value</div>
-            <div class="pov-cell-value pov-value-highlight">${p.quantifiedValue||'—'}</div>
+            <div class="pov-cell-value pov-value-highlight">${renderWithBadges(p.quantifiedValue||'—')}</div>
           </div>
         </div>
       </div>`;
   }).join('');
 
   // Call Strategy
-  document.getElementById('out-hook').textContent = strat.openingHook || '—';
+  document.getElementById('out-hook').innerHTML = renderWithBadges(strat.openingHook || '—');
 
   const qList = document.getElementById('out-questions');
   qList.innerHTML = (strat.discoveryQuestions||[]).map((q,i)=>`
     <div class="q-item">
       <div class="q-num">Q${i+1}</div>
-      <div class="q-text">${q}</div>
+      <div class="q-text">${renderWithBadges(q)}</div>
     </div>`).join('');
 
   const landList = document.getElementById('out-landmines');
   landList.innerHTML = (strat.landmines||[]).map(l=>`
     <div class="landmine-item">
       <div class="landmine-icon">⚠</div>
-      <div>${l}</div>
+      <div>${renderWithBadges(l)}</div>
     </div>`).join('');
 
-  document.getElementById('out-next-step').textContent = strat.recommendedNextStep || '—';
+  document.getElementById('out-next-step').innerHTML = renderWithBadges(strat.recommendedNextStep || '—');
 
   const flagsList = document.getElementById('out-deal-flags');
   flagsList.innerHTML = (strat.dealFlags||[]).map(f=>`
     <div class="flag-item">
       <div class="flag-icon">🚩</div>
-      <div>${f}</div>
+      <div>${renderWithBadges(f)}</div>
     </div>`).join('');
 
   document.getElementById('out-alumni-text').textContent = strat.alumniCheckPrompt || '—';

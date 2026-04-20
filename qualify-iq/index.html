@@ -129,6 +129,10 @@
     .conf-low{background:rgba(248,90,90,.12);color:var(--danger);border-color:rgba(248,90,90,.3)}
     .conf-tooltip{position:absolute;right:0;top:calc(100% + 8px);background:var(--s3);border:1px solid var(--border);clip-path:var(--clip-sm);padding:10px 14px;font-size:12px;color:var(--text);width:260px;z-index:50;display:none;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.4)}
     .conf-badge:hover .conf-tooltip{display:block}
+    .src-badge{display:inline-block;padding:1px 5px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;vertical-align:middle;margin:0 3px;line-height:1.6;white-space:nowrap;}
+    .src-verified{background:rgba(22,163,74,0.15);color:#16A34A;border:1px solid rgba(22,163,74,0.25);}
+    .src-rep{background:rgba(249,115,22,0.15);color:#F97316;border:1px solid rgba(249,115,22,0.25);}
+    .src-inferred{background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid rgba(239,68,68,0.25);}
 
     .m-body{padding:18px 20px;display:flex;align-items:flex-start;gap:16px}
     .m-content{flex:1;font-size:13px;color:var(--text);line-height:1.7;white-space:pre-wrap;font-family:inherit}
@@ -729,8 +733,14 @@ CONTENT RULES:
 - Pain field format: "• [pain statement] — [business impact]"
 - All bullets ≤20 words, quantified where possible (%, $, days, hours)
 - confidence_rationale explains WHY the confidence level was assigned in one sentence
-- Do NOT include confidence info inside the content field — content is for Salesforce paste only
-- If a field is unknown, state clearly and provide a next-best hypothesis`;
+- If a field is unknown, state clearly and provide a next-best hypothesis
+
+SOURCE CONFIDENCE TAGGING (add inline after each bullet's key claim):
+- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
+- [REP_STATED] — came from rep notes or verbal input only, not in a document
+- [INFERRED] — your synthesis or hypothesis; no direct source
+Example: "• Contract cycle averaging 45 days [VERIFIED] — $2M revenue impact annually [INFERRED]"
+Tag every bullet. These tags are shown as badges in the UI but stripped before Salesforce copy.`;
 
   const raw = await callAPI('claude-haiku-4-5-20251001', sys, prompt);
   const cleaned = raw.replace(/```json|```/g,'').trim();
@@ -791,7 +801,7 @@ function renderResults(entry){
         </div>
       </div>
       <div class="m-body">
-        <div class="m-content" id="content-${f.key}">${escapeHtml(content)}</div>
+        <div class="m-content" id="content-${f.key}" data-raw="${escapeHtml(content)}">${renderWithBadges(escapeHtml(content))}</div>
         <button class="copy-btn" onclick="copyField('${f.key}', this)">Copy</button>
       </div>
     </div>`;
@@ -802,9 +812,18 @@ function escapeHtml(t){
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+function renderWithBadges(text) {
+  if (!text) return '';
+  return text
+    .replace(/\[VERIFIED\]/g,   '<span class="src-badge src-verified">✓ Verified</span>')
+    .replace(/\[REP_STATED\]/g, '<span class="src-badge src-rep">Rep-stated</span>')
+    .replace(/\[INFERRED\]/g,   '<span class="src-badge src-inferred">Inferred</span>');
+}
+
 function copyField(key, btn){
   const el = document.getElementById('content-'+key);
-  const text = el.textContent;
+  // Use raw text stored before badge rendering so Salesforce paste stays clean
+  const text = el.dataset.raw || el.textContent;
   navigator.clipboard.writeText(text).then(()=>{
     btn.textContent = '✓ Copied';
     btn.classList.add('copied');

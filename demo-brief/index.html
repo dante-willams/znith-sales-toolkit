@@ -132,6 +132,10 @@
     .blow{background:rgba(62,207,142,.12);color:#3ecf8e;border:1px solid rgba(62,207,142,.3)}
     .bprim{background:rgba(249,115,22,.12);color:#a78bfa;border:1px solid rgba(249,115,22,.3)}
     .bunk{background:var(--s3);color:var(--tm);border:1px solid var(--border)}
+    .src-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;padding:1px 5px;border-radius:2px;vertical-align:middle;margin-left:4px;white-space:nowrap;}
+    .src-verified{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+    .src-rep{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.3);}
+    .src-inferred{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
     /* OVERVIEW */
     .ogrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
     .oi{background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-sm);padding:12px 14px}
@@ -1129,6 +1133,12 @@ KEY DIFFERENTIATORS:
 
 TONE: McKinsey slide deck narrated by Simon Sinek. Confident, business-first, AE-readable. Every bullet ≤20 words. Quantify wherever possible.
 
+SOURCE CONFIDENCE TAGGING — add inline after key claims in text fields (pain, mechanism, differentiator, setup, script, close):
+- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
+- [REP_STATED] — came from rep notes or verbal input only
+- [INFERRED] — your synthesis; no direct source
+Tag substantive claims only. Skip generic statements.
+
 CRITICAL: Respond with ONLY valid JSON. No markdown backticks, no preamble, no explanation. Start your response with { and end with }.
 
 JSON SCHEMA — match exactly:
@@ -1249,6 +1259,13 @@ Return ONLY the JSON object.`;
 }
 
 // =========================================================
+function renderWithBadges(html) {
+  return html
+    .replace(/\[VERIFIED\]/g, '<span class="src-badge src-verified">VERIFIED</span>')
+    .replace(/\[REP_STATED\]/g, '<span class="src-badge src-rep">REP STATED</span>')
+    .replace(/\[INFERRED\]/g, '<span class="src-badge src-inferred">INFERRED</span>');
+}
+
 // RENDER REVIEW
 // =========================================================
 function renderReview(){
@@ -1300,9 +1317,9 @@ function renderReview(){
         <span class="badge ${pmap[p.priority]||'bunk'}">${p.priority||''}</span>
       </td>
       <td style="font-size:12px;color:var(--plight);font-weight:600">${esc(p.owner||'—')}</td>
-      <td style="font-size:12px;color:var(--tm)">${esc(p.whatsbroken)}</td>
-      <td style="font-size:12px;color:var(--warn)">${esc(p.impact||'—')}</td>
-      <td style="font-size:12px;color:var(--ok)">${esc(p.congaFix||p.demoImperative||'—')}</td>
+      <td style="font-size:12px;color:var(--tm)">${renderWithBadges(esc(p.whatsbroken))}</td>
+      <td style="font-size:12px;color:var(--warn)">${renderWithBadges(esc(p.impact||'—'))}</td>
+      <td style="font-size:12px;color:var(--ok)">${renderWithBadges(esc(p.congaFix||p.demoImperative||'—'))}</td>
       <td style="font-size:11px;color:var(--td)">${esc(p.source)}</td>
     </tr>`).join('');
 
@@ -1313,13 +1330,13 @@ function renderReview(){
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--plight);margin-bottom:4px">Capability</div>
         <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px">${esc(s.capability)}</div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--tm);margin-bottom:4px">Pain Addressed</div>
-        <div style="font-size:12px;color:var(--text)">${esc(s.pain)}</div>
+        <div style="font-size:12px;color:var(--text)">${renderWithBadges(esc(s.pain))}</div>
       </div>
       <div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--tm);margin-bottom:4px">How It Works</div>
-        <div style="font-size:12px;color:var(--text);margin-bottom:8px">${esc(s.mechanism)}</div>
+        <div style="font-size:12px;color:var(--text);margin-bottom:8px">${renderWithBadges(esc(s.mechanism))}</div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ok);margin-bottom:4px">Why Competitors Can't Match</div>
-        <div style="font-size:12px;color:var(--ok);font-style:italic">${esc(s.differentiator||'—')}</div>
+        <div style="font-size:12px;color:var(--ok);font-style:italic">${renderWithBadges(esc(s.differentiator||'—'))}</div>
       </div>
     </div>`).join('') || '<div style="color:var(--td);font-size:13px">No solution map generated — regenerate brief to include this section.</div>';
 
@@ -1329,7 +1346,7 @@ function renderReview(){
   if(arc.setup){
     arcHtml += `<div style="background:rgba(249,115,22,.06);border-left:3px solid var(--purple);padding:14px 18px;margin-bottom:16px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--plight);margin-bottom:6px">🎤 SETUP — Opening Script</div>
-      <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${esc(arc.setup)}</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${renderWithBadges(esc(arc.setup))}</div>
     </div>`;
   }
   if((arc.acts||[]).length>0){
@@ -1337,14 +1354,14 @@ function renderReview(){
       arcHtml += `<div style="background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:14px 16px;margin-bottom:10px">
         <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px">ACT ${i+1}: ${esc(act.title)}</div>
         <div style="font-size:11px;color:var(--plight);margin-bottom:8px">${esc(act.theme)}</div>
-        <div style="font-size:12px;color:var(--tm);line-height:1.6">${esc(act.script)}</div>
+        <div style="font-size:12px;color:var(--tm);line-height:1.6">${renderWithBadges(esc(act.script))}</div>
       </div>`;
     });
   }
   if(arc.close){
     arcHtml += `<div style="background:rgba(62,207,142,.06);border-left:3px solid var(--ok);padding:14px 18px;margin-top:4px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ok);margin-bottom:6px">🏁 CLOSE — Closing Script</div>
-      <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${esc(arc.close)}</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${renderWithBadges(esc(arc.close))}</div>
     </div>`;
   }
   document.getElementById('arc-body').innerHTML = arcHtml || '<div style="color:var(--td);font-size:13px">No demo arc generated — regenerate brief to include this section.</div>';
