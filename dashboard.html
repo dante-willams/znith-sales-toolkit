@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<script src="/auth.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Znith · Deals</title>
+<link rel="icon" type="image/x-icon" href="./favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --f-brand:'Epilogue',sans-serif;
+  --f-ui:'Barlow',sans-serif;
+  --f-mono:'IBM Plex Mono',monospace;
+  --amber:#B8860B;
+  --amber-glow:rgba(184,134,11,0.22);
+  --amber-muted:rgba(184,134,11,0.12);
+  --amber-faint:rgba(184,134,11,0.07);
+  --bg:#05070F;
+  --surf:#0F1520;
+  --surf-2:#0A0E1A;
+  --surf-3:#070A13;
+  --border:rgba(255,255,255,0.08);
+  --border-md:rgba(255,255,255,0.14);
+  --text:rgba(255,255,255,0.88);
+  --tmuted:rgba(255,255,255,0.50);
+  --tfaint:rgba(255,255,255,0.28);
+  --transition:all 0.18s ease;
+  --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;min-height:100vh;}
+
+/* ── HEADER ── */
+header{
+  position:sticky;top:0;z-index:100;
+  background:rgba(10,14,26,0.92);
+  backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  padding:0 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  height:64px;
+}
+.header-logo{display:flex;align-items:center;gap:14px;}
+.logo-mark{width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo-mark svg{width:36px;height:36px;}
+.logo-divider{width:1px;height:24px;background:var(--border);}
+.logo-text{font-family:var(--f-ui);font-size:13px;font-weight:600;color:var(--text);letter-spacing:0.04em;text-transform:uppercase;}
+.logo-text span{color:var(--amber);font-weight:400;letter-spacing:0.06em;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.theme-toggle-btn{
+  background:transparent;border:1px solid var(--border-md);
+  color:var(--tmuted);padding:5px 10px;clip-path:var(--clip-sm);
+  cursor:pointer;font-size:15px;line-height:1;transition:var(--transition);
+}
+.theme-toggle-btn:hover{border-color:var(--amber);color:var(--amber);}
+.btn-new-deal{
+  display:flex;align-items:center;gap:7px;
+  background:var(--amber);color:#0A0E1A;
+  border:none;padding:9px 18px;
+  clip-path:var(--clip-sm);
+  font-family:var(--f-ui);font-size:13px;font-weight:700;
+  letter-spacing:0.04em;text-transform:uppercase;
+  cursor:pointer;transition:var(--transition);
+}
+.btn-new-deal:hover{background:#d4a012;transform:translateY(-1px);}
+/* ── HEADER SEARCH ── */
+.header-search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surf);border:1px solid var(--border);
+  padding:7px 14px;clip-path:var(--clip-sm);
+  opacity:0.45;cursor:not-allowed;
+  position:relative;
+}
+.header-search svg{opacity:0.4;flex-shrink:0;}
+.header-search span{font-size:12px;color:var(--tfaint);letter-spacing:0.02em;white-space:nowrap;}
+.search-coming-soon{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:var(--surf);border:1px solid var(--border-md);
+  padding:5px 10px;clip-path:var(--clip-sm);
+  font-size:11px;color:var(--tmuted);white-space:nowrap;
+  pointer-events:none;opacity:0;transition:opacity 0.15s;
+}
+.header-search:hover .search-coming-soon{opacity:1;}
+
+/* ── PIPELINE SECTION ── */
+.section-divider{
+  display:flex;align-items:center;gap:16px;
+  margin:52px 0 24px;
+}
+.section-divider-line{flex:1;height:1px;background:var(--border);}
+.section-divider-label{
+  font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--tfaint);white-space:nowrap;
+}
+.pipeline-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.pipeline-card{
+  background:var(--surf);border:1px solid var(--border);
+  clip-path:var(--clip-lg);padding:24px;
+  display:flex;flex-direction:column;gap:10px;
+  text-decoration:none;transition:var(--transition);cursor:pointer;
+  position:relative;overflow:hidden;
+}
+.pipeline-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(255,255,255,0.03) 0%,transparent 60%);opacity:0;transition:opacity 0.4s ease;}
+.pipeline-card::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent);transform:skewX(-15deg);transition:none;pointer-events:none;}
+.pipeline-card:hover{border-color:var(--border-md);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.pipeline-card:hover::before{opacity:1;}
+.pipeline-card:hover::after{left:160%;transition:left 0.55s ease;}
+.pipeline-card.coming-soon{opacity:0.7;cursor:not-allowed;}
+.pipeline-card.coming-soon::after{background:repeating-linear-gradient(-45deg,transparent,transparent 12px,rgba(255,255,255,0.012) 12px,rgba(255,255,255,0.012) 13px);left:0;width:100%;transform:none;transition:none;}
+.pipeline-card.coming-soon:hover{transform:none;border-color:var(--border);box-shadow:none;}
+.pipeline-card.coming-soon:hover::after{left:0;transition:none;}
+.pipeline-card.coming-soon:hover::before{opacity:0;}
+.pipeline-card-icon{
+  width:36px;height:36px;border-radius:8px;
+  background:var(--amber-muted);border:1px solid rgba(184,134,11,0.2);
+  display:flex;align-items:center;justify-content:center;
+}
+.pipeline-card-icon svg{opacity:0.9;}
+.pipeline-card-header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.pipeline-card-title{font-family:var(--f-brand);font-size:15px;font-weight:700;color:var(--text);}
+.pipeline-card-sub{font-size:12px;color:var(--tmuted);line-height:1.5;}
+.pipeline-card-cta{
+  margin-top:4px;font-size:11px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;color:var(--amber);
+  display:flex;align-items:center;gap:5px;
+}
+.badge-soon{font-family:var(--f-mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;clip-path:var(--clip-sm);color:#f0a05a;background:rgba(240,160,90,0.1);border:1px solid rgba(240,160,90,0.25);position:relative;overflow:hidden;white-space:nowrap;flex-shrink:0;}
+.badge-soon::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(240,160,90,0.25),transparent);animation:shimmer 2.8s ease-in-out infinite;}
+@keyframes shimmer{0%{left:-60%}60%{left:120%}100%{left:120%}}
+
+/* ── MAIN ── */
+.main{max-width:1100px;margin:0 auto;padding:48px 40px 100px;}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:36px;}
+.page-eyebrow{font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:8px;}
+.page-title{font-family:var(--f-brand);font-size:32px;font-weight:800;color:var(--text);line-height:1.15;margin-bottom:6px;}
+.page-title span{color:var(--amber);}
+.page-subtitle{font-size:14px;color:var(--tmuted);line-height:1.5;}
+
+/* ── FILTER BAR ── */
+.filter-bar{display:flex;align-items:center;gap:8px;margin-bottom:28px;flex-wrap:wrap;}
+.filter-btn{
+  padding:6px 14px;font-size:12px;font-weight:600;letter-spacing:0.04em;
+  background:transparent;border:1px solid var(--border);
+  color:var(--tmuted);cursor:pointer;clip-path:var(--clip-sm);
+  transition:var(--transition);font-family:var(--f-ui);
+}
+.filter-btn:hover{border-color:var(--border-md);color:var(--text);}
+.filter-btn.active{background:var(--amber-muted);border-color:var(--amber);color:var(--amber);}
+.filter-count{
+  margin-left:auto;font-size:12px;color:var(--tfaint);
+  font-family:var(--f-mono);letter-spacing:0.06em;
+}
+
+/* ── DEAL GRID ── */
+.deal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;}
+
+/* ── DEAL CARD ── */
+.deal-card{
+  background:var(--surf);border:1px solid var(--border);
+  clip-path:var(--clip-lg);
+  padding:20px;cursor:pointer;
+  transition:var(--transition);
+  display:flex;flex-direction:column;gap:14px;
+  position:relative;
+}
+.deal-card:hover{border-color:var(--border-md);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.deal-card:hover .deal-card-actions{opacity:1;}
+
+.deal-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.deal-company{font-family:var(--f-brand);font-size:18px;font-weight:700;color:var(--text);line-height:1.2;}
+.deal-stage-pill{
+  flex-shrink:0;padding:3px 10px;font-size:10px;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;clip-path:var(--clip-sm);
+  white-space:nowrap;
+}
+
+/* Stage colors */
+.stage-discovery  {background:rgba(99,179,237,0.15);color:#63B3ED;}
+.stage-demo       {background:var(--amber-muted);color:var(--amber);}
+.stage-proposal   {background:rgba(167,139,250,0.15);color:#A78BFA;}
+.stage-negotiation{background:rgba(251,146,60,0.15);color:#FB923C;}
+.stage-closed_won {background:rgba(52,211,153,0.15);color:#34D399;}
+.stage-closed_lost{background:rgba(255,255,255,0.06);color:var(--tfaint);}
+
+/* ── DEAL META ── */
+.deal-meta{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.meta-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tfaint);}
+.meta-item svg{opacity:0.6;}
+
+/* ── MEDDPICC SCORE ── */
+.meddpicc-row{display:flex;align-items:center;gap:8px;}
+.meddpicc-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--tfaint);}
+.meddpicc-bar-wrap{flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.meddpicc-bar{height:100%;border-radius:2px;transition:width 0.6s ease;}
+.meddpicc-score-val{font-family:var(--f-mono);font-size:11px;font-weight:500;min-width:28px;text-align:right;}
+.score-low  {background:#EF4444;color:#EF4444;}
+.score-mid  {background:#F59E0B;color:#F59E0B;}
+.score-high {background:#34D399;color:#34D399;}
+.score-none {background:var(--border);color:var(--tfaint);}
+
+/* ── TOOL GRID ── */
+.deal-tool-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.tool-btn{
+  display:flex;align-items:center;gap:7px;
+  padding:7px 10px;font-size:11px;font-weight:600;
+  letter-spacing:0.02em;text-decoration:none;
+  background:var(--surf-2);border:1px solid var(--border);
+  color:var(--tfaint);clip-path:var(--clip-sm);
+  transition:var(--transition);
+}
+.tool-btn:hover{border-color:var(--border-md);color:var(--text);}
+.tool-btn.done{color:var(--text);border-color:rgba(255,255,255,0.12);}
+.tool-status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.12);}
+.tool-btn.done .tool-status-dot{background:#34D399;}
+
+/* ── WIN ROOM CTA ── */
+.win-room-btn{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:10px 14px;font-size:11px;font-weight:700;
+  letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;
+  clip-path:var(--clip-sm);transition:var(--transition);
+  border:1px solid var(--border);color:var(--tfaint);
+  background:var(--surf-2);
+}
+.win-room-btn.active{background:var(--amber-muted);border-color:rgba(184,134,11,0.3);color:var(--amber);}
+.win-room-btn.active:hover{background:rgba(184,134,11,0.25);}
+.win-room-btn:not(.active):hover{border-color:var(--border-md);color:var(--text);}
+
+/* ── CARD ACTIONS (hover) ── */
+.deal-card-actions{
+  display:flex;gap:8px;opacity:0;transition:opacity 0.18s;
+  justify-content:flex-end;
+}
+.action-btn{
+  background:transparent;border:1px solid var(--border);
+  color:var(--tfaint);font-size:11px;padding:4px 10px;
+  clip-path:var(--clip-sm);cursor:pointer;
+  transition:var(--transition);font-family:var(--f-ui);
+}
+.action-btn:hover{border-color:var(--border-md);color:var(--text);}
+.action-btn.danger:hover{border-color:rgba(239,68,68,0.5);color:#EF4444;}
+
+/* ── EMPTY STATE ── */
+.empty-state{
+  text-align:center;padding:80px 40px;
+  border:1px dashed var(--border);
+  clip-path:var(--clip-lg);
+  background:var(--surf-3);
+}
+.empty-icon{font-size:40px;margin-bottom:16px;opacity:0.4;}
+.empty-title{font-family:var(--f-brand);font-size:22px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.empty-sub{font-size:13px;color:var(--tmuted);margin-bottom:24px;line-height:1.6;}
+.btn-empty-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--amber);color:#0A0E1A;
+  border:none;padding:11px 24px;
+  clip-path:var(--clip-sm);
+  font-family:var(--f-ui);font-size:13px;font-weight:700;
+  letter-spacing:0.04em;text-transform:uppercase;
+  cursor:pointer;transition:var(--transition);text-decoration:none;
+}
+.btn-empty-cta:hover{background:#d4a012;}
+
+/* ── NEW DEAL MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.7);
+  backdrop-filter:blur(4px);z-index:200;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{
+  background:var(--surf);border:1px solid var(--border-md);
+  clip-path:var(--clip-lg);padding:32px;width:100%;max-width:480px;
+  transform:translateY(8px);transition:transform 0.2s;
+}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-title{font-family:var(--f-brand);font-size:20px;font-weight:700;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--tmuted);margin-bottom:24px;}
+.modal-field{margin-bottom:16px;}
+.modal-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--tmuted);margin-bottom:6px;display:block;}
+.modal-input{
+  width:100%;background:var(--surf-2);border:1px solid var(--border);
+  color:var(--text);padding:10px 14px;font-family:var(--f-ui);font-size:14px;
+  clip-path:var(--clip-sm);outline:none;transition:var(--transition);
+}
+.modal-input:focus{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-faint);}
+.modal-input::placeholder{color:var(--tfaint);}
+.modal-row{display:flex;gap:10px;margin-top:8px;}
+.modal-actions{display:flex;gap:10px;margin-top:24px;}
+.btn-modal-primary{
+  flex:1;background:var(--amber);color:#0A0E1A;
+  border:none;padding:11px 20px;
+  clip-path:var(--clip-sm);font-family:var(--f-ui);font-size:13px;font-weight:700;
+  letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;transition:var(--transition);
+}
+.btn-modal-primary:hover{background:#d4a012;}
+.btn-modal-cancel{
+  background:transparent;color:var(--tmuted);
+  border:1px solid var(--border);padding:11px 20px;
+  clip-path:var(--clip-sm);font-family:var(--f-ui);font-size:13px;font-weight:600;
+  cursor:pointer;transition:var(--transition);
+}
+.btn-modal-cancel:hover{border-color:var(--border-md);color:var(--text);}
+
+/* ── DEAL DRAWER ── */
+.drawer-overlay{
+  position:fixed;inset:0;z-index:300;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:opacity 0.2s;
+}
+.drawer-overlay.open{opacity:1;pointer-events:all;}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;z-index:301;
+  width:500px;max-width:95vw;
+  background:var(--surf);border-left:1px solid var(--border-md);
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform 0.25s ease;
+}
+.drawer-overlay.open .drawer{transform:translateX(0);}
+.drawer-header{padding:20px 24px 0;border-bottom:1px solid var(--border);flex-shrink:0;}
+.drawer-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+.drawer-title-left{display:flex;flex-direction:column;gap:6px;}
+.drawer-company{font-family:var(--f-brand);font-size:20px;font-weight:700;color:var(--text);}
+.drawer-meta-row{display:flex;align-items:center;gap:8px;}
+.drawer-close{
+  background:transparent;border:1px solid var(--border);color:var(--tmuted);
+  width:30px;height:30px;display:flex;align-items:center;justify-content:center;
+  clip-path:var(--clip-sm);cursor:pointer;transition:var(--transition);flex-shrink:0;
+}
+.drawer-close:hover{border-color:var(--border-md);color:var(--text);}
+.drawer-tabs{display:flex;gap:0;overflow-x:auto;}
+.drawer-tab{
+  padding:8px 14px;font-size:10px;font-weight:700;letter-spacing:0.07em;
+  text-transform:uppercase;cursor:pointer;color:var(--tmuted);
+  border-bottom:2px solid transparent;transition:var(--transition);white-space:nowrap;
+  background:transparent;border-left:none;border-right:none;border-top:none;
+  font-family:var(--f-ui);
+}
+.drawer-tab.active{color:var(--amber);border-bottom-color:var(--amber);}
+.drawer-tab:hover{color:var(--text);}
+.drawer-body{flex:1;overflow-y:auto;padding:22px 24px 40px;}
+.drawer-panel{display:none;}
+.drawer-panel.active{display:block;}
+.drawer-section{margin-bottom:22px;}
+.drawer-section-label{
+  font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--amber);margin-bottom:8px;
+}
+.drawer-text{font-size:13px;line-height:1.65;color:var(--text);}
+.drawer-empty{
+  text-align:center;padding:48px 20px;color:var(--tmuted);font-size:13px;line-height:1.6;
+}
+.drawer-open-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--amber);color:#0A0E1A;border:none;
+  padding:9px 18px;clip-path:var(--clip-sm);
+  font-family:var(--f-ui);font-size:11px;font-weight:700;
+  letter-spacing:0.05em;text-transform:uppercase;
+  cursor:pointer;transition:var(--transition);text-decoration:none;
+}
+.drawer-open-btn:hover{background:#d4a012;}
+.drawer-dim-list{display:flex;flex-direction:column;gap:0;}
+.drawer-dim-row{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 0;border-bottom:1px solid var(--border);
+}
+.drawer-dim-row:last-child{border-bottom:none;}
+.drawer-dim-name{font-size:11px;font-weight:600;color:var(--text);min-width:130px;}
+.drawer-dim-bar-wrap{flex:1;height:3px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
+.drawer-dim-bar{height:100%;border-radius:2px;}
+.drawer-dim-score{font-family:var(--f-mono);font-size:10px;min-width:24px;text-align:right;}
+.drawer-bullets{list-style:none;display:flex;flex-direction:column;gap:6px;margin:0;padding:0;}
+.drawer-bullets li{font-size:13px;color:var(--text);padding-left:14px;position:relative;line-height:1.5;}
+.drawer-bullets li::before{content:'·';position:absolute;left:0;color:var(--amber);}
+.drawer-checklist{display:flex;flex-direction:column;gap:10px;}
+.drawer-check-item{display:flex;align-items:center;gap:9px;font-size:13px;}
+.drawer-check-item.done{color:var(--text);}
+.drawer-check-item.pending{color:var(--tmuted);}
+.drawer-check-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.drawer-check-item.done .drawer-check-dot{background:#34D399;}
+.drawer-check-item.pending .drawer-check-dot{background:rgba(255,255,255,0.12);}
+.drawer-value-row{
+  display:flex;gap:12px;
+}
+.drawer-value-chip{
+  flex:1;background:var(--surf-2);border:1px solid var(--border);
+  clip-path:var(--clip-sm);padding:10px 12px;text-align:center;
+}
+.drawer-value-chip-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--tmuted);margin-bottom:4px;}
+.drawer-value-chip-val{font-family:var(--f-mono);font-size:16px;font-weight:700;color:var(--text);}
+
+/* ── LIGHT THEME ── */
+[data-theme="light"]{
+  --bg:#F4F5F6;--surf:#FFFFFF;--surf-2:#F4F5F6;--surf-3:#ECEEF0;
+  --border:#E2E5E9;--border-md:#CBD0D8;
+  --text:#1A2332;--tmuted:#6B7280;--tfaint:#9CA3AF;
+}
+[data-theme="light"] header{background:rgba(255,255,255,0.92);border-bottom-color:#E2E5E9;}
+[data-theme="light"] .deal-card{background:#FFFFFF;}
+[data-theme="light"] .tool-btn{background:#F4F5F6;}
+[data-theme="light"] .empty-state{background:#ECEEF0;}
+[data-theme="light"] .modal{background:#FFFFFF;}
+[data-theme="light"] .modal-input{background:#F4F5F6;color:#1A2332;}
+
+/* ── ZNITH FOOTER ── */
+.znith-footer{
+  position:fixed;bottom:0;left:0;right:0;z-index:90;
+  height:34px;padding:0 16px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surf);
+  border-top:2px solid var(--amber);
+}
+.znith-wordmark{display:flex;align-items:center;gap:1px;font-family:var(--f-brand);font-size:12px;font-weight:800;line-height:1;}
+.znith-footer-meta{display:flex;align-items:center;gap:8px;}
+.znith-footer-pip{width:4px;height:4px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber-glow);}
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#99f6e4">
+        <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
+      </svg>
+    </div>
+    <div class="logo-divider"></div>
+    <div class="logo-text">Conga <span>Sales Intelligence</span></div>
+  </div>
+  <div class="header-right">
+    <div class="header-search" title="Search coming with backend">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <span>Search deals…</span>
+      <div class="search-coming-soon">Available when backend is connected</div>
+    </div>
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+    <button class="btn-new-deal" onclick="openNewDealModal()">
+      <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      New Deal
+    </button>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<div class="main">
+
+  <div class="page-header">
+    <p class="page-eyebrow">Deal Workspace</p>
+    <h1 class="page-title">Your <span>active deals.</span></h1>
+    <p class="page-subtitle">Click a deal to jump back in. Research runs once — all tools share the same context.</p>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" data-filter="discovery" onclick="setFilter('discovery')">Discovery</button>
+    <button class="filter-btn" data-filter="demo" onclick="setFilter('demo')">Demo</button>
+    <button class="filter-btn" data-filter="proposal" onclick="setFilter('proposal')">Proposal</button>
+    <button class="filter-btn" data-filter="negotiation" onclick="setFilter('negotiation')">Negotiation</button>
+    <button class="filter-btn" data-filter="closed_won" onclick="setFilter('closed_won')">Won</button>
+    <span class="filter-count" id="dealCount"></span>
+  </div>
+
+  <!-- Deal grid -->
+  <div class="deal-grid" id="dealGrid"></div>
+
+  <!-- ── PIPELINE SECTION ── -->
+  <div class="section-divider">
+    <div class="section-divider-line"></div>
+    <div class="section-divider-label">Pipeline Building</div>
+    <div class="section-divider-line"></div>
+  </div>
+
+  <div class="pipeline-grid">
+    <a href="./prospecting-agent/index.html" target="_blank" rel="noopener" class="pipeline-card">
+      <div class="pipeline-card-header">
+        <div class="pipeline-card-icon">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#B8860B" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+        </div>
+      </div>
+      <div class="pipeline-card-title">Prospecting Agent</div>
+      <div class="pipeline-card-sub">Upload your territory list. Score accounts against ICP, rank by fit, and generate dossiers for your top targets.</div>
+      <div class="pipeline-card-cta">
+        Launch
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+    </a>
+
+    <div class="pipeline-card coming-soon">
+      <div class="pipeline-card-header">
+        <div class="pipeline-card-icon" style="background:rgba(255,255,255,0.04);border-color:var(--border);">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.3)" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <span class="badge-soon">Coming Soon</span>
+      </div>
+      <div class="pipeline-card-title" style="color:var(--tmuted);">Competitive Intel Agent</div>
+      <div class="pipeline-card-sub">Enter a deal and known competitors. Get a battle card with differentiated positioning, objection handles, and win themes — ready for the call.</div>
+      <div class="pipeline-card-cta" style="color:var(--tfaint);">In development</div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ── NEW DEAL MODAL ── -->
+<div class="modal-overlay" id="newDealModal" onclick="handleModalOverlayClick(event)">
+  <div class="modal">
+    <div class="modal-title">Start a new deal</div>
+    <div class="modal-sub">Fill in what you know — you can update everything later.</div>
+
+    <div class="modal-field">
+      <label class="modal-label">Company Name *</label>
+      <input class="modal-input" id="nd-company" type="text" placeholder="e.g. Salesforce, Acme Corp" autofocus>
+    </div>
+
+    <div class="modal-row">
+      <div class="modal-field" style="flex:1">
+        <label class="modal-label">Stage</label>
+        <select class="modal-input" id="nd-stage">
+          <option value="discovery">Discovery</option>
+          <option value="demo">Demo</option>
+          <option value="proposal">Proposal</option>
+          <option value="negotiation">Negotiation</option>
+        </select>
+      </div>
+      <div class="modal-field" style="flex:1">
+        <label class="modal-label">Deal Value (optional)</label>
+        <input class="modal-input" id="nd-value" type="text" placeholder="e.g. 120000">
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeNewDealModal()">Cancel</button>
+      <button class="btn-modal-primary" onclick="createDealAndGo()">
+        Create &amp; Start Research →
+      </button>
+    </div>
+  </div>
+</div>
+
+<footer class="znith-footer">
+  <div class="znith-wordmark">
+    <span style="font-family:var(--f-mono);color:var(--amber);font-weight:700;">/</span>
+    <span style="font-family:var(--f-brand);font-weight:800;color:var(--amber);">Z</span>
+    <span style="font-family:var(--f-brand);font-weight:800;color:rgba(255,255,255,0.25);">nith</span>
+  </div>
+  <div class="znith-footer-meta">
+    <span style="font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">Sales Intelligence</span>
+    <div class="znith-footer-pip"></div>
+    <span style="font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">v1.0</span>
+  </div>
+</footer>
+
+<!-- ── DEAL DRAWER ── -->
+<div class="drawer-overlay" id="dealDrawerOverlay" onclick="handleDrawerOverlayClick(event)">
+  <div class="drawer">
+    <div class="drawer-header">
+      <div class="drawer-title-row">
+        <div class="drawer-title-left">
+          <div class="drawer-company" id="drawerCompany"></div>
+          <div class="drawer-meta-row">
+            <div class="deal-stage-pill" id="drawerStagePill"></div>
+            <div class="meta-item" id="drawerValue" style="display:none"></div>
+          </div>
+        </div>
+        <button class="drawer-close" onclick="closeDrawer()">
+          <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="drawer-tabs">
+        <button class="drawer-tab active" data-tab="overview" onclick="switchDrawerTab('overview')">Overview</button>
+        <button class="drawer-tab" data-tab="brief" onclick="switchDrawerTab('brief')">Account Brief</button>
+        <button class="drawer-tab" data-tab="qualify" onclick="switchDrawerTab('qualify')">Qualify IQ</button>
+        <button class="drawer-tab" data-tab="demo" onclick="switchDrawerTab('demo')">Demo Brief</button>
+        <button class="drawer-tab" data-tab="valuemap" onclick="switchDrawerTab('valuemap')">Value Map</button>
+      </div>
+    </div>
+    <div class="drawer-body">
+      <div class="drawer-panel active" id="drawer-overview"></div>
+      <div class="drawer-panel" id="drawer-brief"></div>
+      <div class="drawer-panel" id="drawer-qualify"></div>
+      <div class="drawer-panel" id="drawer-demo"></div>
+      <div class="drawer-panel" id="drawer-valuemap"></div>
+    </div>
+  </div>
+</div>
+
+<script src="./shared/dealStore.js"></script>
+<script>
+
+// ── THEME ─────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem('znith-theme', next);
+  document.getElementById('themeToggle').textContent = next === 'dark' ? '🌙' : '☀️';
+}
+(function initTheme() {
+  const saved = localStorage.getItem('znith-theme') || 'dark';
+  document.documentElement.dataset.theme = saved;
+  document.getElementById('themeToggle').textContent = saved === 'dark' ? '🌙' : '☀️';
+})();
+
+// ── FILTER ────────────────────────────────────────────────────────────────────
+let activeFilter = 'all';
+
+function setFilter(f) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+  renderDeals();
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+const TOOLS = [
+  { key: 'research',     label: 'Account Brief', path: './account-brief-v2/index.html', dataKey: 'research' },
+  { key: 'qualify',      label: 'Qualify IQ',    path: './qualify-iq/index.html',       dataKey: 'qualification' },
+  { key: 'demo-brief',   label: 'Demo Brief',    path: './demo-brief/index.html',       dataKey: 'meeting_preps' },
+  { key: 'value-map',    label: 'Value Map',     path: './value-map/index.html',        dataKey: 'value_map' },
+];
+const WIN_ROOM = { path: './win-room/index.html' };
+
+function getMeddpiccScore(deal) {
+  const q = deal.qualification?.meddpicc;
+  if (!q) return null;
+  const scores = Object.values(q).map(d => d.score || 0);
+  if (!scores.length) return null;
+  return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+}
+
+function scoreClass(score) {
+  if (score === null) return 'score-none';
+  if (score >= 70) return 'score-high';
+  if (score >= 40) return 'score-mid';
+  return 'score-low';
+}
+
+function timeAgo(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1)  return 'just now';
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
+
+function dealCardHTML(deal) {
+  const score    = getMeddpiccScore(deal);
+  const sc       = scoreClass(score);
+  const stageKey = deal.context.stage || 'discovery';
+
+  const toolBtns = TOOLS.map(t => {
+    const hasData = Array.isArray(deal[t.dataKey]) ? deal[t.dataKey].length > 0 : !!deal[t.dataKey];
+    const url = `${t.path}?deal=${deal.id}`;
+    return `<a href="${url}" class="tool-btn${hasData ? ' done' : ''}" onclick="event.stopPropagation()" title="${t.label}">
+      <span class="tool-status-dot"></span>
+      ${t.label}
+    </a>`;
+  }).join('');
+
+  const hasResearch = !!deal.research;
+  const winRoomUrl  = `${WIN_ROOM.path}?deal=${deal.id}`;
+  const valueStr    = deal.context.deal_value ? `$${Number(deal.context.deal_value).toLocaleString()}` : null;
+
+  return `
+  <div class="deal-card" onclick="openDrawer('${deal.id}')">
+    <div class="deal-card-top">
+      <div class="deal-company">${deal.context.account_name}</div>
+      <div class="deal-stage-pill stage-${stageKey}">${dealStore.stageLabel(stageKey)}</div>
+    </div>
+
+    <div class="deal-meta">
+      <div class="meta-item">
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        ${timeAgo(deal.updated_at)}
+      </div>
+      ${valueStr ? `<div class="meta-item">
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        ${valueStr}
+      </div>` : ''}
+    </div>
+
+    <div class="meddpicc-row">
+      <div class="meddpicc-label">MEDDPICC</div>
+      <div class="meddpicc-bar-wrap">
+        <div class="meddpicc-bar ${sc}" style="width:${score ?? 0}%"></div>
+      </div>
+      <div class="meddpicc-score-val ${sc}">${score !== null ? score : '—'}</div>
+    </div>
+
+    <div class="deal-tool-grid">${toolBtns}</div>
+
+    <a href="${winRoomUrl}" class="win-room-btn${hasResearch ? ' active' : ''}" onclick="event.stopPropagation()">
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      ${hasResearch ? 'Open Win Room' : 'Run Account Brief First'}
+    </a>
+
+    <div class="deal-card-actions">
+      <button class="action-btn" onclick="event.stopPropagation();editStage('${deal.id}')">Edit stage</button>
+      <button class="action-btn danger" onclick="event.stopPropagation();deleteDeal('${deal.id}')">Delete</button>
+    </div>
+  </div>`;
+}
+
+function renderDeals() {
+  const grid  = document.getElementById('dealGrid');
+  const count = document.getElementById('dealCount');
+  let deals   = dealStore.list();
+
+  if (activeFilter !== 'all') {
+    deals = deals.filter(d => d.context.stage === activeFilter);
+  }
+
+  count.textContent = `${deals.length} deal${deals.length !== 1 ? 's' : ''}`;
+
+  if (!deals.length) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1">
+        <div class="empty-icon">◈</div>
+        <div class="empty-title">${activeFilter === 'all' ? 'No deals yet' : 'No ' + dealStore.stageLabel(activeFilter) + ' deals'}</div>
+        <div class="empty-sub">${activeFilter === 'all'
+          ? 'Create your first deal to start building account intelligence,<br>qualifying opportunities, and prepping for meetings.'
+          : 'No deals in this stage. Try a different filter.'}</div>
+        ${activeFilter === 'all' ? `<button class="btn-empty-cta" onclick="openNewDealModal()">
+          <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          Start Your First Deal
+        </button>` : ''}
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = deals.map(dealCardHTML).join('');
+}
+
+// ── DRAWER STATE ──────────────────────────────────────────────────────────────
+let activeDrawerDealId = null;
+
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderDrawerContent(deal) {
+  document.getElementById('drawerCompany').textContent = deal.context.account_name;
+  const stagePill = document.getElementById('drawerStagePill');
+  stagePill.textContent = dealStore.stageLabel(deal.context.stage || 'discovery');
+  stagePill.className = `deal-stage-pill stage-${deal.context.stage || 'discovery'}`;
+
+  const val = deal.context.deal_value ? `$${Number(deal.context.deal_value).toLocaleString()}` : null;
+  document.getElementById('drawerValue').textContent = val || '';
+  document.getElementById('drawerValue').style.display = val ? '' : 'none';
+
+  renderDrawerOverview(deal);
+  renderDrawerBrief(deal);
+  renderDrawerQualify(deal);
+  renderDrawerDemoBrief(deal);
+  renderDrawerValueMap(deal);
+
+  switchDrawerTab('overview');
+}
+
+function renderDrawerOverview(deal) {
+  const items = [
+    { label: 'Account Brief',  done: !!deal.research },
+    { label: 'Qualify IQ',     done: !!deal.qualification },
+    { label: 'Demo Brief',     done: !!(deal.meeting_preps?.length) },
+    { label: 'Value Map',      done: !!deal.value_map },
+  ];
+  const score = getMeddpiccScore(deal);
+  const sc    = scoreClass(score);
+
+  document.getElementById('drawer-overview').innerHTML = `
+    ${score !== null ? `<div class="drawer-section">
+      <div class="drawer-section-label">MEDDPICC Score</div>
+      <div class="drawer-value-row">
+        <div class="drawer-value-chip">
+          <div class="drawer-value-chip-label">Overall</div>
+          <div class="drawer-value-chip-val" style="color:${sc==='score-high'?'#34D399':sc==='score-mid'?'#F59E0B':'#EF4444'}">${score}</div>
+        </div>
+      </div>
+    </div>` : ''}
+    <div class="drawer-section">
+      <div class="drawer-section-label">Progress</div>
+      <div class="drawer-checklist">
+        ${items.map(i => `<div class="drawer-check-item ${i.done?'done':'pending'}">
+          <div class="drawer-check-dot"></div>
+          ${escHtml(i.label)}
+        </div>`).join('')}
+      </div>
+    </div>
+    ${deal.stakeholders?.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Stakeholders</div>
+      <ul class="drawer-bullets">
+        ${deal.stakeholders.slice(0,5).map(s => `<li>${escHtml(s.name||'')}${s.title?` — ${escHtml(s.title)}`:''}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <div style="margin-top:8px;">
+      <a href="./win-room/index.html?deal=${deal.id}" class="drawer-open-btn">
+        Open Win Room
+        <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>`;
+}
+
+function renderDrawerBrief(deal) {
+  const panel = document.getElementById('drawer-brief');
+  const r = deal.research;
+  if (!r) {
+    panel.innerHTML = `<div class="drawer-empty">No research yet.<br><br>
+      <a href="./account-brief-v2/index.html?deal=${deal.id}" class="drawer-open-btn">Run Account Brief</a></div>`;
+    return;
+  }
+  const co = r.company_profile || r;
+  panel.innerHTML = `
+    ${co.summary ? `<div class="drawer-section">
+      <div class="drawer-section-label">Company Overview</div>
+      <div class="drawer-text">${escHtml(co.summary)}</div>
+    </div>` : ''}
+    ${co.industry ? `<div class="drawer-section">
+      <div class="drawer-section-label">Industry</div>
+      <div class="drawer-text">${escHtml(co.industry)}</div>
+    </div>` : ''}
+    ${r.news?.headlines?.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Recent News</div>
+      <ul class="drawer-bullets">
+        ${r.news.headlines.slice(0,4).map(h => `<li>${escHtml(typeof h === 'string' ? h : h.headline||h.title||'')}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <a href="./account-brief-v2/index.html?deal=${deal.id}" class="drawer-open-btn">
+      Open Account Brief
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>`;
+}
+
+function renderDrawerQualify(deal) {
+  const panel = document.getElementById('drawer-qualify');
+  const q = deal.qualification?.meddpicc;
+  if (!q) {
+    panel.innerHTML = `<div class="drawer-empty">No qualification yet.<br><br>
+      <a href="./qualify-iq/index.html?deal=${deal.id}" class="drawer-open-btn">Run Qualify IQ</a></div>`;
+    return;
+  }
+  const dimLabels = { metrics:'Metrics', economic_buyer:'Economic Buyer', decision_criteria:'Decision Criteria', decision_process:'Decision Process', implicate_pain:'Implicate Pain', champion:'Champion', competition:'Competition' };
+  const rows = Object.entries(dimLabels).map(([k, label]) => {
+    const d = q[k] || {};
+    const score = d.score ?? 0;
+    const color = score>=70?'#34D399':score>=40?'#F59E0B':'#EF4444';
+    return `<div class="drawer-dim-row">
+      <div class="drawer-dim-name">${label}</div>
+      <div class="drawer-dim-bar-wrap"><div class="drawer-dim-bar" style="width:${score}%;background:${color}"></div></div>
+      <div class="drawer-dim-score" style="color:${color}">${score}</div>
+    </div>`;
+  }).join('');
+  panel.innerHTML = `
+    <div class="drawer-section">
+      <div class="drawer-section-label">MEDDPICC Scores</div>
+      <div class="drawer-dim-list">${rows}</div>
+    </div>
+    ${deal.qualification.priority_gaps?.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Priority Gaps</div>
+      <ul class="drawer-bullets">
+        ${deal.qualification.priority_gaps.slice(0,3).map(g => `<li>${escHtml(typeof g==='string'?g:g.dimension||'')}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <a href="./qualify-iq/index.html?deal=${deal.id}" class="drawer-open-btn">
+      Open Qualify IQ
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>`;
+}
+
+function renderDrawerDemoBrief(deal) {
+  const panel = document.getElementById('drawer-demo');
+  const preps = deal.meeting_preps;
+  if (!preps?.length) {
+    panel.innerHTML = `<div class="drawer-empty">No demo brief yet.<br><br>
+      <a href="./demo-brief/index.html?deal=${deal.id}" class="drawer-open-btn">Run Demo Brief</a></div>`;
+    return;
+  }
+  const latest = preps[0];
+  const flow = latest.flow || latest.brief?.demoFlow || [];
+  panel.innerHTML = `
+    ${latest.products?.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Products</div>
+      <div class="drawer-text">${latest.products.map(escHtml).join(' · ')}</div>
+    </div>` : ''}
+    ${flow.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Demo Flow (${flow.length} scenes)</div>
+      <ul class="drawer-bullets">
+        ${flow.slice(0,4).map(s => `<li>${escHtml(typeof s==='string'?s:s.scene||s.title||s.step||'')}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <a href="./demo-brief/index.html?deal=${deal.id}" class="drawer-open-btn">
+      Open Demo Brief
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>`;
+}
+
+function renderDrawerValueMap(deal) {
+  const panel = document.getElementById('drawer-valuemap');
+  const vm = deal.value_map?.valueMap;
+  if (!vm) {
+    panel.innerHTML = `<div class="drawer-empty">No value map yet.<br><br>
+      <a href="./value-map/index.html?deal=${deal.id}" class="drawer-open-btn">Run Value Map</a></div>`;
+    return;
+  }
+  const initiatives = vm.initiatives || [];
+  panel.innerHTML = `
+    ${initiatives.length ? `<div class="drawer-section">
+      <div class="drawer-section-label">Business Initiatives (${initiatives.length})</div>
+      <ul class="drawer-bullets">
+        ${initiatives.slice(0,4).map(i => `<li>${escHtml(i.initiative||i.title||'')}</li>`).join('')}
+      </ul>
+    </div>` : ''}
+    <a href="./value-map/index.html?deal=${deal.id}" class="drawer-open-btn">
+      Open Value Map
+      <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>`;
+}
+
+// ── ACTIONS ──────────────────────────────────────────────────────────────────
+function openDrawer(id) {
+  const deal = dealStore.get(id);
+  if (!deal) return;
+  activeDrawerDealId = id;
+  renderDrawerContent(deal);
+  document.getElementById('dealDrawerOverlay').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('dealDrawerOverlay').classList.remove('open');
+}
+
+function handleDrawerOverlayClick(e) {
+  if (e.target === document.getElementById('dealDrawerOverlay')) closeDrawer();
+}
+
+function switchDrawerTab(tab) {
+  document.querySelectorAll('.drawer-tab').forEach(t => t.classList.toggle('active', t.dataset.tab === tab));
+  document.querySelectorAll('.drawer-panel').forEach(p => p.classList.toggle('active', p.id === 'drawer-' + tab));
+}
+
+function deleteDeal(id) {
+  const deal = dealStore.get(id);
+  if (!deal) return;
+  if (!confirm(`Delete deal for ${deal.context.account_name}? This cannot be undone.`)) return;
+  dealStore.delete(id);
+  renderDeals();
+}
+
+function editStage(id) {
+  const deal  = dealStore.get(id);
+  if (!deal) return;
+  const stage = prompt(
+    `Change stage for ${deal.context.account_name}:\n\ndiscovery · demo · proposal · negotiation · closed_won · closed_lost`,
+    deal.context.stage
+  );
+  if (!stage) return;
+  const valid = dealStore.STAGES.map(s => s.id);
+  if (!valid.includes(stage.trim())) { alert('Invalid stage. Use one of: ' + valid.join(', ')); return; }
+  dealStore.patch(id, 'context.stage', stage.trim());
+  renderDeals();
+}
+
+// ── NEW DEAL MODAL ────────────────────────────────────────────────────────────
+function openNewDealModal() {
+  document.getElementById('newDealModal').classList.add('open');
+  setTimeout(() => document.getElementById('nd-company').focus(), 50);
+}
+
+function closeNewDealModal() {
+  document.getElementById('newDealModal').classList.remove('open');
+  document.getElementById('nd-company').value = '';
+  document.getElementById('nd-value').value = '';
+}
+
+function handleModalOverlayClick(e) {
+  if (e.target === document.getElementById('newDealModal')) closeNewDealModal();
+}
+
+function createDealAndGo() {
+  const company = document.getElementById('nd-company').value.trim();
+  if (!company) { document.getElementById('nd-company').focus(); return; }
+  const stage   = document.getElementById('nd-stage').value;
+  const rawVal  = document.getElementById('nd-value').value.replace(/[^0-9.]/g, '');
+  const value   = rawVal ? parseFloat(rawVal) : null;
+  const deal    = dealStore.create(company, { stage, deal_value: value });
+  window.location.href = `./account-brief-v2/index.html?deal=${deal.id}`;
+}
+
+// Enter key in modal
+document.getElementById('nd-company').addEventListener('keydown', e => {
+  if (e.key === 'Enter') createDealAndGo();
+});
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+renderDeals();
+
+</script>
+</body>
+</html>

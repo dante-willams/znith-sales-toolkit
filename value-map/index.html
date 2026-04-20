@@ -1296,6 +1296,7 @@
           <div class="tag" data-val="CPQ">CPQ</div>
           <div class="tag" data-val="DocGen / Composer">DocGen</div>
           <div class="tag" data-val="RLM">RLM</div>
+          <div class="tag" data-val="Price Optimization">Price Optimization</div>
           <div class="tag" data-val="AI / AiMe">AI</div>
         </div>
       </div>
@@ -1320,6 +1321,12 @@
 
       <!-- File chip list -->
       <div id="fileChipList"></div>
+
+      <!-- Deal context indicator — shown below local files -->
+      <div id="dealDocBanner" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.18);border-radius:3px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(99,179,237,0.7);margin-bottom:6px;">Also included in analysis</div>
+        <div id="dealDocList" style="display:flex;flex-direction:column;gap:4px;"></div>
+      </div>
 
       <!-- Divider -->
       <div class="notes-divider"><span>or type / paste below</span></div>
@@ -1458,12 +1465,14 @@
   ✓ Copied to clipboard
 </div>
 
+<script src="../shared/dealStore.js"></script>
+<script src="../shared/deal-nav.js"></script>
 <script>
   // ── STATE ──
   let state = {
     company: '', industry: '', stakeholders: [], notes: '', tools: '',
-    stage: '', products: [],
-    research: '', sources: [], valueMap: null
+    stage: '', products: [], dealDocs: [], docContext: null,
+    research: '', sources: [], valueMap: null, accountBriefResearch: null
   };
   let previousPhase = 1;
 
@@ -1636,7 +1645,13 @@
 
     try {
       const prompt = buildSynthesisPrompt();
-      const synthesisSystem = `You are a senior Conga solutions consultant with deep expertise in CLM, CPQ, DocGen, RLM, and AI. You build Value Maps for enterprise deals. You output ONLY the structured tagged format requested — no commentary, no preamble, no explanation outside the tags. Every field must be specific, credible, and directly tied to the account's strategic context. Use real metrics where available; use plausible industry benchmarks when not. Your output will be rendered directly into a client-facing deliverable.`;
+      const synthesisSystem = `You are a senior Conga solutions consultant with deep expertise in CLM, CPQ, DocGen, RLM, and AI. You build Value Maps for enterprise deals. You output ONLY the structured tagged format requested — no commentary, no preamble, no explanation outside the tags. Every field must be specific, credible, and directly tied to the account's strategic context. Use real metrics where available; use plausible industry benchmarks when not. Your output will be rendered directly into a client-facing deliverable.
+
+SOURCE CONFIDENCE TAGGING — add inline after key claims in text fields (challenge, howCongaHelps, pain metrics, proof):
+- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
+- [REP_STATED] — came from rep notes or verbal input only
+- [INFERRED] — your synthesis or hypothesis; no direct source
+Tag substantive claims only. Skip generic statements. Do not tag chip fields (congaCapability, value, proof point labels).`;
       const response = await callClaude(prompt, false, synthesisSystem);
       state.valueMap = parseValueMap(response);
 
@@ -1659,6 +1674,7 @@
 COMPANY: ${state.company}
 REP'S DISCOVERY NOTES: ${state.notes || 'None provided'}
 CURRENT TOOLS: ${state.tools || 'Unknown'}
+${state.docContext ? '\nDEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary : state.dealDocs.length ? '\nDEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') : ''}${(() => { const ab = state.accountBriefResearch; if (!ab) return ''; let s = '\nACCOUNT BRIEF INTELLIGENCE:\n'; const co = ab.company_profile; if (co?.summary) s += `Company: ${co.summary}\n`; const pov = ab.exec_pov; if (pov?.pitch) s += `Conga POV: ${Array.isArray(pov.pitch)?pov.pitch.join(' '):pov.pitch}\n`; if (pov?.productPOV?.length) s += `Product Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`; if (pov?.valueLevers?.length) s += `Value Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`; const cs = ab.call_strategy; if (cs?.landmines?.length) s += `Watch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`; return s; })()}
 
 Using web search, find and synthesize:
 0. The company's industry and sub-sector (output this first as: INDUSTRY: [your answer])
@@ -1714,8 +1730,8 @@ FIELD GUIDANCE:
 
 COMPANY: ${state.company} | INDUSTRY: ${state.industry}
 STAKEHOLDERS: ${stakeholderList}
-NOTES: ${(state.notes || 'None').slice(0, 500)}
-TOOLS: ${state.tools || 'Unknown'}
+NOTES: ${(state.notes || 'None').slice(0, 2000)}
+${state.docContext ? 'DEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary + '\n' : state.dealDocs.length ? 'DEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') + '\n' : ''}${(() => { const ab = state.accountBriefResearch; if (!ab) return ''; let s = 'ACCOUNT BRIEF INTELLIGENCE:\n'; const co = ab.company_profile; if (co?.summary) s += `Company: ${co.summary}\n`; const pov = ab.exec_pov; if (pov?.pitch) s += `Conga POV: ${Array.isArray(pov.pitch)?pov.pitch.join(' '):pov.pitch}\n`; if (pov?.productPOV?.length) s += `Product Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`; if (pov?.valueLevers?.length) s += `Value Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`; const cs = ab.call_strategy; if (cs?.landmines?.length) s += `Watch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`; return s + '\n'; })()}TOOLS: ${state.tools || 'Unknown'}
 ${stageContext}
 ${productContext}
 RESEARCH: ${researchSnippet}
@@ -1899,6 +1915,13 @@ Include company websites, news articles, press releases, earnings calls, analyst
     return { initiatives, milestones, sources, raw };
   }
 
+  function renderWithBadges(html) {
+    return html
+      .replace(/\[VERIFIED\]/g, '<span class="src-badge src-verified">VERIFIED</span>')
+      .replace(/\[REP_STATED\]/g, '<span class="src-badge src-rep">REP STATED</span>')
+      .replace(/\[INFERRED\]/g, '<span class="src-badge src-inferred">INFERRED</span>');
+  }
+
   // ── RENDER VALUE MAP ──
   function renderValueMap() {
     const vm = state.valueMap;
@@ -1954,7 +1977,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         } else if (row.key === 'proof') {
           inner = `<span class="proof-chip">${escHtml(val)}</span>`;
         } else {
-          inner = `<span class="vm-cell-text ${isHighlight ? 'highlight-text' : ''}">${escHtml(val)}</span>`;
+          inner = `<span class="vm-cell-text ${isHighlight ? 'highlight-text' : ''}">${renderWithBadges(escHtml(val))}</span>`;
         }
 
         return `<div class="vm-cell ${isHighlight ? 'vm-cell-highlight' : ''}" style="border-left: 2px solid ${iColors[i]}18">${inner}</div>`;
@@ -2098,6 +2121,10 @@ Include company websites, news articles, press releases, earnings calls, analyst
         }
         .vm-cell-text { display: block; word-break: break-word; }
         .highlight-text { color: var(--white); font-weight: 500; }
+        .src-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;padding:1px 5px;border-radius:2px;vertical-align:middle;margin-left:4px;white-space:nowrap;}
+        .src-verified{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+        .src-rep{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.3);}
+        .src-inferred{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
         .vm-cell-highlight { background: transparent; }
 
         /* Chips */
@@ -2276,8 +2303,8 @@ Include company websites, news articles, press releases, earnings calls, analyst
               if (key==='congaCapability') inner = `<div class="prod-tags-wrap">${val.split(/[,/·\s]+/).map(p=>p.trim()).filter(Boolean).map(p=>`<span class="prod-tag">${escHtml(p)}</span>`).join('')}</div>`;
               else if (key==='value') inner = `<span class="value-chip">${escHtml(val)}</span>`;
               else if (key==='proof') inner = `<span class="proof-chip">${escHtml(val)}</span>`;
-              else if (key==='howCongaHelps') inner = `<span class="vm-cell-text highlight-text">${escHtml(val)}</span>`;
-              else inner = `<span class="vm-cell-text">${escHtml(val)}</span>`;
+              else if (key==='howCongaHelps') inner = `<span class="vm-cell-text highlight-text">${renderWithBadges(escHtml(val))}</span>`;
+              else inner = `<span class="vm-cell-text">${renderWithBadges(escHtml(val))}</span>`;
               return `<div class="vm-cell vm-cell-highlight" style="border-left:2px solid ${iColors[i]}18">${inner}</div>`;
             }).join('')}
           </div>`;
@@ -2379,7 +2406,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
 
     if (ext === 'txt') {
       const reader = new FileReader();
-      reader.onload = e => { appendToNotes(e.target.result, file.name); markChipDone(id); };
+      reader.onload = e => { storeFileText(id, e.target.result); appendToNotes(e.target.result, file.name); markChipDone(id); };
       reader.readAsText(file);
     } else if (ext === 'pdf') {
       readPdfFile(file, id);
@@ -2387,6 +2414,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
       const reader = new FileReader();
       reader.onload = e => {
         const text = extractTextFromDocx(e.target.result);
+        storeFileText(id, text);
         appendToNotes(text || '[File attached — content could not be fully extracted. Add context below.]', file.name);
         markChipDone(id);
       };
@@ -2406,6 +2434,11 @@ Include company websites, news articles, press releases, earnings calls, analyst
       <button class="file-chip-remove" onclick="removeFile('${id}', event)" title="Remove">✕</button>
     `;
     fileChipList.appendChild(chip);
+  }
+
+  function storeFileText(id, text) {
+    const f = uploadedFiles.find(f => f.id === id);
+    if (f) f.extractedText = text || '';
   }
 
   function markChipDone(id) {
@@ -2457,6 +2490,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         const content = await page.getTextContent();
         fullText += content.items.map(s => s.str).join(' ') + '\n';
       }
+      storeFileText(id, fullText.trim());
       appendToNotes(fullText.trim() || '[PDF attached — no extractable text found. Add context below.]', file.name);
     } catch (err) {
       appendToNotes('[PDF attached — could not extract text automatically. Paste key content below.]', file.name);
@@ -2528,7 +2562,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
   }
 
   function resetApp() {
-    state = { company:'', industry:'', stakeholders:[], notes:'', tools:'', research:'', sources:[], valueMap:null };
+    state = { company:'', industry:'', stakeholders:[], notes:'', tools:'', research:'', sources:[], valueMap:null, dealDocs:[], docContext:null, accountBriefResearch:null };
     document.getElementById('companyName').value = '';
     document.getElementById('discoveryNotes').value = '';
     document.getElementById('currentTools').value = '';
@@ -2584,6 +2618,8 @@ Include company websites, news articles, press releases, earnings calls, analyst
     if (idx >= 0) maps[idx] = entry; else maps.unshift(entry);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(maps));
     updateMapsCount();
+    syncToDeal();
+    const _vd = dealStore.getFromUrl(); if (_vd) dealNav.showNext('Win Room', dealStore.urlFor('../win-room/', _vd.id));
     toast('✓ Saved to All Maps');
   }
 
@@ -2602,6 +2638,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
     if (idx >= 0) maps[idx] = entry; else maps.unshift(entry);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(maps));
     updateMapsCount();
+    syncToDeal();
   }
 
   function showSavedMaps() {
@@ -3216,13 +3253,110 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
 
 
   // Show chat tab on all phases (intake + output)
-  document.getElementById('chatTab').style.display = 'flex';
+  const _chatTabEl = document.getElementById('chatTab');
+  if (_chatTabEl) _chatTabEl.style.display = 'flex';
   updateMapsCount();
   // Show edit tab button when value map exists
   function maybeShowEditTab() {
     const btn = document.getElementById('pill-edit');
     if (btn) btn.style.display = state.valueMap ? 'flex' : 'none';
   }
+
+  function syncToDeal() {
+    if (!state.valueMap) return;
+    const deal = dealStore.getFromUrl();
+    if (!deal) return;
+    dealStore.patch(deal.id, 'value_map', {
+      company: state.company,
+      industry: state.industry,
+      stage: state.stage,
+      products: state.products,
+      valueMap: state.valueMap,
+      generated_at: new Date().toISOString()
+    });
+    // Sync uploaded documents
+    if (uploadedFiles.length) {
+      const freshDeal = dealStore.get(deal.id);
+      const existing  = freshDeal?.documents || [];
+      const newDocs   = uploadedFiles.filter(f => f.extractedText).map(f => ({
+        id:             f.id,
+        name:           f.name,
+        type:           f.name.split('.').pop().toLowerCase(),
+        uploaded_at:    new Date().toISOString(),
+        extracted_text: f.extractedText
+      }));
+      const merged = [...existing];
+      newDocs.forEach(nd => { if (!merged.find(d => d.name === nd.name)) merged.push(nd); });
+      dealStore.patch(deal.id, 'documents', merged);
+    }
+  }
+
+  // Hydrate from deal context if ?deal=uuid present
+  (() => {
+    const deal = dealStore.getFromUrl();
+    if (!deal) return;
+    const nameEl = document.getElementById('companyName');
+    if (nameEl && !nameEl.value) nameEl.value = deal.context.account_name || '';
+    // Select matching stage pill
+    const stageMap = { discovery: 'Discovery', demo: 'Qualification', proposal: 'Validation', negotiation: 'Negotiation', closed_won: 'Closed Won' };
+    const mappedStage = stageMap[deal.context.stage] || '';
+    if (mappedStage) {
+      document.querySelectorAll('.stage-pill').forEach(p => {
+        p.classList.toggle('selected', p.dataset.val === mappedStage);
+      });
+    }
+    // Select matching product tags
+    if (deal.context.products?.length) {
+      document.querySelectorAll('#productTags .tag').forEach(t => {
+        const match = deal.context.products.some(p => t.dataset.val.toLowerCase().includes(p.toLowerCase()) || p.toLowerCase().includes(t.dataset.val.toLowerCase()));
+        if (match) t.classList.add('selected');
+      });
+    }
+    // Build "Also included in analysis" banner
+    const bannerRows = [];
+    if (deal.research) {
+      state.accountBriefResearch = deal.research;
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#A78BFA;font-size:10px;">✦</span>
+        <span>Account Brief — exec POV, company profile, call strategy</span>
+      </div>`);
+    }
+    // Prefer condensed document_context; fall back to raw documents
+    if (deal.document_context?.summary) {
+      state.docContext = deal.document_context;
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#34D399;font-size:10px;">✓</span>
+        <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
+        <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
+      </div>`);
+    } else {
+      const docs = (deal.documents || []).filter(d => d.extracted_text);
+      if (docs.length) {
+        state.dealDocs = docs;
+        docs.forEach(d => bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+          <span style="color:#34D399;font-size:10px;">✓</span>
+          <span>${d.name}</span>
+          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
+        </div>`));
+      }
+    }
+    if (bannerRows.length) {
+      document.getElementById('dealDocBanner').style.display = 'block';
+      document.getElementById('dealDocList').innerHTML = bannerRows.join('');
+    }
+
+    // If value map already exists, show results directly
+    if (deal.value_map?.valueMap) {
+      state.company  = deal.value_map.company  || deal.context.account_name || '';
+      state.industry = deal.value_map.industry || '';
+      state.stage    = deal.value_map.stage    || '';
+      state.products = deal.value_map.products || [];
+      state.valueMap = deal.value_map.valueMap;
+      setPhase(4);
+      renderValueMap();
+      maybeShowEditTab();
+    }
+  })();
 </script>
 <script>/* JSZip inlined */
 /*!

@@ -11,6 +11,8 @@
   <link rel="manifest" href="site.webmanifest">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+  <script src="../shared/dealStore.js"></script>
+  <script src="../shared/deal-nav.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -127,6 +129,10 @@
     .conf-low{background:rgba(248,90,90,.12);color:var(--danger);border-color:rgba(248,90,90,.3)}
     .conf-tooltip{position:absolute;right:0;top:calc(100% + 8px);background:var(--s3);border:1px solid var(--border);clip-path:var(--clip-sm);padding:10px 14px;font-size:12px;color:var(--text);width:260px;z-index:50;display:none;line-height:1.5;box-shadow:0 8px 24px rgba(0,0,0,.4)}
     .conf-badge:hover .conf-tooltip{display:block}
+    .src-badge{display:inline-block;padding:1px 5px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;vertical-align:middle;margin:0 3px;line-height:1.6;white-space:nowrap;}
+    .src-verified{background:rgba(22,163,74,0.15);color:#16A34A;border:1px solid rgba(22,163,74,0.25);}
+    .src-rep{background:rgba(249,115,22,0.15);color:#F97316;border:1px solid rgba(249,115,22,0.25);}
+    .src-inferred{background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid rgba(239,68,68,0.25);}
 
     .m-body{padding:18px 20px;display:flex;align-items:flex-start;gap:16px}
     .m-content{flex:1;font-size:13px;color:var(--text);line-height:1.7;white-space:pre-wrap;font-family:inherit}
@@ -260,6 +266,10 @@
         <div class="dz-sub">PDF, Word, TXT, images — call transcripts, RFPs, discovery notes, org charts</div>
       </div>
       <div class="flist" id="fileList"></div>
+      <div id="dealDocBanner" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.18);border-radius:3px;">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(99,179,237,0.7);margin-bottom:6px;">Also included in analysis</div>
+        <div id="dealDocList" style="display:flex;flex-direction:column;gap:4px;"></div>
+      </div>
     </div>
 
     <!-- Paste Transcript -->
@@ -521,15 +531,17 @@ async function startGeneration(){
   if(!acct){ showErr('Please enter an account name.'); return; }
 
 
-  const hasInput = files.length || document.getElementById('transcriptText').value.trim() || document.getElementById('manualNotes').value.trim();
+  const industry = document.getElementById('industryCtx').value.trim();
+  const transcriptPaste = document.getElementById('transcriptText').value.trim();
+  const manualNotes = document.getElementById('manualNotes').value.trim();
+  const dealCtxNow = dealStore.getFromUrl();
+  const dealDocs = (dealCtxNow?.documents || []).filter(d => d.extracted_text);
+
+  const hasInput = files.length || dealDocs.length || dealCtxNow?.document_context || dealCtxNow?.research || transcriptPaste || manualNotes;
   if(!hasInput){ showErr('Please provide at least one input: upload a file, paste a transcript, or add AE notes.'); return; }
 
   showView('gen');
   setGenStep(1);
-
-  const industry = document.getElementById('industryCtx').value.trim();
-  const transcriptPaste = document.getElementById('transcriptText').value.trim();
-  const manualNotes = document.getElementById('manualNotes').value.trim();
 
   try {
     // ── PASS 1: RESEARCH ──
@@ -539,7 +551,7 @@ async function startGeneration(){
     // ── PASS 2: TRANSCRIPT ANALYSIS ──
     setGenStep(2);
     updateGen('Analyzing documents & transcript...', 'Extracting MEDDPICC signals from all inputs');
-    const analysisResult = await callAnalysis(acct, researchResult, transcriptPaste, manualNotes);
+    const analysisResult = await callAnalysis(acct, researchResult, transcriptPaste, manualNotes, dealDocs);
 
     // ── PASS 3: SYNTHESIS ──
     setGenStep(3);
@@ -555,6 +567,8 @@ async function startGeneration(){
       meddpicc
     };
     saveAnalysis(entry);
+    syncToDeal(entry);
+    const _qd = dealStore.getFromUrl(); if (_qd) dealNav.showNext('Demo Brief', dealStore.urlFor('../demo-brief/', _qd.id));
     renderResults(entry);
     showView('results');
     openChatIfReady(entry);
@@ -577,10 +591,10 @@ function updateGen(title, sub){
   document.getElementById('genSub').textContent = sub;
 }
 // ─── API CALLS ────────────────────────────────────────────────────────────────
-async function callAPI(model, systemPrompt, userContent, useWebSearch=false){
+async function callAPI(model, systemPrompt, userContent, useWebSearch=false, maxTokens=3000){
   const body = {
     model,
-    max_tokens: 3000,
+    max_tokens: maxTokens,
     system: systemPrompt,
     messages: [{ role:'user', content: userContent }]
   };
@@ -613,19 +627,47 @@ Keep each section brief (3–5 bullets). Focus on what's relevant to a contract 
   return await callAPI('claude-haiku-4-5-20251001', sys, prompt, true);
 }
 
-async function callAnalysis(acct, research, transcript, notes){
+async function callAnalysis(acct, research, transcript, notes, dealDocs=[]){
   // Build content array — handle images separately
   const textParts = [];
   const imageParts = [];
+
+  // Condensed deal intelligence summary (preferred over raw docs)
+  const dealCtxForDocs = dealStore.getFromUrl();
+  const docCtx = dealCtxForDocs?.document_context;
+  if (docCtx?.summary) {
+    textParts.push(`--- DEAL INTELLIGENCE SUMMARY (${docCtx.doc_count} docs: ${(docCtx.doc_names||[]).join(', ')}) ---\n${docCtx.summary}`);
+  } else {
+    // Fallback: raw extracted text, no artificial limit
+    dealDocs.forEach(d => {
+      textParts.push(`--- DEAL DOCUMENT: ${d.name} ---\n${d.extracted_text}`);
+    });
+  }
+
+  // Account Brief research context (exec POV, company profile, call strategy)
+  const abRes = dealCtxForDocs?.research;
+  if (abRes) {
+    let abCtx = '--- ACCOUNT BRIEF INTELLIGENCE ---\n';
+    const co = abRes.company_profile;
+    if (co?.summary) abCtx += `Company: ${co.summary}\n`;
+    const pov = abRes.exec_pov;
+    if (pov?.pitch) abCtx += `\nConga POV: ${Array.isArray(pov.pitch) ? pov.pitch.join(' ') : pov.pitch}\n`;
+    if (pov?.productPOV?.length) abCtx += `\nProduct Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`;
+    if (pov?.valueLevers?.length) abCtx += `\nValue Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`;
+    const cs = abRes.call_strategy;
+    if (cs?.openingQuestion) abCtx += `\nDiscovery Hook: ${cs.openingQuestion}\n`;
+    if (cs?.landmines?.length) abCtx += `\nWatch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`;
+    textParts.unshift(abCtx);
+  }
 
   files.forEach(f=>{
     if(f.isImage && f.text){
       imageParts.push({ type:'image', source:{ type:'base64', media_type: getMimeType(f.file.name), data: f.text }});
     } else if(f.text){
-      textParts.push(`--- FILE: ${f.file.name} ---\n${f.text.slice(0,8000)}`);
+      textParts.push(`--- FILE: ${f.file.name} ---\n${f.text}`);
     }
   });
-  if(transcript) textParts.push(`--- PASTED TRANSCRIPT ---\n${transcript.slice(0,6000)}`);
+  if(transcript) textParts.push(`--- PASTED TRANSCRIPT ---\n${transcript}`);
   if(notes) textParts.push(`--- AE MANUAL NOTES ---\n${notes}`);
 
   const sys = `You are an expert B2B sales analyst trained in MEDDPICC qualification. Extract evidence from all provided inputs with precision. For each finding, mark it as [CONFIRMED] if directly stated or [INFERRED] if derived from context. Quote directly when relevant. Name individuals and their apparent role/authority. Rate signal strength and flag gaps explicitly.`;
@@ -662,15 +704,19 @@ ${analysis}
 
 Output this exact JSON schema:
 {
-  "metrics": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list" },
-  "economic_buyer": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "name/title/authority or best hypothesis" },
-  "decision_criteria": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list" },
-  "decision_process": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "step-by-step with owners and timeline" },
-  "identify_pain": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list; each item: [pain] — [business impact]" },
-  "champion": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "name/title/advocacy evidence or 'Not yet identified'" },
-  "competition": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list of vendors, alternatives, or status quo" },
-  "paper_process": { "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "procurement and legal steps, or 'Not discussed — typical process: [hypothesis]'" }
+  "metrics": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list" },
+  "economic_buyer": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "name/title/authority or best hypothesis" },
+  "decision_criteria": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list" },
+  "decision_process": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "step-by-step with owners and timeline" },
+  "identify_pain": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list; each item: [pain] — [business impact]" },
+  "champion": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "name/title/advocacy evidence or 'Not yet identified'" },
+  "competition": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "bullet list of vendors, alternatives, or status quo" },
+  "paper_process": { "score": 0-100, "confidence": "high|medium|low", "confidence_rationale": "one sentence", "content": "procurement and legal steps, or 'Not discussed — typical process: [hypothesis]'" }
 }
+
+SCORE RULES (0-100 integer):
+- high confidence = 70-100, medium = 35-69, low = 0-34
+- Score reflects strength of evidence, not just presence
 
 CONFIDENCE SCORING — apply these field-specific criteria:
 - metrics: high=specific quantified targets confirmed (%, $, days); medium=general improvement goals stated; low=no metrics mentioned
@@ -687,16 +733,25 @@ CONTENT RULES:
 - Pain field format: "• [pain statement] — [business impact]"
 - All bullets ≤20 words, quantified where possible (%, $, days, hours)
 - confidence_rationale explains WHY the confidence level was assigned in one sentence
-- Do NOT include confidence info inside the content field — content is for Salesforce paste only
-- If a field is unknown, state clearly and provide a next-best hypothesis`;
+- If a field is unknown, state clearly and provide a next-best hypothesis
 
-  const raw = await callAPI('claude-haiku-4-5-20251001', sys, prompt);
+SOURCE CONFIDENCE TAGGING (add inline after each bullet's key claim):
+- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
+- [REP_STATED] — came from rep notes or verbal input only, not in a document
+- [INFERRED] — your synthesis or hypothesis; no direct source
+Example: "• Contract cycle averaging 45 days [VERIFIED] — $2M revenue impact annually [INFERRED]"
+Tag every bullet. These tags are shown as badges in the UI but stripped before Salesforce copy.`;
+
+  const raw = await callAPI('claude-haiku-4-5-20251001', sys, prompt, false, 8000);
   const cleaned = raw.replace(/```json|```/g,'').trim();
 
-  // Normalize literal newlines/tabs inside JSON string values (model sometimes outputs raw line breaks)
+  // Normalize all control characters inside JSON string values (model sometimes outputs raw line breaks, form feeds, etc.)
   function sanitizeJson(str) {
     return str.replace(/"(?:[^"\\]|\\.)*"/g, m =>
-      m.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t')
+      m.replace(/[\x00-\x1f]/g, c => {
+        const map = {'\n':'\\n','\r':'\\r','\t':'\\t','\f':'\\f','\b':'\\b'};
+        return map[c] || '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0');
+      })
     );
   }
 
@@ -746,7 +801,7 @@ function renderResults(entry){
         </div>
       </div>
       <div class="m-body">
-        <div class="m-content" id="content-${f.key}">${escapeHtml(content)}</div>
+        <div class="m-content" id="content-${f.key}" data-raw="${escapeHtml(content)}">${renderWithBadges(escapeHtml(content))}</div>
         <button class="copy-btn" onclick="copyField('${f.key}', this)">Copy</button>
       </div>
     </div>`;
@@ -757,9 +812,18 @@ function escapeHtml(t){
   return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+function renderWithBadges(text) {
+  if (!text) return '';
+  return text
+    .replace(/\[VERIFIED\]/g,   '<span class="src-badge src-verified">✓ Verified</span>')
+    .replace(/\[REP_STATED\]/g, '<span class="src-badge src-rep">Rep-stated</span>')
+    .replace(/\[INFERRED\]/g,   '<span class="src-badge src-inferred">Inferred</span>');
+}
+
 function copyField(key, btn){
   const el = document.getElementById('content-'+key);
-  const text = el.textContent;
+  // Use raw text stored before badge rendering so Salesforce paste stays clean
+  const text = el.dataset.raw || el.textContent;
   navigator.clipboard.writeText(text).then(()=>{
     btn.textContent = '✓ Copied';
     btn.classList.add('copied');
@@ -992,6 +1056,115 @@ TONE: Concise, confident, sales-oriented. Bullets where helpful. Under 300 words
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 document.getElementById('chatTab').style.display = 'flex';
+
+// ── DEAL STORE INTEGRATION ────────────────────────────────────────────────────
+
+// Map Qualify IQ key → deal entity key (identify_pain → implicate_pain)
+const DIM_MAP = {
+  metrics:          'metrics',
+  economic_buyer:   'economic_buyer',
+  decision_criteria:'decision_criteria',
+  decision_process: 'decision_process',
+  identify_pain:    'implicate_pain',
+  champion:         'champion',
+  competition:      'competition',
+};
+
+function syncToDeal(entry) {
+  const deal = dealStore.getFromUrl();
+  if (!deal) return;
+
+  const meddpicc = {};
+  let scoreSum = 0, scoreCount = 0;
+  const priorityGaps = [];
+
+  Object.entries(DIM_MAP).forEach(([qiqKey, dealKey]) => {
+    const d = entry.meddpicc[qiqKey] || {};
+    const score = typeof d.score === 'number' ? d.score : (d.confidence === 'high' ? 75 : d.confidence === 'medium' ? 50 : 20);
+    meddpicc[dealKey] = {
+      score,
+      evidence: d.confidence_rationale || '',
+      gaps:     score < 50 ? [d.content || 'Insufficient evidence'] : []
+    };
+    scoreSum += score;
+    scoreCount++;
+    if (score < 50) {
+      priorityGaps.push({ dimension: dealKey, score, evidence: d.confidence_rationale || '' });
+    }
+  });
+
+  const overallScore = scoreCount ? Math.round(scoreSum / scoreCount) : 0;
+  priorityGaps.sort((a, b) => a.score - b.score);
+
+  dealStore.patch(deal.id, 'qualification', {
+    generated_at:  new Date().toISOString(),
+    meddpicc,
+    overall_score: overallScore,
+    priority_gaps: priorityGaps
+  });
+
+  // Sync uploaded documents to deal
+  if (typeof files !== 'undefined' && files.length) {
+    const freshDeal = dealStore.get(deal.id);
+    const existing  = freshDeal?.documents || [];
+    const newDocs   = files.filter(f => f.text && !f.isImage).map(f => ({
+      id:             f.file.name + '-' + f.file.size,
+      name:           f.file.name,
+      type:           f.type || 'other',
+      uploaded_at:    new Date().toISOString(),
+      extracted_text: f.text || ''
+    }));
+    const merged = [...existing];
+    newDocs.forEach(nd => { if (!merged.find(d => d.name === nd.name)) merged.push(nd); });
+    dealStore.patch(deal.id, 'documents', merged);
+  }
+}
+
+// Hydrate from deal context on load
+(function hydrateFromUrl() {
+  const deal = dealStore.getFromUrl();
+  if (!deal) return;
+
+  const nameEl = document.getElementById('accountName');
+  if (nameEl && deal.context.account_name) nameEl.value = deal.context.account_name;
+
+  // Build "Also included in analysis" banner entries
+  const bannerRows = [];
+  if (deal.research) {
+    bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+      <span style="color:#A78BFA;font-size:10px;">✦</span>
+      <span>Account Brief — exec POV, company profile, call strategy</span>
+    </div>`);
+  }
+  if (deal.document_context?.summary) {
+    bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+      <span style="color:#34D399;font-size:10px;">✓</span>
+      <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
+      <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
+    </div>`);
+  } else {
+    (deal.documents || []).filter(d => d.extracted_text).forEach(d => {
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#34D399;font-size:10px;">✓</span>
+        <span>${d.name}</span>
+        <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
+      </div>`);
+    });
+  }
+  if (bannerRows.length) {
+    document.getElementById('dealDocBanner').style.display = 'block';
+    document.getElementById('dealDocList').innerHTML = bannerRows.join('');
+  }
+
+  // If qualification already exists, show results directly
+  if (deal.qualification?.meddpicc) {
+    const existing = getAllAnalyses().find(a => a.accountName === deal.context.account_name);
+    if (existing) {
+      renderResults(existing);
+      showView('results');
+    }
+  }
+})();
 </script>
 <footer class="znith-footer">
   <div class="znith-wordmark">

@@ -14,6 +14,8 @@
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="../shared/dealStore.js"></script>
+  <script src="../shared/deal-nav.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
@@ -130,6 +132,10 @@
     .blow{background:rgba(62,207,142,.12);color:#3ecf8e;border:1px solid rgba(62,207,142,.3)}
     .bprim{background:rgba(249,115,22,.12);color:#a78bfa;border:1px solid rgba(249,115,22,.3)}
     .bunk{background:var(--s3);color:var(--tm);border:1px solid var(--border)}
+    .src-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;padding:1px 5px;border-radius:2px;vertical-align:middle;margin-left:4px;white-space:nowrap;}
+    .src-verified{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+    .src-rep{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.3);}
+    .src-inferred{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
     /* OVERVIEW */
     .ogrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
     .oi{background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-sm);padding:12px 14px}
@@ -343,6 +349,11 @@
       <div class="ds">PDF, DOCX, PPTX, XLSX, CSV, TXT, MD, HTML, EML, PNG, JPG + more · No files? The AI will work from your context above</div>
     </div>
     <div class="flist" id="flist"></div>
+    <!-- Deal context indicator — shown when Account Brief docs are available -->
+    <div id="dealDocBanner" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.18);border-radius:3px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(99,179,237,0.7);margin-bottom:6px;">Also included in analysis</div>
+      <div id="dealDocList" style="display:flex;flex-direction:column;gap:4px;"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -519,7 +530,8 @@ function getApiHeaders(){
 const S = {
   company:'', products:[], personas:[],
   timeline:'', current:'', context:'', competitors:'', sf:'', notes:'',
-  files:[], brief:null, risks:[], flow:[], chatHistory:[]
+  files:[], brief:null, risks:[], flow:[], chatHistory:[],
+  activeDealId: null, dealDocContext: null, dealResearch: null
 };
 
 // =========================================================
@@ -581,6 +593,29 @@ function saveCurrentBrief() {
     personas: S.personas
   });
   saveBriefs(briefs);
+}
+
+function syncToDeal() {
+  if (!S.brief) return;
+  const deal = dealStore.getFromUrl();
+  if (!deal) return;
+  const prep = {
+    id: Date.now().toString(),
+    created_at: new Date().toISOString(),
+    products: S.products,
+    personas: S.personas,
+    brief: S.brief,
+    flow: S.flow,
+    risks: S.risks
+  };
+  if (!deal.meeting_preps) deal.meeting_preps = [];
+  // Replace existing prep for same product set, or append
+  const idx = deal.meeting_preps.findIndex(p =>
+    JSON.stringify(p.products) === JSON.stringify(S.products)
+  );
+  if (idx >= 0) deal.meeting_preps[idx] = prep;
+  else deal.meeting_preps.unshift(prep);
+  dealStore.save(deal);
 }
 
 function loadBriefById(id) {
@@ -951,6 +986,8 @@ async function startGenerate(){
     for(let i=1;i<=6;i++) gStep(i,'done');
     renderReview();
     saveCurrentBrief();
+    syncToDeal();
+    const _dd = dealStore.getFromUrl(); if (_dd) dealNav.showNext('Win Room', dealStore.urlFor('../win-room/', _dd.id));
     openChatWhenReady();
     S.chatHistory = [];
     goTo('review');
@@ -1058,7 +1095,8 @@ KEY PERSONAS:
 ${personas}
 
 SOURCE MATERIALS:
-${text ? text.substring(0,14000) : 'No files uploaded — work from intake context only.'}
+${text || 'No files uploaded — work from intake context only.'}
+${S.dealDocContext?.summary ? `\nDEAL INTELLIGENCE SUMMARY (${S.dealDocContext.doc_count} docs condensed from Account Brief):\n${S.dealDocContext.summary}` : S.dealDocContext?.docs?.length ? `\nDEAL DOCUMENTS:\n${S.dealDocContext.docs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n')}` : ''}${(() => { const ab = S.dealResearch; if (!ab) return ''; let s = '\nACCOUNT BRIEF INTELLIGENCE:\n'; const co = ab.company_profile; if (co?.summary) s += `Company: ${co.summary}\n`; const pov = ab.exec_pov; if (pov?.pitch) s += `Conga POV: ${Array.isArray(pov.pitch)?pov.pitch.join(' '):pov.pitch}\n`; if (pov?.productPOV?.length) s += `Product Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`; if (pov?.valueLevers?.length) s += `Value Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`; const cs = ab.call_strategy; if (cs?.openingQuestion) s += `Discovery Hook: ${cs.openingQuestion}\n`; if (cs?.landmines?.length) s += `Watch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`; return s; })()}
 
 INSTRUCTIONS:
 1. Extract every stated requirement, broken workflow, and pain point from the source materials. Quote the customer's own language where possible.
@@ -1094,6 +1132,12 @@ KEY DIFFERENTIATORS:
 - DealHub: lighter weight CPQ — struggles with complex promotion logic, approval matrices
 
 TONE: McKinsey slide deck narrated by Simon Sinek. Confident, business-first, AE-readable. Every bullet ≤20 words. Quantify wherever possible.
+
+SOURCE CONFIDENCE TAGGING — add inline after key claims in text fields (pain, mechanism, differentiator, setup, script, close):
+- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
+- [REP_STATED] — came from rep notes or verbal input only
+- [INFERRED] — your synthesis; no direct source
+Tag substantive claims only. Skip generic statements.
 
 CRITICAL: Respond with ONLY valid JSON. No markdown backticks, no preamble, no explanation. Start your response with { and end with }.
 
@@ -1215,6 +1259,13 @@ Return ONLY the JSON object.`;
 }
 
 // =========================================================
+function renderWithBadges(html) {
+  return html
+    .replace(/\[VERIFIED\]/g, '<span class="src-badge src-verified">VERIFIED</span>')
+    .replace(/\[REP_STATED\]/g, '<span class="src-badge src-rep">REP STATED</span>')
+    .replace(/\[INFERRED\]/g, '<span class="src-badge src-inferred">INFERRED</span>');
+}
+
 // RENDER REVIEW
 // =========================================================
 function renderReview(){
@@ -1266,9 +1317,9 @@ function renderReview(){
         <span class="badge ${pmap[p.priority]||'bunk'}">${p.priority||''}</span>
       </td>
       <td style="font-size:12px;color:var(--plight);font-weight:600">${esc(p.owner||'—')}</td>
-      <td style="font-size:12px;color:var(--tm)">${esc(p.whatsbroken)}</td>
-      <td style="font-size:12px;color:var(--warn)">${esc(p.impact||'—')}</td>
-      <td style="font-size:12px;color:var(--ok)">${esc(p.congaFix||p.demoImperative||'—')}</td>
+      <td style="font-size:12px;color:var(--tm)">${renderWithBadges(esc(p.whatsbroken))}</td>
+      <td style="font-size:12px;color:var(--warn)">${renderWithBadges(esc(p.impact||'—'))}</td>
+      <td style="font-size:12px;color:var(--ok)">${renderWithBadges(esc(p.congaFix||p.demoImperative||'—'))}</td>
       <td style="font-size:11px;color:var(--td)">${esc(p.source)}</td>
     </tr>`).join('');
 
@@ -1279,13 +1330,13 @@ function renderReview(){
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--plight);margin-bottom:4px">Capability</div>
         <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:8px">${esc(s.capability)}</div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--tm);margin-bottom:4px">Pain Addressed</div>
-        <div style="font-size:12px;color:var(--text)">${esc(s.pain)}</div>
+        <div style="font-size:12px;color:var(--text)">${renderWithBadges(esc(s.pain))}</div>
       </div>
       <div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--tm);margin-bottom:4px">How It Works</div>
-        <div style="font-size:12px;color:var(--text);margin-bottom:8px">${esc(s.mechanism)}</div>
+        <div style="font-size:12px;color:var(--text);margin-bottom:8px">${renderWithBadges(esc(s.mechanism))}</div>
         <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ok);margin-bottom:4px">Why Competitors Can't Match</div>
-        <div style="font-size:12px;color:var(--ok);font-style:italic">${esc(s.differentiator||'—')}</div>
+        <div style="font-size:12px;color:var(--ok);font-style:italic">${renderWithBadges(esc(s.differentiator||'—'))}</div>
       </div>
     </div>`).join('') || '<div style="color:var(--td);font-size:13px">No solution map generated — regenerate brief to include this section.</div>';
 
@@ -1295,7 +1346,7 @@ function renderReview(){
   if(arc.setup){
     arcHtml += `<div style="background:rgba(249,115,22,.06);border-left:3px solid var(--purple);padding:14px 18px;margin-bottom:16px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--plight);margin-bottom:6px">🎤 SETUP — Opening Script</div>
-      <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${esc(arc.setup)}</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${renderWithBadges(esc(arc.setup))}</div>
     </div>`;
   }
   if((arc.acts||[]).length>0){
@@ -1303,14 +1354,14 @@ function renderReview(){
       arcHtml += `<div style="background:var(--s2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:14px 16px;margin-bottom:10px">
         <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px">ACT ${i+1}: ${esc(act.title)}</div>
         <div style="font-size:11px;color:var(--plight);margin-bottom:8px">${esc(act.theme)}</div>
-        <div style="font-size:12px;color:var(--tm);line-height:1.6">${esc(act.script)}</div>
+        <div style="font-size:12px;color:var(--tm);line-height:1.6">${renderWithBadges(esc(act.script))}</div>
       </div>`;
     });
   }
   if(arc.close){
     arcHtml += `<div style="background:rgba(62,207,142,.06);border-left:3px solid var(--ok);padding:14px 18px;margin-top:4px">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--ok);margin-bottom:6px">🏁 CLOSE — Closing Script</div>
-      <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${esc(arc.close)}</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6;font-style:italic">${renderWithBadges(esc(arc.close))}</div>
     </div>`;
   }
   document.getElementById('arc-body').innerHTML = arcHtml || '<div style="color:var(--td);font-size:13px">No demo arc generated — regenerate brief to include this section.</div>';
@@ -2419,6 +2470,7 @@ When updating: preserve every unchanged section exactly. Only modify what was ex
       S.flow   = [...(parsed.brief.demoFlow||[])];
       renderReview();
       saveCurrentBrief();
+      syncToDeal();
       const msgEl = addChatMsg('assistant', parsed.summary || '\u2713 Brief updated.');
       const pill = document.createElement('div');
       pill.className = 'chat-edit-pill';
@@ -2444,8 +2496,90 @@ When updating: preserve every unchanged section exactly. Only modify what was ex
 }
 
 document.addEventListener('DOMContentLoaded', ()=>{
-  // Auto-open sidebar with greeting
+  // Hydrate from deal context if ?deal=uuid present
+  (() => {
+    const deal = dealStore.getFromUrl();
+    if (!deal) return;
+    const nameEl = document.getElementById('iCompany');
+    if (nameEl && !nameEl.value) nameEl.value = deal.context.account_name || '';
+    // Pre-select products from deal
+    if (deal.context.products?.length) {
+      deal.context.products.forEach(prod => {
+        const btn = document.querySelector(`[onclick*="toggleProd"][onclick*="${prod}"]`);
+        if (btn && !btn.classList.contains('active')) btn.click();
+      });
+    }
+    // Pre-populate personas from stakeholders
+    if (deal.stakeholders?.length) {
+      deal.stakeholders.forEach(s => {
+        if (!s.name && !s.title) return;
+        addPersona();
+        const tb = document.getElementById('persona-body');
+        const row = tb.lastElementChild;
+        if (row) {
+          row.querySelector('.pname').value = s.name || '';
+          row.querySelector('.ptitle').value = s.title || '';
+        }
+      });
+    }
+    S.activeDealId = deal.id;
+
+    // Build "Also included in analysis" banner
+    const bannerRows = [];
+    if (deal.research) {
+      S.dealResearch = deal.research;
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#A78BFA;font-size:10px;">✦</span>
+        <span>Account Brief — exec POV, company profile, call strategy</span>
+      </div>`);
+    }
+    if (deal.document_context?.summary) {
+      S.dealDocContext = deal.document_context;
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#34D399;font-size:10px;">✓</span>
+        <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
+        <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
+      </div>`);
+    } else {
+      const docs = (deal.documents || []).filter(d => d.extracted_text);
+      if (docs.length) {
+        S.dealDocContext = { docs };
+        docs.forEach(d => bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+          <span style="color:#34D399;font-size:10px;">✓</span>
+          <span>${d.name}</span>
+          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
+        </div>`));
+      }
+    }
+    if (bannerRows.length) {
+      document.getElementById('dealDocBanner').style.display = 'block';
+      document.getElementById('dealDocList').innerHTML = bannerRows.join('');
+    }
+
+    // If a brief already exists for this deal, show it directly
+    let loadedExisting = false;
+    if (deal.meeting_preps?.length) {
+      const name = deal.context.account_name || '';
+      const existing = loadBriefs().find(b => b.company.toLowerCase() === name.toLowerCase());
+      if (existing) { loadBriefById(existing.id); loadedExisting = true; }
+    }
+    S._loadedExisting = loadedExisting;
+  })();
+
+  // Auto-open sidebar with greeting (skip if an existing brief was loaded)
   setTimeout(()=>{
+    if (S._loadedExisting) {
+      toggleChat();
+      addChatMsg('assistant',
+        'Brief loaded. I can help you refine any section:\n\n' +
+        '\u2022 Add or update competitors\n' +
+        '\u2022 Reframe scenes for specific personas\n' +
+        '\u2022 Adjust risks or open questions\n' +
+        '\u2022 Search the web for fresh intel\n\n' +
+        'What would you like to change?'
+      );
+      return;
+    }
     toggleChat();
     addChatMsg('assistant',
       'Hi! I\'m your AI brief assistant. I can help you:\n\n' +

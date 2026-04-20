@@ -302,6 +302,14 @@ input[type=text]:focus, input[type=url]:focus, select:focus, textarea:focus{
 input::placeholder, textarea::placeholder{color:rgba(113,128,150,0.45);}
 /* select + textarea rules moved to .input-wrap context above */
 
+/* Deal context bar */
+.deal-context-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(184,134,11,0.06);border:1px solid rgba(184,134,11,0.2);border-radius:8px;margin-bottom:16px;}
+.deal-context-label{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--accent);white-space:nowrap;letter-spacing:0.04em;text-transform:uppercase;}
+.deal-context-label svg{opacity:0.8;}
+.deal-select-wrap{flex:1;min-width:0;}
+.deal-picker-hint{font-size:11px;color:var(--white-dim);white-space:nowrap;}
+[data-theme="dark"] .deal-context-bar{background:rgba(184,134,11,0.08);border-color:rgba(184,134,11,0.25);}
+
 /* Product chips */
 .product-grid{display:flex;flex-wrap:wrap;gap:8px;}
 .product-chip{
@@ -562,6 +570,10 @@ input[type=checkbox].chip-check{display:none;}
 .tag-doc{background:var(--blue-dim);color:var(--blue);border:1px solid rgba(96,165,250,0.3);}
 .tag-price{background:var(--green-dim);color:var(--green);border:1px solid rgba(74,222,128,0.3);}
 .tag-ai{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(251,146,60,0.3);}
+.src-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;padding:1px 5px;border-radius:2px;vertical-align:middle;margin-left:4px;white-space:nowrap;}
+.src-verified{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
+.src-rep{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.3);}
+.src-inferred{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
 .pov-narrative{font-size:13px;color:var(--white-dim);line-height:1.5;}
 .pov-card-body{
   display:grid;grid-template-columns:1fr 1fr;gap:0;
@@ -1595,6 +1607,20 @@ input[type=checkbox].chip-check{display:none;}
       </button>
     </div>
 
+    <!-- ── DEAL CONTEXT ── -->
+    <div class="deal-context-bar" id="dealContextBar">
+      <div class="deal-context-label">
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Attach to Deal
+      </div>
+      <div class="input-wrap deal-select-wrap">
+        <select id="dealPicker" onchange="onDealPickerChange()">
+          <option value="">— Create new deal —</option>
+        </select>
+      </div>
+      <span id="dealPickerHint" class="deal-picker-hint"></span>
+    </div>
+
     <div id="intake-error" class="error-box">Please enter a Company Name and Meeting Type to continue.</div>
 
     <div class="btn-row">
@@ -1997,12 +2023,14 @@ input[type=checkbox].chip-check{display:none;}
   </div>
 </div>
 
+<script src="../shared/dealStore.js"></script>
+<script src="../shared/deal-nav.js"></script>
 <script>
 // ════════════════════════════════════════════════════
 // THEME TOGGLE
 // ════════════════════════════════════════════════════
 (function(){
-  const saved = localStorage.getItem('ab-theme') || 'light';
+  const saved = localStorage.getItem('znith-theme') || localStorage.getItem('ab-theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
   const btn = document.getElementById('themeToggle');
   if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
@@ -2012,7 +2040,7 @@ function toggleTheme() {
   const current = document.documentElement.getAttribute('data-theme') || 'light';
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('ab-theme', next);
+  localStorage.setItem('znith-theme', next);
   document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
 }
 
@@ -2021,11 +2049,13 @@ function toggleTheme() {
 // ════════════════════════════════════════════════════
 const state = {
   apiKey: '',
+  activeDealId: null,
   contacts: [],
   contactIdCounter: 0,
   selectedProducts: [],
   uploadedDocuments: [],
   docIdCounter: 0,
+  documentContext: null,
   repNotes: { observations:'', questions:'', flags:'' },
   results: {
     company: null,
@@ -2090,15 +2120,26 @@ async function callClaude(userPrompt, systemPrompt = 'You are a helpful analyst.
   return text;
 }
 
+function stripCiteTags(val) {
+  if (typeof val === 'string') return val.replace(/<cite[^>]*>([\s\S]*?)<\/cite>/g, '$1').trim();
+  if (Array.isArray(val)) return val.map(stripCiteTags);
+  if (val && typeof val === 'object') {
+    const out = {};
+    for (const k in val) out[k] = stripCiteTags(val[k]);
+    return out;
+  }
+  return val;
+}
+
 function safeParseJSON(text) {
   try {
     const clean = text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-    return JSON.parse(clean);
+    return stripCiteTags(JSON.parse(clean));
   } catch(e) {
     // Attempt to extract JSON object from text
     const match = text.match(/\{[\s\S]*\}/);
     if (match) {
-      try { return JSON.parse(match[0]); } catch(e2) {}
+      try { return stripCiteTags(JSON.parse(match[0])); } catch(e2) {}
     }
     return null;
   }
@@ -2124,8 +2165,16 @@ async function startResearch() {
   try {
     await runResearch(company);
     renderOutput();
-    showScreen(3);
     saveBrief();
+    if (state.uploadedDocuments.filter(d => d.textContent).length > 0) {
+      updateStatus('Condensing uploaded documents for cross-tool context…');
+      addLog('active', 'Condensing documents into deal intelligence summary');
+      await condenseDocs();
+      addLog('done', 'Document context ready');
+    }
+    syncToDeal(company);
+    showScreen(3);
+    if (state.activeDealId) dealNav.showNext('Qualify IQ', dealStore.urlFor('../qualify-iq/', state.activeDealId));
   } catch(err) {
     const errBox = document.getElementById('research-error');
     errBox.textContent = 'Something went wrong: ' + err.message + '. Please check your API key and try again.';
@@ -2388,6 +2437,13 @@ Conga product descriptions (for ${company}'s OWN internal use):
 - Price Optimization: Optimizes ${company}'s own pricing strategy and deal desk workflows
 - AI / AiMe: AI analysis of ${company}'s own contracts for risk, compliance, and obligations
 
+SOURCE CONFIDENCE TAGGING — add inline after key claims in narrative and text fields:
+- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
+- [REP_STATED] — came from rep notes or verbal input only, not in a document
+- [INFERRED] — your synthesis or hypothesis; no direct source
+Example: "Their quoting process is manual and fragmented [VERIFIED] — estimated 3-week cycle [INFERRED]"
+Tag substantive claims only. Skip tags on generic statements.
+
 Return ONLY valid JSON starting with {:
 {
   "overarchingNarrative": "2 sentences: why Conga is relevant to ${company}'s own internal revenue and contract operations right now",
@@ -2436,6 +2492,12 @@ Products: ${productList} | Known competitors: ${competitors||'None'}
 Company intel: ${companyJSON}
 Conga challenges identified: ${povSummary}
 SDR notes: ${sdrNotes||'None'}${getTextDocContext()}
+
+SOURCE CONFIDENCE TAGGING — add inline after key claims in text fields:
+- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
+- [REP_STATED] — came from rep notes or verbal input only
+- [INFERRED] — your synthesis; no direct source
+Tag substantive claims only. Skip generic or obvious statements.
 
 Return ONLY valid JSON starting with {:
 {
@@ -2668,6 +2730,13 @@ function togglePOVReasoning() {
   btn.textContent = el.classList.contains('open') ? 'Why this works ▴' : 'Why this works ▾';
 }
 
+function renderWithBadges(html) {
+  return html
+    .replace(/\[VERIFIED\]/g, '<span class="src-badge src-verified">VERIFIED</span>')
+    .replace(/\[REP_STATED\]/g, '<span class="src-badge src-rep">REP STATED</span>')
+    .replace(/\[INFERRED\]/g, '<span class="src-badge src-inferred">INFERRED</span>');
+}
+
 function renderOutput() {
   renderPOVBuilder(state.results.congaPOV);
 
@@ -2798,7 +2867,7 @@ function renderOutput() {
   }
 
   // Conga POV
-  document.getElementById('out-pov-narrative').textContent = pov.overarchingNarrative || '';
+  document.getElementById('out-pov-narrative').innerHTML = renderWithBadges(pov.overarchingNarrative || '');
   const productTagMap = {
     'RLM':'tag-rlm','CPQ':'tag-cpq','CLM':'tag-clm',
     'Doc Automation':'tag-doc','Price Optimization':'tag-price','AI / AiMe':'tag-ai'
@@ -2812,49 +2881,49 @@ function renderOutput() {
       <div class="pov-card">
         <div class="pov-card-header">
           <div class="product-tag ${tagClass}">${p.product}</div>
-          <div class="pov-narrative">${p.challenge||''}</div>
+          <div class="pov-narrative">${renderWithBadges(p.challenge||'')}</div>
         </div>
         <div class="pov-card-body">
           <div class="pov-cell">
             <div class="pov-cell-label">How Conga Solves It</div>
-            <div class="pov-cell-value">${p.howCongaSolves||'—'}</div>
+            <div class="pov-cell-value">${renderWithBadges(p.howCongaSolves||'—')}</div>
           </div>
           <div class="pov-cell">
             <div class="pov-cell-label">Proof Point</div>
-            <div class="pov-cell-value">${p.proofPoint||'—'}</div>
+            <div class="pov-cell-value">${renderWithBadges(p.proofPoint||'—')}</div>
           </div>
           <div class="pov-cell" style="border-bottom:none;grid-column:1/-1;">
             <div class="pov-cell-label">Quantified Value</div>
-            <div class="pov-cell-value pov-value-highlight">${p.quantifiedValue||'—'}</div>
+            <div class="pov-cell-value pov-value-highlight">${renderWithBadges(p.quantifiedValue||'—')}</div>
           </div>
         </div>
       </div>`;
   }).join('');
 
   // Call Strategy
-  document.getElementById('out-hook').textContent = strat.openingHook || '—';
+  document.getElementById('out-hook').innerHTML = renderWithBadges(strat.openingHook || '—');
 
   const qList = document.getElementById('out-questions');
   qList.innerHTML = (strat.discoveryQuestions||[]).map((q,i)=>`
     <div class="q-item">
       <div class="q-num">Q${i+1}</div>
-      <div class="q-text">${q}</div>
+      <div class="q-text">${renderWithBadges(q)}</div>
     </div>`).join('');
 
   const landList = document.getElementById('out-landmines');
   landList.innerHTML = (strat.landmines||[]).map(l=>`
     <div class="landmine-item">
       <div class="landmine-icon">⚠</div>
-      <div>${l}</div>
+      <div>${renderWithBadges(l)}</div>
     </div>`).join('');
 
-  document.getElementById('out-next-step').textContent = strat.recommendedNextStep || '—';
+  document.getElementById('out-next-step').innerHTML = renderWithBadges(strat.recommendedNextStep || '—');
 
   const flagsList = document.getElementById('out-deal-flags');
   flagsList.innerHTML = (strat.dealFlags||[]).map(f=>`
     <div class="flag-item">
       <div class="flag-icon">🚩</div>
-      <div>${f}</div>
+      <div>${renderWithBadges(f)}</div>
     </div>`).join('');
 
   document.getElementById('out-alumni-text').textContent = strat.alumniCheckPrompt || '—';
@@ -3353,6 +3422,61 @@ function updateStatus(msg) {
   document.getElementById('researchStatus').textContent = msg;
 }
 
+// ── DOCUMENT CONDENSATION ─────────────────────────────────────────────────────
+// Processes uploaded docs in batches of 5, extracts sales signals per batch,
+// then consolidates into a single structured "deal intelligence summary" stored
+// as deal.document_context. Downstream tools use this instead of raw text.
+async function condenseDocs() {
+  const BATCH_SIZE = 5;
+  const textDocs = state.uploadedDocuments.filter(d => d.textContent);
+  if (!textDocs.length) return;
+
+  const EXTRACT_SYSTEM = `You are a B2B enterprise sales intelligence analyst. Extract every sales-critical signal from the provided documents. Be exhaustive and specific — name every person mentioned, use exact numbers and quotes, never generalize. Missing a stakeholder or a metric is worse than being too detailed.`;
+
+  const EXTRACT_PROMPT = (batchText) =>
+    `Extract all sales-critical signals from the documents below. For each category, be exhaustive:\n\n` +
+    `STAKEHOLDERS: Every named person — full name, title/role, department, and what they said or implied (quote directly where possible)\n` +
+    `PAIN POINTS: Specific operational problems with evidence and who owns them\n` +
+    `METRICS & IMPACT: Every number, dollar amount, percentage, timeframe, or KPI mentioned\n` +
+    `BUDGET & APPROVAL: Any signals about budget size, approval process, fiscal year, or spend authority\n` +
+    `COMPETITIVE: Any mention of current vendors, alternatives being evaluated, or status quo tools\n` +
+    `DECISION PROCESS: Steps, stakeholders, timeline, and criteria they use to make decisions\n` +
+    `CHAMPION SIGNALS: Anyone who expressed urgency, advocated internally, or asked for materials\n` +
+    `COMMITMENTS & NEXT STEPS: Anything agreed upon, promised, or scheduled\n\n` +
+    `DOCUMENTS:\n\n${batchText}`;
+
+  const CONSOLIDATE_SYSTEM = `You are a B2B enterprise sales coach producing a deal intelligence summary for a Conga AE. Synthesize all extracted signals into a single structured document. De-duplicate across sources. Preserve all named people, exact numbers, and direct quotes. This document will be used by Qualify IQ, Value Map, and Win Room — every critical signal must be retained.`;
+
+  const CONSOLIDATE_PROMPT = (batches) =>
+    `Consolidate these extracted sales signals into a single Deal Intelligence Summary. ` +
+    `Organize into these sections: Stakeholders & Positions, Pain Points & Evidence, Metrics & Business Impact, ` +
+    `Budget & Approval Signals, Competitive Landscape, Decision Process & Timeline, Champion Signals, ` +
+    `Key Commitments & Next Steps. De-duplicate people and signals across batches. Preserve all names, ` +
+    `numbers, and quotes — do not summarize away specifics.\n\n` +
+    batches.map((b, i) => `=== BATCH ${i + 1} ===\n${b}`).join('\n\n');
+
+  const batchOutputs = [];
+  for (let i = 0; i < textDocs.length; i += BATCH_SIZE) {
+    const batch = textDocs.slice(i, i + BATCH_SIZE);
+    const batchText = batch.map(d => `=== ${d.name} ===\n${d.textContent}`).join('\n\n');
+    updateStatus(`Extracting signals from documents ${i + 1}–${Math.min(i + BATCH_SIZE, textDocs.length)} of ${textDocs.length}…`);
+    const result = await callClaude(EXTRACT_PROMPT(batchText), EXTRACT_SYSTEM, false, [], 4000);
+    batchOutputs.push(result);
+  }
+
+  updateStatus('Consolidating document intelligence…');
+  const consolidated = batchOutputs.length === 1
+    ? batchOutputs[0]
+    : await callClaude(CONSOLIDATE_PROMPT(batchOutputs), CONSOLIDATE_SYSTEM, false, [], 5000);
+
+  state.documentContext = {
+    summary: consolidated,
+    doc_count: textDocs.length,
+    doc_names: textDocs.map(d => d.name),
+    generated_at: new Date().toISOString()
+  };
+}
+
 function addLog(type, text) {
   const log = document.getElementById('researchLog');
   const entry = document.createElement('div');
@@ -3696,6 +3820,134 @@ function openChatWithPrompt(prompt) {
     input.focus();
     autoResizeChatInput(input);
   }
+}
+
+// ════════════════════════════════════════════════════
+// DEAL STORE INTEGRATION
+// ════════════════════════════════════════════════════
+
+function populateDealPicker() {
+  const picker = document.getElementById('dealPicker');
+  const hint   = document.getElementById('dealPickerHint');
+  if (!picker) return;
+
+  const company = document.getElementById('companyName')?.value.trim().toLowerCase();
+  const deals   = dealStore.list();
+
+  // Rebuild options
+  picker.innerHTML = '<option value="">— Create new deal —</option>';
+  deals.forEach(d => {
+    const opt      = document.createElement('option');
+    opt.value      = d.id;
+    opt.textContent = `${d.context.account_name}  ·  ${dealStore.stageLabel(d.context.stage)}`;
+    // Pre-select if company name matches an existing deal
+    if (company && d.context.account_name.toLowerCase() === company) opt.selected = true;
+    picker.appendChild(opt);
+  });
+
+  // Restore previously active deal if set
+  if (state.activeDealId) picker.value = state.activeDealId;
+
+  updateDealPickerHint();
+}
+
+function onDealPickerChange() {
+  const id = document.getElementById('dealPicker').value;
+  state.activeDealId = id || null;
+
+  if (id) {
+    const deal = dealStore.get(id);
+    if (deal) {
+      // Pre-fill company name from the selected deal
+      const nameEl = document.getElementById('companyName');
+      if (nameEl && !nameEl.value.trim()) nameEl.value = deal.context.account_name;
+    }
+  }
+
+  updateDealPickerHint();
+}
+
+function updateDealPickerHint() {
+  const hint = document.getElementById('dealPickerHint');
+  if (!hint) return;
+  const id = document.getElementById('dealPicker')?.value;
+  if (!id) { hint.textContent = 'New deal will be created on research'; return; }
+  const deal = dealStore.get(id);
+  if (!deal) { hint.textContent = ''; return; }
+  const researchAge = deal.research?.generated_at
+    ? Math.round((Date.now() - new Date(deal.research.generated_at)) / 3600000)
+    : null;
+  hint.textContent = researchAge !== null
+    ? `Research ${researchAge < 1 ? 'just run' : researchAge + 'h ago'} · ${dealStore.needsResearch(id) ? 'will re-run' : 'cached'}`
+    : 'No research yet';
+}
+
+function syncToDeal(company) {
+  // Get existing deal or create a new one
+  let deal = state.activeDealId ? dealStore.get(state.activeDealId) : null;
+  if (!deal) {
+    deal = dealStore.create(company, {
+      stage:    'discovery',
+      products: state.selectedProducts
+    });
+    state.activeDealId = deal.id;
+    // Update picker to reflect the new deal
+    populateDealPicker();
+    document.getElementById('dealPicker').value = deal.id;
+  }
+
+  // Update context
+  deal.context.account_name = company;
+  deal.context.products     = [...state.selectedProducts];
+
+  // Map contacts → stakeholders
+  if (state.results.contacts?.length) {
+    deal.stakeholders = state.results.contacts.map(c => ({
+      name:      c.name  || '',
+      title:     c.title || '',
+      role:      'unknown',
+      sentiment: 'unknown',
+      notes:     c.bio   || ''
+    }));
+  }
+
+  // Map all research output to deal.research
+  deal.research = {
+    research_hash: null, // stamped below
+    generated_at:  new Date().toISOString(),
+    company_profile: state.results.company   || null,
+    industry:        state.results.industry  || null,
+    exec_pov:        state.results.congaPOV  || null,
+    call_strategy:   state.results.callStrategy || null,
+    deal_brief:      state.results.dealBrief || null,
+    // News pulled from company profile — gets its own TTL
+    news: {
+      last_checked: new Date().toISOString(),
+      items: state.results.company?.recentNews || []
+    }
+  };
+
+  // Only overwrite documents if files were actually uploaded this run.
+  // Without this guard, re-running Account Brief without files would wipe
+  // documents saved by Qualify IQ and Value Map via dealStore.patch().
+  if (state.uploadedDocuments.length > 0) {
+    deal.documents = state.uploadedDocuments.map(d => ({
+      id:             String(d.id),
+      name:           d.name  || '',
+      type:           d.ext   || d.type || 'other',
+      uploaded_at:    new Date().toISOString(),
+      extracted_text: d.textContent || ''
+    }));
+  }
+
+  if (state.documentContext) {
+    deal.document_context = state.documentContext;
+  }
+
+  dealStore.save(deal);
+  dealStore.stampResearchHash(deal.id);
+  updateDealPickerHint();
+  return deal;
 }
 
 // ════════════════════════════════════════════════════
@@ -4712,6 +4964,52 @@ function resetChat() {
 addContact(); // Start with one empty contact
 updateBriefsBadge();
 updateChatSuggestions(1);
+
+// Hydrate form from ?deal=uuid if arriving from the dashboard
+(function hydrateFromUrl() {
+  const deal = dealStore.getFromUrl();
+  if (!deal) { populateDealPicker(); return; }
+
+  state.activeDealId = deal.id;
+
+  // Pre-fill company name
+  const nameEl = document.getElementById('companyName');
+  if (nameEl && deal.context.account_name) nameEl.value = deal.context.account_name;
+
+  // Pre-fill meeting type from stage (needed for results header even on early return)
+  const stageToMeeting = {
+    discovery:   'Discovery',
+    demo:        'Demo / Evaluation',
+    proposal:    'Proposal / Commercial',
+    negotiation: 'Proposal / Commercial',
+  };
+  const meetingEl = document.getElementById('meetingType');
+  if (meetingEl && stageToMeeting[deal.context.stage]) {
+    const opt = Array.from(meetingEl.options).find(o => o.value === stageToMeeting[deal.context.stage]);
+    if (opt) meetingEl.value = opt.value;
+  }
+
+  // If research already exists, show results directly
+  if (deal.research) {
+    state.results = {
+      company:      deal.research.company_profile,
+      industry:     deal.research.industry,
+      congaPOV:     deal.research.exec_pov,
+      callStrategy: deal.research.call_strategy,
+      dealBrief:    deal.research.deal_brief,
+      contacts:     deal.stakeholders?.map(s => ({ name: s.name, title: s.title, bio: s.notes })) || [],
+    };
+    renderOutput();
+    showScreen(3);
+    populateDealPicker();
+    return;
+  }
+
+  populateDealPicker();
+})();
+
+// Refresh deal picker suggestions as the rep types the company name
+document.getElementById('companyName')?.addEventListener('input', populateDealPicker);
 
 // ── ADDENDA TOGGLES — hide/show optional sections ──
 document.addEventListener('change', function(e) {
