@@ -233,6 +233,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .md-edit-link{display:inline-block;margin-top:8px;font-size:10px;font-weight:600;color:var(--amber);text-decoration:none;letter-spacing:0.04em;}
 .md-edit-link:hover{text-decoration:underline;}
 
+/* Sidebar news */
+.side-news-list{display:flex;flex-direction:column;gap:8px;}
+.side-news-item{background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-sm);padding:9px 11px;}
+.side-news-item:hover{border-color:var(--border-md);}
+.side-news-headline{font-size:12px;color:var(--text);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.side-news-meta{display:flex;align-items:center;gap:6px;margin-top:4px;}
+.side-news-source{font-size:10px;color:var(--tfaint);font-family:var(--f-mono);}
+.side-news-fresh{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 4px rgba(22,163,74,0.5);flex-shrink:0;}
+.side-news-loading{font-size:11px;color:var(--tfaint);font-style:italic;}
+.side-news-viewall{font-size:10px;font-weight:600;color:var(--amber);text-decoration:none;letter-spacing:0.05em;display:inline-block;margin-top:8px;}
+.side-news-viewall:hover{text-decoration:underline;}
+
 /* Stakeholders */
 .stakeholder-list{display:flex;flex-direction:column;gap:6px;}
 .stakeholder-item{
@@ -321,6 +333,13 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
     <div class="side-section" id="sideMetaSection">
       <div class="side-label">Deal</div>
       <div class="meta-grid" id="sideMeta"></div>
+    </div>
+
+    <!-- Recent News -->
+    <div class="side-section" id="sideNewsSection" style="display:none">
+      <div class="side-label">Recent News</div>
+      <div class="side-news-list" id="sideNewsList"></div>
+      <a href="#mainNewsSection" class="side-news-viewall" id="sideNewsViewAll" style="display:none">View all →</a>
     </div>
 
     <!-- MEDDPICC -->
@@ -439,6 +458,127 @@ async function callClaude(messages, system, maxTokens = 4000) {
   if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API ${res.status}`); }
   const data = await res.json();
   return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+}
+
+async function callClaudeWebSearch(prompt, maxTokens = 1500) {
+  const res = await fetch('/api/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: maxTokens,
+      tools: [{ type: 'web_search_20250305', name: 'web_search' }],
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API ${res.status}`); }
+  const data = await res.json();
+  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('').trim();
+}
+
+// ── RECENT NEWS ───────────────────────────────────────────────────────────────
+
+const NEWS_CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+async function fetchRecentNews(deal) {
+  const section = document.getElementById('sideNewsSection');
+  const list    = document.getElementById('sideNewsList');
+  if (!section || !list) return;
+
+  // Check 24h cache
+  const cached = deal.news_cache;
+  if (cached?.fetched_at && (Date.now() - new Date(cached.fetched_at)) < NEWS_CACHE_TTL_MS && cached.items?.length) {
+    renderSidebarNews(cached.items);
+    return;
+  }
+
+  // Show loading state
+  section.style.display = '';
+  list.innerHTML = '<div class="side-news-loading">Fetching latest news…</div>';
+
+  const company  = deal.context.account_name || '';
+  const industry = deal.research?.industry?.name || deal.research?.industry || '';
+  const query    = `"${company}" ${industry} news announcements earnings 2025`;
+
+  try {
+    const raw = await callClaudeWebSearch(
+      `Search for the 3 most recent and significant news items about ${company} (${industry}) from the last 90 days. ` +
+      `Focus on: earnings, leadership changes, M&A activity, strategic partnerships, product launches, or major business challenges. ` +
+      `Return ONLY a JSON array (no markdown, no preamble) with up to 3 items: ` +
+      `[{"headline":"...","source":"...","date":"YYYY-MM-DD","url":"...","summary":"one sentence"}]. ` +
+      `Only include items you can verify with a real URL. If fewer than 3 credible recent items exist, return fewer.`
+    );
+
+    let items = [];
+    try {
+      const m = raw.match(/\[[\s\S]*\]/);
+      items = m ? JSON.parse(m[0]) : [];
+    } catch { items = []; }
+
+    // Filter to last 90 days
+    const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+    items = items.filter(n => {
+      if (!n.date) return true;
+      return new Date(n.date).getTime() > cutoff;
+    }).slice(0, 3);
+
+    dealStore.patch(deal.id, 'news_cache', { fetched_at: new Date().toISOString(), items });
+    renderSidebarNews(items);
+  } catch (e) {
+    list.innerHTML = '<div class="side-news-loading">Could not load news.</div>';
+  }
+}
+
+function renderSidebarNews(items) {
+  const section  = document.getElementById('sideNewsSection');
+  const list     = document.getElementById('sideNewsList');
+  const viewAll  = document.getElementById('sideNewsViewAll');
+  if (!section || !list) return;
+
+  if (!items?.length) { section.style.display = 'none'; return; }
+
+  section.style.display = '';
+  const cutoff7d = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  const sidebar  = items.slice(0, 2); // max 2 on sidebar
+
+  list.innerHTML = sidebar.map(n => {
+    const isFresh = n.date && new Date(n.date).getTime() > cutoff7d;
+    const dateStr = n.date ? new Date(n.date).toLocaleDateString('en-US', { month:'short', day:'numeric' }) : '';
+    const inner = `
+      <div class="side-news-headline">${n.headline || ''}</div>
+      <div class="side-news-meta">
+        ${isFresh ? '<span class="side-news-fresh"></span>' : ''}
+        <span class="side-news-source">${n.source || ''}${dateStr ? ' · ' + dateStr : ''}</span>
+      </div>`;
+    return n.url
+      ? `<a href="${n.url}" target="_blank" class="side-news-item" style="display:block;text-decoration:none;">${inner}</a>`
+      : `<div class="side-news-item">${inner}</div>`;
+  }).join('');
+
+  // Show "View all" only if there are more items than sidebar shows
+  if (viewAll) viewAll.style.display = items.length > 2 ? 'inline-block' : 'none';
+
+  // Also render full list in main content news section
+  renderMainNews(items);
+}
+
+function renderMainNews(items) {
+  const section = document.getElementById('mainNewsSection');
+  if (!section || !items?.length) return;
+  section.style.display = '';
+  const cutoff7d = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  document.getElementById('mainNewsList').innerHTML = items.map(n => {
+    const isFresh = n.date && new Date(n.date).getTime() > cutoff7d;
+    const dateStr = n.date ? new Date(n.date).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '';
+    return `<div class="news-item">
+      <div class="news-headline" style="display:flex;align-items:center;gap:8px;">
+        ${isFresh ? '<span style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px rgba(22,163,74,0.5);flex-shrink:0;display:inline-block;"></span>' : ''}
+        ${n.url ? `<a href="${n.url}" target="_blank" style="color:var(--text);text-decoration:none;">${n.headline||''}</a>` : (n.headline||'')}
+      </div>
+      ${n.summary ? `<div style="font-size:12px;color:var(--tmuted);margin-top:4px;line-height:1.5;">${n.summary}</div>` : ''}
+      <div class="news-date">${n.source||''}${dateStr ? ' · ' + dateStr : ''}</div>
+    </div>`;
+  }).join('');
 }
 
 function safeJSON(str) {
@@ -924,20 +1064,11 @@ function renderMain() {
     </div>`;
   }
 
-  // Recent News
-  const news = deal.research?.news?.items;
-  if (news?.length) {
-    html += `<div class="section">
-      <div class="section-eyebrow">Recent News</div>
-      <div class="news-list">
-        ${news.slice(0,5).map(n => `
-          <div class="news-item">
-            <div class="news-headline">${n.headline||n.title||n}</div>
-            ${n.date ? `<div class="news-date">${n.date}</div>` : ''}
-          </div>`).join('')}
-      </div>
-    </div>`;
-  }
+  // Recent News placeholder — populated by fetchRecentNews()
+  html += `<div class="section" id="mainNewsSection" style="display:none">
+    <div class="section-eyebrow">Recent News</div>
+    <div class="news-list" id="mainNewsList"></div>
+  </div>`;
 
   document.getElementById('mainCol').innerHTML = html;
 }
@@ -1029,6 +1160,9 @@ function openQualifyIQ() {
   } else {
     await runSynthesis();
   }
+
+  // Fetch recent news independently — uses 24h cache, non-blocking
+  fetchRecentNews(deal).catch(() => {});
 })();
 
 </script>
