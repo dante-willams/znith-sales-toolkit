@@ -591,10 +591,10 @@ function updateGen(title, sub){
   document.getElementById('genSub').textContent = sub;
 }
 // ─── API CALLS ────────────────────────────────────────────────────────────────
-async function callAPI(model, systemPrompt, userContent, useWebSearch=false){
+async function callAPI(model, systemPrompt, userContent, useWebSearch=false, maxTokens=3000){
   const body = {
     model,
-    max_tokens: 3000,
+    max_tokens: maxTokens,
     system: systemPrompt,
     messages: [{ role:'user', content: userContent }]
   };
@@ -742,7 +742,7 @@ SOURCE CONFIDENCE TAGGING (add inline after each bullet's key claim):
 Example: "• Contract cycle averaging 45 days [VERIFIED] — $2M revenue impact annually [INFERRED]"
 Tag every bullet. These tags are shown as badges in the UI but stripped before Salesforce copy.`;
 
-  const raw = await callAPI('claude-haiku-4-5-20251001', sys, prompt);
+  const raw = await callAPI('claude-haiku-4-5-20251001', sys, prompt, false, 8000);
   const cleaned = raw.replace(/```json|```/g,'').trim();
 
   // Normalize all control characters inside JSON string values (model sometimes outputs raw line breaks, form feeds, etc.)
