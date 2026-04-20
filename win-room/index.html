@@ -233,6 +233,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .md-edit-link{display:inline-block;margin-top:8px;font-size:10px;font-weight:600;color:var(--amber);text-decoration:none;letter-spacing:0.04em;}
 .md-edit-link:hover{text-decoration:underline;}
 
+/* ── SOURCE CONFIDENCE BADGES ── */
+.conf-badge{display:inline-block;padding:1px 5px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;vertical-align:middle;margin:0 3px;line-height:1.6;white-space:nowrap;}
+.conf-verified{background:rgba(22,163,74,0.15);color:#16A34A;border:1px solid rgba(22,163,74,0.25);}
+.conf-rep{background:rgba(249,115,22,0.15);color:#F97316;border:1px solid rgba(249,115,22,0.25);}
+.conf-inferred{background:rgba(239,68,68,0.15);color:#EF4444;border:1px solid rgba(239,68,68,0.25);}
+
 /* Sidebar news */
 .side-news-list{display:flex;flex-direction:column;gap:8px;}
 .side-news-item{background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-sm);padding:9px 11px;}
@@ -415,7 +421,22 @@ COACHING PRINCIPLES:
 3. Competing event > compelling event: deadlines they can't move beat aspirational timelines
 4. Never discuss price before value + EB engagement
 5. Stage play: coaching must be specific to where the deal actually is — discovery coaching ≠ proposal coaching
-6. Document intelligence: if transcripts or RFPs are in context, surface the most important signals from them`;
+6. Document intelligence: if transcripts or RFPs are in context, surface the most important signals from them
+
+SOURCE CONFIDENCE TAGGING (REQUIRED):
+For every significant claim or assertion in your output, tag it with one of:
+  [VERIFIED] — directly corroborated by web research, official documents, or uploaded call recordings/RFPs
+  [REP_STATED] — comes only from the rep's notes or transcript input; not independently confirmed
+  [INFERRED] — your inference or synthesis; no direct source, based on patterns or reasoning
+
+Rules:
+- Tag inline, immediately after the claim. E.g. "Their Q1 revenue grew 15% [VERIFIED] and they are prioritizing CLM [REP_STATED] per rep notes."
+- Tag every substantive claim. Skip tagging filler words, company names, or obvious facts.
+- When evidence fields say "[SOURCE: REP_NOTES]" treat those claims as [REP_STATED]
+- When evidence fields say "[SOURCE: WEB_RESEARCH]" treat those as [VERIFIED]
+- When evidence fields say "[SOURCE: DOCS]" treat those as [VERIFIED]
+- Your own synthesis and coaching deductions are [INFERRED] unless grounded in a verified source
+- Do NOT tag coaching_pulse items — those are always your coaching opinion`;
 
 const MEDDPICC_DIMS = [
   { key: 'metrics',          label: 'Metrics',         abbr: 'M' },
@@ -581,6 +602,14 @@ function renderMainNews(items) {
   }).join('');
 }
 
+function renderWithBadges(text) {
+  if (!text) return '';
+  return text
+    .replace(/\[VERIFIED\]/g,    '<span class="conf-badge conf-verified">✓ Verified</span>')
+    .replace(/\[REP_STATED\]/g,  '<span class="conf-badge conf-rep">Rep-stated</span>')
+    .replace(/\[INFERRED\]/g,    '<span class="conf-badge conf-inferred">Inferred</span>');
+}
+
 function safeJSON(str) {
   try {
     const m = str.match(/```json\s*([\s\S]*?)```/) || str.match(/\{[\s\S]*\}/);
@@ -605,15 +634,15 @@ function buildDealContext(d) {
 
   if (res) {
     const co = res.company_profile;
-    if (co?.summary) ctx += `### Company\n${co.summary}\n\n`;
+    if (co?.summary) ctx += `### Company [SOURCE: WEB_RESEARCH]\n${co.summary}\n\n`;
     if (co?.recentNews?.length) {
-      ctx += `### Recent News\n`;
+      ctx += `### Recent News [SOURCE: WEB_RESEARCH]\n`;
       co.recentNews.slice(0,3).forEach(n => ctx += `- ${n.headline||n}\n`);
       ctx += '\n';
     }
     if (res.deal_brief) {
       const db = res.deal_brief;
-      ctx += `### Deal Health (from Account Brief)\n`;
+      ctx += `### Deal Health (from Account Brief) [SOURCE: WEB_RESEARCH]\n`;
       ctx += `Health: ${db.dealHealthScore} — ${db.dealHealthReason}\n`;
       ctx += `Champion: ${db.championStatus} | Economic Buyer: ${db.economicBuyerStatus}\n`;
       ctx += `Decision Process: ${db.decisionProcessClarity} | Competitive: ${db.competitiveExposure}\n`;
@@ -692,14 +721,14 @@ function buildDealContext(d) {
 
   // Document intelligence — prefer condensed summary, fall back to raw docs
   if (d.document_context?.summary) {
-    ctx += `### Document Intelligence (${d.document_context.doc_count} docs condensed)\n`;
+    ctx += `### Document Intelligence [SOURCE: DOCS] (${d.document_context.doc_count} docs condensed)\n`;
     ctx += d.document_context.summary.slice(0, 20000);
     if (d.document_context.summary.length > 20000) ctx += '\n[...truncated at 20k]';
     ctx += '\n\n';
   } else {
     const docs = d.documents?.filter(doc => doc.extracted_text);
     if (docs?.length) {
-      ctx += `### Uploaded Documents\n`;
+      ctx += `### Uploaded Documents [SOURCE: DOCS]\n`;
       docs.slice(0, 4).forEach(doc => {
         ctx += `**${doc.name}** (${doc.type}):\n`;
         ctx += doc.extracted_text.slice(0, 5000);
@@ -710,7 +739,7 @@ function buildDealContext(d) {
 
   // Rep notes
   if (d.context?.notes) {
-    ctx += `### Rep Notes\n${d.context.notes}\n\n`;
+    ctx += `### Rep Notes [SOURCE: REP_NOTES]\n${d.context.notes}\n\n`;
   }
 
   return ctx;
@@ -981,8 +1010,8 @@ function renderMain() {
   html += `<div class="section">
     <div class="section-eyebrow">Situation</div>
     <div class="situation-card">
-      <div class="situation-text">${s.situation}</div>
-      ${s.health_reason ? `<div class="health-reason">${s.health_reason}</div>` : ''}
+      <div class="situation-text">${renderWithBadges(s.situation)}</div>
+      ${s.health_reason ? `<div class="health-reason">${renderWithBadges(s.health_reason)}</div>` : ''}
     </div>
   </div>`;
 
@@ -992,13 +1021,13 @@ function renderMain() {
     if (s.value_case) {
       html += `<div>
         <div class="section-eyebrow">Value Case</div>
-        <div class="info-card" style="border-color:rgba(184,134,11,0.2);background:var(--amber-faint);">${s.value_case}</div>
+        <div class="info-card" style="border-color:rgba(184,134,11,0.2);background:var(--amber-faint);">${renderWithBadges(s.value_case)}</div>
       </div>`;
     }
     if (s.stage_play) {
       html += `<div>
         <div class="section-eyebrow">Stage Play</div>
-        <div class="info-card" style="border-color:rgba(59,130,246,0.2);background:rgba(59,130,246,0.05);">${s.stage_play}</div>
+        <div class="info-card" style="border-color:rgba(59,130,246,0.2);background:rgba(59,130,246,0.05);">${renderWithBadges(s.stage_play)}</div>
       </div>`;
     }
     html += `</div>`;
@@ -1013,11 +1042,11 @@ function renderMain() {
           <div class="gap-card">
             <div class="gap-severity ${severityClass(g.severity)}"></div>
             <div class="gap-body">
-              <div class="gap-title">${g.gap}</div>
-              ${g.evidence ? `<div class="gap-evidence">${g.evidence}</div>` : ''}
+              <div class="gap-title">${renderWithBadges(g.gap)}</div>
+              ${g.evidence ? `<div class="gap-evidence">${renderWithBadges(g.evidence)}</div>` : ''}
               ${g.action ? `<div class="gap-action">
                 <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                ${g.action}
+                ${renderWithBadges(g.action)}
               </div>` : ''}
             </div>
           </div>`).join('')}
@@ -1034,15 +1063,15 @@ function renderMain() {
           <div class="action-item">
             <div class="action-num">${i+1}</div>
             <div class="action-body">
-              <div class="action-text">${a.action}</div>
-              ${a.why ? `<div class="action-why">${a.why}</div>` : ''}
+              <div class="action-text">${renderWithBadges(a.action)}</div>
+              ${a.why ? `<div class="action-why">${renderWithBadges(a.why)}</div>` : ''}
             </div>
           </div>`).join('')}
       </div>
     </div>`;
   }
 
-  // Coaching Pulse
+  // Coaching Pulse — no badges, these are always coach opinion
   if (s.coaching_pulse?.length) {
     html += `<div class="section">
       <div class="section-eyebrow">Coaching Pulse</div>
@@ -1060,7 +1089,7 @@ function renderMain() {
   if (s.competitive_watch && s.competitive_watch !== 'null') {
     html += `<div class="section">
       <div class="section-eyebrow">Competitive Watch</div>
-      <div class="info-card">${s.competitive_watch}</div>
+      <div class="info-card">${renderWithBadges(s.competitive_watch)}</div>
     </div>`;
   }
 
