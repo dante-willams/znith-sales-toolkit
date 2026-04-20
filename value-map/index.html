@@ -54,6 +54,18 @@
     --transition: 220ms cubic-bezier(0.4,0,0.2,1);
   }
 
+  [data-theme="light"] {
+    --navy: #f5f4f2; --navy-mid: #e8e6e3; --navy-light: #e8e6e3;
+    --navy-border: rgba(0,0,0,0.10);
+    --white: rgba(14,13,11,0.88); --white-dim: rgba(14,13,11,0.50); --white-faint: rgba(0,0,0,0.04);
+  }
+  [data-theme="light"] header { background: rgba(245,244,242,0.94) !important; }
+  [data-theme="light"] body::before, [data-theme="light"] body::after { display: none; }
+  .theme-toggle-btn { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.55); padding: 5px 10px; clip-path: var(--clip-sm); cursor: pointer; font-size: 15px; line-height: 1; transition: var(--transition); flex-shrink: 0; }
+  .theme-toggle-btn:hover { border-color: var(--amber); color: var(--amber); }
+  [data-theme="light"] .theme-toggle-btn { border-color: rgba(0,0,0,0.18); color: rgba(0,0,0,0.45); }
+  [data-theme="light"] .theme-toggle-btn:hover { border-color: var(--amber); color: var(--amber); }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
@@ -1237,6 +1249,7 @@
       <span>Edit</span>
     </div>
   </div>
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">☀️</button>
   </div><!-- /.header-inner -->
 </header>
 
@@ -1458,6 +1471,8 @@
 </div>
 
 <script>
+(function(){const s=localStorage.getItem('vm-theme')||'dark';document.documentElement.setAttribute('data-theme',s);const b=document.getElementById('themeToggle');if(b)b.textContent=s==='dark'?'☀️':'🌙';})();
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'dark';const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('vm-theme',n);document.getElementById('themeToggle').textContent=n==='dark'?'☀️':'🌙';}
   // ── STATE ──
   let state = {
     company: '', industry: '', stakeholders: [], notes: '', tools: '',

@@ -24,6 +24,12 @@
       --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
       --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
     }
+    [data-theme="light"]{--bg:#f4f5f7;--surface:#ffffff;--s2:#f8f9fb;--s3:#eef0f3;--border:#d1d5db;--navy:#f0f2f5;--text:#1a2332;--tm:#4a5568;--td:#718096;}
+    [data-theme="light"] body{color:var(--text)}
+    .theme-toggle-btn{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.55);padding:5px 10px;clip-path:var(--clip-sm);cursor:pointer;font-size:15px;line-height:1;transition:all .15s;margin-right:4px}
+    .theme-toggle-btn:hover{border-color:var(--plight);color:var(--plight)}
+    [data-theme="light"] .theme-toggle-btn{border-color:rgba(0,0,0,0.18);color:rgba(0,0,0,0.45)}
+    [data-theme="light"] .theme-toggle-btn:hover{border-color:var(--purple);color:var(--pdim)}
     body{font-family:'DM Sans',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
     /* HEADER */
     .app-header{background:var(--navy);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
@@ -257,6 +263,7 @@
   <div class="app-nav">
     <button class="nav-btn active" id="nav-new" onclick="showView('new')">+ New Brief</button>
     <button class="nav-btn" id="nav-all" onclick="showView('all')">All Briefs <span class="nbadge" id="brief-count">0</span></button>
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">☀️</button>
   </div>
 </div>
 
@@ -503,9 +510,8 @@
 </div><!-- /main -->
 
 <script>
-// =========================================================
-
-// =========================================================
+(function(){const s=localStorage.getItem('db-theme')||'dark';document.documentElement.setAttribute('data-theme',s);const b=document.getElementById('themeToggle');if(b)b.textContent=s==='dark'?'☀️':'🌙';})();
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'dark';const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('db-theme',n);document.getElementById('themeToggle').textContent=n==='dark'?'☀️':'🌙';}
 function getApiHeaders(){
   return {
     'Content-Type':'application/json'

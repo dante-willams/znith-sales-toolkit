@@ -25,6 +25,12 @@
       --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
       --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
     }
+    [data-theme="light"]{--bg:#f4f6f8;--surface:#ffffff;--s2:#f8f9fb;--s3:#eef1f3;--border:#d1d5db;--navy:#f0f3f5;--text:#1a2332;--tm:#4a5568;--td:#718096;--accent:#0d9488;--accent-dim:#0a7c71;--accent-light:#0d9488;--accent-glow:rgba(13,148,136,0.10);--accent-border:rgba(13,148,136,0.3);}
+    [data-theme="light"] body{color:var(--text)}
+    .theme-toggle-btn{background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.55);padding:5px 10px;clip-path:var(--clip-sm);cursor:pointer;font-size:15px;line-height:1;transition:all .15s}
+    .theme-toggle-btn:hover{border-color:var(--accent);color:var(--accent)}
+    [data-theme="light"] .theme-toggle-btn{border-color:rgba(0,0,0,0.18);color:rgba(0,0,0,0.45)}
+    [data-theme="light"] .theme-toggle-btn:hover{border-color:var(--accent);color:var(--accent-dim)}
     body{font-family:'DM Sans',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5}
 
     /* HEADER */
@@ -213,6 +219,7 @@
   </div>
   <div class="hdr-right">
     <button class="btn-ghost" onclick="showView('all')">All Analyses</button>
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">☀️</button>
   </div>
 </header>
 
@@ -356,6 +363,8 @@
 </button>
 
 <script>
+(function(){const s=localStorage.getItem('qi-theme')||'dark';document.documentElement.setAttribute('data-theme',s);const b=document.getElementById('themeToggle');if(b)b.textContent=s==='dark'?'☀️':'🌙';})();
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'dark';const n=c==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('qi-theme',n);document.getElementById('themeToggle').textContent=n==='dark'?'☀️':'🌙';}
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
 // ─── MEDDPICC DEFINITIONS ────────────────────────────────────────────────────
