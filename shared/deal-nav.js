@@ -144,7 +144,7 @@ const dealNav = (() => {
       const chipCls  = isActive ? 'dn-active' : '';
       const sep      = i < TOOLS.length - 1 ? '<div class="dn-sep"></div>' : '';
 
-      return `<a href="${url}" class="dn-chip ${chipCls}" title="${escHtml(t.label)}">
+      return `<a href="${url}" class="dn-chip ${chipCls}" title="${escHtml(t.label)}" ${isActive ? '' : 'target="_blank"'}>
         <div class="dn-dot ${dotCls}"></div>
         ${escHtml(t.label)}
       </a>${sep}`;
