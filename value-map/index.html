@@ -3234,7 +3234,8 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
 
 
   // Show chat tab on all phases (intake + output)
-  document.getElementById('chatTab').style.display = 'flex';
+  const _chatTabEl = document.getElementById('chatTab');
+  if (_chatTabEl) _chatTabEl.style.display = 'flex';
   updateMapsCount();
   // Show edit tab button when value map exists
   function maybeShowEditTab() {
