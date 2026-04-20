@@ -1,10 +1,16 @@
 module.exports = async function handler(req, res) {
-  if (req.method === 'GET') {
-    const key = process.env.ANTHROPIC_API_KEY;
-    return res.status(200).json({
-      keySet: !!key,
-      keyPrefix: key ? key.substring(0, 14) + '...' : 'NOT SET',
-    });
+  const TOOLKIT_PASSWORD = process.env.TOOLKIT_PASSWORD;
+
+  if (TOOLKIT_PASSWORD) {
+    const supplied = req.headers['x-toolkit-password'] || '';
+    if (supplied !== TOOLKIT_PASSWORD) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+  }
+
+  // Auth-check ping — just validate the password, don't call Anthropic
+  if (req.body && req.body._auth_check) {
+    return res.status(200).json({ ok: true });
   }
 
   if (req.method !== 'POST') {
