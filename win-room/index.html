@@ -218,6 +218,15 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .meddpicc-dim-label{font-size:11px;font-weight:600;color:var(--text);}
 .meddpicc-dim-note{font-size:10px;color:var(--tfaint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px;}
 .meddpicc-score-badge{font-family:var(--f-mono);font-size:10px;font-weight:600;flex-shrink:0;}
+.md-chevron{font-size:13px;color:var(--tfaint);flex-shrink:0;margin-left:2px;line-height:1;transition:var(--transition);}
+.md-row{display:flex;flex-direction:column;}
+.md-detail{background:var(--surf-2);border:1px solid var(--border);border-top:none;padding:10px 12px;margin-bottom:2px;}
+.md-evidence{font-size:12px;color:var(--tmuted);line-height:1.55;white-space:pre-wrap;word-break:break-word;}
+.md-gaps{margin-top:8px;}
+.md-gap-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:4px;}
+.md-gap-item{font-size:11px;color:var(--tmuted);margin-bottom:3px;line-height:1.4;}
+.md-edit-link{display:inline-block;margin-top:8px;font-size:10px;font-weight:600;color:var(--amber);text-decoration:none;letter-spacing:0.04em;}
+.md-edit-link:hover{text-decoration:underline;}
 
 /* Stakeholders */
 .stakeholder-list{display:flex;flex-direction:column;gap:6px;}
@@ -720,10 +729,10 @@ function renderSidebar() {
 }
 
 function renderMEDDPICC() {
-  const q   = deal.qualification?.meddpicc;
-  const db  = deal.research?.deal_brief;
+  const q      = deal.qualification?.meddpicc;
+  const db     = deal.research?.deal_brief;
+  const qiqUrl = dealStore.urlFor('../qualify-iq/index.html', deal.id);
 
-  // Derive signals from deal brief if no formal qualification yet
   const signals = {
     champion:         db?.championStatus,
     economic_buyer:   db?.economicBuyerStatus,
@@ -740,31 +749,54 @@ function renderMEDDPICC() {
   }
 
   const html = MEDDPICC_DIMS.map(dim => {
-    let status = 'unknown', note = 'Not yet assessed', score = null;
+    let status = 'unknown', evidence = 'Not yet assessed', score = null, gaps = [];
 
     if (q?.[dim.key]) {
-      score  = q[dim.key].score;
-      note   = q[dim.key].evidence || 'No evidence recorded';
-      status = score >= 70 ? 'green' : score >= 40 ? 'yellow' : 'red';
+      score    = q[dim.key].score;
+      evidence = q[dim.key].evidence || 'No evidence recorded';
+      gaps     = q[dim.key].gaps    || [];
+      status   = score >= 70 ? 'green' : score >= 40 ? 'yellow' : 'red';
     } else if (signals[dim.key]) {
-      status = statusFromSignal(signals[dim.key]);
-      note   = signals[dim.key];
+      status   = statusFromSignal(signals[dim.key]);
+      evidence = signals[dim.key];
     }
 
-    const indClass = `ind-${status}`;
-    const scoreStr = score !== null ? score : '—';
+    const indClass   = `ind-${status}`;
+    const scoreStr   = score !== null ? score : '—';
+    const scoreColor = status==='green'?'var(--green)':status==='red'?'var(--red)':status==='yellow'?'var(--yellow)':'var(--tfaint)';
+    const shortNote  = evidence.length > 55 ? evidence.slice(0, 55) + '…' : evidence;
+    const gapsHtml   = gaps.length
+      ? `<div class="md-gaps"><span class="md-gap-label">Gaps</span>${gaps.map(g=>`<div class="md-gap-item">• ${g}</div>`).join('')}</div>`
+      : '';
 
-    return `<div class="meddpicc-item">
-      <div class="meddpicc-indicator ${indClass}"></div>
-      <div class="meddpicc-dim">
-        <div class="meddpicc-dim-label">${dim.label}</div>
-        <div class="meddpicc-dim-note" title="${note}">${note}</div>
+    return `<div class="md-row">
+      <div class="meddpicc-item" onclick="toggleMEDDPICC('${dim.key}')">
+        <div class="meddpicc-indicator ${indClass}"></div>
+        <div class="meddpicc-dim">
+          <div class="meddpicc-dim-label">${dim.label}</div>
+          <div class="meddpicc-dim-note">${shortNote}</div>
+        </div>
+        <div class="meddpicc-score-badge" style="color:${scoreColor}">${scoreStr}</div>
+        <div class="md-chevron" id="chev-${dim.key}">›</div>
       </div>
-      <div class="meddpicc-score-badge" style="color:${status==='green'?'var(--green)':status==='red'?'var(--red)':status==='yellow'?'var(--yellow)':'var(--tfaint)'}">${scoreStr}</div>
+      <div class="md-detail" id="md-${dim.key}" style="display:none">
+        <div class="md-evidence">${evidence}</div>
+        ${gapsHtml}
+        <a href="${qiqUrl}" class="md-edit-link">Edit in Qualify IQ →</a>
+      </div>
     </div>`;
   }).join('');
 
   document.getElementById('meddpiccList').innerHTML = html;
+}
+
+function toggleMEDDPICC(key) {
+  const detail = document.getElementById('md-' + key);
+  const chev   = document.getElementById('chev-' + key);
+  if (!detail) return;
+  const opening = detail.style.display === 'none';
+  detail.style.display = opening ? 'block' : 'none';
+  if (chev) chev.textContent = opening ? '⌄' : '›';
 }
 
 function renderLoading() {

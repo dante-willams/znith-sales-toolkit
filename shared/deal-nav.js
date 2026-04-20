@@ -14,6 +14,12 @@ const dealNav = (() => {
       done:  d => !!d.research,
     },
     {
+      id:   'value-map',
+      label: 'Value Map',
+      path:  '../value-map/',
+      done:  d => !!d.value_map,
+    },
+    {
       id:   'qualify-iq',
       label: 'Qualify IQ',
       path:  '../qualify-iq/',
@@ -24,12 +30,6 @@ const dealNav = (() => {
       label: 'Demo Brief',
       path:  '../demo-brief/',
       done:  d => (d.meeting_preps?.length > 0),
-    },
-    {
-      id:   'value-map',
-      label: 'Value Map',
-      path:  '../value-map/',
-      done:  d => !!d.value_map,
     },
     {
       id:   'win-room',
