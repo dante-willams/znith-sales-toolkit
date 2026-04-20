@@ -98,14 +98,25 @@ header{
   clip-path:var(--clip-lg);padding:24px;
   display:flex;flex-direction:column;gap:10px;
   text-decoration:none;transition:var(--transition);cursor:pointer;
+  position:relative;overflow:hidden;
 }
+.pipeline-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(255,255,255,0.03) 0%,transparent 60%);opacity:0;transition:opacity 0.4s ease;}
+.pipeline-card::after{content:'';position:absolute;top:0;left:-100%;width:50%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.04),transparent);transform:skewX(-15deg);transition:none;pointer-events:none;}
 .pipeline-card:hover{border-color:var(--border-md);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,0.3);}
+.pipeline-card:hover::before{opacity:1;}
+.pipeline-card:hover::after{left:160%;transition:left 0.55s ease;}
+.pipeline-card.coming-soon{opacity:0.7;cursor:not-allowed;}
+.pipeline-card.coming-soon::after{background:repeating-linear-gradient(-45deg,transparent,transparent 12px,rgba(255,255,255,0.012) 12px,rgba(255,255,255,0.012) 13px);left:0;width:100%;transform:none;transition:none;}
+.pipeline-card.coming-soon:hover{transform:none;border-color:var(--border);box-shadow:none;}
+.pipeline-card.coming-soon:hover::after{left:0;transition:none;}
+.pipeline-card.coming-soon:hover::before{opacity:0;}
 .pipeline-card-icon{
   width:36px;height:36px;border-radius:8px;
   background:var(--amber-muted);border:1px solid rgba(184,134,11,0.2);
   display:flex;align-items:center;justify-content:center;
 }
 .pipeline-card-icon svg{opacity:0.9;}
+.pipeline-card-header{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .pipeline-card-title{font-family:var(--f-brand);font-size:15px;font-weight:700;color:var(--text);}
 .pipeline-card-sub{font-size:12px;color:var(--tmuted);line-height:1.5;}
 .pipeline-card-cta{
@@ -113,6 +124,9 @@ header{
   letter-spacing:0.06em;text-transform:uppercase;color:var(--amber);
   display:flex;align-items:center;gap:5px;
 }
+.badge-soon{font-family:var(--f-mono);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;clip-path:var(--clip-sm);color:#f0a05a;background:rgba(240,160,90,0.1);border:1px solid rgba(240,160,90,0.25);position:relative;overflow:hidden;white-space:nowrap;flex-shrink:0;}
+.badge-soon::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(240,160,90,0.25),transparent);animation:shimmer 2.8s ease-in-out infinite;}
+@keyframes shimmer{0%{left:-60%}60%{left:120%}100%{left:120%}}
 
 /* ── MAIN ── */
 .main{max-width:1100px;margin:0 auto;padding:48px 40px 100px;}
@@ -463,10 +477,12 @@ header{
 
   <div class="pipeline-grid">
     <a href="./prospecting-agent/index.html" target="_blank" rel="noopener" class="pipeline-card">
-      <div class="pipeline-card-icon">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#B8860B" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-        </svg>
+      <div class="pipeline-card-header">
+        <div class="pipeline-card-icon">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#B8860B" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+        </div>
       </div>
       <div class="pipeline-card-title">Prospecting Agent</div>
       <div class="pipeline-card-sub">Upload your territory list. Score accounts against ICP, rank by fit, and generate dossiers for your top targets.</div>
@@ -476,19 +492,20 @@ header{
       </div>
     </a>
 
-    <div class="pipeline-card" style="opacity:0.45;cursor:not-allowed;" title="Available when backend is connected">
-      <div class="pipeline-card-icon" style="background:rgba(255,255,255,0.04);border-color:var(--border);">
-        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.3)" stroke-width="2">
-          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
-          <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
-        </svg>
+    <div class="pipeline-card coming-soon">
+      <div class="pipeline-card-header">
+        <div class="pipeline-card-icon" style="background:rgba(255,255,255,0.04);border-color:var(--border);">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="rgba(255,255,255,0.3)" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <span class="badge-soon">Coming Soon</span>
       </div>
-      <div class="pipeline-card-title" style="color:var(--tmuted);">Territory Assignment</div>
-      <div class="pipeline-card-sub">Assign scored accounts to reps, track territory coverage, and monitor pipeline health across the team.</div>
-      <div class="pipeline-card-cta" style="color:var(--tfaint);">
-        Coming with backend
-      </div>
+      <div class="pipeline-card-title" style="color:var(--tmuted);">Competitive Intel Agent</div>
+      <div class="pipeline-card-sub">Enter a deal and known competitors. Get a battle card with differentiated positioning, objection handles, and win themes — ready for the call.</div>
+      <div class="pipeline-card-cta" style="color:var(--tfaint);">In development</div>
     </div>
+
   </div>
 
 </div>
