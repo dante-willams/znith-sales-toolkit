@@ -1470,7 +1470,7 @@
   let state = {
     company: '', industry: '', stakeholders: [], notes: '', tools: '',
     stage: '', products: [], dealDocs: [], docContext: null,
-    research: '', sources: [], valueMap: null
+    research: '', sources: [], valueMap: null, accountBriefResearch: null
   };
   let previousPhase = 1;
 
@@ -1666,7 +1666,7 @@
 COMPANY: ${state.company}
 REP'S DISCOVERY NOTES: ${state.notes || 'None provided'}
 CURRENT TOOLS: ${state.tools || 'Unknown'}
-${state.docContext ? '\nDEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary : state.dealDocs.length ? '\nDEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') : ''}
+${state.docContext ? '\nDEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary : state.dealDocs.length ? '\nDEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') : ''}${(() => { const ab = state.accountBriefResearch; if (!ab) return ''; let s = '\nACCOUNT BRIEF INTELLIGENCE:\n'; const co = ab.company_profile; if (co?.summary) s += `Company: ${co.summary}\n`; const pov = ab.exec_pov; if (pov?.pitch) s += `Conga POV: ${Array.isArray(pov.pitch)?pov.pitch.join(' '):pov.pitch}\n`; if (pov?.productPOV?.length) s += `Product Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`; if (pov?.valueLevers?.length) s += `Value Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`; const cs = ab.call_strategy; if (cs?.landmines?.length) s += `Watch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`; return s; })()}
 
 Using web search, find and synthesize:
 0. The company's industry and sub-sector (output this first as: INDUSTRY: [your answer])
@@ -1723,7 +1723,7 @@ FIELD GUIDANCE:
 COMPANY: ${state.company} | INDUSTRY: ${state.industry}
 STAKEHOLDERS: ${stakeholderList}
 NOTES: ${(state.notes || 'None').slice(0, 2000)}
-${state.docContext ? 'DEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary + '\n' : state.dealDocs.length ? 'DEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') + '\n' : ''}TOOLS: ${state.tools || 'Unknown'}
+${state.docContext ? 'DEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary + '\n' : state.dealDocs.length ? 'DEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') + '\n' : ''}${(() => { const ab = state.accountBriefResearch; if (!ab) return ''; let s = 'ACCOUNT BRIEF INTELLIGENCE:\n'; const co = ab.company_profile; if (co?.summary) s += `Company: ${co.summary}\n`; const pov = ab.exec_pov; if (pov?.pitch) s += `Conga POV: ${Array.isArray(pov.pitch)?pov.pitch.join(' '):pov.pitch}\n`; if (pov?.productPOV?.length) s += `Product Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`; if (pov?.valueLevers?.length) s += `Value Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`; const cs = ab.call_strategy; if (cs?.landmines?.length) s += `Watch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`; return s + '\n'; })()}TOOLS: ${state.tools || 'Unknown'}
 ${stageContext}
 ${productContext}
 RESEARCH: ${researchSnippet}
@@ -2543,7 +2543,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
   }
 
   function resetApp() {
-    state = { company:'', industry:'', stakeholders:[], notes:'', tools:'', research:'', sources:[], valueMap:null, dealDocs:[], docContext:null };
+    state = { company:'', industry:'', stakeholders:[], notes:'', tools:'', research:'', sources:[], valueMap:null, dealDocs:[], docContext:null, accountBriefResearch:null };
     document.getElementById('companyName').value = '';
     document.getElementById('discoveryNotes').value = '';
     document.getElementById('currentTools').value = '';
@@ -3292,29 +3292,37 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
         if (match) t.classList.add('selected');
       });
     }
+    // Build "Also included in analysis" banner
+    const bannerRows = [];
+    if (deal.research) {
+      state.accountBriefResearch = deal.research;
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#A78BFA;font-size:10px;">✦</span>
+        <span>Account Brief — exec POV, company profile, call strategy</span>
+      </div>`);
+    }
     // Prefer condensed document_context; fall back to raw documents
     if (deal.document_context?.summary) {
       state.docContext = deal.document_context;
-      document.getElementById('dealDocBanner').style.display = 'block';
-      document.getElementById('dealDocList').innerHTML =
-        `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-          <span style="color:#34D399;font-size:10px;">✓</span>
-          <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
-          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
-        </div>`;
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#34D399;font-size:10px;">✓</span>
+        <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
+        <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
+      </div>`);
     } else {
       const docs = (deal.documents || []).filter(d => d.extracted_text);
       if (docs.length) {
         state.dealDocs = docs;
-        document.getElementById('dealDocBanner').style.display = 'block';
-        document.getElementById('dealDocList').innerHTML = docs.map(d =>
-          `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-            <span style="color:#34D399;font-size:10px;">✓</span>
-            <span>${d.name}</span>
-            <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
-          </div>`
-        ).join('');
+        docs.forEach(d => bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+          <span style="color:#34D399;font-size:10px;">✓</span>
+          <span>${d.name}</span>
+          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
+        </div>`));
       }
+    }
+    if (bannerRows.length) {
+      document.getElementById('dealDocBanner').style.display = 'block';
+      document.getElementById('dealDocList').innerHTML = bannerRows.join('');
     }
 
     // If value map already exists, show results directly

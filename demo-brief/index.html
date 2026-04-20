@@ -526,7 +526,7 @@ const S = {
   company:'', products:[], personas:[],
   timeline:'', current:'', context:'', competitors:'', sf:'', notes:'',
   files:[], brief:null, risks:[], flow:[], chatHistory:[],
-  activeDealId: null, dealDocContext: null
+  activeDealId: null, dealDocContext: null, dealResearch: null
 };
 
 // =========================================================
@@ -1091,7 +1091,7 @@ ${personas}
 
 SOURCE MATERIALS:
 ${text || 'No files uploaded — work from intake context only.'}
-${S.dealDocContext?.summary ? `\nDEAL INTELLIGENCE SUMMARY (${S.dealDocContext.doc_count} docs condensed from Account Brief):\n${S.dealDocContext.summary}` : S.dealDocContext?.docs?.length ? `\nDEAL DOCUMENTS:\n${S.dealDocContext.docs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n')}` : ''}
+${S.dealDocContext?.summary ? `\nDEAL INTELLIGENCE SUMMARY (${S.dealDocContext.doc_count} docs condensed from Account Brief):\n${S.dealDocContext.summary}` : S.dealDocContext?.docs?.length ? `\nDEAL DOCUMENTS:\n${S.dealDocContext.docs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n')}` : ''}${(() => { const ab = S.dealResearch; if (!ab) return ''; let s = '\nACCOUNT BRIEF INTELLIGENCE:\n'; const co = ab.company_profile; if (co?.summary) s += `Company: ${co.summary}\n`; const pov = ab.exec_pov; if (pov?.pitch) s += `Conga POV: ${Array.isArray(pov.pitch)?pov.pitch.join(' '):pov.pitch}\n`; if (pov?.productPOV?.length) s += `Product Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`; if (pov?.valueLevers?.length) s += `Value Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`; const cs = ab.call_strategy; if (cs?.openingQuestion) s += `Discovery Hook: ${cs.openingQuestion}\n`; if (cs?.landmines?.length) s += `Watch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`; return s; })()}
 
 INSTRUCTIONS:
 1. Extract every stated requirement, broken workflow, and pain point from the source materials. Quote the customer's own language where possible.
@@ -2506,29 +2506,36 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
     S.activeDealId = deal.id;
 
-    // Load document context from Account Brief
+    // Build "Also included in analysis" banner
+    const bannerRows = [];
+    if (deal.research) {
+      S.dealResearch = deal.research;
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#A78BFA;font-size:10px;">✦</span>
+        <span>Account Brief — exec POV, company profile, call strategy</span>
+      </div>`);
+    }
     if (deal.document_context?.summary) {
       S.dealDocContext = deal.document_context;
-      document.getElementById('dealDocBanner').style.display = 'block';
-      document.getElementById('dealDocList').innerHTML =
-        `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-          <span style="color:#34D399;font-size:10px;">✓</span>
-          <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
-          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
-        </div>`;
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#34D399;font-size:10px;">✓</span>
+        <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
+        <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
+      </div>`);
     } else {
       const docs = (deal.documents || []).filter(d => d.extracted_text);
       if (docs.length) {
         S.dealDocContext = { docs };
-        document.getElementById('dealDocBanner').style.display = 'block';
-        document.getElementById('dealDocList').innerHTML = docs.map(d =>
-          `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-            <span style="color:#34D399;font-size:10px;">✓</span>
-            <span>${d.name}</span>
-            <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
-          </div>`
-        ).join('');
+        docs.forEach(d => bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+          <span style="color:#34D399;font-size:10px;">✓</span>
+          <span>${d.name}</span>
+          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
+        </div>`));
       }
+    }
+    if (bannerRows.length) {
+      document.getElementById('dealDocBanner').style.display = 'block';
+      document.getElementById('dealDocList').innerHTML = bannerRows.join('');
     }
 
     // If a brief already exists for this deal, show it directly

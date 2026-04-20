@@ -532,7 +532,7 @@ async function startGeneration(){
   const dealCtxNow = dealStore.getFromUrl();
   const dealDocs = (dealCtxNow?.documents || []).filter(d => d.extracted_text);
 
-  const hasInput = files.length || dealDocs.length || transcriptPaste || manualNotes;
+  const hasInput = files.length || dealDocs.length || dealCtxNow?.document_context || dealCtxNow?.research || transcriptPaste || manualNotes;
   if(!hasInput){ showErr('Please provide at least one input: upload a file, paste a transcript, or add AE notes.'); return; }
 
   showView('gen');
@@ -637,6 +637,22 @@ async function callAnalysis(acct, research, transcript, notes, dealDocs=[]){
     dealDocs.forEach(d => {
       textParts.push(`--- DEAL DOCUMENT: ${d.name} ---\n${d.extracted_text}`);
     });
+  }
+
+  // Account Brief research context (exec POV, company profile, call strategy)
+  const abRes = dealCtxForDocs?.research;
+  if (abRes) {
+    let abCtx = '--- ACCOUNT BRIEF INTELLIGENCE ---\n';
+    const co = abRes.company_profile;
+    if (co?.summary) abCtx += `Company: ${co.summary}\n`;
+    const pov = abRes.exec_pov;
+    if (pov?.pitch) abCtx += `\nConga POV: ${Array.isArray(pov.pitch) ? pov.pitch.join(' ') : pov.pitch}\n`;
+    if (pov?.productPOV?.length) abCtx += `\nProduct Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`;
+    if (pov?.valueLevers?.length) abCtx += `\nValue Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`;
+    const cs = abRes.call_strategy;
+    if (cs?.openingQuestion) abCtx += `\nDiscovery Hook: ${cs.openingQuestion}\n`;
+    if (cs?.landmines?.length) abCtx += `\nWatch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`;
+    textParts.unshift(abCtx);
   }
 
   files.forEach(f=>{
@@ -1089,27 +1105,32 @@ function syncToDeal(entry) {
   const nameEl = document.getElementById('accountName');
   if (nameEl && deal.context.account_name) nameEl.value = deal.context.account_name;
 
-  // Show deal document context banner
+  // Build "Also included in analysis" banner entries
+  const bannerRows = [];
+  if (deal.research) {
+    bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+      <span style="color:#A78BFA;font-size:10px;">✦</span>
+      <span>Account Brief — exec POV, company profile, call strategy</span>
+    </div>`);
+  }
   if (deal.document_context?.summary) {
-    document.getElementById('dealDocBanner').style.display = 'block';
-    document.getElementById('dealDocList').innerHTML =
-      `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-        <span style="color:#34D399;font-size:10px;">✓</span>
-        <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
-        <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
-      </div>`;
+    bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+      <span style="color:#34D399;font-size:10px;">✓</span>
+      <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
+      <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
+    </div>`);
   } else {
-    const docs = (deal.documents || []).filter(d => d.extracted_text);
-    if (docs.length) {
-      document.getElementById('dealDocBanner').style.display = 'block';
-      document.getElementById('dealDocList').innerHTML = docs.map(d =>
-        `<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-          <span style="color:#34D399;font-size:10px;">✓</span>
-          <span>${d.name}</span>
-          <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
-        </div>`
-      ).join('');
-    }
+    (deal.documents || []).filter(d => d.extracted_text).forEach(d => {
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
+        <span style="color:#34D399;font-size:10px;">✓</span>
+        <span>${d.name}</span>
+        <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
+      </div>`);
+    });
+  }
+  if (bannerRows.length) {
+    document.getElementById('dealDocBanner').style.display = 'block';
+    document.getElementById('dealDocList').innerHTML = bannerRows.join('');
   }
 
   // If qualification already exists, show results directly
