@@ -613,9 +613,9 @@ Include 3-5 priority gaps (ranked high→low). Include 3-4 next actions. Keep co
 
     if (!synthesis) throw new Error('Could not parse synthesis response');
 
-    // Save health + win_room timestamp to deal
+    // Persist synthesis so the next visit loads instantly
     dealStore.patch(deal.id, 'research.deal_brief.dealHealthScore', synthesis.health || 'yellow');
-    dealStore.patch(deal.id, 'win_room', { last_run: new Date().toISOString(), health: synthesis.health || 'yellow' });
+    dealStore.patch(deal.id, 'win_room', { last_run: new Date().toISOString(), health: synthesis.health || 'yellow', synthesis });
     deal = dealStore.get(deal.id);
 
     renderTopbarHealth(synthesis.health);
@@ -987,8 +987,23 @@ function openQualifyIQ() {
     return;
   }
 
-  // Run synthesis
-  await runSynthesis();
+  // Load cached synthesis if available — no API call needed
+  const cached = deal.win_room?.synthesis;
+  if (cached) {
+    synthesis = cached;
+    renderTopbarHealth(synthesis.health);
+    renderMain();
+    // Show age on refresh button
+    const lastRun = deal.win_room?.last_run;
+    if (lastRun) {
+      const mins = Math.round((Date.now() - new Date(lastRun)) / 60000);
+      const age  = mins < 60 ? `${mins}m ago` : `${Math.round(mins/60)}h ago`;
+      const btn  = document.getElementById('refreshBtn');
+      if (btn) btn.title = `Last run ${age} — click to refresh`;
+    }
+  } else {
+    await runSynthesis();
+  }
 })();
 
 </script>
