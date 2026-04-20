@@ -735,10 +735,13 @@ CONTENT RULES:
   const raw = await callAPI('claude-haiku-4-5-20251001', sys, prompt);
   const cleaned = raw.replace(/```json|```/g,'').trim();
 
-  // Normalize literal newlines/tabs inside JSON string values (model sometimes outputs raw line breaks)
+  // Normalize all control characters inside JSON string values (model sometimes outputs raw line breaks, form feeds, etc.)
   function sanitizeJson(str) {
     return str.replace(/"(?:[^"\\]|\\.)*"/g, m =>
-      m.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t')
+      m.replace(/[\x00-\x1f]/g, c => {
+        const map = {'\n':'\\n','\r':'\\r','\t':'\\t','\f':'\\f','\b':'\\b'};
+        return map[c] || '\\u' + c.charCodeAt(0).toString(16).padStart(4,'0');
+      })
     );
   }
 
