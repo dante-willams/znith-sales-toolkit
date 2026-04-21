@@ -574,10 +574,23 @@ function renderWithBadges(text) {
 }
 
 function safeJSON(str) {
-  try {
-    const m = str.match(/```json\s*([\s\S]*?)```/) || str.match(/\{[\s\S]*\}/);
-    return JSON.parse(m ? (m[1]||m[0]) : str);
-  } catch { return null; }
+  // 1. Try fenced block first
+  const fenced = str.match(/```json\s*([\s\S]*?)```/);
+  if (fenced) { try { return JSON.parse(fenced[1]); } catch {} }
+  // 2. Try raw parse
+  try { return JSON.parse(str); } catch {}
+  // 3. Extract outermost {...}
+  const start = str.indexOf('{'), end = str.lastIndexOf('}');
+  if (start !== -1 && end > start) {
+    try { return JSON.parse(str.slice(start, end + 1)); } catch {}
+    // 4. Truncated JSON — close open structures and retry
+    let snippet = str.slice(start, end + 1);
+    const opens = (snippet.match(/\[/g)||[]).length - (snippet.match(/\]/g)||[]).length;
+    const braces = (snippet.match(/\{/g)||[]).length - (snippet.match(/\}/g)||[]).length;
+    snippet += ']'.repeat(Math.max(0,opens)) + '}'.repeat(Math.max(0,braces));
+    try { return JSON.parse(snippet); } catch {}
+  }
+  return null;
 }
 
 // ── BUILD DEAL CONTEXT ────────────────────────────────────────────────────────
@@ -746,7 +759,7 @@ Return ONLY valid JSON, no preamble, no markdown fences:
 
 Include 3-5 priority gaps (ranked high→low). Include 3-4 next actions. Keep coaching_pulse to 2-3 points maximum.`;
 
-    const raw = await callClaude([{ role: 'user', content: prompt }], DEAL_COACH_BRAIN, 3000);
+    const raw = await callClaude([{ role: 'user', content: prompt }], DEAL_COACH_BRAIN, 6000);
     synthesis = safeJSON(raw);
 
     if (!synthesis) throw new Error('Could not parse synthesis response');
