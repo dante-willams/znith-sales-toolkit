@@ -1031,7 +1031,7 @@ function parseCSV(text) {
 function buildDeals(rows) {
   const header = rows[0];
   const idx = {};
-  header.forEach((h,i) => idx[h.trim()] = i);
+  header.forEach((h,i) => { const k = h.trim(); if (!(k in idx)) idx[k] = i; });
   return rows.slice(1).map(r => ({
     name:        r[idx['Opportunity']] || '',
     account:     r[idx['Account Name']] || '',
@@ -1476,13 +1476,19 @@ Severity must be "high" or "medium". Include 2-4 risk areas. Generate coaching q
       }),
     });
     const data = await res.json();
+    if (!res.ok) {
+      throw new Error(`API ${res.status}: ${JSON.stringify(data).slice(0, 300)}`);
+    }
     const raw = data?.content?.[0]?.text || '';
+    if (!raw) {
+      throw new Error(`Empty response from API. Full data: ${JSON.stringify(data).slice(0, 400)}`);
+    }
     let parsed;
     try {
       const jsonMatch = raw.match(/\{[\s\S]*\}/);
       parsed = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
     } catch(e) {
-      throw new Error('Could not parse AI response. Raw: ' + raw.slice(0, 200));
+      throw new Error('JSON parse failed. Raw: ' + raw.slice(0, 400));
     }
     renderSynthesis(parsed);
   } catch(err) {
