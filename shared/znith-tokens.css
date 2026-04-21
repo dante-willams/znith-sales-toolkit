@@ -61,7 +61,7 @@
 }
 
 /* ── Light theme ── */
-[data-theme="light"] {
+:root[data-theme="light"] {
   --amber:       #C98C20;   /* fills on white */
   --amber-text:  #946C00;   /* text / icons — AA pass */
   --amber-deep:  #6E5000;   /* hover / pressed */
@@ -92,7 +92,7 @@
 
 /* ── Conga Symbol ── */
 .conga-mark { width: 28px; height: 28px; color: #FFFFFF; }
-[data-theme="light"] .conga-mark { color: #1A1914; }
+:root[data-theme="light"] .conga-mark { color: #1A1914; }
 
 /* ── Standard footer ── */
 .znith-footer {
