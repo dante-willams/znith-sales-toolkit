@@ -2,37 +2,17 @@
 <html lang="en" data-theme="dark">
 <head>
 <script src="/auth.js"></script>
+<link rel="stylesheet" href="./shared/znith-tokens.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Znith · Deals</title>
+<title>Conga Sales Intelligence</title>
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --f-brand:'Epilogue',sans-serif;
-  --f-ui:'Barlow',sans-serif;
-  --f-mono:'IBM Plex Mono',monospace;
-  --amber:#B8860B;
-  --amber-glow:rgba(184,134,11,0.22);
-  --amber-muted:rgba(184,134,11,0.12);
-  --amber-faint:rgba(184,134,11,0.07);
-  --bg:#05070F;
-  --surf:#0F1520;
-  --surf-2:#0A0E1A;
-  --surf-3:#070A13;
-  --border:rgba(255,255,255,0.08);
-  --border-md:rgba(255,255,255,0.14);
-  --text:rgba(255,255,255,0.88);
-  --tmuted:rgba(255,255,255,0.50);
-  --tfaint:rgba(255,255,255,0.28);
-  --transition:all 0.18s ease;
-  --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
-  --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
-}
+
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;min-height:100vh;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;min-height:100vh;padding-bottom:40px;}
 
 /* ── HEADER ── */
 header{
@@ -66,7 +46,7 @@ header{
   letter-spacing:0.04em;text-transform:uppercase;
   cursor:pointer;transition:var(--transition);
 }
-.btn-new-deal:hover{background:#d4a012;transform:translateY(-1px);}
+.btn-new-deal:hover{background:#B8860B;transform:translateY(-1px);}
 /* ── HEADER SEARCH ── */
 .header-search{
   display:flex;align-items:center;gap:8px;
@@ -116,7 +96,7 @@ header{
 .pipeline-card.coming-soon:hover::before{opacity:0;}
 .pipeline-card-icon{
   width:36px;height:36px;border-radius:8px;
-  background:var(--amber-muted);border:1px solid rgba(184,134,11,0.2);
+  background:var(--amber-muted);border:1px solid rgba(229,168,58,0.12);
   display:flex;align-items:center;justify-content:center;
 }
 .pipeline-card-icon svg{opacity:0.9;}
@@ -228,8 +208,8 @@ header{
   border:1px solid var(--border);color:var(--tfaint);
   background:var(--surf-2);
 }
-.win-room-btn.active{background:var(--amber-muted);border-color:rgba(184,134,11,0.3);color:var(--amber);}
-.win-room-btn.active:hover{background:rgba(184,134,11,0.25);}
+.win-room-btn.active{background:var(--amber-muted);border-color:rgba(229,168,58,0.28);color:var(--amber);}
+.win-room-btn.active:hover{background:rgba(229,168,58,0.25);}
 .win-room-btn:not(.active):hover{border-color:var(--border-md);color:var(--text);}
 
 /* ── CARD ACTIONS (hover) ── */
@@ -265,7 +245,7 @@ header{
   letter-spacing:0.04em;text-transform:uppercase;
   cursor:pointer;transition:var(--transition);text-decoration:none;
 }
-.btn-empty-cta:hover{background:#d4a012;}
+.btn-empty-cta:hover{background:#B8860B;}
 
 /* ── NEW DEAL MODAL ── */
 .modal-overlay{
@@ -300,7 +280,7 @@ header{
   clip-path:var(--clip-sm);font-family:var(--f-ui);font-size:13px;font-weight:700;
   letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;transition:var(--transition);
 }
-.btn-modal-primary:hover{background:#d4a012;}
+.btn-modal-primary:hover{background:#B8860B;}
 .btn-modal-cancel{
   background:transparent;color:var(--tmuted);
   border:1px solid var(--border);padding:11px 20px;
@@ -365,7 +345,7 @@ header{
   letter-spacing:0.05em;text-transform:uppercase;
   cursor:pointer;transition:var(--transition);text-decoration:none;
 }
-.drawer-open-btn:hover{background:#d4a012;}
+.drawer-open-btn:hover{background:#B8860B;}
 .drawer-dim-list{display:flex;flex-direction:column;gap:0;}
 .drawer-dim-row{
   display:flex;align-items:center;gap:10px;
@@ -410,16 +390,7 @@ header{
 [data-theme="light"] .modal-input{background:#F4F5F6;color:#1A2332;}
 
 /* ── ZNITH FOOTER ── */
-.znith-footer{
-  position:fixed;bottom:0;left:0;right:0;z-index:90;
-  height:34px;padding:0 16px;
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--surf);
-  border-top:2px solid var(--amber);
-}
-.znith-wordmark{display:flex;align-items:center;gap:1px;font-family:var(--f-brand);font-size:12px;font-weight:800;line-height:1;}
-.znith-footer-meta{display:flex;align-items:center;gap:8px;}
-.znith-footer-pip{width:4px;height:4px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber-glow);}
+
 </style>
 </head>
 <body>
@@ -428,7 +399,7 @@ header{
 <header>
   <div class="header-logo">
     <div class="logo-mark">
-      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#99f6e4">
+      <svg viewBox="0 0 1039.041 1080" fill="currentColor" class="conga-mark" xmlns="http://www.w3.org/2000/svg">
         <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
       </svg>
     </div>
@@ -483,7 +454,7 @@ header{
     <a href="./prospecting-agent/index.html" target="_blank" rel="noopener" class="pipeline-card">
       <div class="pipeline-card-header">
         <div class="pipeline-card-icon">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#B8860B" stroke-width="2">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#E5A83A" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
           </svg>
         </div>
@@ -552,14 +523,14 @@ header{
 
 <footer class="znith-footer">
   <div class="znith-wordmark">
-    <span style="font-family:var(--f-mono);color:var(--amber);font-weight:700;">/</span>
-    <span style="font-family:var(--f-brand);font-weight:800;color:var(--amber);">Z</span>
-    <span style="font-family:var(--f-brand);font-weight:800;color:rgba(255,255,255,0.25);">nith</span>
+    <span class="slash" style="font-family:var(--f-mono);color:var(--amber);font-weight:700;">/</span>
+    <span class="z" style="font-family:var(--f-brand);font-weight:800;color:var(--amber);">Z</span>
+    <span class="rest" style="font-family:var(--f-brand);font-weight:800;color:var(--tghost);">nith</span>
   </div>
   <div class="znith-footer-meta">
-    <span style="font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">Sales Intelligence</span>
+    <span>Sales Intelligence</span>
     <div class="znith-footer-pip"></div>
-    <span style="font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">v1.0</span>
+    <span>v4.0</span>
   </div>
 </footer>
 

@@ -2,40 +2,14 @@
 <html lang="en" data-theme="dark">
 <head>
 <script src="/auth.js"></script>
+<link rel="stylesheet" href="../shared/znith-tokens.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Win Room · Conga</title>
-<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<title>Conga Win Room</title>
 <style>
-:root{
-  --f-brand:'Epilogue',sans-serif;
-  --f-ui:'Barlow',sans-serif;
-  --f-mono:'IBM Plex Mono',monospace;
-  --amber:#B8860B;
-  --amber-glow:rgba(184,134,11,0.22);
-  --amber-muted:rgba(184,134,11,0.12);
-  --amber-faint:rgba(184,134,11,0.07);
-  --green:#16A34A; --green-muted:rgba(22,163,74,0.12);
-  --yellow:#D97706; --yellow-muted:rgba(217,119,6,0.12);
-  --red:#DC2626; --red-muted:rgba(220,38,38,0.12);
-  --blue:#3B82F6; --blue-muted:rgba(59,130,246,0.12);
-  --bg:#05070F;
-  --surf:#0F1520;
-  --surf-2:#0A0E1A;
-  --surf-3:#070A13;
-  --border:rgba(255,255,255,0.08);
-  --border-md:rgba(255,255,255,0.14);
-  --text:rgba(255,255,255,0.88);
-  --tmuted:rgba(255,255,255,0.50);
-  --tfaint:rgba(255,255,255,0.28);
-  --navy:#0A0E1A;
-  --white-faint:rgba(255,255,255,0.18);
-  --transition:all 0.18s ease;
-  --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
-  --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
-}
+
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;min-height:100vh;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;min-height:100vh;padding-bottom:40px;}
 
 /* ── TOPBAR ── */
 .topbar{
@@ -76,8 +50,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
   text-decoration:none;
 }
 .btn-topbar:hover{border-color:var(--border-md);color:var(--text);}
-.btn-topbar.primary{background:var(--amber-muted);border-color:rgba(184,134,11,0.3);color:var(--amber);}
-.btn-topbar.primary:hover{background:rgba(184,134,11,0.2);}
+.btn-topbar.primary{background:var(--amber-muted);border-color:rgba(229,168,58,0.28);color:var(--amber);}
+.btn-topbar.primary:hover{background:rgba(229,168,58,0.12);}
 .btn-topbar.spinning svg{animation:spin 1s linear infinite;}
 .btn-topbar.stale{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);color:#F87171;position:relative;}
 .btn-topbar.stale:hover{background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.5);}
@@ -106,7 +80,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
   letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;
   text-decoration:none;transition:var(--transition);
 }
-.btn-state:hover{background:#d4a012;}
+.btn-state:hover{background:#B8860B;}
 
 /* ── SYNTHESIS LOADING ── */
 .synthesis-loading{display:flex;flex-direction:column;gap:16px;padding:20px 0;}
@@ -175,7 +149,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .coaching-item{
   display:flex;gap:10px;align-items:flex-start;
   padding:10px 14px;
-  background:var(--amber-faint);border:1px solid rgba(184,134,11,0.15);
+  background:var(--amber-faint);border:1px solid rgba(229,168,58,0.15);
   clip-path:var(--clip-sm);
 }
 .coaching-pip{width:4px;height:4px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:6px;}
@@ -270,15 +244,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 }
 .side-btn:hover{border-color:var(--amber);color:var(--amber);}
 
-/* ── ZNITH FOOTER ── */
-.znith-footer{
-  position:fixed;bottom:0;left:0;right:0;z-index:90;height:34px;padding:0 16px;
-  display:flex;align-items:center;justify-content:space-between;
-  background:var(--surf);border-top:2px solid var(--amber);
-}
-.znith-wordmark{display:flex;align-items:center;gap:1px;font-family:var(--f-brand);font-size:12px;font-weight:800;line-height:1;}
-.znith-footer-meta{display:flex;align-items:center;gap:8px;}
-.znith-footer-pip{width:4px;height:4px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber-glow);}
+
 
 /* ── LIGHT THEME ── */
 [data-theme="light"]{
@@ -288,7 +254,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
   --white-faint:rgba(0,0,0,0.15);
 }
 [data-theme="light"] .topbar{background:rgba(244,245,246,0.95);}
-[data-theme="light"] .znith-footer{background:#FFFFFF;}
 </style>
 </head>
 <body>
@@ -297,7 +262,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 <div class="topbar" id="topbar">
   <a href="../dashboard.html" class="topbar-logo" title="Back to deals">
     <div class="topbar-logo-mark">
-      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#99f6e4">
+      <svg viewBox="0 0 1039.041 1080" fill="currentColor" class="conga-mark" xmlns="http://www.w3.org/2000/svg">
         <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
       </svg>
     </div>
@@ -376,14 +341,14 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 <!-- ── FOOTER ── -->
 <footer class="znith-footer">
   <div class="znith-wordmark">
-    <span style="font-family:var(--f-mono);color:var(--amber);font-weight:700;">/</span>
-    <span style="font-family:var(--f-brand);font-weight:800;color:var(--amber);">Z</span>
-    <span style="font-family:var(--f-brand);font-weight:800;color:var(--white-faint);">nith</span>
+    <span class="slash" style="font-family:var(--f-mono);color:var(--amber);font-weight:700;">/</span>
+    <span class="z" style="font-family:var(--f-brand);font-weight:800;color:var(--amber);">Z</span>
+    <span class="rest" style="font-family:var(--f-brand);font-weight:800;color:var(--tghost);">nith</span>
   </div>
   <div class="znith-footer-meta">
-    <span style="font-family:var(--f-mono);font-size:9px;color:var(--white-faint);letter-spacing:0.08em;">Win Room</span>
+    <span>Win Room</span>
     <div class="znith-footer-pip"></div>
-    <span style="font-family:var(--f-mono);font-size:9px;color:var(--white-faint);letter-spacing:0.08em;">v2.0</span>
+    <span>v4.0</span>
   </div>
 </footer>
 
@@ -1021,7 +986,7 @@ function renderMain() {
     if (s.value_case) {
       html += `<div>
         <div class="section-eyebrow">Value Case</div>
-        <div class="info-card" style="border-color:rgba(184,134,11,0.2);background:var(--amber-faint);">${renderWithBadges(s.value_case)}</div>
+        <div class="info-card" style="border-color:rgba(229,168,58,0.12);background:var(--amber-faint);">${renderWithBadges(s.value_case)}</div>
       </div>`;
     }
     if (s.stage_play) {
