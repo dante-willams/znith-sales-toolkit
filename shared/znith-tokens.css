@@ -40,6 +40,28 @@
   --status-warn: #F59E0B;
   --status-risk: #EF4444;
 
+  /* ── v1 status aliases (backward compat) ── */
+  --green:        var(--status-ok);
+  --yellow:       var(--status-warn);
+  --red:          var(--status-risk);
+  --blue:         #63B3ED;
+  --green-muted:  rgba(52,211,153,0.14);
+  --yellow-muted: rgba(245,158,11,0.14);
+  --red-muted:    rgba(239,68,68,0.14);
+
+  /* ── Stage pill colors ── */
+  --stage-discovery:   #63B3ED;
+  --stage-demo:        var(--amber);
+  --stage-proposal:    #A78BFA;
+  --stage-negotiation: #FB923C;
+  --stage-closed-won:  var(--status-ok);
+  --stage-closed-lost: var(--tfaint);
+
+  /* ── Health / status shadows ── */
+  --sh-ok:   0 0 6px rgba(52,211,153,0.35);
+  --sh-warn: 0 0 6px rgba(245,158,11,0.35);
+  --sh-risk: 0 0 6px rgba(239,68,68,0.35);
+
   /* ── Geometry ── */
   --clip-lg:  polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0% calc(100% - 10px), 0% 10px);
   --clip-sm:  polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
@@ -56,8 +78,6 @@
   --sh-md:    0 2px 8px rgba(0,0,0,0.35);
   --sh-lg:    0 8px 28px rgba(0,0,0,0.4);
 
-  /* ── Number treatment ── */
-  font-variant-numeric: tabular-nums;
 }
 
 /* ── Light theme ── */
@@ -88,7 +108,43 @@
   --sh-sm:    0 1px 2px rgba(26,25,20,0.04), 0 1px 1px rgba(26,25,20,0.03);
   --sh-md:    0 2px 8px rgba(26,25,20,0.06), 0 1px 3px rgba(26,25,20,0.04);
   --sh-lg:    0 8px 28px rgba(26,25,20,0.08), 0 2px 8px rgba(26,25,20,0.05);
+
+  /* ── v1 muted aliases (light) ── */
+  --green-muted:  rgba(22,163,74,0.12);
+  --yellow-muted: rgba(180,120,20,0.12);
+  --red-muted:    rgba(200,50,50,0.10);
+
+  /* ── Health shadows (light: tighter, less glow) ── */
+  --sh-ok:   0 1px 3px rgba(22,163,74,0.2);
+  --sh-warn: 0 1px 3px rgba(180,120,20,0.2);
+  --sh-risk: 0 1px 3px rgba(200,50,50,0.2);
 }
+
+/* ── Tabular nums — scoped to numeric display classes ── */
+.kpi-value, .kpi-value *,
+.meddpicc-score-val, .drawer-value-chip-val, .drawer-dim-score,
+.meta-val, .score, [data-num] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── KPI number treatment — prefix / num / unit ── */
+.kpi-value {
+  font-family: var(--f-brand);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+}
+.kpi-value .prefix,
+.kpi-value .unit {
+  font-size: 0.5em;
+  opacity: 0.55;
+  font-weight: 600;
+  margin: 0 0.08em;
+}
+.kpi-value .num { font-size: 1em; }
 
 /* ── Conga Symbol ── */
 .conga-mark { width: 28px; height: 28px; color: #FFFFFF; }
