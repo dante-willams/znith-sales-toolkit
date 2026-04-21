@@ -13,6 +13,7 @@
 <style>
 :root {
   /* ── Znith Design System v2 — Account Brief (Teal) ── */
+  --header-glass: rgba(255,255,255,0.92);
 
   /* Module accent — Account Brief teal */
   --accent:       #0D9488;
@@ -98,7 +99,7 @@ body::after{
 /* ── HEADER ── */
 header{
   position:sticky;top:0;z-index:100;
-  background:rgba(10,14,26,0.92);
+  background:var(--header-glass);
   backdrop-filter:blur(16px);
   border-bottom:1px solid var(--navy-border);
   padding:0 40px;
@@ -118,6 +119,7 @@ header{
   --tmuted:      rgba(255,255,255,0.50);
   --tfaint:      rgba(255,255,255,0.28);
   /* Legacy card aliases */
+  --header-glass: rgba(10,14,26,0.92);
   --navy-mid:    #1E2A3C;
   --navy-light:  #1A2332;
   --navy-border: rgba(255,255,255,0.10);
