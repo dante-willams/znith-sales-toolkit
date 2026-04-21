@@ -22,7 +22,7 @@
     :root{
       --surface:var(--surf);--s2:var(--surf-2);--s3:var(--surf-3);
       --navy:var(--surf-2);--tm:var(--tmuted);--td:var(--tfaint);
-      --purple:#f97316;--pdim:#c2410c;--plight:#fb923c;
+      --purple:var(--amber);--pdim:var(--amber-deep);--plight:var(--amber);
       --danger:#f85a5a;--warn:#f0a429;--ok:#3ecf8e;--white:#ffffff;
     }
     body{font-family:var(--f-ui);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;padding-bottom:40px;}
@@ -2329,11 +2329,7 @@ function openChatWhenReady(){
     `\u2022 Adjust pain points, risks, or demo flow timing\n` +
     `\u2022 Search the web for live intel on ${S.company}\n\n` +
     `What would you like to change?`;
-  if(!chatOpen){
-    setTimeout(()=>{ toggleChat(); addChatMsg('assistant', readyMsg); }, 800);
-  } else {
-    addChatMsg('assistant', readyMsg);
-  }
+  addChatMsg('assistant', readyMsg);
 }
 
 function addChatMsg(role, text){
