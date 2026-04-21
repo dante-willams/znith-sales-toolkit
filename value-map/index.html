@@ -74,13 +74,12 @@
   /* ── HEADER ── */
   header {
     position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(14,13,11,0.94);
+    background: var(--surf-2);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--navy-border);
     height: 56px;
     display: flex; align-items: center;
   }
-  [data-theme="light"] header { background: rgba(255,255,255,0.94); }
 
   .header-inner {
     width: 100%;
@@ -352,7 +351,7 @@
   }
 
   .btn-secondary:hover {
-    border-color: rgba(240,244,255,0.3);
+    border-color: var(--border-md);
     color: var(--white);
     background: var(--white-faint);
   }
@@ -394,7 +393,7 @@
     margin-top: 32px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 12px;
-    color: rgba(240,244,255,0.4);
+    color: var(--tmuted);
     max-height: 180px;
     overflow-y: auto;
     line-height: 1.8;
@@ -413,7 +412,7 @@
   }
 
   .source-card {
-    background: rgba(34,32,24,0.5);
+    background: var(--surf-2);
     border: 1px solid var(--navy-border);
     clip-path: var(--clip-sm);
     padding: 14px 16px;
@@ -447,7 +446,7 @@
 
   /* ── VALUE MAP OUTPUT ── */
   .vm-header {
-    background: linear-gradient(135deg, var(--navy-light) 0%, rgba(26,34,54,0.8) 100%);
+    background: var(--surf);
     border: 1px solid var(--navy-border);
     border-radius: 16px 16px 0 0;
     padding: 32px 40px;
@@ -728,7 +727,7 @@
 
   .copy-toolbar-inner {
     display: flex; gap: 12px; align-items: center;
-    background: rgba(24,23,20,0.96);
+    background: var(--surf-2);
     backdrop-filter: blur(16px);
     border: 1px solid var(--navy-border);
     clip-path: var(--clip-lg);
@@ -866,7 +865,7 @@
   }
   .file-chip-remove {
     background: transparent; border: none;
-    color: rgba(244,240,255,0.3);
+    color: var(--tfaint);
     width: 20px; height: 20px; font-size: 12px;
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; transition: color 0.2s; border-radius: 4px; padding: 0;
@@ -876,7 +875,7 @@
   .notes-divider {
     display: flex; align-items: center; gap: 12px;
     margin: 14px 0 12px;
-    color: rgba(240,244,255,0.2); font-size: 11px; font-weight: 500;
+    color: var(--tghost); font-size: 11px; font-weight: 500;
     letter-spacing: 0.08em; text-transform: uppercase;
   }
   .notes-divider::before, .notes-divider::after {
@@ -1112,7 +1111,7 @@
     text-transform: uppercase; color: var(--white-dim);
   }
   .edit-field input, .edit-field textarea {
-    background: rgba(34,32,24,0.5); border: 1px solid var(--navy-border);
+    background: var(--surf-2); border: 1px solid var(--navy-border);
     clip-path: var(--clip-sm); color: var(--white); font-family: 'Barlow', sans-serif;
     font-size: 13px; padding: 9px 12px; outline: none;
     transition: border-color 0.2s; resize: vertical;
@@ -2071,7 +2070,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .vm-stakeholder-row {
           display: grid;
           grid-template-columns: 200px repeat(3, minmax(0, 1fr));
-          background: rgba(24,23,20,0.6);
+          background: var(--surf);
           border: 1px solid var(--navy-border);
           border-top: none;
         }
@@ -2098,11 +2097,11 @@ Include company websites, news articles, press releases, earnings calls, analyst
           padding: 12px 16px;
           display: flex; align-items: flex-start; gap: 10px;
           border-right: 1px solid var(--navy-border);
-          background: rgba(24,23,20,0.4);
+          background: var(--surf-2);
         }
         .row-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
         .row-label-text { font-size: 12px; font-weight: 600; color: var(--white); }
-        .row-label-desc { font-size: 11px; color: rgba(244,240,255,0.35); margin-top: 2px; }
+        .row-label-desc { font-size: 11px; color: var(--tfaint); margin-top: 2px; }
 
         .vm-cell {
           padding: 12px 14px;
@@ -2175,7 +2174,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .msp-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
         @media (max-width: 700px) { .msp-grid { grid-template-columns: 1fr 1fr; } }
         .msp-card {
-          background: rgba(24,23,20,0.6);
+          background: var(--surf);
           border: 1px solid var(--navy-border);
           border-radius: 10px; padding: 14px 16px;
           position: relative; overflow: hidden;
@@ -2185,7 +2184,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .msp-phase { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
         .msp-body { display: flex; flex-direction: column; gap: 6px; }
         .msp-row { font-size: 11.5px; color: var(--white-dim); line-height: 1.45; }
-        .msp-lbl { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(244,240,255,0.3); margin-bottom: 2px; }
+        .msp-lbl { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tfaint); margin-bottom: 2px; }
 
         /* Sources */
         .vm-sources {
@@ -2198,7 +2197,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .source-item {
           display: flex; align-items: flex-start; gap: 10px;
           padding: 10px 14px;
-          background: rgba(24,23,20,0.6);
+          background: var(--surf);
           border: 1px solid var(--navy-border);
           border-radius: 8px;
           transition: border-color 0.2s;
@@ -2751,7 +2750,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
       </div>
       <div class="edit-msp-grid">`;
     vm.milestones.forEach((m, mi) => {
-      html += `<div style="background:rgba(24,23,20,0.6);border:1px solid var(--navy-border);border-radius:10px;padding:14px 16px">
+      html += `<div style="background:var(--surf);border:1px solid var(--navy-border);border-radius:10px;padding:14px 16px">
         <div class="edit-field-label" style="margin-bottom:10px;color:var(--gold)">Milestone ${mi+1}: ${escHtml(m.phase)}</div>
         <div class="edit-field" style="margin-bottom:8px">
           <div class="edit-field-label">Timing</div>
