@@ -749,6 +749,98 @@ header {
   animation: sweep 2.2s ease-in-out infinite;
 }
 
+/* ── Week-over-week delta ── */
+.delta-card {
+  background: var(--surf); border: 1px solid var(--border);
+  clip-path: var(--clip-lg); overflow: hidden; box-shadow: var(--sh-sm);
+}
+.delta-kpi-row {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border-bottom: 1px solid var(--border);
+}
+.delta-kpi {
+  padding: 14px 18px; border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.delta-kpi:last-child { border-right: none; }
+.delta-kpi-label {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--tfaint);
+}
+.delta-kpi-value {
+  font-family: var(--f-brand); font-size: 28px; font-weight: 800;
+  letter-spacing: -0.03em; color: var(--text); line-height: 1.1;
+}
+.delta-kpi-value.pos { color: var(--status-ok); }
+.delta-kpi-value.neg { color: var(--status-risk); }
+.delta-groups { display: grid; grid-template-columns: repeat(4,1fr); }
+.delta-group {
+  padding: 14px 18px; border-right: 1px solid var(--border);
+}
+.delta-group:last-child { border-right: none; }
+.delta-group-label {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 10px;
+}
+.delta-group-label.added   { color: var(--status-ok); }
+.delta-group-label.advanced { color: var(--amber-text); }
+.delta-group-label.slipped  { color: var(--status-warn); }
+.delta-group-label.dropped  { color: var(--status-risk); }
+.delta-deal-item {
+  padding: 6px 0; border-bottom: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 2px;
+}
+.delta-deal-item:last-child { border-bottom: none; }
+.delta-deal-name { font-weight: 600; color: var(--text); font-size: 12px; }
+.delta-deal-meta { font-family: var(--f-mono); font-size: 10px; color: var(--tfaint); }
+.delta-empty { font-size: 12px; color: var(--tghost); font-style: italic; }
+
+/* ── Commit vs AI call gap ── */
+.gap-bar-wrap {
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+}
+.gap-labels {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 10px;
+}
+.gap-label-name {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--tfaint); margin-bottom: 2px;
+}
+.gap-label-val {
+  font-family: var(--f-brand); font-size: 20px; font-weight: 800;
+  letter-spacing: -0.03em;
+}
+.gap-label-val.commit  { color: var(--text); }
+.gap-label-val.ai-call { color: var(--amber-text); }
+.gap-bar-track {
+  height: 8px; background: var(--surf-3);
+  clip-path: var(--clip-sm); overflow: hidden;
+  border: 1px solid var(--border); position: relative; margin-bottom: 8px;
+}
+.gap-bar-bg   { position: absolute; inset: 0; background: rgba(229,168,58,0.18); transition: width 600ms ease-out; }
+.gap-bar-fill { position: absolute; inset: 0; background: linear-gradient(90deg, var(--amber-deep), var(--amber-fill)); transition: width 600ms ease-out; }
+.gap-verdict {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+}
+.gap-verdict.over    { color: var(--status-risk); }
+.gap-verdict.upside  { color: var(--status-ok); }
+.gap-verdict.aligned { color: var(--tmuted); }
+.gap-deal-list { padding: 0 18px 12px; }
+.gap-deal-section-title {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 10px 0 6px; border-top: 1px solid var(--border); color: var(--tfaint);
+}
+.gap-deal-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 0; border-bottom: 1px solid var(--border);
+}
+.gap-deal-row:last-child { border-bottom: none; }
+.gap-deal-acct { font-size: 12px; font-weight: 600; color: var(--text); }
+.gap-deal-acv  { font-family: var(--f-mono); font-size: 11px; color: var(--tfaint); }
+
 /* ── Responsive ── */
 @media (max-width: 1200px) {
   .main { grid-template-columns: 1fr; }
@@ -819,6 +911,8 @@ header {
       <div class="page-chrome">
         <div class="live-pill"><div class="live-pip"></div><div class="live-text" id="loaded-label">Loaded</div></div>
         <button class="btn btn-ghost btn-sm" onclick="exportAttention()">Export Signals</button>
+        <input type="file" id="prior-input" accept=".csv" style="display:none" onchange="handlePriorFile(event)">
+        <button class="btn btn-ghost btn-sm" id="compare-btn" onclick="document.getElementById('prior-input').click()">Compare Weeks</button>
         <button class="btn btn-primary btn-sm" id="synthesis-btn" onclick="runSynthesis()">&#9670; Run AI Synthesis</button>
       </div>
     </div>
@@ -902,6 +996,18 @@ header {
       </div>
     </div>
 
+    <!-- Week-over-week delta (visible when prior CSV loaded) -->
+    <div id="delta-section" style="display:none;">
+      <div class="delta-card">
+        <div class="card-head" style="padding:16px 20px 14px;border-bottom:1px solid var(--border);">
+          <div class="card-title">Week-over-Week Movement <span class="count-pill" id="delta-total-pill">—</span></div>
+          <div class="card-eye" id="delta-eye">vs prior export</div>
+        </div>
+        <div class="delta-kpi-row" id="delta-kpis"></div>
+        <div class="delta-groups" id="delta-groups"></div>
+      </div>
+    </div>
+
     <!-- Main grid -->
     <div class="main">
       <div>
@@ -938,6 +1044,15 @@ header {
 
       <!-- Right rail -->
       <div class="rail">
+        <!-- Commit vs AI Call gap -->
+        <div class="attention-card">
+          <div class="attention-head">
+            <div class="card-title" style="font-size:14px;">Commit vs AI Call</div>
+            <div class="card-eye" id="gap-eye">Forecast Gap</div>
+          </div>
+          <div id="gap-body"></div>
+        </div>
+        <!-- Attention queue -->
         <div class="attention-card">
           <div class="attention-head">
             <div class="card-title" style="font-size:14px;">Attention Queue</div>
@@ -1133,6 +1248,8 @@ function render() {
   renderStageFlow();
   renderDealsTable();
   renderAttention();
+  renderDelta();
+  renderGap();
 }
 
 function renderKPIs() {
@@ -1564,6 +1681,203 @@ function renderSynthesis(data) {
 
   loading.style.display = 'none';
   report.style.display = 'flex';
+}
+
+/* ── Week-over-week ── */
+let priorDeals = [];
+let hasPrior = false;
+
+function handlePriorFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => loadPriorCSV(ev.target.result);
+  reader.readAsText(file);
+}
+
+function loadPriorCSV(text) {
+  try {
+    const rows = parseCSV(text);
+    priorDeals = buildDeals(rows).filter(d => d.account);
+    hasPrior = true;
+    const btn = document.getElementById('compare-btn');
+    btn.textContent = '✓ Prior Loaded';
+    btn.style.borderColor = 'var(--status-ok)';
+    btn.style.color = 'var(--status-ok)';
+    render();
+  } catch(e) {
+    alert('Could not parse prior CSV: ' + e.message);
+  }
+}
+
+function matchDeal(d, list) {
+  return list.find(p =>
+    (p.id && d.id && p.id === d.id) ||
+    (p.name === d.name && p.account === d.account)
+  );
+}
+
+function computeDelta() {
+  const added = [], dropped = [], advanced = [], slipped = [];
+
+  allDeals.forEach(d => {
+    const prior = matchDeal(d, priorDeals);
+    if (!prior) { added.push(d); return; }
+
+    const si = STAGE_ORDER.indexOf(d.stage);
+    const pi = STAGE_ORDER.indexOf(prior.stage);
+    const curDate = new Date(d.closeDate);
+    const priDate = new Date(prior.closeDate);
+    const dateSlipped = !isNaN(curDate) && !isNaN(priDate) && curDate > priDate;
+
+    if (si > pi) {
+      advanced.push({ curr: d, prior });
+    } else if (si < pi || dateSlipped) {
+      slipped.push({ curr: d, prior, dateSlipped, stageBack: si < pi });
+    } else {
+      const scoreDelta = riskScore(d) - riskScore(prior);
+      if (scoreDelta >= 20) slipped.push({ curr: d, prior, darkened: true });
+    }
+  });
+
+  priorDeals.forEach(p => { if (!matchDeal(p, allDeals)) dropped.push(p); });
+
+  const curTotal  = allDeals.reduce((s,d) => s + parseACV(d.acvRaw), 0);
+  const priTotal  = priorDeals.reduce((s,d) => s + parseACV(d.acvRaw), 0);
+
+  return { added, dropped, advanced, slipped, acvDelta: curTotal - priTotal };
+}
+
+function renderDelta() {
+  const section = document.getElementById('delta-section');
+  if (!hasPrior) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+
+  const { added, dropped, advanced, slipped, acvDelta } = computeDelta();
+  const total = added.length + dropped.length + advanced.length + slipped.length;
+  const f = fmtACV(Math.abs(acvDelta));
+  const sign = acvDelta >= 0 ? '+' : '-';
+  const cls = acvDelta >= 0 ? 'pos' : 'neg';
+
+  document.getElementById('delta-total-pill').textContent = `${total} moves`;
+
+  document.getElementById('delta-kpis').innerHTML = `
+    <div class="delta-kpi">
+      <div class="delta-kpi-label">Pipeline Change</div>
+      <div class="delta-kpi-value ${cls}">${sign}$${f.num}${f.unit}</div>
+    </div>
+    <div class="delta-kpi">
+      <div class="delta-kpi-label">New Added</div>
+      <div class="delta-kpi-value ${added.length > 0 ? 'pos' : ''}">${added.length}</div>
+    </div>
+    <div class="delta-kpi">
+      <div class="delta-kpi-label">Advanced Stage</div>
+      <div class="delta-kpi-value ${advanced.length > 0 ? 'pos' : ''}">${advanced.length}</div>
+    </div>
+    <div class="delta-kpi">
+      <div class="delta-kpi-label">Slipped / At Risk</div>
+      <div class="delta-kpi-value ${slipped.length > 0 ? 'neg' : ''}">${slipped.length}</div>
+    </div>`;
+
+  const acctFmt = d => {
+    const f = fmtACV(parseACV(d.acvRaw));
+    return `<div class="delta-deal-item">
+      <div class="delta-deal-name">${d.account}</div>
+      <div class="delta-deal-meta">${d.owner.split(' ')[0]} · $${f.num}${f.unit}</div>
+    </div>`;
+  };
+
+  const group = (labelText, cls, items, empty, renderFn) => `
+    <div class="delta-group">
+      <div class="delta-group-label ${cls}">${labelText} (${items.length})</div>
+      ${items.length === 0 ? `<div class="delta-empty">${empty}</div>` : items.map(renderFn).join('')}
+    </div>`;
+
+  document.getElementById('delta-groups').innerHTML =
+    group('New', 'added', added, 'None added', d => acctFmt(d)) +
+    group('Advanced', 'advanced', advanced, 'No movement', ({curr, prior}) => `
+      <div class="delta-deal-item">
+        <div class="delta-deal-name">${curr.account}</div>
+        <div class="delta-deal-meta">${STAGE_LABELS[prior.stage]||prior.stage} → ${STAGE_LABELS[curr.stage]||curr.stage}</div>
+      </div>`) +
+    group('Slipped', 'slipped', slipped, 'None slipped', ({curr, dateSlipped, stageBack, darkened}) => `
+      <div class="delta-deal-item">
+        <div class="delta-deal-name">${curr.account}</div>
+        <div class="delta-deal-meta">${darkened ? 'Gone dark' : stageBack ? 'Stage regressed' : 'Close date pushed'}</div>
+      </div>`) +
+    group('Dropped', 'dropped', dropped, 'None dropped', d => acctFmt(d));
+}
+
+/* ── Commit vs AI call gap ── */
+function computeGap() {
+  const committed  = filteredDeals.filter(d => d.forecast === 'Most Likely');
+  const commit     = committed.reduce((s,d) => s + parseACV(d.acvRaw), 0);
+
+  const defensible = filteredDeals.filter(d => riskScore(d) < 30 && STAGE_ORDER.indexOf(d.stage) >= 1);
+  const aiCall     = defensible.reduce((s,d) => s + parseACV(d.acvRaw), 0);
+
+  const overCommitted = committed.filter(d => riskScore(d) >= 40);
+  const upside = filteredDeals.filter(d =>
+    d.forecast !== 'Most Likely' && riskScore(d) < 20 && STAGE_ORDER.indexOf(d.stage) >= 2
+  );
+
+  return { commit, aiCall, gap: aiCall - commit, overCommitted, upside };
+}
+
+function renderGap() {
+  const { commit, aiCall, gap, overCommitted, upside } = computeGap();
+  const body = document.getElementById('gap-body');
+  const maxVal = Math.max(commit, aiCall, 1);
+  const fc = fmtACV(commit);
+  const fa = fmtACV(aiCall);
+  const fg = fmtACV(Math.abs(gap));
+
+  const verdictCls  = gap < -10000 ? 'over' : gap > 10000 ? 'upside' : 'aligned';
+  const verdictText = gap < -10000
+    ? `Over-committed by $${fg.num}${fg.unit}`
+    : gap > 10000
+    ? `$${fg.num}${fg.unit} potential upside`
+    : 'Commit and AI call aligned';
+
+  document.getElementById('gap-eye').textContent =
+    verdictCls === 'over' ? '⚠ Over-commit' : verdictCls === 'upside' ? '↑ Upside' : '✓ Aligned';
+
+  const dealRow = d => {
+    const f = fmtACV(parseACV(d.acvRaw));
+    return `<div class="gap-deal-row">
+      <div class="gap-deal-acct">${d.account}</div>
+      <div class="gap-deal-acv">$${f.num}${f.unit}</div>
+    </div>`;
+  };
+
+  body.innerHTML = `
+    <div class="gap-bar-wrap">
+      <div class="gap-labels">
+        <div>
+          <div class="gap-label-name">Rep Commit</div>
+          <div class="gap-label-val commit">$${fc.num}${fc.unit}</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="gap-label-name">AI Call</div>
+          <div class="gap-label-val ai-call">$${fa.num}${fa.unit}</div>
+        </div>
+      </div>
+      <div class="gap-bar-track">
+        <div class="gap-bar-bg" style="width:${Math.round(Math.max(commit,aiCall)/maxVal*100)}%"></div>
+        <div class="gap-bar-fill" style="width:${Math.round(Math.min(commit,aiCall)/maxVal*100)}%"></div>
+      </div>
+      <div class="gap-verdict ${verdictCls}">${verdictText}</div>
+    </div>
+    ${overCommitted.length ? `<div class="gap-deal-list">
+      <div class="gap-deal-section-title" style="color:var(--status-risk);">Over-committed (${overCommitted.length})</div>
+      ${overCommitted.map(dealRow).join('')}
+    </div>` : ''}
+    ${upside.length ? `<div class="gap-deal-list">
+      <div class="gap-deal-section-title" style="color:var(--status-ok);">Potential upside (${upside.length})</div>
+      ${upside.map(dealRow).join('')}
+    </div>` : ''}
+    ${!overCommitted.length && !upside.length ? `
+      <div style="padding:14px 18px;font-size:12px;color:var(--tfaint);">No significant gaps detected.</div>` : ''}`;
 }
 
 /* ── Navigation ── */
