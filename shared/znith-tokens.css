@@ -127,6 +127,8 @@
 :root[data-theme="light"] .theme-toggle .icon-moon { display: none; }
 :root[data-theme="light"] .theme-toggle-btn .icon-sun,
 :root[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+:root[data-theme="light"] .theme-toggle-btn,
+:root[data-theme="light"] .theme-toggle { color: var(--text); border-color: var(--border-md); }
 
 /* ── Tabular nums — scoped to numeric display classes ── */
 .kpi-value, .kpi-value *,
