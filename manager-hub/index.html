@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conga Pipeline Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ── Znith v4 · Dark (default) ── */
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui:    'Barlow', sans-serif;
+  --f-mono:  'IBM Plex Mono', monospace;
+
+  --amber-text:   #E5A83A;
+  --amber-fill:   #E5A83A;
+  --amber-deep:   #B8860B;
+  --amber-glow:   rgba(229,168,58,0.22);
+  --amber-muted:  rgba(229,168,58,0.12);
+  --amber-faint:  rgba(229,168,58,0.06);
+  --amber-wash:   rgba(229,168,58,0.08);
+
+  --canvas: #05070F;
+  --surf:   #0F1520;
+  --surf-2: #0A0E1A;
+  --surf-3: #070A13;
+
+  --border:    rgba(255,255,255,0.08);
+  --border-md: rgba(255,255,255,0.14);
+  --border-dk: rgba(255,255,255,0.22);
+
+  --text:   rgba(255,255,255,0.92);
+  --tmuted: rgba(255,255,255,0.62);
+  --tfaint: rgba(255,255,255,0.42);
+  --tghost: rgba(255,255,255,0.22);
+
+  --status-ok:   #34D399;
+  --status-warn: #F59E0B;
+  --status-risk: #EF4444;
+
+  --clip-lg:  polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm:  polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  --clip-fwd: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  --clip-lead:polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+
+  --t-instant: 120ms ease-out;
+  --t-delib:   220ms cubic-bezier(0.4,0,0.2,1);
+  --t-event:   400ms cubic-bezier(0.34,1.56,0.64,1);
+
+  --sh-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --sh-md: 0 2px 10px rgba(0,0,0,0.5);
+  --sh-lg: 0 8px 32px rgba(0,0,0,0.6);
+  --sh-amber: 0 0 16px rgba(229,168,58,0.28), 0 2px 6px rgba(229,168,58,0.18);
+}
+
+/* ── Znith v4 · Light override ── */
+[data-theme="light"] {
+  --amber-text:   #946C00;
+  --amber-fill:   #C98C20;
+  --amber-deep:   #6E5000;
+  --amber-glow:   rgba(201,140,32,0.22);
+  --amber-muted:  rgba(148,108,0,0.10);
+  --amber-faint:  rgba(148,108,0,0.06);
+  --amber-wash:   #FBF5E6;
+
+  --canvas: #F4F2ED;
+  --surf:   #FFFFFF;
+  --surf-2: #FAF8F2;
+  --surf-3: #EFEBE0;
+
+  --border:    #E3E0D8;
+  --border-md: #CFCBBE;
+  --border-dk: #B6B0A0;
+
+  --text:   #1A1914;
+  --tmuted: #5A564C;
+  --tfaint: #7A7466;
+  --tghost: #9A9484;
+
+  --status-ok:   #137A4F;
+  --status-warn: #A86608;
+  --status-risk: #B51D1D;
+
+  --sh-sm: 0 1px 2px rgba(26,25,20,0.04), 0 1px 1px rgba(26,25,20,0.03);
+  --sh-md: 0 2px 8px rgba(26,25,20,0.06), 0 1px 3px rgba(26,25,20,0.04);
+  --sh-lg: 0 8px 28px rgba(26,25,20,0.08), 0 2px 8px rgba(26,25,20,0.05);
+  --sh-amber: 0 2px 12px rgba(201,140,32,0.24), 0 1px 3px rgba(201,140,32,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--f-ui);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+body { padding-bottom: 48px; }
+
+/* ── Header ── */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px;
+}
+.hdr-left { display: flex; align-items: center; gap: 14px; }
+.hdr-mark { width: 28px; height: 28px; }
+.hdr-mark svg { width: 100%; height: 100%; }
+.hdr-div { width: 1px; height: 20px; background: var(--border); }
+.hdr-name {
+  font-family: var(--f-ui); font-size: 12px; font-weight: 600;
+  color: var(--text); letter-spacing: 0.06em; text-transform: uppercase;
+}
+.hdr-name span { color: var(--amber-text); font-weight: 400; }
+.hdr-nav { display: flex; gap: 4px; margin-left: 24px; }
+.hdr-nav a {
+  font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--tmuted);
+  padding: 7px 12px; text-decoration: none;
+  clip-path: var(--clip-sm);
+  transition: background var(--t-instant), color var(--t-instant);
+}
+.hdr-nav a:hover { background: var(--surf-3); color: var(--text); }
+.hdr-nav a.active { color: var(--amber-text); background: var(--amber-muted); }
+.hdr-right { display: flex; align-items: center; gap: 10px; }
+.hdr-badge {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 4px 10px; background: var(--amber-muted);
+  color: var(--amber-text); border: 1px solid rgba(148,108,0,0.22);
+  clip-path: var(--clip-sm);
+}
+.hdr-avatar {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--amber-fill), var(--amber-deep));
+  clip-path: var(--clip-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-brand); font-size: 11px; font-weight: 800; color: #fff;
+}
+.btn {
+  font-family: var(--f-ui); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 8px 14px; clip-path: var(--clip-sm); border: 1px solid;
+  cursor: pointer; transition: background var(--t-instant), border-color var(--t-instant);
+}
+.btn-primary { background: var(--amber-fill); color: #fff; border-color: var(--amber-fill); box-shadow: var(--sh-amber); }
+.btn-primary:hover { background: var(--amber-deep); border-color: var(--amber-deep); }
+.btn-ghost { background: var(--surf); color: var(--text); border-color: var(--border-md); box-shadow: var(--sh-sm); }
+.btn-ghost:hover { background: var(--surf-2); border-color: var(--border-dk); }
+.btn-sm { font-size: 10px; padding: 5px 10px; letter-spacing: 0.08em; }
+
+/* ── Upload screen ── */
+#upload-screen {
+  max-width: 640px; margin: 80px auto; padding: 0 28px;
+  text-align: center;
+}
+.upload-eye {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--amber-text); margin-bottom: 16px;
+}
+.upload-title {
+  font-family: var(--f-brand); font-size: 36px; font-weight: 800;
+  letter-spacing: -0.025em; margin-bottom: 12px;
+}
+.upload-sub { color: var(--tmuted); font-size: 14px; margin-bottom: 36px; }
+.drop-zone {
+  border: 2px dashed var(--border-md);
+  background: var(--surf);
+  clip-path: var(--clip-lg);
+  padding: 52px 36px;
+  cursor: pointer;
+  transition: border-color var(--t-instant), background var(--t-instant);
+  position: relative;
+}
+.drop-zone:hover, .drop-zone.drag-over {
+  border-color: var(--amber-fill);
+  background: var(--amber-wash);
+}
+.drop-icon {
+  width: 40px; height: 40px; margin: 0 auto 16px;
+  color: var(--amber-fill);
+}
+.drop-label {
+  font-family: var(--f-brand); font-size: 17px; font-weight: 700;
+  color: var(--text); margin-bottom: 6px;
+}
+.drop-sub { font-size: 12px; color: var(--tfaint); }
+.drop-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.upload-note {
+  margin-top: 18px; font-family: var(--f-mono); font-size: 10px;
+  color: var(--tghost); letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+/* ── Hub page ── */
+#hub-screen { display: none; }
+.page {
+  max-width: 1400px; margin: 0 auto;
+  padding: 28px 28px 72px;
+  display: flex; flex-direction: column; gap: 24px;
+}
+.page-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  padding-bottom: 20px; border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.page-head::before {
+  content: ''; position: absolute; left: 0; bottom: -1px;
+  width: 0; height: 2px; background: var(--amber-fill);
+  animation: drawIn 600ms ease-out 200ms both;
+}
+@keyframes drawIn { to { width: 160px; } }
+.page-title {
+  font-family: var(--f-brand); font-size: 36px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.025em; line-height: 1.05;
+}
+.page-sub { font-size: 13px; color: var(--tmuted); margin-top: 6px; }
+.page-chrome { display: flex; align-items: center; gap: 10px; }
+.live-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 13px; background: var(--amber-muted);
+  border: 1px solid rgba(148,108,0,0.22); clip-path: var(--clip-sm);
+}
+.live-pip {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--amber-fill); box-shadow: 0 0 8px var(--amber-glow);
+  animation: pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+.live-text {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.16em; color: var(--amber-text); text-transform: uppercase;
+}
+
+/* ── KPI row ── */
+.kpi-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+}
+.kpi {
+  background: var(--surf); border: 1px solid var(--border);
+  clip-path: var(--clip-lg); padding: 20px 22px;
+  position: relative; overflow: hidden; box-shadow: var(--sh-sm);
+}
+.kpi::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(26,25,20,0.018) 0.5px, transparent 0.5px);
+  background-size: 3px 3px; pointer-events: none;
+}
+.kpi.charged {
+  background: linear-gradient(135deg, var(--amber-wash) 0%, var(--surf) 70%);
+  border-color: rgba(148,108,0,0.28); box-shadow: var(--sh-amber);
+}
+.kpi-label {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--tfaint);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+  position: relative; z-index: 1;
+}
+.kpi-label::before { content: ''; width: 14px; height: 1px; background: var(--amber-fill); }
+.kpi.charged .kpi-label { color: var(--amber-text); }
+.kpi-value {
+  position: relative; z-index: 1;
+  display: flex; align-items: baseline; gap: 4px;
+  font-family: var(--f-brand); font-weight: 800;
+  letter-spacing: -0.04em; color: var(--text);
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.kpi.charged .kpi-value { color: var(--amber-deep); }
+.kpi-value .prefix { font-size: 26px; color: var(--tmuted); font-weight: 500; }
+.kpi-value .num { font-size: 44px; }
+.kpi-value .unit { font-size: 18px; color: var(--tmuted); font-weight: 500; }
+.kpi.charged .kpi-value .unit { color: var(--amber-fill); }
+.kpi-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 12px; position: relative; z-index: 1;
+}
+.kpi-sub { font-family: var(--f-mono); font-size: 9px; color: var(--tghost); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ── Stage flow ── */
+.stage-card {
+  background: var(--surf); border: 1px solid var(--border);
+  clip-path: var(--clip-lg); padding: 20px 22px; box-shadow: var(--sh-sm);
+}
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-title {
+  font-family: var(--f-brand); font-size: 16px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.card-eye {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber-text);
+}
+.stage-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+.stage-block {
+  position: relative; padding: 14px 14px 14px 18px;
+  background: var(--surf-2); border: 1px solid var(--border);
+  clip-path: var(--clip-fwd); display: flex; flex-direction: column; gap: 5px;
+  cursor: pointer; transition: background var(--t-delib), border-color var(--t-delib);
+}
+.stage-block::before {
+  content: ''; position: absolute; left: 0; top: 10px; bottom: 10px;
+  width: 2px; background: var(--border-md);
+  transition: background var(--t-delib);
+}
+.stage-block:hover { background: var(--surf-3); }
+.stage-block.active { background: var(--amber-wash); border-color: rgba(148,108,0,0.28); }
+.stage-block.active::before { background: var(--amber-fill); }
+.stage-block.risk { background: rgba(181,29,29,0.04); border-color: rgba(181,29,29,0.18); }
+.stage-block.risk::before { background: var(--status-risk); }
+.stage-lbl { font-family: var(--f-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tfaint); }
+.stage-block.active .stage-lbl { color: var(--amber-text); }
+.stage-block.risk .stage-lbl { color: var(--status-risk); }
+.stage-name { font-family: var(--f-brand); font-size: 13px; font-weight: 700; color: var(--text); }
+.stage-val { font-family: var(--f-mono); font-size: 10px; color: var(--tmuted); }
+.stage-bar { position: relative; height: 4px; background: var(--surf-3); clip-path: var(--clip-sm); overflow: hidden; border: 1px solid var(--border); }
+.stage-bar-fill { position: absolute; inset: 0; background: linear-gradient(90deg, var(--amber-deep), var(--amber-fill)); transition: width 600ms ease-out; }
+.stage-meta {
+  display: flex; justify-content: space-between;
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--tfaint); margin-top: 8px;
+}
+.stage-meta .curr { color: var(--amber-text); }
+
+/* ── Main grid ── */
+.main { display: grid; grid-template-columns: 1fr 340px; gap: 20px; align-items: start; }
+
+/* ── Filter bar ── */
+.filter-bar {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.filter-chip {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 5px 10px; clip-path: var(--clip-sm);
+  border: 1px solid var(--border-md); background: var(--surf);
+  color: var(--tmuted); cursor: pointer;
+  transition: background var(--t-instant), color var(--t-instant), border-color var(--t-instant);
+}
+.filter-chip:hover { background: var(--surf-2); color: var(--text); }
+.filter-chip.active { background: var(--amber-muted); color: var(--amber-text); border-color: rgba(148,108,0,0.28); }
+.filter-label { font-family: var(--f-mono); font-size: 9px; color: var(--tghost); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ── Deals table ── */
+.deals-card {
+  background: var(--surf); border: 1px solid var(--border);
+  clip-path: var(--clip-lg); overflow: hidden; box-shadow: var(--sh-sm);
+}
+.deals-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.deals-head .card-title { display: flex; align-items: center; gap: 10px; }
+.count-pill {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; padding: 3px 7px;
+  background: var(--amber-muted); color: var(--amber-text);
+  clip-path: var(--clip-sm); border: 1px solid rgba(148,108,0,0.2);
+}
+.table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.table thead th {
+  font-family: var(--f-ui); font-size: 11px; font-weight: 600;
+  color: var(--tmuted); text-align: left;
+  padding: 10px 14px;
+  background: var(--surf-2);
+  border-bottom: 1px solid var(--border);
+}
+.table thead th.right { text-align: right; }
+.table tbody td {
+  padding: 13px 14px; border-bottom: 1px solid var(--border);
+  font-size: 13px; vertical-align: middle;
+  transition: background var(--t-instant); color: var(--text);
+}
+.table tbody tr:last-child td { border-bottom: none; }
+.table tbody tr { cursor: pointer; }
+.table tbody tr:hover td { background: var(--amber-faint); }
+.table tbody tr.selected td { background: var(--amber-muted) !important; }
+
+.td-acct { display: flex; align-items: center; gap: 10px; }
+.acct-avatar {
+  width: 28px; height: 28px;
+  background: var(--surf-2); border: 1px solid var(--border-md);
+  clip-path: var(--clip-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-brand); font-size: 10px; font-weight: 700; color: var(--text);
+  flex-shrink: 0;
+}
+.acct-name { font-weight: 600; color: var(--text); }
+.acct-meta { font-family: var(--f-mono); font-size: 10px; color: var(--tfaint); letter-spacing: 0.04em; }
+
+.risk-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 7px; clip-path: var(--clip-sm);
+}
+.risk-badge::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+.risk-badge.high { background: rgba(181,29,29,0.08); color: var(--status-risk); border: 1px solid rgba(181,29,29,0.22); }
+.risk-badge.high::before { background: var(--status-risk); }
+.risk-badge.watch { background: var(--amber-muted); color: var(--amber-text); border: 1px solid rgba(148,108,0,0.28); }
+.risk-badge.watch::before { background: var(--amber-fill); }
+.risk-badge.ok { background: rgba(19,122,79,0.07); color: var(--status-ok); border: 1px solid rgba(19,122,79,0.2); }
+.risk-badge.ok::before { background: var(--status-ok); }
+
+.forecast-chip {
+  display: inline-block;
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 3px 7px; clip-path: var(--clip-sm);
+}
+.forecast-chip.most-likely { background: rgba(19,122,79,0.08); color: var(--status-ok); border: 1px solid rgba(19,122,79,0.22); }
+.forecast-chip.best-case { background: var(--amber-muted); color: var(--amber-text); border: 1px solid rgba(148,108,0,0.2); }
+.forecast-chip.pipeline { background: var(--surf-2); color: var(--tfaint); border: 1px solid var(--border-md); }
+
+.td-num { font-family: var(--f-mono); font-weight: 500; color: var(--text); text-align: right; }
+.td-num .unit { color: var(--tfaint); font-size: 11px; }
+
+.td-owner { display: flex; align-items: center; gap: 7px; }
+.owner-dot {
+  width: 22px; height: 22px; clip-path: var(--clip-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-brand); font-size: 9px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+
+/* ── Right rail ── */
+.rail { display: flex; flex-direction: column; gap: 14px; }
+
+.attention-card {
+  background: var(--surf); border: 1px solid var(--border);
+  clip-path: var(--clip-lg); overflow: hidden; box-shadow: var(--sh-sm);
+}
+.attention-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surf-2);
+}
+
+.signal-item {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background var(--t-instant);
+  position: relative;
+}
+.signal-item:last-child { border-bottom: none; }
+.signal-item:hover { background: var(--amber-faint); }
+.signal-item::before {
+  content: ''; position: absolute; left: 0; top: 14px; bottom: 14px;
+  width: 2px;
+}
+.signal-item.sig-risk::before { background: var(--status-risk); }
+.signal-item.sig-warn::before { background: var(--amber-fill); }
+.signal-eye {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--tfaint); margin-bottom: 4px;
+  display: flex; align-items: center; gap: 6px;
+}
+.signal-title {
+  font-family: var(--f-brand); font-size: 14px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.01em; margin-bottom: 4px;
+}
+.signal-body { font-size: 12px; color: var(--tmuted); line-height: 1.5; }
+.signal-action {
+  display: inline-flex; margin-top: 8px;
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--amber-text); text-decoration: none;
+  padding: 4px 9px; background: var(--surf);
+  border: 1px solid rgba(148,108,0,0.28); clip-path: var(--clip-sm);
+  cursor: pointer; transition: background var(--t-instant);
+}
+.signal-action:hover { background: var(--amber-muted); }
+
+/* ── Deal detail panel ── */
+#deal-panel {
+  position: fixed; right: 0; top: 64px; bottom: 34px;
+  width: 520px; background: var(--surf);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform var(--t-delib);
+  z-index: 80;
+  box-shadow: var(--sh-lg);
+  overflow: hidden;
+}
+#deal-panel.open { transform: translateX(0); }
+.panel-header {
+  padding: 18px 22px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surf-2);
+  flex-shrink: 0;
+}
+.panel-close {
+  position: absolute; top: 18px; right: 18px;
+  width: 28px; height: 28px;
+  background: var(--surf-3); border: 1px solid var(--border-md);
+  clip-path: var(--clip-sm); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--tmuted); font-size: 16px; line-height: 1;
+  transition: background var(--t-instant);
+}
+.panel-close:hover { background: var(--border); color: var(--text); }
+.panel-eye {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber-text);
+  margin-bottom: 6px;
+}
+.panel-title {
+  font-family: var(--f-brand); font-size: 20px; font-weight: 800;
+  color: var(--text); letter-spacing: -0.015em; padding-right: 36px;
+}
+.panel-meta { font-size: 12px; color: var(--tmuted); margin-top: 4px; }
+
+.panel-body { padding: 20px 22px; overflow-y: auto; flex: 1; }
+.panel-section {
+  margin-bottom: 22px;
+}
+.panel-section-title {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--tfaint);
+  margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+}
+.panel-section-title::before { content: ''; width: 14px; height: 1px; background: var(--amber-fill); }
+.panel-fact-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.panel-fact {
+  background: var(--surf-2); border: 1px solid var(--border);
+  clip-path: var(--clip-sm); padding: 10px 12px;
+}
+.panel-fact-label {
+  font-family: var(--f-mono); font-size: 9px; color: var(--tghost);
+  letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 3px;
+}
+.panel-fact-value { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.next-step-box {
+  background: var(--surf-2); border: 1px solid var(--border);
+  clip-path: var(--clip-lg); padding: 12px 14px;
+  font-size: 12px; color: var(--tmuted); line-height: 1.6;
+  max-height: 120px; overflow-y: auto;
+}
+
+.ai-output-box {
+  background: linear-gradient(135deg, var(--amber-wash) 0%, var(--surf) 60%);
+  border: 1px solid rgba(148,108,0,0.28); clip-path: var(--clip-lg);
+  padding: 14px 16px; font-size: 13px; color: var(--text); line-height: 1.65;
+  white-space: pre-wrap; display: none;
+}
+.ai-output-box.visible { display: block; }
+
+.generating-bar {
+  height: 3px; background: var(--surf-3); clip-path: var(--clip-sm);
+  overflow: hidden; margin-bottom: 10px; display: none;
+}
+.generating-bar.active { display: block; }
+.generating-bar-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--amber-deep), var(--amber-fill));
+  animation: sweep 2s ease-in-out infinite;
+}
+@keyframes sweep {
+  0% { width: 0%; margin-left: 0%; }
+  50% { width: 60%; margin-left: 20%; }
+  100% { width: 0%; margin-left: 100%; }
+}
+
+.action-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+/* ── Footer ── */
+.znith-footer {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
+  height: 34px; padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surf); border-top: 2px solid var(--amber-fill);
+}
+.foot-word { display: flex; align-items: center; gap: 1px; font-family: var(--f-brand); font-size: 13px; font-weight: 800; line-height: 1; }
+.foot-word .slash { font-family: var(--f-mono); color: var(--amber-text); }
+.foot-word .z { color: var(--amber-text); }
+.foot-word .rest { color: var(--tghost); }
+.foot-meta { display: flex; align-items: center; gap: 12px; font-family: var(--f-mono); font-size: 9px; color: var(--tfaint); letter-spacing: 0.1em; text-transform: uppercase; }
+.foot-pip { width: 4px; height: 4px; border-radius: 50%; background: var(--amber-fill); animation: pulse 2.5s ease-in-out infinite; }
+
+/* ── Conga mark — auto-swaps by theme ── */
+.conga-mark { width: 28px; height: 28px; color: rgba(255,255,255,0.92); }
+[data-theme="light"] .conga-mark { color: #1A1914; }
+
+/* ── Theme toggle button (header-right) ── */
+.theme-toggle-btn {
+  background: transparent; border: 1px solid var(--border-md);
+  color: var(--tmuted); padding: 5px 10px; clip-path: var(--clip-sm);
+  cursor: pointer; font-size: 15px; line-height: 1;
+  transition: border-color var(--t-instant), color var(--t-instant);
+  display: flex; align-items: center; justify-content: center;
+}
+.theme-toggle-btn:hover { border-color: var(--amber-fill); color: var(--amber-fill); }
+.theme-toggle-btn .icon-sun { display: none; }
+[data-theme="light"] .theme-toggle-btn .icon-moon { display: none; }
+[data-theme="light"] .theme-toggle-btn .icon-sun  { display: block; }
+
+/* ── Light-mode header/footer overrides ── */
+[data-theme="light"] header { background: rgba(255,255,255,0.92); border-bottom-color: #E3E0D8; }
+[data-theme="light"] .kpi.charged { background: linear-gradient(135deg, #FBF5E6 0%, #FFFFFF 70%); }
+[data-theme="light"] .drop-zone { background: #FFFFFF; }
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .main { grid-template-columns: 1fr; }
+  #deal-panel { width: 100%; top: 64px; }
+}
+@media (max-width: 800px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .stage-flow { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="hdr-left">
+    <div class="hdr-mark">
+      <svg class="conga-mark" viewBox="0 0 1039.041 1080" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+        <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
+      </svg>
+    </div>
+    <div class="hdr-div"></div>
+    <div class="hdr-name">Conga <span>Pipeline Hub</span></div>
+    <nav class="hdr-nav">
+      <a href="#" class="active" onclick="setView('pipeline',this)">Pipeline</a>
+      <a href="#" onclick="setView('team',this)">Team</a>
+      <a href="#" onclick="setView('forecast',this)">Forecast</a>
+    </nav>
+  </div>
+  <div class="hdr-right">
+    <div class="hdr-badge" id="quarter-badge">Q2 · FY26</div>
+    <button class="btn btn-ghost btn-sm" onclick="resetData()">New Export</button>
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">
+      <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
+    <div class="hdr-avatar">RG</div>
+  </div>
+</header>
+
+<!-- Upload screen -->
+<div id="upload-screen">
+  <div class="upload-eye">Conga Pipeline Hub · Manager</div>
+  <h1 class="upload-title">Load your pipeline</h1>
+  <p class="upload-sub">Export your pipeline from Clari and drop it here. All analysis runs locally — nothing leaves your browser.</p>
+
+  <div class="drop-zone" id="drop-zone">
+    <input type="file" class="drop-input" id="file-input" accept=".csv">
+    <svg class="drop-icon" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="6" y="8" width="28" height="24" rx="2"/>
+      <path d="M14 20l6-6 6 6M20 14v12"/>
+    </svg>
+    <div class="drop-label">Drop your Clari CSV export</div>
+    <div class="drop-sub">or click to browse · .csv files only</div>
+  </div>
+  <div class="upload-note">Data stays in your browser · not sent to any server until you request AI analysis</div>
+</div>
+
+<!-- Hub screen -->
+<div id="hub-screen">
+  <div class="page">
+
+    <div class="page-head">
+      <div>
+        <h1 class="page-title" id="hub-title">Q2 Pipeline</h1>
+        <div class="page-sub" id="hub-sub">Loading…</div>
+      </div>
+      <div class="page-chrome">
+        <div class="live-pill"><div class="live-pip"></div><div class="live-text" id="loaded-label">Loaded</div></div>
+        <button class="btn btn-ghost btn-sm" onclick="exportAttention()">Export Signals</button>
+      </div>
+    </div>
+
+    <!-- KPI row -->
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Total Pipeline</div>
+        <div class="kpi-value"><span class="prefix">$</span><span class="num" id="kpi-total">—</span><span class="unit" id="kpi-total-unit">K</span></div>
+        <div class="kpi-meta"><span class="kpi-sub" id="kpi-total-count">— deals</span></div>
+      </div>
+      <div class="kpi charged">
+        <div class="kpi-label">Most Likely</div>
+        <div class="kpi-value"><span class="prefix">$</span><span class="num" id="kpi-ml">—</span><span class="unit" id="kpi-ml-unit">K</span></div>
+        <div class="kpi-meta"><span class="kpi-sub" id="kpi-ml-count">— deals</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Best Case</div>
+        <div class="kpi-value"><span class="prefix">$</span><span class="num" id="kpi-bc">—</span><span class="unit" id="kpi-bc-unit">K</span></div>
+        <div class="kpi-meta"><span class="kpi-sub" id="kpi-bc-count">— deals</span></div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Needs Attention</div>
+        <div class="kpi-value"><span class="num" id="kpi-risk">—</span></div>
+        <div class="kpi-meta"><span class="kpi-sub" id="kpi-risk-sub">deals flagged</span></div>
+      </div>
+    </div>
+
+    <!-- Stage flow -->
+    <div class="stage-card">
+      <div class="card-head">
+        <div class="card-title">Pipeline flow</div>
+        <div class="card-eye" id="stage-eye">All reps</div>
+      </div>
+      <div class="stage-flow" id="stage-flow"></div>
+      <div class="stage-bar"><div class="stage-bar-fill" id="stage-bar-fill"></div></div>
+      <div class="stage-meta">
+        <span>Weighted progress · <span class="curr" id="stage-pct">—</span></span>
+        <span id="stage-total-deals">—</span>
+      </div>
+    </div>
+
+    <!-- Main grid -->
+    <div class="main">
+      <div>
+        <!-- Filter bar -->
+        <div class="filter-bar">
+          <span class="filter-label">Rep:</span>
+          <div id="rep-filters"></div>
+          <span class="filter-label" style="margin-left:8px;">Forecast:</span>
+          <div id="forecast-filters"></div>
+        </div>
+
+        <!-- Deals table -->
+        <div class="deals-card">
+          <div class="deals-head">
+            <div class="card-title">Active deals <span class="count-pill" id="deals-count">0</span></div>
+            <button class="btn btn-ghost btn-sm" onclick="sortDeals()">Sort: Risk ↓</button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Account</th>
+                <th>Stage</th>
+                <th>Forecast</th>
+                <th class="right">ACV</th>
+                <th class="right">Age</th>
+                <th>Risk</th>
+                <th>Rep</th>
+              </tr>
+            </thead>
+            <tbody id="deals-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Right rail -->
+      <div class="rail">
+        <div class="attention-card">
+          <div class="attention-head">
+            <div class="card-title" style="font-size:14px;">Attention Queue</div>
+            <div class="card-eye" id="attention-count">0 signals</div>
+          </div>
+          <div id="attention-list"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Deal panel -->
+<div id="deal-panel">
+  <div class="panel-header">
+    <div class="panel-close" onclick="closePanel()">×</div>
+    <div class="panel-eye" id="panel-eye">Deal · Details</div>
+    <div class="panel-title" id="panel-title">—</div>
+    <div class="panel-meta" id="panel-meta">—</div>
+  </div>
+  <div class="panel-body">
+    <div class="panel-section">
+      <div class="panel-section-title">Deal facts</div>
+      <div class="panel-fact-grid" id="panel-facts"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Next step</div>
+      <div class="next-step-box" id="panel-next-step">—</div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-section-title">Manager actions</div>
+      <div class="action-row">
+        <button class="btn btn-primary btn-sm" onclick="runAI('coaching')">Coaching Questions</button>
+        <button class="btn btn-ghost btn-sm" onclick="runAI('forecast')">Forecast Defense</button>
+        <button class="btn btn-ghost btn-sm" onclick="runAI('risk')">Risk Summary</button>
+      </div>
+    </div>
+    <div class="panel-section" id="ai-section" style="display:none;">
+      <div class="panel-section-title" id="ai-section-title">AI Analysis</div>
+      <div class="generating-bar" id="gen-bar"><div class="generating-bar-fill"></div></div>
+      <div class="ai-output-box" id="ai-output"></div>
+    </div>
+    <div class="panel-section" id="se-section" style="display:none;">
+      <div class="panel-section-title">SE Notes</div>
+      <div class="next-step-box" id="panel-se-notes" style="max-height:200px;">—</div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="znith-footer">
+  <div class="foot-word"><span class="slash">/</span><span class="z">Z</span><span class="rest">nith</span></div>
+  <div class="foot-meta"><span>Pipeline Hub</span><div class="foot-pip"></div><span>v1.0</span></div>
+</footer>
+
+<script>
+/* ── CSV Parser ── */
+function parseCSV(text) {
+  const rows = [];
+  let i = 0;
+  while (i < text.length) {
+    const row = [];
+    while (i < text.length) {
+      if (text[i] === '"') {
+        i++;
+        let field = '';
+        while (i < text.length) {
+          if (text[i] === '"' && text[i+1] === '"') { field += '"'; i += 2; }
+          else if (text[i] === '"') { i++; break; }
+          else { field += text[i++]; }
+        }
+        row.push(field);
+        if (text[i] === ',') i++;
+        else if (text[i] === '\r') i++;
+        else if (text[i] === '\n') { i++; break; }
+      } else {
+        let field = '';
+        while (i < text.length && text[i] !== ',' && text[i] !== '\n' && text[i] !== '\r') {
+          field += text[i++];
+        }
+        row.push(field.trim());
+        if (text[i] === ',') i++;
+        else if (text[i] === '\r') i++;
+        else if (text[i] === '\n') { i++; break; }
+      }
+    }
+    if (row.length > 1) rows.push(row);
+  }
+  return rows;
+}
+
+function buildDeals(rows) {
+  const header = rows[0];
+  const idx = {};
+  header.forEach((h,i) => idx[h.trim()] = i);
+  return rows.slice(1).map(r => ({
+    name:        r[idx['Opportunity']] || '',
+    account:     r[idx['Account Name']] || '',
+    owner:       r[idx['Owner']] || '',
+    acvRaw:      r[idx['Avg. ACV']] || '',
+    closeDate:   r[idx['Close Date']] || '',
+    stage:       r[idx['Stage']] || '',
+    forecast:    r[idx['Forecast Category']] || '',
+    rvpComment:  r[idx['RVP Comment']] || '',
+    nextStep:    r[idx['Next Step']] || '',
+    age:         parseInt(r[idx['Age']]) || 0,
+    stageDur:    parseInt(r[idx['Stage Duration']]) || 0,
+    type:        r[idx['Type']] || '',
+    pathToPlan:  r[idx['Path to Plan']] || '',
+    se:          r[idx['Conga SE']] || '',
+    seNotes:     r[idx['SE Notes']] || '',
+    territory:   r[idx['Territory']] || '',
+    id:          r[idx['Opportunity ID']] || Math.random().toString(36).slice(2),
+  }));
+}
+
+function parseACV(raw) {
+  if (!raw) return 0;
+  return parseFloat(raw.replace(/[$,]/g, '')) || 0;
+}
+
+function fmtACV(val) {
+  if (val >= 1000000) return { num: (val/1000000).toFixed(1), unit: 'M' };
+  if (val >= 1000)    return { num: Math.round(val/1000).toString(), unit: 'K' };
+  return { num: Math.round(val).toString(), unit: '' };
+}
+
+/* ── Risk scoring ── */
+function riskScore(d) {
+  let score = 0;
+  const ns = (d.nextStep + ' ' + d.rvpComment).toLowerCase();
+  if (d.stageDur > 60) score += 30;
+  else if (d.stageDur > 30) score += 15;
+  if (d.age > 150) score += 20;
+  else if (d.age > 90) score += 10;
+  if (d.forecast === 'Best Case' && (d.stage === '1 - Discovery' || d.stage === '2 - Validation')) score += 25;
+  if (/gone dark|no response|dark|no update|no movement|no inbound/i.test(ns)) score += 30;
+  if (d.pathToPlan === 'No' && d.forecast !== 'Pipeline') score += 10;
+  if (parseACV(d.acvRaw) > 100000) score += 5;
+  return score;
+}
+
+function riskLabel(score) {
+  if (score >= 45) return { cls: 'high', label: 'At Risk' };
+  if (score >= 20) return { cls: 'watch', label: 'Watch' };
+  return { cls: 'ok', label: 'On Track' };
+}
+
+function riskSignal(d, score) {
+  const ns = (d.nextStep + ' ' + d.rvpComment).toLowerCase();
+  const reasons = [];
+  if (d.stageDur > 60) reasons.push(`Stalled ${d.stageDur}d in stage`);
+  else if (d.stageDur > 30) reasons.push(`${d.stageDur}d in current stage`);
+  if (d.age > 150) reasons.push(`Deal aged ${d.age} days`);
+  if (d.forecast === 'Best Case' && (d.stage === '1 - Discovery' || d.stage === '2 - Validation'))
+    reasons.push('Best Case forecast at early stage');
+  if (/gone dark|no response|no movement/i.test(ns)) reasons.push('Gone dark — no recent response');
+  if (d.pathToPlan === 'No' && d.forecast !== 'Pipeline') reasons.push('No mutual close plan');
+  return reasons;
+}
+
+/* ── Rep colors ── */
+const REP_COLORS = ['#6B47C2','#0D8576','#C74A05','#16803B','#B01839','#1A6BB5','#7A3F00'];
+const repColorMap = {};
+let repColorIdx = 0;
+function repColor(name) {
+  if (!repColorMap[name]) repColorMap[name] = REP_COLORS[repColorIdx++ % REP_COLORS.length];
+  return repColorMap[name];
+}
+function initials(name) { return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+
+/* ── State ── */
+let allDeals = [];
+let filteredDeals = [];
+let activeRep = 'all';
+let activeForecast = 'all';
+let selectedDeal = null;
+let sortRisk = true;
+
+/* ── Render ── */
+function render() {
+  filteredDeals = allDeals.filter(d => {
+    const repOk = activeRep === 'all' || d.owner === activeRep;
+    const fcOk  = activeForecast === 'all' || d.forecast === activeForecast;
+    return repOk && fcOk;
+  });
+  if (sortRisk) filteredDeals.sort((a,b) => riskScore(b) - riskScore(a));
+
+  renderKPIs();
+  renderStageFlow();
+  renderDealsTable();
+  renderAttention();
+}
+
+function renderKPIs() {
+  const deals = filteredDeals;
+  const total = deals.reduce((s,d) => s + parseACV(d.acvRaw), 0);
+  const ml    = deals.filter(d => d.forecast === 'Most Likely').reduce((s,d) => s + parseACV(d.acvRaw), 0);
+  const bc    = deals.filter(d => d.forecast === 'Best Case').reduce((s,d) => s + parseACV(d.acvRaw), 0);
+  const risk  = deals.filter(d => riskScore(d) >= 45).length;
+
+  const setKPI = (numId, unitId, val) => {
+    const f = fmtACV(val);
+    document.getElementById(numId).textContent = f.num;
+    document.getElementById(unitId).textContent = f.unit;
+  };
+  setKPI('kpi-total','kpi-total-unit', total);
+  setKPI('kpi-ml','kpi-ml-unit', ml);
+  setKPI('kpi-bc','kpi-bc-unit', bc);
+  document.getElementById('kpi-total-count').textContent = `${deals.length} deals`;
+  document.getElementById('kpi-ml-count').textContent    = `${deals.filter(d=>d.forecast==='Most Likely').length} deals`;
+  document.getElementById('kpi-bc-count').textContent    = `${deals.filter(d=>d.forecast==='Best Case').length} deals`;
+  document.getElementById('kpi-risk').textContent        = risk;
+  document.getElementById('kpi-risk-sub').textContent    = risk === 1 ? 'deal flagged' : 'deals flagged';
+}
+
+const STAGE_ORDER = ['1 - Discovery','2 - Validation','3 - Justification','4 - Negotiation'];
+const STAGE_LABELS = { '1 - Discovery':'Discovery','2 - Validation':'Validation','3 - Justification':'Justification','4 - Negotiation':'Negotiation' };
+
+function renderStageFlow() {
+  const deals = filteredDeals;
+  const total = deals.reduce((s,d) => s + parseACV(d.acvRaw), 0);
+  const byStage = {};
+  STAGE_ORDER.forEach(s => byStage[s] = { count:0, acv:0 });
+  deals.forEach(d => {
+    if (byStage[d.stage]) { byStage[d.stage].count++; byStage[d.stage].acv += parseACV(d.acvRaw); }
+  });
+
+  const maxACV = Math.max(...STAGE_ORDER.map(s => byStage[s].acv), 1);
+  const lateACV = (byStage['3 - Justification'].acv + byStage['4 - Negotiation'].acv);
+  const pct = total > 0 ? Math.round(lateACV / total * 100) : 0;
+
+  document.getElementById('stage-bar-fill').style.width = pct + '%';
+  document.getElementById('stage-pct').textContent = pct + '%';
+  document.getElementById('stage-total-deals').textContent = `${deals.length} deals tracked`;
+  document.getElementById('stage-eye').textContent = activeRep === 'all' ? 'All reps' : activeRep;
+
+  const flow = document.getElementById('stage-flow');
+  flow.innerHTML = '';
+  STAGE_ORDER.forEach((s, i) => {
+    const { count, acv } = byStage[s];
+    const f = fmtACV(acv);
+    const isLate = i >= 2;
+    const isRisky = !isLate && count > 0 && (acv / total) > 0.25;
+    let cls = 'stage-block';
+    if (isLate) cls += ' active';
+    if (isRisky) cls += ' risk';
+    flow.innerHTML += `
+      <div class="${cls}" onclick="filterStage('${s}')">
+        <div class="stage-lbl">${i === 0 ? 'Early' : i === 3 ? 'Close' : 'Active'}</div>
+        <div class="stage-name">${STAGE_LABELS[s]}</div>
+        <div class="stage-val">$${f.num}${f.unit} · ${count}</div>
+      </div>`;
+  });
+}
+
+function filterStage(stage) {
+  // Toggle stage filter in deals table
+  const tbodyDeals = filteredDeals.filter(d => d.stage === stage);
+  // For now, just scroll to first matching deal in table
+}
+
+function renderDealsTable() {
+  const tbody = document.getElementById('deals-tbody');
+  document.getElementById('deals-count').textContent = filteredDeals.length;
+  tbody.innerHTML = '';
+  filteredDeals.forEach(d => {
+    const score = riskScore(d);
+    const { cls, label } = riskLabel(score);
+    const acv = parseACV(d.acvRaw);
+    const f = fmtACV(acv);
+    const fcCls = d.forecast === 'Most Likely' ? 'most-likely' : d.forecast === 'Best Case' ? 'best-case' : 'pipeline';
+    const color = repColor(d.owner);
+    const av = initials(d.account);
+    const rv = initials(d.owner);
+    const isSelected = selectedDeal && selectedDeal.id === d.id;
+    tbody.innerHTML += `
+      <tr onclick="openDeal('${d.id}')" ${isSelected ? 'class="selected"' : ''}>
+        <td>
+          <div class="td-acct">
+            <div class="acct-avatar">${av}</div>
+            <div>
+              <div class="acct-name">${d.account}</div>
+              <div class="acct-meta">${d.type || '—'}</div>
+            </div>
+          </div>
+        </td>
+        <td style="font-size:12px;color:var(--tmuted);">${STAGE_LABELS[d.stage] || d.stage}</td>
+        <td><span class="forecast-chip ${fcCls}">${d.forecast}</span></td>
+        <td class="td-num">$${f.num}<span class="unit">${f.unit}</span></td>
+        <td class="td-num">${d.age}<span class="unit">d</span></td>
+        <td><span class="risk-badge ${cls}">${label}</span></td>
+        <td>
+          <div class="td-owner">
+            <div class="owner-dot" style="background:${color};">${rv}</div>
+            <span style="font-size:12px;color:var(--tmuted);">${d.owner.split(' ')[0]}</span>
+          </div>
+        </td>
+      </tr>`;
+  });
+}
+
+function renderAttention() {
+  const atRisk = filteredDeals
+    .map(d => ({ d, score: riskScore(d), reasons: riskSignal(d, riskScore(d)) }))
+    .filter(x => x.score >= 20)
+    .sort((a,b) => b.score - a.score)
+    .slice(0, 8);
+
+  document.getElementById('attention-count').textContent = `${atRisk.length} signals`;
+  const list = document.getElementById('attention-list');
+  list.innerHTML = '';
+  if (atRisk.length === 0) {
+    list.innerHTML = `<div style="padding:20px;font-size:13px;color:var(--tfaint);text-align:center;">No signals — pipeline looks healthy</div>`;
+    return;
+  }
+  atRisk.forEach(({ d, score, reasons }) => {
+    const sev = score >= 45 ? 'sig-risk' : 'sig-warn';
+    const acv = fmtACV(parseACV(d.acvRaw));
+    list.innerHTML += `
+      <div class="signal-item ${sev}" onclick="openDeal('${d.id}')">
+        <div class="signal-eye">${d.owner.split(' ')[0]} · $${acv.num}${acv.unit}</div>
+        <div class="signal-title">${d.account}</div>
+        <div class="signal-body">${reasons[0] || ''}${reasons[1] ? ' · ' + reasons[1] : ''}</div>
+        <span class="signal-action">Review deal →</span>
+      </div>`;
+  });
+}
+
+function renderFilters() {
+  const reps = [...new Set(allDeals.map(d => d.owner))].sort();
+  const repDiv = document.getElementById('rep-filters');
+  repDiv.innerHTML = `<span class="filter-chip ${activeRep==='all'?'active':''}" onclick="setRep('all')">All</span>`;
+  reps.forEach(r => {
+    repDiv.innerHTML += `<span class="filter-chip ${activeRep===r?'active':''}" onclick="setRep('${r}')">${r.split(' ')[0]}</span>`;
+  });
+
+  const fcDiv = document.getElementById('forecast-filters');
+  fcDiv.innerHTML = `<span class="filter-chip ${activeForecast==='all'?'active':''}" onclick="setForecast('all')">All</span>`;
+  ['Most Likely','Best Case','Pipeline'].forEach(fc => {
+    fcDiv.innerHTML += `<span class="filter-chip ${activeForecast===fc?'active':''}" onclick="setForecast('${fc}')">${fc}</span>`;
+  });
+}
+
+function setRep(r) { activeRep = r; renderFilters(); render(); }
+function setForecast(f) { activeForecast = f; renderFilters(); render(); }
+function sortDeals() { sortRisk = !sortRisk; render(); }
+
+/* ── Deal panel ── */
+function openDeal(id) {
+  selectedDeal = allDeals.find(d => d.id === id);
+  if (!selectedDeal) return;
+  const d = selectedDeal;
+  const acv = fmtACV(parseACV(d.acvRaw));
+  const score = riskScore(d);
+  const { label } = riskLabel(score);
+
+  document.getElementById('panel-eye').textContent = `${d.owner} · ${label}`;
+  document.getElementById('panel-title').textContent = d.account;
+  document.getElementById('panel-meta').textContent = `${d.name} · Close ${d.closeDate}`;
+
+  const facts = [
+    ['ACV',       `$${acv.num}${acv.unit}`],
+    ['Stage',     STAGE_LABELS[d.stage] || d.stage],
+    ['Forecast',  d.forecast],
+    ['Age',       `${d.age} days`],
+    ['Stage Dur', `${d.stageDur} days`],
+    ['Type',      d.type || '—'],
+    ['Path/Plan', d.pathToPlan],
+    ['SE',        d.se || '—'],
+  ];
+  document.getElementById('panel-facts').innerHTML = facts.map(([k,v]) =>
+    `<div class="panel-fact"><div class="panel-fact-label">${k}</div><div class="panel-fact-value">${v}</div></div>`
+  ).join('');
+
+  const ns = d.nextStep.trim().split('\n').slice(0,8).join('\n');
+  document.getElementById('panel-next-step').textContent = ns || '—';
+
+  document.getElementById('ai-section').style.display = 'none';
+  document.getElementById('ai-output').classList.remove('visible');
+  document.getElementById('ai-output').textContent = '';
+
+  if (d.seNotes && d.seNotes.length > 10) {
+    document.getElementById('se-section').style.display = 'block';
+    document.getElementById('panel-se-notes').textContent = d.seNotes.trim().slice(0, 1200);
+  } else {
+    document.getElementById('se-section').style.display = 'none';
+  }
+
+  document.getElementById('deal-panel').classList.add('open');
+  renderDealsTable();
+}
+
+function closePanel() {
+  document.getElementById('deal-panel').classList.remove('open');
+  selectedDeal = null;
+  renderDealsTable();
+}
+
+/* ── AI Actions ── */
+async function runAI(mode) {
+  if (!selectedDeal) return;
+  const d = selectedDeal;
+  const acv = fmtACV(parseACV(d.acvRaw));
+  const score = riskScore(d);
+  const { label } = riskLabel(score);
+  const reasons = riskSignal(d, score);
+
+  const section = document.getElementById('ai-section');
+  const bar = document.getElementById('gen-bar');
+  const output = document.getElementById('ai-output');
+  const title = document.getElementById('ai-section-title');
+
+  const prompts = {
+    coaching: {
+      label: 'Coaching Questions',
+      system: `You are a sales manager preparing for a deal review with your rep. Generate 5 pointed, specific coaching questions based on the deal data. Focus on gaps in qualification, stall reasons, and path to close. Be concise. Return only the numbered questions, no preamble.`,
+    },
+    forecast: {
+      label: 'Forecast Defense',
+      system: `You are a sales manager preparing to defend this deal's forecast category to your VP. Write a 3-5 sentence narrative explaining why this deal is (or isn't) defensible at its current forecast category. Be honest about risks. Return only the narrative.`,
+    },
+    risk: {
+      label: 'Risk Summary',
+      system: `You are a sales manager assessing deal risk. Provide a concise 3-bullet risk summary for this deal: what the top risks are, what's missing, and one specific recommended intervention. Return only the 3 bullets, no headers.`,
+    },
+  };
+
+  const { label: modeLabel, system } = prompts[mode];
+  title.textContent = modeLabel;
+  section.style.display = 'block';
+  bar.classList.add('active');
+  output.classList.remove('visible');
+  output.textContent = '';
+
+  const userContent = `
+Deal: ${d.account}
+Opportunity: ${d.name}
+Rep: ${d.owner}
+ACV: $${acv.num}${acv.unit}
+Stage: ${STAGE_LABELS[d.stage] || d.stage}
+Forecast: ${d.forecast}
+Age: ${d.age} days (${d.stageDur} days in current stage)
+Type: ${d.type}
+Path to Plan: ${d.pathToPlan}
+Risk signals: ${reasons.join('; ') || 'None detected'}
+
+RVP Comment: ${d.rvpComment.slice(0, 400) || 'None'}
+
+Next Steps (recent): ${d.nextStep.slice(0, 600) || 'None'}
+
+${d.seNotes ? 'SE Notes (excerpt): ' + d.seNotes.slice(0, 800) : ''}
+`.trim();
+
+  try {
+    const res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system,
+        messages: [{ role: 'user', content: userContent }],
+        max_tokens: 600,
+      }),
+    });
+    const data = await res.json();
+    const text = data?.content?.[0]?.text || data?.error || 'No response received.';
+    bar.classList.remove('active');
+    output.textContent = text;
+    output.classList.add('visible');
+  } catch (err) {
+    bar.classList.remove('active');
+    output.textContent = 'Error: ' + err.message;
+    output.classList.add('visible');
+  }
+}
+
+/* ── Navigation ── */
+function setView(v, el) {
+  document.querySelectorAll('.hdr-nav a').forEach(a => a.classList.remove('active'));
+  el.classList.add('active');
+}
+
+/* ── Load data ── */
+function loadCSV(text) {
+  try {
+    const rows = parseCSV(text);
+    allDeals = buildDeals(rows).filter(d => d.account);
+    if (allDeals.length === 0) { alert('No deals found. Check your CSV format.'); return; }
+
+    document.getElementById('upload-screen').style.display = 'none';
+    document.getElementById('hub-screen').style.display = 'block';
+
+    const total = allDeals.reduce((s,d) => s + parseACV(d.acvRaw), 0);
+    const f = fmtACV(total);
+    document.getElementById('hub-title').textContent = 'Q2 Pipeline';
+    document.getElementById('hub-sub').textContent = `${allDeals.length} deals · $${f.num}${f.unit} total pipeline`;
+    document.getElementById('loaded-label').textContent = `${allDeals.length} deals loaded`;
+
+    renderFilters();
+    render();
+    localStorage.setItem('manager_hub_csv', text);
+  } catch(e) {
+    alert('Could not parse CSV: ' + e.message);
+  }
+}
+
+function resetData() {
+  localStorage.removeItem('manager_hub_csv');
+  document.getElementById('upload-screen').style.display = 'block';
+  document.getElementById('hub-screen').style.display = 'none';
+  allDeals = []; filteredDeals = [];
+  closePanel();
+}
+
+function exportAttention() {
+  const atRisk = filteredDeals
+    .map(d => ({ d, score: riskScore(d), reasons: riskSignal(d, riskScore(d)) }))
+    .filter(x => x.score >= 20)
+    .sort((a,b) => b.score - a.score);
+
+  const lines = ['Account,Rep,ACV,Stage,Forecast,Age,Stage Duration,Risk Signals'];
+  atRisk.forEach(({ d, reasons }) => {
+    const acv = parseACV(d.acvRaw);
+    lines.push(`"${d.account}","${d.owner}",$${acv},"${STAGE_LABELS[d.stage]||d.stage}","${d.forecast}",${d.age},${d.stageDur},"${reasons.join('; ')}"`);
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'pipeline-attention-signals.csv'; a.click();
+}
+
+/* ── File drop/input ── */
+const dropZone = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) readFile(file);
+});
+fileInput.addEventListener('change', e => { if (e.target.files[0]) readFile(e.target.files[0]); });
+
+function readFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => loadCSV(e.target.result);
+  reader.readAsText(file);
+}
+
+/* ── Theme toggle ── */
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('znith-theme', next);
+}
+const savedTheme = localStorage.getItem('znith-theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+
+/* ── Restore from localStorage ── */
+const saved = localStorage.getItem('manager_hub_csv');
+if (saved) loadCSV(saved);
+</script>
+</body>
+</html>
