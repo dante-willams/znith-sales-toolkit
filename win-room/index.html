@@ -53,6 +53,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .btn-topbar.primary{background:var(--amber-muted);border-color:rgba(229,168,58,0.28);color:var(--amber);}
 .btn-topbar.primary:hover{background:rgba(229,168,58,0.12);}
 .btn-topbar.spinning svg{animation:spin 1s linear infinite;}
+.theme-toggle-btn .icon-sun{display:none;}
+:root[data-theme="light"] .theme-toggle-btn .icon-moon{display:none;}
+:root[data-theme="light"] .theme-toggle-btn .icon-sun{display:block;}
 .btn-topbar.stale{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);color:#F87171;position:relative;}
 .btn-topbar.stale:hover{background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.5);}
 .stale-dot{width:7px;height:7px;border-radius:50%;background:#EF4444;flex-shrink:0;animation:stale-pulse 1.8s ease-in-out infinite;}
@@ -189,9 +192,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 }
 .meddpicc-item:hover{border-color:var(--border-md);}
 .meddpicc-indicator{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.ind-green{background:var(--green);box-shadow:0 0 6px rgba(22,163,74,0.4);}
-.ind-yellow{background:var(--yellow);box-shadow:0 0 6px rgba(217,119,6,0.4);}
-.ind-red{background:var(--red);box-shadow:0 0 6px rgba(220,38,38,0.4);}
+.ind-green{background:var(--green);box-shadow:var(--sh-ok);}
+.ind-yellow{background:var(--yellow);box-shadow:var(--sh-warn);}
+.ind-red{background:var(--red);box-shadow:var(--sh-risk);}
 .ind-unknown{background:var(--border-md);}
 .meddpicc-dim{flex:1;min-width:0;}
 .meddpicc-dim-label{font-size:11px;font-weight:600;color:var(--text);}
@@ -234,7 +237,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .stakeholder-name{font-size:12px;font-weight:600;color:var(--text);}
 .stakeholder-meta{display:flex;gap:6px;align-items:center;margin-top:2px;}
 .stakeholder-title{font-size:11px;color:var(--tmuted);}
-.stakeholder-role{font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--amber);}
+.stakeholder-role{font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--tmuted);}
 .side-btn{
   width:100%;margin-top:8px;padding:8px;
   background:transparent;border:1px solid var(--border);
@@ -271,7 +274,10 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
     </div>
   </div>
   <div class="topbar-right">
-    <button class="btn-topbar" onclick="toggleTheme()" id="themeToggle" title="Toggle theme">🌙</button>
+    <button class="btn-topbar theme-toggle-btn" onclick="toggleTheme()" id="themeToggle" title="Toggle theme" aria-label="Toggle theme">
+      <svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    </button>
     <a href="../dashboard.html" class="btn-topbar">
       <svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
       Dashboard
@@ -419,12 +425,10 @@ function toggleTheme() {
   const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
   document.documentElement.dataset.theme = next;
   localStorage.setItem('znith-theme', next);
-  document.getElementById('themeToggle').textContent = next === 'dark' ? '🌙' : '☀️';
 }
 (function initTheme() {
   const saved = localStorage.getItem('znith-theme') || 'dark';
   document.documentElement.dataset.theme = saved;
-  document.getElementById('themeToggle').textContent = saved === 'dark' ? '🌙' : '☀️';
 })();
 
 // ── API ────────────────────────────────────────────────────────────────────────
@@ -1064,7 +1068,7 @@ function renderMain() {
 function renderError(msg) {
   document.getElementById('mainCol').innerHTML = `
     <div class="state-screen">
-      <div class="state-icon">⚠</div>
+      <div class="state-icon"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
       <div class="state-title">Synthesis failed</div>
       <div class="state-sub">${msg}</div>
       <button class="btn-state" onclick="runSynthesis()">Try Again</button>

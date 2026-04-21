@@ -120,6 +120,14 @@
   --sh-risk: 0 1px 3px rgba(200,50,50,0.2);
 }
 
+/* ── Theme toggle SVG icon visibility ── */
+.theme-toggle-btn .icon-sun,
+.theme-toggle .icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle-btn .icon-moon,
+:root[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle-btn .icon-sun,
+:root[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+
 /* ── Tabular nums — scoped to numeric display classes ── */
 .kpi-value, .kpi-value *,
 .meddpicc-score-val, .drawer-value-chip-val, .drawer-dim-score,

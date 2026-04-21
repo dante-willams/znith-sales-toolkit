@@ -1385,7 +1385,7 @@ input[type=checkbox].chip-check{display:none;}
     <div class="step-dot" id="dot-3"></div>
   </div>
   <div class="header-right">
-    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
+    <button class="theme-toggle-btn" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode"><svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
     <button class="header-briefs-btn" id="briefsBtn" onclick="showSavedBriefs()">
       📋 All Account Briefs <span class="briefs-count-badge" id="briefsCount">0</span>
     </button>
@@ -1990,7 +1990,6 @@ input[type=checkbox].chip-check{display:none;}
   const saved = localStorage.getItem('znith-theme') || localStorage.getItem('ab-theme') || 'light';
   document.documentElement.setAttribute('data-theme', saved);
   const btn = document.getElementById('themeToggle');
-  if (btn) btn.textContent = saved === 'dark' ? '☀️' : '🌙';
 })();
 
 function toggleTheme() {
@@ -1998,7 +1997,6 @@ function toggleTheme() {
   const next = current === 'dark' ? 'light' : 'dark';
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('znith-theme', next);
-  document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
 }
 
 // ════════════════════════════════════════════════════
@@ -2870,7 +2868,7 @@ function renderOutput() {
   const landList = document.getElementById('out-landmines');
   landList.innerHTML = (strat.landmines||[]).map(l=>`
     <div class="landmine-item">
-      <div class="landmine-icon">⚠</div>
+      <div class="landmine-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div>
       <div>${renderWithBadges(l)}</div>
     </div>`).join('');
 
@@ -3737,7 +3735,7 @@ function renderDealBrief() {
   // Critical gaps
   const gaps = db.criticalGaps || [];
   document.getElementById('out-critical-gaps').innerHTML = gaps.length
-    ? gaps.map(g=>`<div class="landmine-item"><div class="landmine-icon" style="color:var(--red);">⚠</div><div style="font-size:13px;color:var(--white-dim);">${g}</div></div>`).join('')
+    ? gaps.map(g=>`<div class="landmine-item"><div class="landmine-icon" style="color:var(--red);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div style="font-size:13px;color:var(--white-dim);">${g}</div></div>`).join('')
     : '<div style="font-size:13px;color:var(--white-dim);opacity:0.6;">No critical gaps identified.</div>';
 
   // What must happen next

@@ -5212,7 +5212,7 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
                   <button onClick={() => setShowClearConfirm(false)} style={{fontSize:11,color:'var(--tmuted)',background:'none',border:'none',cursor:'pointer',padding:0}}>No</button>
                 </div>
               )}
-              <button id="themeToggle" onClick={() => window.toggleTheme && window.toggleTheme()} title="Toggle theme" style={{background:'transparent',border:'1px solid var(--border-md)',color:'var(--tmuted)',padding:'5px 10px',clipPath:'var(--clip-sm)',cursor:'pointer',fontSize:14,lineHeight:1,transition:'var(--transition)',fontFamily:'var(--f-ui)'}}>🌙</button>
+              <button id="themeToggle" onClick={() => window.toggleTheme && window.toggleTheme()} title="Toggle theme" style={{background:'transparent',border:'1px solid var(--border-md)',color:'var(--tmuted)',padding:'5px 10px',clipPath:'var(--clip-sm)',cursor:'pointer',fontSize:14,lineHeight:1,transition:'var(--transition)',fontFamily:'var(--f-ui)'}}><svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
               <div className="header-steps">
                 {[1,2,3,4,5,6].map(n=>(
                   <div key={n} className={`step-dot ${n===step?'active':n<step?'done':''}`} title={`Module ${n}: ${MODULE_LABELS[n-1]}`}/>
@@ -5414,7 +5414,6 @@ function toggleTheme() {
   document.documentElement.setAttribute('data-theme', next);
   localStorage.setItem('znith-theme', next);
   const btn = document.getElementById('themeToggle');
-  if (btn) btn.textContent = next === 'dark' ? '🌙' : '☀️';
 }
 window.toggleTheme = toggleTheme;
 (function() {
@@ -5422,8 +5421,7 @@ window.toggleTheme = toggleTheme;
   document.documentElement.setAttribute('data-theme', saved);
   window.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('themeToggle');
-    if (btn) btn.textContent = saved === 'dark' ? '🌙' : '☀️';
-  });
+    });
 })();
   </script>
 </body>
