@@ -8,31 +8,8 @@
 <link rel="stylesheet" href="../shared/znith-tokens.css">
 <style>
 :root{
-  --f-brand:'Epilogue',sans-serif;
-  --f-ui:'Barlow',sans-serif;
-  --f-mono:'IBM Plex Mono',monospace;
-  --amber:#B8860B;
-  --amber-glow:rgba(184,134,11,0.22);
-  --amber-muted:rgba(184,134,11,0.12);
-  --amber-faint:rgba(184,134,11,0.07);
-  --green:#16A34A; --green-muted:rgba(22,163,74,0.12);
-  --yellow:#D97706; --yellow-muted:rgba(217,119,6,0.12);
-  --red:#DC2626; --red-muted:rgba(220,38,38,0.12);
-  --blue:#3B82F6; --blue-muted:rgba(59,130,246,0.12);
-  --bg:#05070F;
-  --surf:#0F1520;
-  --surf-2:#0A0E1A;
-  --surf-3:#070A13;
-  --border:rgba(255,255,255,0.08);
-  --border-md:rgba(255,255,255,0.14);
-  --text:rgba(255,255,255,0.88);
-  --tmuted:rgba(255,255,255,0.50);
-  --tfaint:rgba(255,255,255,0.28);
   --navy:#0A0E1A;
   --white-faint:rgba(255,255,255,0.18);
-  --transition:all 0.18s ease;
-  --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
-  --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;min-height:100vh;}
@@ -76,8 +53,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
   text-decoration:none;
 }
 .btn-topbar:hover{border-color:var(--border-md);color:var(--text);}
-.btn-topbar.primary{background:var(--amber-muted);border-color:rgba(184,134,11,0.3);color:var(--amber);}
-.btn-topbar.primary:hover{background:rgba(184,134,11,0.2);}
+.btn-topbar.primary{background:var(--amber-muted);border-color:rgba(229,168,58,0.3);color:var(--amber);}
+.btn-topbar.primary:hover{background:rgba(229,168,58,0.2);}
 .btn-topbar.spinning svg{animation:spin 1s linear infinite;}
 .btn-topbar.stale{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);color:#F87171;position:relative;}
 .btn-topbar.stale:hover{background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.5);}
@@ -1021,7 +998,7 @@ function renderMain() {
     if (s.value_case) {
       html += `<div>
         <div class="section-eyebrow">Value Case</div>
-        <div class="info-card" style="border-color:rgba(184,134,11,0.2);background:var(--amber-faint);">${renderWithBadges(s.value_case)}</div>
+        <div class="info-card" style="border-color:rgba(229,168,58,0.2);background:var(--amber-faint);">${renderWithBadges(s.value_case)}</div>
       </div>`;
     }
     if (s.stage_play) {

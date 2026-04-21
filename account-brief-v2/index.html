@@ -14,24 +14,12 @@
 :root {
   /* ── Znith Design System v2 — Account Brief (Teal) ── */
 
-  /* Fonts */
-  --f-brand: 'Epilogue', sans-serif;
-  --f-ui:    'Barlow', sans-serif;
-  --f-mono:  'IBM Plex Mono', monospace;
-
   /* Module accent — Account Brief teal */
   --accent:       #0D9488;
   --accent-glow:  rgba(13,148,136,0.22);
   --accent-muted: rgba(13,148,136,0.12);
   --accent-faint: rgba(13,148,136,0.08);
   --accent-light: #0e9689;
-
-  /* System amber */
-  --amber:        #B8860B;
-  --amber-glow:   rgba(184,134,11,0.22);
-  --amber-muted:  rgba(184,134,11,0.12);
-  --amber-faint:  rgba(184,134,11,0.08);
-  --amber-bg:     #FDF3DC;
 
   /* Base palette */
   --navy:         #1A2332;
@@ -73,13 +61,6 @@
   --conga-lavender: #2dd4bf;
   --conga-deep:   #0a5c56;
 
-  /* Geometry */
-  --clip-lg: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
-  --clip-sm: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
-
-  /* Motion */
-  --transition: 220ms cubic-bezier(0.4,0,0.2,1);
-  --spring:     400ms cubic-bezier(0.34,1.56,0.64,1);
 }
 
 
@@ -104,7 +85,7 @@ body{
 body::before{
   content:'';position:fixed;top:-200px;left:-200px;
   width:700px;height:700px;
-  background:radial-gradient(circle,rgba(184,134,11,0.06) 0%,transparent 70%);
+  background:radial-gradient(circle,rgba(229,168,58,0.06) 0%,transparent 70%);
   pointer-events:none;z-index:0;
 }
 body::after{
@@ -1291,7 +1272,7 @@ input[type=checkbox].chip-check{display:none;}
   align-items: center;
   gap: 6px;
   background: var(--amber-faint);
-  border: 1px solid rgba(184,134,11,0.25);
+  border: 1px solid rgba(229,168,58,0.25);
   color: var(--amber);
   font-family: var(--f-mono);
   font-size: 10px;
@@ -1388,7 +1369,7 @@ input[type=checkbox].chip-check{display:none;}
   text-transform: uppercase;
   color: var(--amber);
   background: var(--amber-faint);
-  border: 1px solid rgba(184,134,11,0.3);
+  border: 1px solid rgba(229,168,58,0.3);
   padding: 4px 12px;
   clip-path: var(--clip-sm);
 }

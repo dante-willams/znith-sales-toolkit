@@ -16,15 +16,6 @@
 <style>
 /* ── ZNITH DESIGN SYSTEM v1.0 ────────────────────────────────────────────── */
 :root {
-  --f-brand: 'Epilogue', sans-serif;
-  --f-ui:    'Barlow', sans-serif;
-  --f-mono:  'IBM Plex Mono', monospace;
-
-  /* Amber — system color: nav, footer, CTAs, metric values */
-  --amber:       #B8860B;
-  --amber-glow:  rgba(184,134,11,0.28);
-  --amber-muted: rgba(184,134,11,0.12);
-
   /* Module accent colors — used sparingly on borders, badges, pips only */
   --c-account:       #0D9488; --c-account-glow:  rgba(13,148,136,0.28);  --c-account-muted:  rgba(13,148,136,0.12);
   --c-valuemap:      #8B5CF6; --c-valuemap-glow: rgba(139,92,246,0.28);  --c-valuemap-muted: rgba(139,92,246,0.12);
@@ -154,7 +145,7 @@ select option { background: var(--surf-2); }
 
 /* ── UPLOAD ZONE ─────────────────────────────────────────────────────────── */
 .upload-zone {
-  border: 1px dashed rgba(184,134,11,0.3); padding: 18px;
+  border: 1px dashed rgba(229,168,58,0.3); padding: 18px;
   text-align: center; cursor: pointer; transition: all var(--transition);
   clip-path: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
   margin-top: 14px;
@@ -456,7 +447,7 @@ select option { background: var(--surf-2); }
   clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 }
 .chat-fab:hover { border-color: var(--amber); }
-.chat-fab.live { border-color: rgba(184,134,11,0.4); background: rgba(184,134,11,0.05); }
+.chat-fab.live { border-color: rgba(229,168,58,0.4); background: rgba(229,168,58,0.05); }
 .chat-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
 .chat-fab.live .chat-pip { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); animation: blink 2s ease-in-out infinite; }
 
@@ -487,7 +478,7 @@ select option { background: var(--surf-2); }
 .chat-msg { font-size: 12px; line-height: 1.55; max-width: 90%; white-space: pre-wrap; }
 .chat-msg.user {
   align-self: flex-end; background: var(--amber-muted);
-  border: 1px solid rgba(184,134,11,0.2); padding: 8px 11px; color: var(--text);
+  border: 1px solid rgba(229,168,58,0.2); padding: 8px 11px; color: var(--text);
   clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 }
 .chat-msg.assistant {
@@ -526,7 +517,7 @@ select option { background: var(--surf-2); }
   clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 }
 .hist-btn:hover { border-color: var(--amber); color: var(--text); }
-.hist-btn.active { border-color: rgba(184,134,11,0.4); color: var(--amber); background: rgba(184,134,11,0.05); }
+.hist-btn.active { border-color: rgba(229,168,58,0.4); color: var(--amber); background: rgba(229,168,58,0.05); }
 .hist-badge {
   display: none; align-items: center; justify-content: center;
   background: var(--amber); color: #000; font-size: 9px; font-weight: 700;
@@ -558,7 +549,7 @@ select option { background: var(--surf-2); }
   padding: 11px 13px; cursor: pointer; transition: all var(--transition);
   clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 }
-.hist-entry:hover { border-color: var(--amber); background: rgba(184,134,11,0.04); }
+.hist-entry:hover { border-color: var(--amber); background: rgba(229,168,58,0.04); }
 .hist-entry-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
 .hist-entry-account { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hist-entry-del { background: none; border: none; color: var(--tfaint); font-size: 16px; cursor: pointer; line-height: 1; padding: 0 2px; flex-shrink: 0; }
@@ -587,7 +578,7 @@ select option { background: var(--surf-2); }
 
 /* ── FOOTER ──────────────────────────────────────────────────────────────── */
 .znith-footer {
-  background: var(--surf); border-top: 1px solid rgba(184,134,11,0.15);
+  background: var(--surf); border-top: 1px solid rgba(229,168,58,0.15);
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 24px; height: 34px; position: sticky; bottom: 0; z-index: 50;
 }
@@ -602,7 +593,7 @@ select option { background: var(--surf-2); }
 <header>
   <div class="header-logo">
     <div class="logo-mark">
-      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#B8860B">
+      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#E5A83A">
         <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
       </svg>
     </div>
@@ -2312,7 +2303,9 @@ function downloadPDF() {
   --text:   rgba(255,255,255,0.85);
   --tmuted: rgba(255,255,255,0.45);
   --tfaint: rgba(255,255,255,0.20);
-  --amber:  #B8860B;
+  --amber:  #E5A83A;
+  --amber-glow: rgba(229,168,58,0.22);
+  --amber-muted: rgba(229,168,58,0.12);
 }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -2370,13 +2363,13 @@ html, body {
 .pdf-ft {
   position: fixed; bottom: 0; left: 0; right: 0;
   background: #181714;
-  border-top: 1px solid rgba(184,134,11,0.2);
+  border-top: 1px solid rgba(229,168,58,0.2);
   padding: 5px 20px;
   display: flex; align-items: center; justify-content: space-between;
   -webkit-print-color-adjust: exact; print-color-adjust: exact;
 }
 .pdf-ft-wm {
-  font-family: var(--f-brand); font-size: 10px; font-weight: 800; color: #B8860B;
+  font-family: var(--f-brand); font-size: 10px; font-weight: 800; color: #E5A83A;
 }
 .pdf-ft-wm span { color: rgba(255,255,255,0.25); font-weight: 400; }
 .pdf-ft-center { font-family: var(--f-mono); font-size: 8px; color: rgba(255,255,255,0.25); }

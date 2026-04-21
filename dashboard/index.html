@@ -10,27 +10,6 @@
 <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
 <link rel="stylesheet" href="../shared/znith-tokens.css">
 <style>
-:root{
-  --f-brand:'Epilogue',sans-serif;
-  --f-ui:'Barlow',sans-serif;
-  --f-mono:'IBM Plex Mono',monospace;
-  --amber:#B8860B;
-  --amber-glow:rgba(184,134,11,0.22);
-  --amber-muted:rgba(184,134,11,0.12);
-  --amber-faint:rgba(184,134,11,0.07);
-  --bg:#05070F;
-  --surf:#0F1520;
-  --surf-2:#0A0E1A;
-  --surf-3:#070A13;
-  --border:rgba(255,255,255,0.08);
-  --border-md:rgba(255,255,255,0.14);
-  --text:rgba(255,255,255,0.88);
-  --tmuted:rgba(255,255,255,0.50);
-  --tfaint:rgba(255,255,255,0.28);
-  --transition:all 0.18s ease;
-  --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
-  --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
-}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;min-height:100vh;}
 
@@ -116,7 +95,7 @@ header{
 .pipeline-card.coming-soon:hover::before{opacity:0;}
 .pipeline-card-icon{
   width:36px;height:36px;border-radius:8px;
-  background:var(--amber-muted);border:1px solid rgba(184,134,11,0.2);
+  background:var(--amber-muted);border:1px solid rgba(229,168,58,0.2);
   display:flex;align-items:center;justify-content:center;
 }
 .pipeline-card-icon svg{opacity:0.9;}
@@ -228,8 +207,8 @@ header{
   border:1px solid var(--border);color:var(--tfaint);
   background:var(--surf-2);
 }
-.win-room-btn.active{background:var(--amber-muted);border-color:rgba(184,134,11,0.3);color:var(--amber);}
-.win-room-btn.active:hover{background:rgba(184,134,11,0.25);}
+.win-room-btn.active{background:var(--amber-muted);border-color:rgba(229,168,58,0.3);color:var(--amber);}
+.win-room-btn.active:hover{background:rgba(229,168,58,0.25);}
 .win-room-btn:not(.active):hover{border-color:var(--border-md);color:var(--text);}
 
 /* ── CARD ACTIONS (hover) ── */
@@ -483,7 +462,7 @@ header{
     <a href="../prospecting-agent/index.html" target="_blank" rel="noopener" class="pipeline-card">
       <div class="pipeline-card-header">
         <div class="pipeline-card-icon">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#B8860B" stroke-width="2">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="#E5A83A" stroke-width="2">
             <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
           </svg>
         </div>

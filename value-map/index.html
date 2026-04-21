@@ -13,16 +13,6 @@
 <link rel="stylesheet" href="../shared/znith-tokens.css">
 <style>
   :root {
-    /* ── ZNITH DESIGN SYSTEM v1.0 ── */
-    --f-brand: 'Epilogue', sans-serif;
-    --f-ui:    'Barlow', sans-serif;
-    --f-mono:  'IBM Plex Mono', monospace;
-
-    /* Znith system amber — nav, footer, wordmark, CTA */
-    --amber:       #B8860B;
-    --amber-glow:  rgba(184,134,11,0.28);
-    --amber-muted: rgba(184,134,11,0.12);
-
     /* Value Map module accent — Violet */
     --violet:       #8B5CF6;
     --violet-glow:  rgba(139,92,246,0.28);
@@ -48,11 +38,6 @@
     --purple-dim:  rgba(196,181,253,0.13);
     --green:       #7ee8a2;
     --green-dim:   rgba(126,232,162,0.10);
-
-    /* Corner system */
-    --clip-lg: polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0% calc(100% - 10px), 0% 10px);
-    --clip-sm: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
-    --transition: 220ms cubic-bezier(0.4,0,0.2,1);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -146,7 +131,7 @@
   .step-pill.active {
     color: var(--amber);
     border-color: var(--amber-muted);
-    background: rgba(184,134,11,0.08);
+    background: rgba(229,168,58,0.08);
   }
 
   .step-pill.done {
@@ -309,7 +294,7 @@
     user-select: none;
   }
 
-  .tag:hover { background: rgba(184,134,11,0.2); }
+  .tag:hover { background: rgba(229,168,58,0.2); }
   .tag.selected {
     background: var(--amber);
     border-color: var(--amber);
@@ -431,7 +416,7 @@
     transition: border-color 0.2s;
   }
 
-  .source-card:hover { border-color: rgba(184,134,11,0.25); }
+  .source-card:hover { border-color: rgba(229,168,58,0.25); }
 
   .source-title {
     font-weight: 600;
@@ -520,7 +505,7 @@
     flex-shrink: 0;
   }
 
-  .vm-section-num.gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(184,134,11,0.25); }
+  .vm-section-num.gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(229,168,58,0.25); }
   .vm-section-num.teal { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(61,224,200,0.25); }
   .vm-section-num.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.25); }
   .vm-section-num.green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,0.25); }
@@ -562,7 +547,7 @@
     height: 3px;
   }
 
-  .initiative-card.c1 { border-color: rgba(184,134,11,0.2); background: rgba(184,134,11,0.06); }
+  .initiative-card.c1 { border-color: rgba(229,168,58,0.2); background: rgba(229,168,58,0.06); }
   .initiative-card.c1::before { background: var(--gold); }
   .initiative-card.c2 { border-color: rgba(61,224,200,0.2); background: rgba(61,224,200,0.04); }
   .initiative-card.c2::before { background: var(--teal); }
@@ -635,7 +620,7 @@
 
   .metric-chip.value {
     background: var(--gold-dim);
-    border: 1px solid rgba(184,134,11,0.2);
+    border: 1px solid rgba(229,168,58,0.2);
     color: var(--gold-light);
   }
 
@@ -776,7 +761,7 @@
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--navy-border); border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: rgba(184,134,11,0.35); }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(229,168,58,0.35); }
 
   /* ── FILE DROP ZONE ── */
   #dropZone {
@@ -1060,7 +1045,7 @@
     font-weight: 700;
   }
   .maps-tab { cursor: pointer; gap: 7px; }
-  .maps-tab:hover { color: var(--amber); border-color: var(--amber-muted); background: rgba(184,134,11,0.06); }
+  .maps-tab:hover { color: var(--amber); border-color: var(--amber-muted); background: rgba(229,168,58,0.06); }
   .maps-tab.active-tab { color: var(--white); border-color: rgba(255,255,255,0.15); background: var(--white-faint); }
   .maps-count {
     background: var(--amber); color: #000;
@@ -3401,10 +3386,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   Assistant
 </button>
 <!-- ZNITH FOOTER -->
-<footer style="position:fixed;bottom:0;left:0;right:0;width:100%;background:var(--surf,#181714);border-top:1px solid rgba(184,134,11,0.15);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:34px;z-index:98;">
+<footer style="position:fixed;bottom:0;left:0;right:0;width:100%;background:var(--surf,#181714);border-top:1px solid rgba(229,168,58,0.15);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:34px;z-index:98;">
   <div style="display:flex;align-items:center;gap:5px;">
-    <span style="font-family:'IBM Plex Mono',monospace;color:#B8860B;font-weight:700;font-size:13px;">/</span>
-    <span style="font-family:'Epilogue',sans-serif;font-weight:800;font-size:13px;color:#B8860B;">Z</span><span style="font-family:'Epilogue',sans-serif;font-weight:800;font-size:13px;color:rgba(255,255,255,0.4);">nith</span>
+    <span style="font-family:'IBM Plex Mono',monospace;color:var(--amber);font-weight:700;font-size:13px;">/</span>
+    <span style="font-family:'Epilogue',sans-serif;font-weight:800;font-size:13px;color:var(--amber);">Z</span><span style="font-family:'Epilogue',sans-serif;font-weight:800;font-size:13px;color:rgba(255,255,255,0.4);">nith</span>
   </div>
   <div style="display:flex;align-items:center;gap:8px;">
     <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.2);">Value Map</span>
