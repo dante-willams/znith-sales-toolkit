@@ -320,6 +320,8 @@ header {
 .stage-block.active::before { background: var(--amber-fill); }
 .stage-block.risk { background: rgba(181,29,29,0.04); border-color: rgba(181,29,29,0.18); }
 .stage-block.risk::before { background: var(--status-risk); }
+.stage-block.selected-stage { background: var(--amber-muted); border-color: var(--amber-fill); box-shadow: var(--sh-amber); }
+.stage-block.selected-stage::before { background: var(--amber-fill); }
 .stage-lbl { font-family: var(--f-mono); font-size: 8px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tfaint); }
 .stage-block.active .stage-lbl { color: var(--amber-text); }
 .stage-block.risk .stage-lbl { color: var(--status-risk); }
@@ -1113,15 +1115,17 @@ let allDeals = [];
 let filteredDeals = [];
 let activeRep = 'all';
 let activeForecast = 'all';
+let activeStage = 'all';
 let selectedDeal = null;
 let sortRisk = true;
 
 /* ── Render ── */
 function render() {
   filteredDeals = allDeals.filter(d => {
-    const repOk = activeRep === 'all' || d.owner === activeRep;
-    const fcOk  = activeForecast === 'all' || d.forecast === activeForecast;
-    return repOk && fcOk;
+    const repOk   = activeRep === 'all' || d.owner === activeRep;
+    const fcOk    = activeForecast === 'all' || d.forecast === activeForecast;
+    const stageOk = activeStage === 'all' || d.stage === activeStage;
+    return repOk && fcOk && stageOk;
   });
   if (sortRisk) filteredDeals.sort((a,b) => riskScore(b) - riskScore(a));
 
@@ -1179,14 +1183,17 @@ function renderStageFlow() {
   STAGE_ORDER.forEach((s, i) => {
     const { count, acv } = byStage[s];
     const f = fmtACV(acv);
+    const isSelected = activeStage === s;
     const isLate = i >= 2;
     const isRisky = !isLate && count > 0 && (acv / total) > 0.25;
     let cls = 'stage-block';
-    if (isLate) cls += ' active';
-    if (isRisky) cls += ' risk';
+    if (isSelected) cls += ' selected-stage';
+    else if (isLate) cls += ' active';
+    if (isRisky && !isSelected) cls += ' risk';
+    const lbl = i === 0 ? 'Early' : i === 3 ? 'Close' : 'Active';
     flow.innerHTML += `
-      <div class="${cls}" onclick="filterStage('${s}')">
-        <div class="stage-lbl">${i === 0 ? 'Early' : i === 3 ? 'Close' : 'Active'}</div>
+      <div class="${cls}" onclick="filterStage('${s}')" title="Click to filter · click again to clear">
+        <div class="stage-lbl">${isSelected ? '✕ ' : ''}${lbl}</div>
         <div class="stage-name">${STAGE_LABELS[s]}</div>
         <div class="stage-val">$${f.num}${f.unit} · ${count}</div>
       </div>`;
@@ -1194,9 +1201,11 @@ function renderStageFlow() {
 }
 
 function filterStage(stage) {
-  // Toggle stage filter in deals table
-  const tbodyDeals = filteredDeals.filter(d => d.stage === stage);
-  // For now, just scroll to first matching deal in table
+  activeStage = activeStage === stage ? 'all' : stage;
+  render();
+  if (activeStage !== 'all') {
+    document.querySelector('.deals-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
 }
 
 function renderDealsTable() {
@@ -1396,6 +1405,7 @@ ${d.seNotes ? 'SE Notes (excerpt): ' + d.seNotes.slice(0, 800) : ''}
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
         system,
         messages: [{ role: 'user', content: userContent }],
         max_tokens: 600,
@@ -1470,6 +1480,7 @@ Severity must be "high" or "medium". Include 2-4 risk areas. Generate coaching q
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
         system,
         messages: [{ role: 'user', content: userMsg }],
         max_tokens: 3000,
