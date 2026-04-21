@@ -11,6 +11,19 @@
   --f-ui:    'Barlow', sans-serif;
   --f-mono:  'IBM Plex Mono', monospace;
 
+  /* ── Info role — muted slate for non-action informational content ── */
+  --info:        #7A94B8;
+  --info-deep:   #4E6A8E;
+  --info-muted:  rgba(122,148,184,0.14);
+  --info-faint:  rgba(122,148,184,0.06);
+
+  /* ── Semantic role aliases (amber = Action) ── */
+  --accent:       var(--amber);
+  --accent-deep:  var(--amber-deep);
+  --accent-glow:  var(--amber-glow);
+  --accent-muted: var(--amber-muted);
+  --accent-faint: var(--amber-faint);
+
   /* ── Amber — internal tool signature ── */
   --amber:       #E5A83A;
   --amber-deep:  #B8860B;   /* hover / pressed only */
@@ -83,6 +96,11 @@
 
 /* ── Light theme ── */
 :root[data-theme="light"] {
+  --info:        #5A7396;
+  --info-deep:   #324A70;
+  --info-muted:  rgba(90,115,150,0.12);
+  --info-faint:  rgba(90,115,150,0.05);
+
   --amber:       #C98C20;   /* fills on white */
   --amber-text:  #946C00;   /* text / icons — AA pass */
   --amber-deep:  #6E5000;   /* hover / pressed */
@@ -166,6 +184,10 @@
   margin: 0 0.08em;
 }
 .kpi-value .num { font-size: 1em; }
+
+/* ── Hero KPI — one amber metric per tool ── */
+.kpi-hero { color: var(--amber); }
+.kpi-hero .kpi-value { color: var(--amber); }
 
 /* ── Conga Symbol ── */
 .conga-mark { width: 28px; height: 28px; color: #FFFFFF; }

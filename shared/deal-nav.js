@@ -55,7 +55,7 @@ const dealNav = (() => {
     const deal = dealStore.getFromUrl();
     if (!deal) return;
 
-    const dashUrl    = dealStore.urlFor('../dashboard.html', deal.id);
+    const dashUrl    = dealStore.urlFor('../dashboard/', deal.id);
     const stageId    = deal.context.stage || 'discovery';
     const stageLbl   = dealStore.stageLabel(stageId);
     const activeId   = currentToolId();

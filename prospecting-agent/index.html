@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <script src="/auth.js"></script>
-  <link rel="stylesheet" href="../shared/znith-tokens.css">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Conga Prospecting Agent</title>
@@ -10,6 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
   <link rel="manifest" href="site.webmanifest" />
+  <link rel="stylesheet" href="../shared/znith-tokens.css" />
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -19,11 +19,34 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      /* Typography */
+      --f-brand: 'Epilogue', sans-serif;
+      --f-ui:    'Barlow', sans-serif;
+      --f-mono:  'IBM Plex Mono', monospace;
+
+      /* Amber system color */
+      --amber:        #B8860B;
+      --amber-glow:   rgba(184,134,11,0.28);
+      --amber-muted:  rgba(184,134,11,0.12);
+
+      /* Base palette */
+      --bg:      #0e0d0b;
+      --surf:    #181714;
+      --surf-2:  #222018;
+      --border:  rgba(255,255,255,0.07);
+      --text:    rgba(255,255,255,0.85);
+      --tmuted:  rgba(255,255,255,0.45);
+      --tfaint:  rgba(255,255,255,0.2);
+
       /* Status colors (keep functional) */
       --green:     #4ade80;
       --green-dim: rgba(74,222,128,0.12);
       --red:       #f87171;
       --red-dim:   rgba(248,113,113,0.12);
+
+      /* Transitions */
+      --transition: 220ms cubic-bezier(0.4,0,0.2,1);
+      --spring:     400ms cubic-bezier(0.34,1.56,0.64,1);
     }
 
     html, body {
@@ -34,20 +57,19 @@
       line-height: 1.6;
       min-height: 100vh;
     }
-    body { padding-bottom: 40px; }
 
     body::before {
       content: '';
       position: fixed; top: -120px; right: -120px;
       width: 560px; height: 560px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(229,168,58,0.08) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(184,134,11,0.08) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
     }
     body::after {
       content: '';
       position: fixed; bottom: -160px; left: -160px;
       width: 600px; height: 600px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(229,168,58,0.04) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(184,134,11,0.04) 0%, transparent 70%);
       pointer-events: none; z-index: 0;
     }
 
@@ -58,12 +80,15 @@
       padding: 20px 40px;
       display: flex; align-items: center; justify-content: space-between;
     }
-    [data-theme="light"] header { background: rgba(255,255,255,0.94); }
     .header-left { display: flex; align-items: center; gap: 14px; }
     .logo-mark {
       width: 36px; height: 36px;
+      background: var(--amber-muted);
+      border: 1px solid rgba(184,134,11,0.3);
+      clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0% calc(100% - 10px), 0% 10px);
       display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
+      box-shadow: 0 0 20px var(--amber-glow); flex-shrink: 0;
+      padding: 7px;
     }
     .logo-mark svg { width: 100%; height: 100%; display: block; }
     .logo-name { font-size: 14px; font-weight: 600; font-family: var(--f-ui); color: var(--text); letter-spacing: 0.02em; }
@@ -73,7 +98,7 @@
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--tfaint); transition: all 0.3s;
     }
-    .step-dot.active { background: var(--amber); box-shadow: var(--sh-amber); }
+    .step-dot.active { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); }
     .step-dot.done   { background: var(--text); }
 
     /* ─── Main ─── */
@@ -85,7 +110,7 @@
     .phase-label {
       font-size: 11px; font-weight: 600;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--amber); margin-bottom: 12px;
+      color: var(--tfaint); margin-bottom: 12px;
       font-family: var(--f-mono);
     }
     .phase-title {
@@ -136,13 +161,13 @@
       font-size: 13px; font-weight: 500; color: var(--tmuted);
       cursor: pointer; transition: all 0.18s ease; user-select: none;
     }
-    .chip:hover { border-color: rgba(229,168,58,0.5); color: var(--text); }
+    .chip:hover { border-color: rgba(184,134,11,0.5); color: var(--text); }
     .chip.selected { border-color: var(--amber); background: var(--amber-muted); color: var(--text); }
     .chip-dot {
       width: 7px; height: 7px; border-radius: 50%;
       background: var(--tfaint); transition: background 0.18s; flex-shrink: 0;
     }
-    .chip.selected .chip-dot { background: var(--amber); box-shadow: var(--sh-amber); }
+    .chip.selected .chip-dot { background: var(--amber); box-shadow: 0 0 6px var(--amber-glow); }
 
     /* ─── Tab toggle ─── */
     .tab-row {
@@ -246,9 +271,9 @@
       font-size: 14px; font-weight: 600; padding: 13px 28px;
       clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
       border: none; cursor: pointer;
-      transition: all 0.2s; box-shadow: 0 4px 20px rgba(229,168,58,0.35);
+      transition: all 0.2s; box-shadow: 0 4px 20px rgba(184,134,11,0.35);
     }
-    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(229,168,58,0.5); }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(184,134,11,0.5); }
     .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
     .btn-secondary {
       display: inline-flex; align-items: center; gap: 8px;
@@ -258,7 +283,7 @@
       clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
       cursor: pointer; transition: all 0.2s;
     }
-    .btn-secondary:hover { border-color: rgba(229,168,58,0.4); color: var(--text); }
+    .btn-secondary:hover { border-color: rgba(184,134,11,0.4); color: var(--text); }
 
     /* ─── Success screen ─── */
     .success-wrap { text-align: center; padding: 56px 24px 48px; }
@@ -266,7 +291,7 @@
       width: 80px; height: 80px; border-radius: 50%;
       background: var(--amber);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 28px; box-shadow: var(--sh-amber);
+      margin: 0 auto 28px; box-shadow: 0 8px 32px var(--amber-glow);
     }
     .success-title {
       font-family: var(--f-brand); font-size: 30px; font-weight: 700;
@@ -279,7 +304,7 @@
     .territory-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 36px; }
     .territory-tag {
       display: inline-flex; align-items: center; gap: 6px;
-      background: var(--amber-muted); border: 1px solid rgba(229,168,58,0.35);
+      background: var(--amber-muted); border: 1px solid rgba(184,134,11,0.35);
       clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
       padding: 6px 14px; font-size: 13px; font-weight: 500; color: var(--text);
     }
@@ -370,7 +395,7 @@
       clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
       padding: 14px 18px;
     }
-    .pass-row.active { border-color: rgba(229,168,58,0.5); background: var(--amber-muted); }
+    .pass-row.active { border-color: rgba(184,134,11,0.5); background: var(--amber-muted); }
     .pass-row.done { border-color: rgba(74,222,128,0.3); background: var(--green-dim); }
     .pass-indicator {
       width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
@@ -412,8 +437,8 @@
       padding: 22px; margin-bottom: 12px;
       transition: border-color 0.2s, background 0.2s; position: relative;
     }
-    .account-card:hover { border-color: rgba(229,168,58,0.28); }
-    .account-card.activated { border-color: rgba(229,168,58,0.55); background: rgba(229,168,58,0.06); }
+    .account-card:hover { border-color: rgba(184,134,11,0.3); }
+    .account-card.activated { border-color: rgba(184,134,11,0.55); background: rgba(184,134,11,0.06); }
     .account-card-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
     .score-badge {
       width: 46px; height: 46px;
@@ -423,7 +448,7 @@
       font-size: 17px; font-weight: 700;
     }
     .score-hi  { background: rgba(74,222,128,0.14);  color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
-    .score-mid { background: var(--amber-muted);      color: var(--amber); border: 1px solid rgba(229,168,58,0.28); }
+    .score-mid { background: var(--amber-muted);      color: var(--amber); border: 1px solid rgba(184,134,11,0.3); }
     .score-low { background: rgba(251,191,36,0.12);   color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
     .score-min { background: var(--red-dim);           color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
 
@@ -434,7 +459,7 @@
 
     .product-badge {
       display: inline-flex; align-items: center;
-      background: var(--amber-muted); border: 1px solid rgba(229,168,58,0.28);
+      background: var(--amber-muted); border: 1px solid rgba(184,134,11,0.3);
       color: var(--text); font-size: 11px; font-weight: 600;
       letter-spacing: 0.06em; text-transform: uppercase;
       padding: 3px 10px;
@@ -562,7 +587,7 @@
     }
     .activation-inner {
       display: flex; align-items: center; justify-content: space-between;
-      background: var(--surf-2); border: 1px solid rgba(229,168,58,0.4);
+      background: var(--surf-2); border: 1px solid rgba(184,134,11,0.4);
       clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0% calc(100% - 10px), 0% 10px);
       padding: 14px 20px; gap: 16px; flex-wrap: wrap;
     }
@@ -615,7 +640,7 @@
       font-family: var(--f-ui);
       margin-bottom: -1px;
     }
-    .module-nav-item:hover:not(:disabled) { color: var(--text); border-bottom-color: rgba(229,168,58,0.4); }
+    .module-nav-item:hover:not(:disabled) { color: var(--text); border-bottom-color: rgba(184,134,11,0.4); }
     .module-nav-item.active { color: var(--amber); border-bottom-color: var(--amber); }
     .module-nav-item.done { color: var(--text); }
     .module-nav-item:disabled { opacity: 0.35; cursor: not-allowed; }
@@ -740,8 +765,8 @@
       padding: 22px; margin-bottom: 14px; transition: border-color 0.2s;
     }
     .pov-section.highlight {
-      border-color: rgba(229,168,58,0.4);
-      background: linear-gradient(135deg, rgba(229,168,58,0.06) 0%, var(--surf-2) 100%);
+      border-color: rgba(184,134,11,0.4);
+      background: linear-gradient(135deg, rgba(184,134,11,0.07) 0%, var(--surf-2) 100%);
     }
     .pov-section-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; gap: 12px; }
     .pov-section-meta { display: flex; align-items: center; gap: 10px; }
@@ -811,7 +836,7 @@
     /* Sources panel */
     .pov-sources {
       margin-top: 14px; padding: 12px 14px;
-      background: rgba(229,168,58,0.06); border: 1px solid rgba(229,168,58,0.18);
+      background: rgba(184,134,11,0.06); border: 1px solid rgba(184,134,11,0.18);
       clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
     }
     .pov-sources-header {
@@ -832,7 +857,7 @@
     /* Generating state */
     .pov-generating {
       display: flex; align-items: center; gap: 14px; padding: 20px;
-      background: var(--amber-muted); border: 1px solid rgba(229,168,58,0.28);
+      background: var(--amber-muted); border: 1px solid rgba(184,134,11,0.3);
       clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0% calc(100% - 10px), 0% 10px);
       margin-bottom: 16px;
       font-size: 14px; color: var(--text);
@@ -854,10 +879,10 @@
       background: var(--amber);
       color: white; border: none; border-radius: 50px;
       padding: 13px 22px; font-size: 14px; font-weight: 600;
-      cursor: pointer; box-shadow: 0 4px 24px rgba(229,168,58,0.45);
+      cursor: pointer; box-shadow: 0 4px 24px rgba(184,134,11,0.45);
       transition: all 0.2s; font-family: var(--f-ui);
     }
-    .assistant-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 32px rgba(229,168,58,0.55); }
+    .assistant-fab:hover { transform: translateY(-2px); box-shadow: 0 6px 32px rgba(184,134,11,0.55); }
     .assistant-fab.open { border-radius: 50%; padding: 13px; }
 
     /* Chat panel */
@@ -894,7 +919,7 @@
     .chat-msg { max-width: 100%; }
     .chat-msg.user {
       align-self: flex-end;
-      background: var(--amber-muted); border: 1px solid rgba(229,168,58,0.28);
+      background: var(--amber-muted); border: 1px solid rgba(184,134,11,0.3);
       border-radius: 12px 12px 3px 12px;
       padding: 10px 14px; font-size: 13px; color: var(--text);
       max-width: 88%;
@@ -925,7 +950,7 @@
     /* Edit suggestion card */
     .edit-suggestion {
       margin-top: 10px; padding: 12px 14px;
-      background: var(--amber-muted); border: 1px solid rgba(229,168,58,0.25);
+      background: var(--amber-muted); border: 1px solid rgba(184,134,11,0.25);
       clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
     }
     .edit-suggestion-label {
@@ -937,13 +962,13 @@
       margin-bottom: 10px; font-style: italic;
     }
     .btn-apply-edit {
-      background: var(--amber-muted); border: 1px solid rgba(229,168,58,0.35);
+      background: var(--amber-muted); border: 1px solid rgba(184,134,11,0.35);
       color: var(--amber); font-family: var(--f-ui);
       font-size: 12px; font-weight: 600; padding: 6px 14px;
       clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
       cursor: pointer; transition: all 0.18s;
     }
-    .btn-apply-edit:hover { background: rgba(229,168,58,0.12); }
+    .btn-apply-edit:hover { background: rgba(184,134,11,0.2); }
 
     /* Chat input */
     .chat-input-area { padding: 12px 14px; border-top: 1px solid var(--border); flex-shrink: 0; }
@@ -974,7 +999,7 @@
 <body>
   <div id="root">
     <div id="boot-loader" style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:#0e0d0b;">
-      <div style="width:40px;height:40px;border:3px solid rgba(229,168,58,0.12);border-top-color:#E5A83A;border-radius:50%;animation:spin 0.9s linear infinite;"></div>
+      <div style="width:40px;height:40px;border:3px solid rgba(184,134,11,0.2);border-top-color:#B8860B;border-radius:50%;animation:spin 0.9s linear infinite;"></div>
       <span style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,0.4);letter-spacing:0.05em;">Loading Prospecting Agent…</span>
       <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
     </div>
@@ -2952,7 +2977,7 @@ Keep responses concise and actionable. Be a sharp, opinionated strategic advisor
                 {srcList.length > 0 && (
                   <button
                     className="btn-edit-section"
-                    style={{color:'var(--text)',borderColor:'rgba(229,168,58,0.28)'}}
+                    style={{color:'var(--text)',borderColor:'rgba(184,134,11,0.3)'}}
                     onClick={() => setShowSources(s => !s)}
                     title="View sources"
                   >
@@ -3494,15 +3519,15 @@ Make everything specific to ${account.name}'s industry, profile, and known signa
                     </select>
                   </div>
                   <div className="context-field">
-                    <label className="field-label">Known Stakeholders <span style={{fontWeight:400,color:'rgba(229,168,58,0.5)',fontSize:10,letterSpacing:'0.04em'}}>— optional</span></label>
+                    <label className="field-label">Known Stakeholders <span style={{fontWeight:400,color:'rgba(184,134,11,0.5)',fontSize:10,letterSpacing:'0.04em'}}>— optional</span></label>
                     <textarea className="context-textarea" rows={2} placeholder="e.g. Sarah Chen, CFO — met at Dreamforce" value={currentCtx.stakeholders||''} onChange={e=>updateContext('stakeholders',e.target.value)}/>
                   </div>
                   <div className="context-field">
-                    <label className="field-label">Recent News / Signals <span style={{fontWeight:400,color:'rgba(229,168,58,0.5)',fontSize:10,letterSpacing:'0.04em'}}>— optional</span></label>
+                    <label className="field-label">Recent News / Signals <span style={{fontWeight:400,color:'rgba(184,134,11,0.5)',fontSize:10,letterSpacing:'0.04em'}}>— optional</span></label>
                     <textarea className="context-textarea" rows={2} placeholder="e.g. Just acquired XYZ, announced SAP migration" value={currentCtx.recentNews||''} onChange={e=>updateContext('recentNews',e.target.value)}/>
                   </div>
                   <div className="context-field">
-                    <label className="field-label">Rep Notes <span style={{fontWeight:400,color:'rgba(229,168,58,0.5)',fontSize:10,letterSpacing:'0.04em'}}>— optional</span></label>
+                    <label className="field-label">Rep Notes <span style={{fontWeight:400,color:'rgba(184,134,11,0.5)',fontSize:10,letterSpacing:'0.04em'}}>— optional</span></label>
                     <textarea className="context-textarea" rows={2} placeholder="Anything else to help AI write a sharper POV" value={currentCtx.notes||''} onChange={e=>updateContext('notes',e.target.value)}/>
                   </div>
                 </div>
@@ -3676,7 +3701,7 @@ Make everything specific to ${account.name}'s industry, profile, and known signa
                 </div>
               )}
               {contact.conversation_starter && (
-                <div style={{marginTop:14,padding:'12px 14px',background:'var(--amber-muted)',border:'1px solid rgba(229,168,58,0.25)',borderRadius:10}}>
+                <div style={{marginTop:14,padding:'12px 14px',background:'var(--amber-muted)',border:'1px solid rgba(184,134,11,0.25)',borderRadius:10}}>
                   <div style={{fontSize:11,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',color:'var(--amber)',marginBottom:6}}>Conversation Starter</div>
                   <p style={{fontSize:13,color:'var(--text)',lineHeight:1.6,fontStyle:'italic'}}>"{contact.conversation_starter}"</p>
                 </div>
@@ -4057,7 +4082,7 @@ Make contact names realistic for this company (use known executives if you know 
                       </div>
                     </div>
                     <div style={{marginBottom:14}}>
-                      <label className="field-label">LinkedIn / Notes <span style={{color:'rgba(229,168,58,0.5)',fontWeight:400}}>— optional, helps AI enrich</span></label>
+                      <label className="field-label">LinkedIn / Notes <span style={{color:'rgba(184,134,11,0.5)',fontWeight:400}}>— optional, helps AI enrich</span></label>
                       <textarea className="context-textarea" rows={3}
                         placeholder="Paste LinkedIn About section, bio, or any notes about this person…"
                         value={newContact.notes} onChange={e=>setNewContact(p=>({...p,notes:e.target.value}))}/>
@@ -5170,8 +5195,8 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
           <header>
             <div className="header-left">
               <div className="logo-mark">
-                <svg viewBox="0 0 1039.041 1080" fill="currentColor" class="conga-mark" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
+                <svg id="a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1039.041 1080">
+                  <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z" fill="#fff"/>
                 </svg>
               </div>
               <div><div className="logo-name">Conga <span>Prospecting Agent</span></div></div>
@@ -5182,7 +5207,7 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
                   onClick={() => setShowAcctMgr(s => !s)}
                   style={{
                     display:'flex',alignItems:'center',gap:7,
-                    background:'var(--amber-muted)',border:'1px solid rgba(229,168,58,0.28)',
+                    background:'var(--amber-muted)',border:'1px solid rgba(184,134,11,0.3)',
                     color:'var(--text)',fontSize:12,fontWeight:600,
                     padding:'7px 14px',borderRadius:20,cursor:'pointer',
                     fontFamily:'var(--f-ui)',transition:'all 0.18s'
@@ -5212,7 +5237,6 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
                   <button onClick={() => setShowClearConfirm(false)} style={{fontSize:11,color:'var(--tmuted)',background:'none',border:'none',cursor:'pointer',padding:0}}>No</button>
                 </div>
               )}
-              <button id="themeToggle" onClick={() => window.toggleTheme && window.toggleTheme()} title="Toggle theme" style={{background:'transparent',border:'1px solid var(--border-md)',color:'var(--tmuted)',padding:'5px 10px',clipPath:'var(--clip-sm)',cursor:'pointer',fontSize:14,lineHeight:1,transition:'var(--transition)',fontFamily:'var(--f-ui)'}}><svg class="icon-moon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg><svg class="icon-sun" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg></button>
               <div className="header-steps">
                 {[1,2,3,4,5,6].map(n=>(
                   <div key={n} className={`step-dot ${n===step?'active':n<step?'done':''}`} title={`Module ${n}: ${MODULE_LABELS[n-1]}`}/>
@@ -5387,16 +5411,27 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
               onNav={nav}
             />
           )}
-          <footer className="znith-footer">
-            <div className="znith-wordmark">
-              <span className="slash" style={{fontFamily:'var(--f-mono)',color:'var(--amber)',fontWeight:700}}>/</span>
-              <span className="z" style={{fontFamily:'var(--f-brand)',fontWeight:800,color:'var(--amber)'}}>Z</span>
-              <span className="rest" style={{fontFamily:'var(--f-brand)',fontWeight:800,color:'var(--tghost)'}}>nith</span>
+          <footer style={{
+            background: 'var(--surf)',
+            borderTop: '1px solid rgba(184,134,11,0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 24px',
+            height: '34px',
+            position: 'sticky',
+            bottom: 0,
+            zIndex: 50
+          }}>
+            <div style={{display:'flex', alignItems:'center', gap:'5px'}}>
+              <span style={{fontFamily:"'IBM Plex Mono', monospace", color:'#B8860B', fontWeight:700, fontSize:'13px'}}>/</span>
+              <span style={{fontFamily:"'Epilogue', sans-serif", fontWeight:800, color:'#B8860B', fontSize:'13px'}}>Z</span>
+              <span style={{fontFamily:"'Epilogue', sans-serif", fontWeight:800, color:'rgba(255,255,255,0.5)', fontSize:'13px'}}>nith</span>
             </div>
-            <div className="znith-footer-meta">
-              <span>Prospecting Agent</span>
-              <div className="znith-footer-pip"></div>
-              <span>v4.0</span>
+            <div style={{display:'flex', alignItems:'center', gap:'8px'}}>
+              <span style={{fontFamily:"'IBM Plex Mono', monospace", fontSize:'9px', color:'rgba(255,255,255,0.2)', letterSpacing:'0.08em'}}>Prospecting Agent</span>
+              <div style={{width:'4px', height:'4px', borderRadius:'50%', background:'#B8860B', boxShadow:'0 0 6px rgba(184,134,11,0.5)'}}></div>
+              <span style={{fontFamily:"'IBM Plex Mono', monospace", fontSize:'9px', color:'rgba(255,255,255,0.2)', letterSpacing:'0.08em'}}>v1.0</span>
             </div>
           </footer>
         </>
@@ -5406,23 +5441,6 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
     const _rootEl = document.getElementById('root');
     _rootEl.innerHTML = '';
     ReactDOM.createRoot(_rootEl).render(<App/>);
-  </script>
-  <script>
-function toggleTheme() {
-  const curr = document.documentElement.getAttribute('data-theme') || 'dark';
-  const next = curr === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setItem('znith-theme', next);
-  const btn = document.getElementById('themeToggle');
-}
-window.toggleTheme = toggleTheme;
-(function() {
-  const saved = localStorage.getItem('znith-theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', saved);
-  window.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('themeToggle');
-    });
-})();
   </script>
 </body>
 </html>
