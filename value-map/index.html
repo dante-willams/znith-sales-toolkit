@@ -23,10 +23,10 @@
     --navy-mid:    #181714;
     --navy-light:  #181714;
     --navy-border: rgba(255,255,255,0.07);
-    --gold:        #8B5CF6;
-    --gold-light:  #a78bfa;
-    --gold-dim:    rgba(139,92,246,0.14);
-    --gold-glow:   rgba(139,92,246,0.08);
+    --gold:        var(--amber);
+    --gold-light:  var(--amber);
+    --gold-dim:    var(--amber-muted);
+    --gold-glow:   var(--amber-faint);
     --white:       rgba(255,255,255,0.9);
     --white-dim:   rgba(255,255,255,0.5);
     --white-faint: rgba(255,255,255,0.06);
@@ -286,7 +286,7 @@
     display: flex; align-items: center; gap: 6px;
     padding: 5px 12px;
     background: var(--gold-dim);
-    border: 1px solid rgba(139,92,246,0.25);
+    border: 1px solid var(--amber-glow);
     clip-path: var(--clip-sm);
     font-size: 12px;
     color: var(--gold-light);
@@ -951,7 +951,7 @@
   }
   .chat-msg.user {
     background: rgba(139,92,246,0.15);
-    border: 1px solid rgba(139,92,246,0.25);
+    border: 1px solid var(--amber-glow);
     color: var(--white);
     align-self: flex-end;
     max-width: 88%;
