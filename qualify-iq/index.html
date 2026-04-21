@@ -185,7 +185,8 @@
     .chat-send{background:var(--amber);border:none;clip-path:var(--clip-sm);width:38px;height:38px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#000;transition:opacity .2s}
     .chat-send:hover{opacity:.85}
     .chat-send:disabled{opacity:.4;cursor:default}
-    .chat-tab{position:fixed;bottom:28px;right:20px;background:var(--amber);color:#000;border:none;clip-path:var(--clip-sm);padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:0 4px 20px var(--amber-glow);z-index:201;transition:opacity .2s;letter-spacing:.03em}
+    .chat-tab{position:fixed;bottom:28px;right:20px;background:var(--amber);color:#000;border:none;clip-path:var(--clip-sm);padding:10px 20px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;box-shadow:var(--sh-amber);z-index:201;transition:opacity .2s;letter-spacing:.03em}
+    [data-theme="light"] .app-header{background:rgba(255,255,255,0.94);border-bottom-color:var(--border);}
     .chat-tab:hover{opacity:.88}
     @media(max-width:900px){.app-shell.chat-open>main{margin-right:0}.chat-sidebar{width:100%;max-width:380px}}
 
@@ -209,6 +210,7 @@
     <span class="logo-tag">Qualify IQ</span>
   </div>
   <div class="hdr-right">
+    <button class="btn-ghost theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme" style="background:transparent;border:1px solid var(--border-md);color:var(--tmuted);padding:5px 10px;clip-path:var(--clip-sm);cursor:pointer;font-size:14px;line-height:1;transition:var(--transition);">🌙</button>
     <button class="btn-ghost" onclick="showView('all')">All Analyses</button>
   </div>
 </header>
@@ -1154,6 +1156,23 @@ function syncToDeal(entry) {
       showView('results');
     }
   }
+})();
+
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = curr === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('znith-theme', next);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+(function() {
+  const saved = localStorage.getItem('znith-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = saved === 'dark' ? '🌙' : '☀️';
+  });
 })();
 </script>
 <footer class="znith-footer">

@@ -58,6 +58,7 @@
       padding: 20px 40px;
       display: flex; align-items: center; justify-content: space-between;
     }
+    [data-theme="light"] header { background: rgba(255,255,255,0.94); }
     .header-left { display: flex; align-items: center; gap: 14px; }
     .logo-mark {
       width: 36px; height: 36px;
@@ -72,7 +73,7 @@
       width: 8px; height: 8px; border-radius: 50%;
       background: var(--tfaint); transition: all 0.3s;
     }
-    .step-dot.active { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); }
+    .step-dot.active { background: var(--amber); box-shadow: var(--sh-amber); }
     .step-dot.done   { background: var(--text); }
 
     /* ─── Main ─── */
@@ -141,7 +142,7 @@
       width: 7px; height: 7px; border-radius: 50%;
       background: var(--tfaint); transition: background 0.18s; flex-shrink: 0;
     }
-    .chip.selected .chip-dot { background: var(--amber); box-shadow: 0 0 6px var(--amber-glow); }
+    .chip.selected .chip-dot { background: var(--amber); box-shadow: var(--sh-amber); }
 
     /* ─── Tab toggle ─── */
     .tab-row {
@@ -265,7 +266,7 @@
       width: 80px; height: 80px; border-radius: 50%;
       background: var(--amber);
       display: flex; align-items: center; justify-content: center;
-      margin: 0 auto 28px; box-shadow: 0 8px 32px var(--amber-glow);
+      margin: 0 auto 28px; box-shadow: var(--sh-amber);
     }
     .success-title {
       font-family: var(--f-brand); font-size: 30px; font-weight: 700;
@@ -5211,6 +5212,7 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
                   <button onClick={() => setShowClearConfirm(false)} style={{fontSize:11,color:'var(--tmuted)',background:'none',border:'none',cursor:'pointer',padding:0}}>No</button>
                 </div>
               )}
+              <button id="themeToggle" onClick={() => window.toggleTheme && window.toggleTheme()} title="Toggle theme" style={{background:'transparent',border:'1px solid var(--border-md)',color:'var(--tmuted)',padding:'5px 10px',clipPath:'var(--clip-sm)',cursor:'pointer',fontSize:14,lineHeight:1,transition:'var(--transition)',fontFamily:'var(--f-ui)'}}>🌙</button>
               <div className="header-steps">
                 {[1,2,3,4,5,6].map(n=>(
                   <div key={n} className={`step-dot ${n===step?'active':n<step?'done':''}`} title={`Module ${n}: ${MODULE_LABELS[n-1]}`}/>
@@ -5404,6 +5406,25 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
     const _rootEl = document.getElementById('root');
     _rootEl.innerHTML = '';
     ReactDOM.createRoot(_rootEl).render(<App/>);
+  </script>
+  <script>
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = curr === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('znith-theme', next);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+window.toggleTheme = toggleTheme;
+(function() {
+  const saved = localStorage.getItem('znith-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = saved === 'dark' ? '🌙' : '☀️';
+  });
+})();
   </script>
 </body>
 </html>

@@ -28,6 +28,7 @@
     body{font-family:var(--f-ui);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.5;padding-bottom:40px;}
     /* HEADER */
     .app-header{background:var(--navy);border-bottom:1px solid var(--border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:56px;position:sticky;top:0;z-index:100}
+    [data-theme="light"] .app-header{background:rgba(255,255,255,0.94);border-bottom-color:var(--border);}
     .logo{display:flex;align-items:center;gap:12px}
     .logo-mark{display:flex;align-items:center}
     .logo-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--plight);font-weight:600;letter-spacing:0.8px;text-transform:uppercase;background:rgba(249,115,22,.15);padding:3px 9px;clip-path:var(--clip-sm);border:1px solid rgba(249,115,22,.3)}
@@ -253,6 +254,7 @@
   </div>
   <span style="color:var(--td);font-size:12px">Internal Use Only · Conga Sales</span>
   <div class="app-nav">
+    <button class="btn-ghost theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme" style="background:transparent;border:1px solid var(--border-md);color:var(--tmuted);padding:5px 10px;clip-path:var(--clip-sm);cursor:pointer;font-size:14px;line-height:1;transition:var(--transition);">🌙</button>
     <button class="nav-btn active" id="nav-new" onclick="showView('new')">+ New Brief</button>
     <button class="nav-btn" id="nav-all" onclick="showView('all')">All Briefs <span class="nbadge" id="brief-count">0</span></button>
   </div>
@@ -2595,6 +2597,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
     observer.observe(generateBtn);
   }
 });
+
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = curr === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('znith-theme', next);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+(function() {
+  const saved = localStorage.getItem('znith-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = saved === 'dark' ? '🌙' : '☀️';
+  });
+})();
 </script>
 <!-- ── CHAT SIDEBAR ── -->
 <div class="chat-sidebar" id="chatSidebar">

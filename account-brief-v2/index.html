@@ -97,6 +97,7 @@ header{
   display:flex;align-items:center;justify-content:space-between;
   height:64px;
 }
+[data-theme="light"] header { background: rgba(255,255,255,0.94); border-bottom-color: var(--border); }
 
 /* ── DARK THEME — full v1 palette ── */
 [data-theme="dark"]{
@@ -266,7 +267,7 @@ input[type=text]:focus, input[type=url]:focus, select:focus, textarea:focus{
 /* select still needs its arrow and padding-right */
 .input-wrap select{
   appearance:none;cursor:pointer;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23B8860B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23E5A83A' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;
   background-color:transparent;
 }

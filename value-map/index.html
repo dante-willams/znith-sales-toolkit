@@ -80,6 +80,7 @@
     height: 56px;
     display: flex; align-items: center;
   }
+  [data-theme="light"] header { background: rgba(255,255,255,0.94); }
 
   .header-inner {
     width: 100%;
@@ -316,7 +317,7 @@
     letter-spacing: 0.03em;
     cursor: pointer;
     transition: all 0.25s ease;
-    box-shadow: 0 4px 16px var(--amber-glow);
+    box-shadow: var(--sh-amber);
     position: relative;
     overflow: hidden;
   }
@@ -1015,7 +1016,7 @@
     clip-path: var(--clip-sm);
     padding: 10px 20px; font-size: 12px; font-weight: 700;
     cursor: pointer; display: flex; align-items: center; gap: 7px;
-    box-shadow: 0 4px 20px var(--amber-glow);
+    box-shadow: var(--sh-amber);
     z-index: 201; transition: opacity 0.2s;
     letter-spacing: 0.03em;
   }
@@ -1129,7 +1130,7 @@
     font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600;
     background: var(--amber);
     color: #000; border: none; cursor: pointer; transition: all 0.2s; white-space: nowrap;
-    box-shadow: 0 2px 12px var(--amber-glow);
+    box-shadow: var(--sh-amber);
   }
   .btn-save-map:hover { opacity: 0.88; }
 
@@ -1222,6 +1223,8 @@
       <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
       <span>Edit</span>
     </div>
+    <div style="width:1px;height:20px;background:var(--navy-border);margin:0 4px;flex-shrink:0"></div>
+    <button class="btn-ghost theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme" style="background:transparent;border:1px solid var(--border-md);color:var(--tmuted);padding:5px 10px;clip-path:var(--clip-sm);cursor:pointer;font-size:14px;line-height:1;transition:var(--transition);">🌙</button>
   </div>
   </div><!-- /.header-inner -->
 </header>
@@ -3342,6 +3345,23 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
       maybeShowEditTab();
     }
   })();
+
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = curr === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('znith-theme', next);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+(function() {
+  const saved = localStorage.getItem('znith-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = saved === 'dark' ? '🌙' : '☀️';
+  });
+})();
 </script>
 <script>/* JSZip inlined */
 /*!

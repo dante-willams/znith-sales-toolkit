@@ -51,6 +51,7 @@ header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 24px;
 }
+[data-theme="light"] header { background: rgba(255,255,255,0.94); }
 .header-logo { display: flex; align-items: center; gap: 12px; }
 .logo-mark { width: 30px; height: 30px; flex-shrink: 0; display: flex; align-items: center; }
 .logo-mark svg { width: 30px; height: 30px; }
@@ -215,7 +216,7 @@ select option { background: var(--surf-2); }
   border: none; padding: 14px 24px;
   font-family: var(--f-ui); font-size: 14px; font-weight: 700;
   cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-  box-shadow: 0 4px 24px var(--amber-glow); transition: all var(--transition);
+  box-shadow: var(--sh-amber); transition: all var(--transition);
   clip-path: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
 }
 .btn-generate:hover:not(:disabled) { filter: brightness(1.1); transform: translateY(-1px); }
@@ -249,7 +250,7 @@ select option { background: var(--surf-2); }
 }
 .log-line { display: flex; align-items: center; gap: 9px; padding: 3px 0; font-size: 12px; color: var(--tmuted); }
 .log-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: all 0.3s; }
-.log-line.active .log-dot { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); animation: blink 1.2s ease-in-out infinite; }
+.log-line.active .log-dot { background: var(--amber); box-shadow: var(--sh-amber); animation: blink 1.2s ease-in-out infinite; }
 .log-line.done  .log-dot { background: var(--c-qualify); box-shadow: 0 0 6px rgba(22,163,74,0.3); animation: none; }
 .log-line.error .log-dot { background: #E11D48; }
 .log-line.active { color: var(--text); }
@@ -438,7 +439,7 @@ select option { background: var(--surf-2); }
 .chat-fab:hover { border-color: var(--amber); }
 .chat-fab.live { border-color: rgba(229,168,58,0.4); background: rgba(229,168,58,0.05); }
 .chat-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--border); transition: all 0.3s; }
-.chat-fab.live .chat-pip { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); animation: blink 2s ease-in-out infinite; }
+.chat-fab.live .chat-pip { background: var(--amber); box-shadow: var(--sh-amber); animation: blink 2s ease-in-out infinite; }
 
 /* ── CHAT OVERLAY ────────────────────────────────────────────────────────── */
 .chat-overlay {
@@ -457,7 +458,7 @@ select option { background: var(--surf-2); }
   padding: 11px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0;
 }
 .chat-head-left { display: flex; align-items: center; gap: 8px; }
-.chat-head-pip { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); animation: blink 2s ease-in-out infinite; }
+.chat-head-pip { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); box-shadow: var(--sh-amber); animation: blink 2s ease-in-out infinite; }
 .chat-head-title { font-size: 13px; font-weight: 600; }
 .chat-head-sub { font-family: var(--f-mono); font-size: 9px; color: var(--tfaint); }
 .chat-close { background: none; border: none; color: var(--tfaint); font-size: 18px; cursor: pointer; line-height: 1; padding: 2px 4px; }
@@ -582,6 +583,7 @@ select option { background: var(--surf-2); }
     <div class="logo-text">Conga <span>Sales Hub</span></div>
   </div>
   <div class="header-right">
+    <button class="btn-ghost theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme" style="background:transparent;border:1px solid var(--border-md);color:var(--tmuted);padding:5px 10px;clip-path:var(--clip-sm);cursor:pointer;font-size:14px;line-height:1;transition:var(--transition);">🌙</button>
     <button class="hist-btn" id="histBtn" onclick="toggleHistory()">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       History
@@ -3013,6 +3015,22 @@ updateHistoryBadge();
   }).catch(() => {});
 })();
 
+function toggleTheme() {
+  const curr = document.documentElement.getAttribute('data-theme') || 'dark';
+  const next = curr === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('znith-theme', next);
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = next === 'dark' ? '🌙' : '☀️';
+}
+(function() {
+  const saved = localStorage.getItem('znith-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', saved);
+  window.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = saved === 'dark' ? '🌙' : '☀️';
+  });
+})();
 
 </script>
 </body>
