@@ -53,6 +53,8 @@
   --sh-md: 0 2px 10px rgba(0,0,0,0.5);
   --sh-lg: 0 8px 32px rgba(0,0,0,0.6);
   --sh-amber: 0 0 16px rgba(229,168,58,0.28), 0 2px 6px rgba(229,168,58,0.18);
+
+  --surf-glass: rgba(15,21,32,0.94);
 }
 
 /* ── Znith v4 · Light override ── */
@@ -87,6 +89,8 @@
   --sh-md: 0 2px 8px rgba(26,25,20,0.06), 0 1px 3px rgba(26,25,20,0.04);
   --sh-lg: 0 8px 28px rgba(26,25,20,0.08), 0 2px 8px rgba(26,25,20,0.05);
   --sh-amber: 0 2px 12px rgba(201,140,32,0.24), 0 1px 3px rgba(201,140,32,0.18);
+
+  --surf-glass: rgba(255,255,255,0.92);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -105,7 +109,7 @@ body { padding-bottom: 48px; }
 /* ── Header ── */
 header {
   position: sticky; top: 0; z-index: 100;
-  background: rgba(15,21,32,0.94);
+  background: var(--surf-glass);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
@@ -602,8 +606,7 @@ header {
 .foot-pip { width: 4px; height: 4px; border-radius: 50%; background: var(--amber-fill); animation: pulse 2.5s ease-in-out infinite; }
 
 /* ── Conga mark — auto-swaps by theme ── */
-.conga-mark { width: 28px; height: 28px; color: rgba(255,255,255,0.92); }
-[data-theme="light"] .conga-mark { color: #1A1914; }
+.conga-mark { width: 28px; height: 28px; color: var(--text); }
 
 /* ── Theme toggle button (header-right) ── */
 .theme-toggle-btn {
@@ -619,9 +622,9 @@ header {
 [data-theme="light"] .theme-toggle-btn .icon-sun  { display: block; }
 
 /* ── Light-mode header/footer overrides ── */
-[data-theme="light"] header { background: rgba(255,255,255,0.92); border-bottom-color: #E3E0D8; }
-[data-theme="light"] .kpi.charged { background: linear-gradient(135deg, #FBF5E6 0%, #FFFFFF 70%); }
-[data-theme="light"] .drop-zone { background: #FFFFFF; }
+[data-theme="light"] header { border-bottom-color: var(--border); }
+[data-theme="light"] .kpi.charged { background: linear-gradient(135deg, var(--amber-wash) 0%, var(--surf) 70%); }
+[data-theme="light"] .drop-zone { background: var(--surf); }
 
 /* ── Synthesis section ── */
 .synthesis-card {
