@@ -174,7 +174,7 @@
     .chat-hint{font-size:11px;color:var(--tm);padding:10px 18px;border-bottom:1px solid var(--border);flex-shrink:0;line-height:1.5}
     .chat-messages{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px}
     .chat-msg{max-width:100%;font-size:12.5px;line-height:1.55;clip-path:var(--clip-sm);padding:10px 13px;white-space:pre-wrap;word-break:break-word}
-    .chat-msg.user{background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);color:var(--white);align-self:flex-end;max-width:88%}
+    .chat-msg.user{background:rgba(45,212,191,.12);border:1px solid rgba(45,212,191,.25);color:var(--text);align-self:flex-end;max-width:88%}
     .chat-msg.assistant{background:var(--navy);border:1px solid var(--border);color:var(--text);align-self:flex-start}
     .chat-msg.thinking{background:var(--navy);border:1px solid var(--border);color:var(--tm);align-self:flex-start;font-style:italic;opacity:.7}
     .chat-edit-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(62,207,142,.1);border:1px solid rgba(62,207,142,.25);color:var(--ok);clip-path:var(--clip-sm);font-size:10px;font-weight:600;padding:2px 8px;margin-top:6px;letter-spacing:.04em}
@@ -1122,21 +1122,21 @@ function syncToDeal(entry) {
   // Build "Also included in analysis" banner entries
   const bannerRows = [];
   if (deal.research) {
-    bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-      <span style="color:#A78BFA;font-size:10px;">✦</span>
+    bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tmuted);">
+      <span style="color:var(--stage-proposal);font-size:10px;">✦</span>
       <span>Account Brief — exec POV, company profile, call strategy</span>
     </div>`);
   }
   if (deal.document_context?.summary) {
-    bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-      <span style="color:#34D399;font-size:10px;">✓</span>
+    bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tmuted);">
+      <span style="color:var(--stage-closed-won);font-size:10px;">✓</span>
       <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
       <span style="color:var(--tghost);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
     </div>`);
   } else {
     (deal.documents || []).filter(d => d.extracted_text).forEach(d => {
-      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-        <span style="color:#34D399;font-size:10px;">✓</span>
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tmuted);">
+        <span style="color:var(--stage-closed-won);font-size:10px;">✓</span>
         <span>${d.name}</span>
         <span style="color:var(--tghost);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
       </div>`);

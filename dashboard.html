@@ -161,11 +161,11 @@ header{
 }
 
 /* Stage colors */
-.stage-discovery  {background:rgba(99,179,237,0.15);color:#63B3ED;}
+.stage-discovery  {background:rgba(99,179,237,0.15);color:var(--stage-discovery);}
 .stage-demo       {background:var(--amber-muted);color:var(--amber);}
-.stage-proposal   {background:rgba(167,139,250,0.15);color:#A78BFA;}
-.stage-negotiation{background:rgba(251,146,60,0.15);color:#FB923C;}
-.stage-closed_won {background:rgba(52,211,153,0.15);color:#34D399;}
+.stage-proposal   {background:rgba(167,139,250,0.15);color:var(--stage-proposal);}
+.stage-negotiation{background:rgba(251,146,60,0.15);color:var(--stage-negotiation);}
+.stage-closed_won {background:rgba(52,211,153,0.15);color:var(--stage-closed-won);}
 .stage-closed_lost{background:rgba(255,255,255,0.06);color:var(--tfaint);}
 
 /* ── DEAL META ── */
@@ -179,9 +179,9 @@ header{
 .meddpicc-bar-wrap{flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
 .meddpicc-bar{height:100%;border-radius:2px;transition:width 0.6s ease;}
 .meddpicc-score-val{font-family:var(--f-mono);font-size:11px;font-weight:500;min-width:28px;text-align:right;}
-.score-low  {background:#EF4444;color:#EF4444;}
-.score-mid  {background:#F59E0B;color:#F59E0B;}
-.score-high {background:#34D399;color:#34D399;}
+.score-low  {background:var(--status-risk);color:var(--status-risk);}
+.score-mid  {background:var(--status-warn);color:var(--status-warn);}
+.score-high {background:var(--status-ok);color:var(--status-ok);}
 .score-none {background:var(--border);color:var(--tfaint);}
 
 /* ── TOOL GRID ── */
@@ -197,7 +197,7 @@ header{
 .tool-btn:hover{border-color:var(--border-md);color:var(--text);}
 .tool-btn.done{color:var(--text);border-color:rgba(255,255,255,0.12);}
 .tool-status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.12);}
-.tool-btn.done .tool-status-dot{background:#34D399;}
+.tool-btn.done .tool-status-dot{background:var(--status-ok);}
 
 /* ── WIN ROOM CTA ── */
 .win-room-btn{
@@ -364,7 +364,7 @@ header{
 .drawer-check-item.done{color:var(--text);}
 .drawer-check-item.pending{color:var(--tmuted);}
 .drawer-check-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.drawer-check-item.done .drawer-check-dot{background:#34D399;}
+.drawer-check-item.done .drawer-check-dot{background:var(--status-ok);}
 .drawer-check-item.pending .drawer-check-dot{background:rgba(255,255,255,0.12);}
 .drawer-value-row{
   display:flex;gap:12px;

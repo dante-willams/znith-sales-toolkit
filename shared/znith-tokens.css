@@ -48,6 +48,7 @@
   --green-muted:  rgba(52,211,153,0.14);
   --yellow-muted: rgba(245,158,11,0.14);
   --red-muted:    rgba(239,68,68,0.14);
+  --blue-muted:   rgba(99,179,237,0.14);
 
   /* ── Stage pill colors ── */
   --stage-discovery:   #63B3ED;
@@ -109,10 +110,20 @@
   --sh-md:    0 2px 8px rgba(26,25,20,0.06), 0 1px 3px rgba(26,25,20,0.04);
   --sh-lg:    0 8px 28px rgba(26,25,20,0.08), 0 2px 8px rgba(26,25,20,0.05);
 
+  /* ── v1 status aliases (light — proper hex for contrast on white) ── */
+  --status-ok:   #16A34A;
+  --status-warn: #B47814;
+  --status-risk: #C83232;
+  --green:        #16A34A;
+  --yellow:       #B47814;
+  --red:          #C83232;
+  --blue:         #2B6FAE;
+
   /* ── v1 muted aliases (light) ── */
   --green-muted:  rgba(22,163,74,0.12);
   --yellow-muted: rgba(180,120,20,0.12);
   --red-muted:    rgba(200,50,50,0.10);
+  --blue-muted:   rgba(43,111,174,0.12);
 
   /* ── Health shadows (light: tighter, less glow) ── */
   --sh-ok:   0 1px 3px rgba(22,163,74,0.2);

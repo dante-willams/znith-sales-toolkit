@@ -251,7 +251,7 @@ select option { background: var(--surf-2); }
 .log-line { display: flex; align-items: center; gap: 9px; padding: 3px 0; font-size: 12px; color: var(--tmuted); }
 .log-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: all 0.3s; }
 .log-line.active .log-dot { background: var(--amber); box-shadow: var(--sh-amber); animation: blink 1.2s ease-in-out infinite; }
-.log-line.done  .log-dot { background: var(--c-qualify); box-shadow: 0 0 6px rgba(22,163,74,0.3); animation: none; }
+.log-line.done  .log-dot { background: var(--c-qualify); box-shadow: var(--sh-ok); animation: none; }
 .log-line.error .log-dot { background: #E11D48; }
 .log-line.active { color: var(--text); }
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
@@ -269,7 +269,7 @@ select option { background: var(--surf-2); }
 .mod-prog-item.error  { border-color: rgba(225,29,72,0.35); }
 .mod-prog-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
 .mod-prog-item.active .mod-prog-pip { background: var(--mp-accent); box-shadow: 0 0 6px var(--mp-glow); animation: blink 1.2s ease-in-out infinite; }
-.mod-prog-item.done   .mod-prog-pip { background: var(--c-qualify); box-shadow: 0 0 6px rgba(22,163,74,0.3); animation: none; }
+.mod-prog-item.done   .mod-prog-pip { background: var(--c-qualify); box-shadow: var(--sh-ok); animation: none; }
 .mod-prog-item.error  .mod-prog-pip { background: #E11D48; animation: none; }
 .mod-prog-name { font-size: 11px; font-weight: 500; color: var(--tmuted); }
 .mod-prog-item.active .mod-prog-name, .mod-prog-item.done .mod-prog-name { color: var(--text); }

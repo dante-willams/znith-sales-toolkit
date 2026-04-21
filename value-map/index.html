@@ -2113,9 +2113,9 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .vm-cell-text { display: block; word-break: break-word; }
         .highlight-text { color: var(--white); font-weight: 500; }
         .src-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;padding:1px 5px;border-radius:2px;vertical-align:middle;margin-left:4px;white-space:nowrap;}
-        .src-verified{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
-        .src-rep{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.3);}
-        .src-inferred{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
+        .src-verified{background:var(--green-muted);color:var(--green);border:1px solid rgba(52,211,153,0.3);}
+        .src-rep{background:var(--amber-muted);color:var(--amber);border:1px solid var(--amber-glow);}
+        .src-inferred{background:var(--red-muted);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
         .vm-cell-highlight { background: transparent; }
 
         /* Chips */
@@ -3307,16 +3307,16 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
     const bannerRows = [];
     if (deal.research) {
       state.accountBriefResearch = deal.research;
-      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-        <span style="color:#A78BFA;font-size:10px;">✦</span>
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tmuted);">
+        <span style="color:var(--stage-proposal);font-size:10px;">✦</span>
         <span>Account Brief — exec POV, company profile, call strategy</span>
       </div>`);
     }
     // Prefer condensed document_context; fall back to raw documents
     if (deal.document_context?.summary) {
       state.docContext = deal.document_context;
-      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-        <span style="color:#34D399;font-size:10px;">✓</span>
+      bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tmuted);">
+        <span style="color:var(--stage-closed-won);font-size:10px;">✓</span>
         <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
         <span style="color:var(--tghost);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
       </div>`);
@@ -3324,8 +3324,8 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
       const docs = (deal.documents || []).filter(d => d.extracted_text);
       if (docs.length) {
         state.dealDocs = docs;
-        docs.forEach(d => bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-          <span style="color:#34D399;font-size:10px;">✓</span>
+        docs.forEach(d => bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--tmuted);">
+          <span style="color:var(--stage-closed-won);font-size:10px;">✓</span>
           <span>${d.name}</span>
           <span style="color:var(--tghost);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
         </div>`));
