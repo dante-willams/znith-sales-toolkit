@@ -458,8 +458,15 @@ function toggleTheme() {
 
 // ── API ────────────────────────────────────────────────────────────────────────
 
-async function callClaude(messages, system, maxTokens = 4000) {
-  const res = await fetch('/api/claude', {
+// ═══════════════════════════════════════════════════════════════════
+// UTILITY FUNCTIONS
+// ═══════════════════════════════════════════════════════════════════
+
+async function callAPI({ model, messages, system = null, tools = null, maxTokens = 3000 }) {
+  const body = { model, messages, max_tokens: maxTokens, metadata: { tool: 'win-room' } };
+  if (system) body.system = system;
+  if (tools) body.tools = tools;
+  const res = await fetch(API_CONFIG.endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ model: 'claude-sonnet-4-6', messages, system, max_tokens: maxTokens })

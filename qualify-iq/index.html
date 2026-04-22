@@ -595,7 +595,8 @@ async function callAPI(model, systemPrompt, userContent, useWebSearch=false, max
     model,
     max_tokens: maxTokens,
     system: systemPrompt,
-    messages: [{ role:'user', content: userContent }]
+    messages: [{ role:'user', content: userContent }],
+    metadata: { tool: 'qualify-iq' }
   };
   if(useWebSearch){
     body.tools = [{ type:'web_search_20250305', name:'web_search' }];
