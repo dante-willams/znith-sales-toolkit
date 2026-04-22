@@ -194,3 +194,145 @@ const dealStore = (() => {
   };
 
 })();
+
+// ── One-time migration: winroom v1 → dealStore ────────────────────────────────
+//
+// Runs automatically on first page load after brand-refresh merges to main.
+// Reads the old scattered winroom_* keys and writes them into znith_deals,
+// preserving all data. Sets znith_migrated_v1 flag to prevent re-runs.
+//
+// Safe to call multiple times — idempotent after first run.
+(function migrateWinroomV1() {
+  if (localStorage.getItem('znith_migrated_v1')) return;
+
+  var oldDeals;
+  try { oldDeals = JSON.parse(localStorage.getItem('winroom_deals') || '[]'); }
+  catch (e) { oldDeals = []; }
+
+  if (!Array.isArray(oldDeals) || !oldDeals.length) {
+    localStorage.setItem('znith_migrated_v1', '1');
+    return;
+  }
+
+  // Map v1 free-text stage labels to v2 stage IDs
+  var stageMap = {
+    'prospect': 'discovery',
+    'discovery': 'discovery',
+    'qualification': 'discovery',
+    'demo/proof': 'demo',
+    'demo': 'demo',
+    'proposal': 'proposal',
+    'negotiation/close': 'negotiation',
+    'negotiation': 'negotiation',
+    'closed won': 'closed_won',
+    'closed_won': 'closed_won',
+    'closed lost': 'closed_lost',
+    'closed_lost': 'closed_lost',
+  };
+
+  function readSlice(id, suffix, fallback) {
+    try { return JSON.parse(localStorage.getItem('winroom_' + id + '_' + suffix)) ?? fallback; }
+    catch (e) { return fallback; }
+  }
+
+  // Read current znith_deals so we never overwrite a deal that already exists
+  var store;
+  try { store = JSON.parse(localStorage.getItem('znith_deals') || '{}'); }
+  catch (e) { store = {}; }
+
+  var migrated = 0;
+  for (var i = 0; i < oldDeals.length; i++) {
+    var old = oldDeals[i];
+    var id = old.id;
+    if (!id) continue;
+    if (store[id]) continue; // already in dealStore — skip
+
+    var setup        = readSlice(id, 'setup',       {});
+    var stakeholders = readSlice(id, 'stakeholders', []);
+    var meddpicc     = readSlice(id, 'meddpicc',    null);
+    var calls        = readSlice(id, 'calls',        []);
+    var docs         = readSlice(id, 'docs',         []);
+    var msp          = readSlice(id, 'msp',          null);
+    var summary      = readSlice(id, 'summary',      '');
+    var chat         = readSlice(id, 'chat',         []);
+    var coaching     = readSlice(id, 'coaching',     null);
+    var coachingTs   = readSlice(id, 'coachingTs',   null);
+
+    var rawStage = ((setup.stage || '')).toLowerCase();
+    var stage    = stageMap[rawStage] || 'discovery';
+
+    // Consolidate free-text context fields from the old setup form into notes
+    var notesParts = [setup.accountContext, setup.situation, setup.whyConga, setup.whyNow]
+      .filter(function(s) { return s && s.trim(); });
+
+    // Products was a free-text string on v1
+    var products = setup.products
+      ? [setup.products]
+      : [];
+
+    var ts = old.lastModified || new Date().toISOString();
+
+    store[id] = {
+      id:         id,
+      created_at: ts,
+      updated_at: ts,
+
+      context: {
+        account_name: setup.account || old.name || 'Untitled Deal',
+        stage:        stage,
+        close_date:   setup.closeTarget || null,
+        deal_value:   setup.dealSize    || null,
+        products:     products,
+        notes:        notesParts.join('\n\n'),
+      },
+
+      stakeholders: (Array.isArray(stakeholders) ? stakeholders : []).map(function(s) {
+        return {
+          name:      s.name      || '',
+          title:     s.title     || '',
+          role:      s.role      || '',
+          sentiment: s.sentiment || 'Unknown',
+          notes:     s.notes     || '',
+        };
+      }),
+
+      research:      null,
+      qualification: null,
+      meeting_preps: [],
+      value_map:     null,
+
+      documents: (Array.isArray(docs) ? docs : []).map(function(d) {
+        return {
+          name:           d.name           || d.filename || '',
+          extracted_text: d.extracted_text || d.text     || '',
+          uploaded_at:    d.uploaded_at    || ts,
+        };
+      }),
+
+      // v1 win-room data preserved verbatim — use for reference / future Qualify IQ import
+      win_room_v1: {
+        meddpicc:    meddpicc,
+        calls:       calls,
+        msp:         msp,
+        summary:     summary,
+        chat:        chat,
+        coaching:    coaching,
+        coaching_ts: coachingTs,
+        health:      old.health,
+        migrated_at: new Date().toISOString(),
+      },
+    };
+
+    migrated++;
+  }
+
+  try {
+    localStorage.setItem('znith_deals', JSON.stringify(store));
+    localStorage.setItem('znith_migrated_v1', '1');
+    if (migrated > 0) {
+      console.info('[dealStore] migrated ' + migrated + ' win-room v1 deal(s) to znith_deals');
+    }
+  } catch (e) {
+    console.error('[dealStore] migration write failed:', e);
+  }
+})();
