@@ -1,5 +1,9 @@
 {
   "version": 2,
+  "cleanUrls": false,
+  "redirects": [
+    { "source": "/dashboard.html", "destination": "/dashboard/", "permanent": true }
+  ],
   "functions": {
     "api/claude.js": {
       "maxDuration": 300

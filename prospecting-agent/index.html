@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="/auth.js"></script>
+  <script src="/auth.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Conga Prospecting Agent</title>
@@ -9,9 +9,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png" />
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png" />
   <link rel="manifest" href="site.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../shared/znith-tokens.css" />
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -21,16 +19,6 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      /* Typography */
-      --f-brand: 'Epilogue', sans-serif;
-      --f-ui:    'Barlow', sans-serif;
-      --f-mono:  'IBM Plex Mono', monospace;
-
-      /* Amber system color */
-      --amber:        #B8860B;
-      --amber-glow:   rgba(184,134,11,0.28);
-      --amber-muted:  rgba(184,134,11,0.12);
-
       /* Base palette */
       --bg:      #0e0d0b;
       --surf:    #181714;
@@ -112,7 +100,7 @@
     .phase-label {
       font-size: 11px; font-weight: 600;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--amber); margin-bottom: 12px;
+      color: var(--tfaint); margin-bottom: 12px;
       font-family: var(--f-mono);
     }
     .phase-title {
@@ -347,7 +335,19 @@
        MODULE 2 STYLES
     ══════════════════════════════════════════ */
 
-.form-label { font-size: 11px; font-weight: 500; color: var(--tmuted); margin-bottom: 6px; display: block; letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--f-mono); }
+    /* API Key Gate */
+    .api-key-gate {
+      background: var(--amber-muted); border: 1px solid rgba(184,134,11,0.25);
+      clip-path: polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0% calc(100% - 10px), 0% 10px);
+      padding: 24px; margin-bottom: 20px;
+    }
+    .api-key-gate-title {
+      font-size: 13px; font-weight: 600; color: var(--amber); margin-bottom: 4px;
+    }
+    .api-key-gate-sub { font-size: 12px; color: var(--tmuted); margin-bottom: 16px; }
+    .api-key-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+    .api-key-field { flex: 1; min-width: 240px; }
+    .form-label { font-size: 11px; font-weight: 500; color: var(--tmuted); margin-bottom: 6px; display: block; letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--f-mono); }
     .form-input {
       width: 100%; background: var(--surf); border: 1px solid var(--border);
       color: var(--text); font-family: var(--f-ui); font-size: 13px;
@@ -373,6 +373,19 @@
     }
     .select:focus { border-color: var(--amber); }
     .select option { background: var(--surf); }
+    .btn-save-key {
+      background: var(--amber-muted); border: 1px solid rgba(184,134,11,0.35);
+      color: var(--amber); font-family: var(--f-ui);
+      font-size: 13px; font-weight: 600; padding: 10px 20px;
+      clip-path: polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
+      cursor: pointer; transition: all 0.2s; white-space: nowrap;
+    }
+    .btn-save-key:hover { background: rgba(184,134,11,0.2); }
+    .api-key-saved {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--green); cursor: pointer;
+    }
+
     /* Info banner */
     .info-banner {
       background: var(--tfaint); border: 1px solid var(--border);
@@ -1001,7 +1014,7 @@
 <body>
   <div id="root">
     <div id="boot-loader" style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:#0e0d0b;">
-      <div style="width:40px;height:40px;border:3px solid rgba(184,134,11,0.2);border-top-color:#B8860B;border-radius:50%;animation:spin 0.9s linear infinite;"></div>
+      <div style="width:40px;height:40px;border:3px solid rgba(229,168,58,0.2);border-top-color:#E5A83A;border-radius:50%;animation:spin 0.9s linear infinite;"></div>
       <span style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,0.4);letter-spacing:0.05em;">Loading Prospecting Agent…</span>
       <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
     </div>
@@ -1050,9 +1063,41 @@
       'Education',
     ];
 
-    const DEFAULT_MODEL = 'claude-opus-4-6';
+    const DEFAULT_MODEL = 'claude-sonnet-4-6';
 
-    const BASE_ICP_CONTEXT = `
+    // Per-module model assignments — right-sized for task complexity and cost
+    const MODEL_M2       = 'claude-haiku-4-5-20251001'; // structured JSON scoring, no creativity needed
+    const MODEL_M3       = 'claude-sonnet-4-6';          // POV messaging, creative positioning
+    const MODEL_M4_BRIEF = 'claude-sonnet-4-6';          // contact brief (800 tokens)
+    const MODEL_M4_DEEP  = 'claude-opus-4-7';            // deep multi-signal contact research (2500 tokens)
+    const MODEL_M5_SEQ   = 'claude-sonnet-4-6';          // sequence writing (6000 tokens)
+    const MODEL_M5_VAR   = 'claude-haiku-4-5-20251001';  // variation generation (800 tokens)
+    const MODEL_CHAT     = 'claude-sonnet-4-6';          // chat panel quick Q&A
+
+    // ICP context — populated at startup by fetching icp-data.json
+    let BASE_ICP_CONTEXT = '';
+    let _icpProducts = {};
+    function getProductICP(product) {
+      return _icpProducts[product] || _icpProducts['All Products'] || '';
+    }
+
+    // API key lives server-side in ANTHROPIC_API_KEY env var — proxy handles auth
+    const EMBEDDED_API_KEY = 'proxy';
+
+    // Load ICP data from shared/icp-data.json at startup
+    (async () => {
+      try {
+        const res = await fetch('../shared/icp-data.json');
+        const data = await res.json();
+        BASE_ICP_CONTEXT = data.narrative;
+        _icpProducts = data.products;
+      } catch (e) {
+        console.error('Failed to load ICP data — API calls will have no system context:', e);
+      }
+    })();
+
+    // ── REMOVED (content now lives in icp-data.json) ──────────────────────
+    const _REMOVED_PLACEHOLDER = `
 You are the Conga + PROS Prospecting Agent AI. You help sales reps identify and prioritize the highest-value accounts.
 
 ABOUT THE PRODUCT SUITE:
@@ -1112,15 +1157,17 @@ SALES CYCLE SIGNAL (Price Optimization):
 - If a Price Optimization deal has been open for 200+ days with no stage progression, it is more likely to stall as No Decision than to close.
 `;
 
-    function getProductICP(product) {
-      const profiles = {
-        'CLM': `
+    // Old hardcoded getProductICP removed — data now lives in icp-data.json
+    // getProductICP() is defined above and reads from _icpProducts (populated at startup)
+
+    /* OLD_ICP_PROFILES_REMOVED — content now lives in icp-data.json
+    const _OLD_ICP_CLM = `
 PRODUCT FOCUS: CLM — Contract Lifecycle Management
 
 DATA SOURCE: 14,292 global Conga closed won deals (2022–2026) + 23,531 closed lost deals.
 
 TOP INDUSTRIES BY ACV (use these to weight scores):
-- Healthcare & Life Sciences: $35,627 mean ACV — highest of any industry. HIPAA/FDA compliance, regulated supplier and patient contracts. Prioritize strongly.
+- Healthcare & Life Sciences: $35,627 mean ACV — highest of any industry. WITHIN HLS, prioritize: Pharmaceutical/Biotech (FDA-regulated supplier and clinical trial contracts), Medical Devices (GPO contracts, complex pricing), Health Tech/Digital Health (SaaS contracts, MSAs). DO NOT prioritize: Health Systems, Hospitals, IDNs, or Payers — these are poor fits due to budget constraints, IT complexity, and low win rates.
 - Energy, Oil & Utilities: $31,679 mean ACV. Regulatory burden, complex supplier agreements, HSE contracts.
 - Technology (HW/SW/Services): $18,583 mean ACV. SaaS renewal complexity, vendor agreements, partner contracts.
 - Financial Services/Banking/Insurance: $11,440 mean ACV. FINRA/SOX contracts, high-volume client agreements.
@@ -1139,7 +1186,7 @@ SEGMENT SCORING FOR CLM:
 - Strategic: Treat as Enterprise+.
 
 SCORING SCALE:
-9–10: Healthcare/Energy/Tech/FinServ at Enterprise $500M+ + Salesforce CRM + high contract volume + regulatory environment
+9–10: Pharma/Biotech/MedDevice/HealthTech OR Energy/Tech/FinServ at Enterprise $500M+ + Salesforce CRM + high contract volume + regulatory environment. NOTE: Health Systems and Hospitals should score MAX 4 for CLM — they are not a fit.
 7–8: Same industries at Commercial $250M+ OR Manufacturing/FinServ at Enterprise + Salesforce
 5–6: Priority industry at Commercial $100M–$250M with contract pain
 3–4: Education with Salesforce OR off-profile $500M+ with some legal complexity
@@ -1153,7 +1200,7 @@ PRODUCT FOCUS: CPQ — Configure Price Quote
 DATA SOURCE: 233 global Conga CPQ closed won deals (2022–2026). Mean ACV $139,131 — this is a pure enterprise product.
 
 TOP INDUSTRIES BY ACV:
-- Healthcare & Life Sciences: $225K avg ACV. Device pricing, GPO/formulary contracts. Highest-value CPQ vertical.
+- Healthcare & Life Sciences: $225K avg ACV. Prioritize: Medical Devices (GPO/formulary pricing complexity), Pharma (contract pricing, rebate management), Health Tech (subscription pricing). Avoid: Health Systems, Hospitals, Payers — low win rate, budget-constrained.
 - Technology (HW/SW/Services): $159K avg ACV. Bundle pricing, SaaS subscription configuration, SKU proliferation.
 - Transportation / Equipment: $221K avg ACV. Complex equipment + services quoting.
 - Telecom: $173K avg ACV. Service package configuration.
@@ -1341,7 +1388,7 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
 `
       };
       return profiles[product] || profiles['All Products'];
-    }
+    } OLD_ICP_PROFILES_REMOVED */
 
     // ── SVG Icons ─────────────────────────────────────────────────
     const IconPin      = ({ size=16 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="var(--amber)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>;
@@ -1396,12 +1443,23 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
               });
             }
 
-            // Find header row: first row with 3+ non-empty string cells
+            // Find header row: prefer a row containing "account name" or "company name",
+            // fall back to first row with 3+ non-empty string cells
+            const NAME_CANDIDATES = ['account name', 'company name', 'company', 'organization', 'name'];
             let headerIdx = 0;
-            for (let i = 0; i < Math.min(25, rows.length); i++) {
-              const nonEmpty = rows[i].filter(c => c !== '' && c !== null && c !== undefined);
-              const strCells = nonEmpty.filter(c => isNaN(Number(c)));
-              if (strCells.length >= 3) { headerIdx = i; break; }
+            let foundNameHeader = false;
+            for (let i = 0; i < Math.min(30, rows.length); i++) {
+              const lower = rows[i].map(c => String(c || '').toLowerCase());
+              if (NAME_CANDIDATES.some(n => lower.some(h => h.includes(n)))) {
+                headerIdx = i; foundNameHeader = true; break;
+              }
+            }
+            if (!foundNameHeader) {
+              for (let i = 0; i < Math.min(30, rows.length); i++) {
+                const nonEmpty = rows[i].filter(c => c !== '' && c !== null && c !== undefined);
+                const strCells = nonEmpty.filter(c => isNaN(Number(c)));
+                if (strCells.length >= 3) { headerIdx = i; break; }
+              }
             }
             const headers = rows[headerIdx].map(h => String(h || ''));
             const dataRows = rows.slice(headerIdx + 1);
@@ -1466,7 +1524,7 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
 
     // Claude API call
     // conversationMessages: optional array of {role, content} for multi-turn chat
-    async function callClaude(model, systemPrompt, userMessage, maxTokens = 8000, conversationMessages = null) {
+    async function callClaude(apiKey, model, systemPrompt, userMessage, maxTokens = 8000, conversationMessages = null) {
       const messages = conversationMessages
         ? conversationMessages
         : [{ role: 'user', content: userMessage }];
@@ -1486,9 +1544,9 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
         const msg = err?.error?.message || '';
-        if (res.status === 401) throw new Error('ERR_AUTH: Authentication failed. Check your proxy configuration.');
-        if (res.status === 403) throw new Error('ERR_AUTH: Access denied for this model. Check your proxy configuration.');
-        if (res.status === 429) throw new Error('ERR_RATE: Rate limit hit. Please try again in a moment.');
+        if (res.status === 401) throw new Error('ERR_AUTH: Your API key is invalid or expired. Click "API key saved" at the top to update it.');
+        if (res.status === 403) throw new Error('ERR_AUTH: API key does not have permission for this model. Check your Anthropic account.');
+        if (res.status === 429) throw new Error('ERR_RATE: Rate limit hit. Wait 30 seconds then try again.');
         if (res.status === 529 || res.status === 503) throw new Error('ERR_SERVICE: Anthropic is experiencing high load. Wait a minute and try again.');
         if (res.status >= 500) throw new Error('ERR_SERVICE: Anthropic service error. Try again in a moment.');
         throw new Error(msg || `API error ${res.status}`);
@@ -1692,11 +1750,13 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
                     return out;
                   });
                 }
-                // Find header row
+                // Find header row — pick the row with the most non-empty cells
+                // (handles Salesforce exports with 10+ metadata rows before the real header)
                 let headerIdx = 0;
-                for (let i = 0; i < Math.min(10, rows.length); i++) {
+                let maxNonEmpty = 0;
+                for (let i = 0; i < Math.min(30, rows.length); i++) {
                   const nonEmpty = rows[i].filter(c => c !== '' && c !== null && c !== undefined);
-                  if (nonEmpty.length >= 2) { headerIdx = i; break; }
+                  if (nonEmpty.length > maxNonEmpty) { maxNonEmpty = nonEmpty.length; headerIdx = i; }
                 }
                 const headers = rows[headerIdx].map(h => String(h || ''));
                 const dataRows = rows.slice(headerIdx + 1);
@@ -1927,6 +1987,9 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
       const score   = account.combined_score || account.icp_score || 0;
       const bd      = account.score_breakdown;
       const signals = Array.isArray(account.buying_signals) ? account.buying_signals : [];
+      const competitors   = Array.isArray(account.key_competitors) ? account.key_competitors : [];
+      const headwinds     = Array.isArray(account.industry_headwinds) ? account.industry_headwinds : [];
+      const tailwinds     = Array.isArray(account.industry_tailwinds) ? account.industry_tailwinds : [];
       const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title>${account.name} — Account Brief</title>
       <style>
         body{font-family:'Helvetica Neue',Arial,sans-serif;max-width:800px;margin:40px auto;padding:0 32px;color:#1a1a1a;font-size:13px;line-height:1.6}
@@ -1965,6 +2028,13 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
 
       ${signals.length ? `<h2>Buying Signals</h2><div>${signals.map(s=>`<span class="signal">${s}</span>`).join('')}</div>` : ''}
       ${account.outreach_angle ? `<h2>Outreach Angle</h2><p style="color:#555;font-style:italic">💡 ${account.outreach_angle}</p>` : ''}
+
+      ${competitors.length ? `<h2>Key Competitors</h2><div>${competitors.map(c=>`<span class="signal">${c}</span>`).join('')}</div>` : ''}
+
+      ${(headwinds.length || tailwinds.length) ? `<h2>Industry Dynamics</h2>
+        ${headwinds.length ? `<div style="margin-bottom:8px"><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#dc2626">▼ Headwinds</span><ul style="margin:4px 0 0;padding-left:18px">${headwinds.map(h=>`<li style="font-size:12px;color:#555;margin:2px 0">${h}</li>`).join('')}</ul></div>` : ''}
+        ${tailwinds.length ? `<div><span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:#16a34a">▲ Tailwinds</span><ul style="margin:4px 0 0;padding-left:18px">${tailwinds.map(t=>`<li style="font-size:12px;color:#555;margin:2px 0">${t}</li>`).join('')}</ul></div>` : ''}
+      ` : ''}
 
       ${bd ? `<h2>Score Breakdown</h2>${['industry_fit','revenue_band','tech_stack','business_model','relationship_signal'].map(k=>{
         const d=bd[k]; if(!d) return '';
@@ -2007,7 +2077,7 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
       w.document.close();
     }
 
-    function AccountCard({ account, rank, activated, onToggle, owner='', onOwnerChange, closedLostData=[], onEditField }) {
+    function AccountCard({ account, rank, activated, onToggle, owner='', onOwnerChange, closedLostData=[], onEditField, onOpenInZnith }) {
       const score = account.combined_score || account.icp_score || 0;
       const [showBreakdown, setShowBreakdown] = useState(false);
       const [editingAngle, setEditingAngle] = useState(false);
@@ -2082,6 +2152,11 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
               <button onClick={()=>printAccountDossier(account)} style={{background:'none',border:'none',color:'var(--tfaint)',fontSize:10,cursor:'pointer',fontFamily:'var(--f-ui)',whiteSpace:'nowrap',padding:0}}>
                 ↗ Export Brief
               </button>
+              {onOpenInZnith && (
+                <button onClick={()=>onOpenInZnith(account)} style={{background:'none',border:'none',color:'var(--amber)',fontSize:10,cursor:'pointer',fontFamily:'var(--f-ui)',whiteSpace:'nowrap',padding:0,fontWeight:600}}>
+                  ↗ Open in Znith
+                </button>
+              )}
             </div>
           </div>
 
@@ -2127,6 +2202,40 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
             </div>
           )}
 
+          {/* Key Competitors */}
+          {account.key_competitors?.length > 0 && (
+            <div style={{marginTop:10, display:'flex', alignItems:'flex-start', gap:8, flexWrap:'wrap'}}>
+              <span style={{fontFamily:"'IBM Plex Mono',monospace", fontSize:9, color:'var(--tfaint)', letterSpacing:'0.1em', textTransform:'uppercase', paddingTop:3, flexShrink:0}}>Competitors</span>
+              <div style={{display:'flex', flexWrap:'wrap', gap:4}}>
+                {account.key_competitors.map((c,i)=>(
+                  <span key={i} style={{fontSize:11, color:'var(--tmuted)', background:'var(--tfaint)', padding:'2px 8px', borderRadius:20, border:'1px solid var(--border)'}}>{c}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Industry Headwinds / Tailwinds */}
+          {(account.industry_headwinds?.length > 0 || account.industry_tailwinds?.length > 0) && (
+            <div style={{marginTop:10, display:'flex', gap:16, flexWrap:'wrap'}}>
+              {account.industry_headwinds?.length > 0 && (
+                <div style={{flex:1, minWidth:160}}>
+                  <div style={{fontFamily:"'IBM Plex Mono',monospace", fontSize:9, color:'#f87171', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:4}}>▼ Headwinds</div>
+                  {account.industry_headwinds.map((h,i)=>(
+                    <div key={i} style={{fontSize:11, color:'var(--tmuted)', lineHeight:1.5, marginBottom:2}}>· {h}</div>
+                  ))}
+                </div>
+              )}
+              {account.industry_tailwinds?.length > 0 && (
+                <div style={{flex:1, minWidth:160}}>
+                  <div style={{fontFamily:"'IBM Plex Mono',monospace", fontSize:9, color:'#4ade80', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:4}}>▲ Tailwinds</div>
+                  {account.industry_tailwinds.map((t,i)=>(
+                    <div key={i} style={{fontSize:11, color:'var(--tmuted)', lineHeight:1.5, marginBottom:2}}>· {t}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* ACV Range + Score Breakdown */}
           <div style={{display:'flex', alignItems:'center', gap:10, marginTop:10, flexWrap:'wrap'}}>
             {account.est_acv_range && (
@@ -2168,8 +2277,12 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
         try { return JSON.parse(localStorage.getItem('conga_closed_lost') || '[]'); } catch { return []; }
       });
 
-      // Model setting
-      const model = localStorage.getItem('conga_model') || DEFAULT_MODEL;
+      // API settings
+      const [apiKey, setApiKey]   = useState(()=>localStorage.getItem('conga_api_key')||EMBEDDED_API_KEY);
+      const [model, setModel]     = useState(()=>localStorage.getItem('conga_model')||DEFAULT_MODEL);
+      const [keyDraft, setKeyDraft] = useState(()=>localStorage.getItem('conga_api_key')||'');
+      const [modelDraft, setModelDraft] = useState(()=>localStorage.getItem('conga_model')||DEFAULT_MODEL);
+      const [showSettings, setShowSettings] = useState(false);
 
       // Mode
       const [mode, setMode] = useState(uploadedFile || manualAccounts.some(a=>a.company) ? 'upload' : 'discover');
@@ -2240,6 +2353,27 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
         } catch { return []; }
       });
 
+      // Local file state — handles re-upload directly in Module 2 if file was lost on navigation
+      const [localFile, setLocalFile] = useState(uploadedFile || null);
+
+      function handleLocalFile(file) {
+        setLocalFile(file);
+        setParsedAccounts(null);
+        setParseError(null);
+        setFilteredInfo(null);
+        parseAccountFile(file)
+          .then(accounts => {
+            if (accounts.length > 200) {
+              const filtered = preFilterAccounts(accounts, 200);
+              setFilteredInfo({ original: accounts.length, filtered: filtered.length });
+              setParsedAccounts(filtered);
+            } else {
+              setParsedAccounts(accounts);
+            }
+          })
+          .catch(err => setParseError(err.message));
+      }
+
       // Parse file when component mounts
       useEffect(()=>{
         if (uploadedFile) {
@@ -2262,6 +2396,13 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
         }
       }, []);
 
+      function saveApiKey() {
+        localStorage.setItem('conga_api_key', keyDraft);
+        localStorage.setItem('conga_model', modelDraft);
+        setApiKey(keyDraft); setModel(modelDraft);
+        setShowSettings(false);
+      }
+
       function toggleActivated(name) {
         const isOn = activated.includes(name);
         const nextNames = isOn ? activated.filter(n=>n!==name) : [...activated, name];
@@ -2274,6 +2415,20 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
         setActivatedData(nextData);
         localStorage.setItem('conga_activated', JSON.stringify(nextNames));
         localStorage.setItem('conga_activated_data', JSON.stringify(nextData));
+      }
+
+      function handleOpenInZnith(account) {
+        localStorage.setItem('znith_prefill', JSON.stringify({
+          account:        account.name,
+          stage:          'Discovery',
+          segment:        territory?.segment || '',
+          product:        account.recommended_product || territory?.product || '',
+          icp_score:      account.combined_score || account.icp_score || 0,
+          outreach_angle: account.outreach_angle || '',
+          buying_signals: account.buying_signals || [],
+          primary_reason: account.primary_reason || '',
+        }));
+        window.open('../sales-hub/', '_blank');
       }
 
       function exportAccountsToExcel() {
@@ -2304,6 +2459,7 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
       }
 
       async function runAnalysis() {
+        // API key lives in server-side env — no client-side key needed
         setError(null); setResults(null);
         setPass1Done(false);
 
@@ -2382,7 +2538,7 @@ Return a JSON array:
 Return ONLY the JSON array.`;
           }
 
-          const pass1Text = await callClaude(model, productContext, pass1Prompt, 10000);
+          const pass1Text = await callClaude(apiKey, MODEL_M2, productContext, pass1Prompt, 8000);
           const pass1Results = extractJSON(pass1Text);
           setPass1Count(pass1Results.length);
           setPass1Done(true);
@@ -2437,6 +2593,9 @@ Return a JSON array of the FINAL TOP 20 with:
   "cross_sell_products": ["<product>"],
   "cross_sell_reason": "<one line or empty string>",
   "est_acv_range": "<e.g. $15,000–$45,000 based on industry + segment + product>",
+  "key_competitors": ["<top competitor 1 of this company>", "<top competitor 2>", "<top competitor 3>"],
+  "industry_headwinds": ["<industry challenge/headwind 1>", "<industry challenge/headwind 2>"],
+  "industry_tailwinds": ["<industry growth driver/tailwind 1>", "<industry growth driver/tailwind 2>"],
   "score_breakdown": {
     "industry_fit":        { "score": <1-10>, "rationale": "<one line>" },
     "revenue_band":        { "score": <1-10>, "rationale": "<one line>" },
@@ -2447,7 +2606,7 @@ Return a JSON array of the FINAL TOP 20 with:
 }
 Return ONLY the JSON array.`;
 
-          const pass2Text = await callClaude(model, productContext, pass2Prompt, 12000);
+          const pass2Text = await callClaude(apiKey, MODEL_M2, productContext, pass2Prompt, 10000);
           let finalResults = extractJSON(pass2Text);
 
           // Client-side segment revenue enforcement for Discover mode
@@ -2507,6 +2666,7 @@ Return ONLY the JSON array.`;
               : 'No list? No problem. Tell Claude where to look and it will research and surface the best accounts in your territory.'}
           </p>
 
+
           {/* Mode selector + clear cache */}
           {!isAnalyzing && (
             <>
@@ -2537,10 +2697,34 @@ Return ONLY the JSON array.`;
                       <div className="card-subtitle">
                         {parsedAccounts
                           ? `${parsedAccounts.length} accounts ready for analysis${filteredInfo ? ` (pre-filtered from ${filteredInfo.original})` : ''}`
-                          : parseError ? 'Could not parse file' : 'Parsing file...'}
+                          : parseError ? 'Could not parse file'
+                          : localFile ? 'Parsing file…'
+                          : 'Upload your account list to get started'}
                       </div>
                     </div>
+                    {parsedAccounts && (
+                      <button className="btn-secondary" style={{marginLeft:'auto',fontSize:11,padding:'4px 12px'}}
+                        onClick={()=>{setLocalFile(null);setParsedAccounts(null);setParseError(null);setFilteredInfo(null);}}>
+                        ↺ Re-upload
+                      </button>
+                    )}
                   </div>
+
+                  {/* Show upload zone when no file is loaded */}
+                  {!localFile && !parsedAccounts && (
+                    <FileUpload
+                      file={null}
+                      onFile={handleLocalFile}
+                      onClear={()=>{setLocalFile(null);setParsedAccounts(null);}}
+                    />
+                  )}
+
+                  {/* Parsing spinner */}
+                  {localFile && !parsedAccounts && !parseError && (
+                    <div style={{display:'flex',alignItems:'center',gap:10,padding:'20px 0',color:'var(--tmuted)',fontSize:13}}>
+                      <IconSpinner size={16}/> Parsing {localFile.name}…
+                    </div>
+                  )}
 
                   {filteredInfo && (
                     <div className="info-banner" style={{marginBottom:16}}>
@@ -2549,7 +2733,12 @@ Return ONLY the JSON array.`;
                     </div>
                   )}
 
-                  {parseError && <div className="error-box">{parseError}</div>}
+                  {parseError && (
+                    <div className="error-box">
+                      {parseError}
+                      <button className="btn-secondary" style={{marginTop:8,fontSize:12}} onClick={()=>{setLocalFile(null);setParsedAccounts(null);setParseError(null);}}>Try a different file</button>
+                    </div>
+                  )}
 
                   {parsedAccounts && !parseError && (
                     <div style={{overflowX:'auto',borderRadius:10,border:'1px solid var(--border)',maxHeight:280,overflowY:'auto'}}>
@@ -2732,6 +2921,7 @@ Return ONLY the JSON array.`;
                           owner={owners[account.name] || ''}
                           onOwnerChange={(val)=>setOwner(account.name, val)}
                           closedLostData={closedLostData}
+                          onOpenInZnith={handleOpenInZnith}
                           onEditField={(field, value) => {
                             const updated = results.map(r => r.name === account.name ? {...r, [field]: value} : r);
                             setResults(updated);
@@ -2780,6 +2970,9 @@ Return ONLY the JSON array.`;
                error}
               <div style={{display:'flex',gap:8,marginTop:12,flexWrap:'wrap'}}>
                 <button className="btn-secondary" onClick={()=>{ setStatus('idle'); setError(null); }}>Try Again</button>
+                {error?.startsWith('ERR_AUTH') && (
+                  <button className="btn-secondary" onClick={()=>setShowSettings(true)}>Update API Key</button>
+                )}
               </div>
             </div>
           )}
@@ -3051,7 +3244,7 @@ Keep responses concise and actionable. Be a sharp, opinionated strategic advisor
       );
     }
 
-    function ChatPanel({ open, onClose, account, pov, currentModule, model }) {
+    function ChatPanel({ open, onClose, account, pov, currentModule, apiKey, model }) {
       const storageKey = `conga_chat_${account.name}`;
       const [messages, setMessages] = useState(() => {
         try { return JSON.parse(localStorage.getItem(storageKey) || '[]'); } catch { return []; }
@@ -3081,7 +3274,7 @@ Keep responses concise and actionable. Be a sharp, opinionated strategic advisor
         try {
           const systemPrompt = buildChatSystemPrompt(account, pov, currentModule);
           const apiMessages = newMessages.map(m => ({ role: m.role, content: m.content }));
-          const raw = await callClaude(model, systemPrompt, null, 2000, apiMessages);
+          const raw = await callClaude(apiKey, MODEL_CHAT, systemPrompt, null, 1500, apiMessages);
           const { cleanText, edits } = parseAssistantMessage(raw);
           setMessages(prev => [...prev, { role: 'assistant', content: cleanText, module: currentModule, edits }]);
           if (edits.length > 0) setPendingEdits(edits);
@@ -3209,7 +3402,20 @@ Keep responses concise and actionable. Be a sharp, opinionated strategic advisor
       );
     }
 
-    function Module3({ territory, onBack, onContinue, model }) {
+    function Module3({ territory, onBack, onContinue, apiKey: apiKeyProp, model }) {
+      // Allow local API key override so the user can set it from within Module 3
+      const [localKeyDraft, setLocalKeyDraft] = useState('');
+      const [localKeySaved, setLocalKeySaved] = useState(() => localStorage.getItem('conga_api_key') || EMBEDDED_API_KEY);
+      const apiKey = localKeySaved || apiKeyProp || '';
+
+      function saveLocalKey() {
+        const k = localKeyDraft.trim();
+        if (!k) return;
+        localStorage.setItem('conga_api_key', k);
+        setLocalKeySaved(k);
+        setLocalKeyDraft('');
+      }
+
       // Load activated account objects directly — avoids name-matching issues
       // Primary: conga_activated_data (full objects saved when toggling)
       // Fallback: try to match names from conga_m2_results
@@ -3300,6 +3506,7 @@ Keep responses concise and actionable. Be a sharp, opinionated strategic advisor
 
       async function generatePOV() {
         if (!account) return;
+        if (!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') { setGenError('No API key set — enter your Anthropic key in the field above.'); return; }
         setGenerating(true);
         setGenError(null);
 
@@ -3307,7 +3514,9 @@ Keep responses concise and actionable. Be a sharp, opinionated strategic advisor
         const sigArr = getSignals(account);
         const signals = Array.isArray(sigArr) ? sigArr.join('; ') : (sigArr || 'none noted');
 
-        const accountContext = `ACCOUNT: ${account.name}
+        const prompt = `Generate a complete Prospecting POV for this account. Return ONLY valid JSON — no markdown, no explanation.
+
+ACCOUNT: ${account.name}
 Industry: ${account.industry || 'Unknown'}
 Revenue: ${account.revenue ? fmtRevenue(account.revenue) : 'Unknown'}
 Employees: ${account.employees ? account.employees.toLocaleString() : 'Unknown'}
@@ -3317,31 +3526,16 @@ Buying Signals: ${signals}
 ${ctx.productFocus ? `Product Focus: ${ctx.productFocus}` : territory?.product ? `Product Focus: ${territory.product}` : ''}
 ${ctx.stakeholders ? `Known Stakeholders: ${ctx.stakeholders}` : ''}
 ${ctx.recentNews ? `Recent News / Context: ${ctx.recentNews}` : ''}
-${ctx.notes ? `Rep Notes: ${ctx.notes}` : ''}`;
+${ctx.notes ? `Rep Notes: ${ctx.notes}` : ''}
 
-        const prompt1 = `Generate the first half of a Prospecting POV for this account. Return ONLY valid JSON — no markdown, no explanation.
-
-${accountContext}
-
-Return this EXACT JSON structure:
+Return this EXACT JSON structure with sources for each section:
 {
   "executive_summary": "One compelling executive value statement (2-3 sentences, no bullets)",
   "executive_summary_sources": ["source or basis for this statement"],
   "pain_points": ["specific pain point 1", "specific pain point 2", "specific pain point 3", "specific pain point 4"],
   "pain_points_sources": ["source 1", "source 2"],
   "conga_fit": ["specific fit reason 1", "specific fit reason 2", "specific fit reason 3"],
-  "conga_fit_sources": ["source 1", "source 2"]
-}
-
-Sources should be specific: company filings, earnings calls, analyst reports (Gartner/Forrester), news articles, LinkedIn signals, or known customer references. If uncertain, note "Based on industry pattern" or "Inferred from ICP signals".
-Make everything specific to ${account.name}'s industry, profile, and known signals. Draw directly on Conga + PROS product capabilities.`;
-
-        const prompt2 = `Generate the second half of a Prospecting POV for this account. Return ONLY valid JSON — no markdown, no explanation.
-
-${accountContext}
-
-Return this EXACT JSON structure:
-{
+  "conga_fit_sources": ["source 1", "source 2"],
   "use_cases": ["use case 1 with specific outcome/metric", "use case 2 with outcome", "use case 3 with outcome"],
   "use_cases_sources": ["source 1", "source 2"],
   "proof_points": ["similar customer or ROI data point 1", "proof point 2", "proof point 3"],
@@ -3351,18 +3545,14 @@ Return this EXACT JSON structure:
 }
 
 Sources should be specific: company filings, earnings calls, analyst reports (Gartner/Forrester), news articles, LinkedIn signals, or known customer references. If uncertain, note "Based on industry pattern" or "Inferred from ICP signals".
+
 Make everything specific to ${account.name}'s industry, profile, and known signals. Draw directly on Conga + PROS product capabilities.`;
 
         try {
-          const [raw1, raw2] = await Promise.all([
-            callClaude(model, BASE_ICP_CONTEXT, prompt1, 3000),
-            callClaude(model, BASE_ICP_CONTEXT, prompt2, 3000),
-          ]);
-          const parsed1 = extractJSON(raw1);
-          const parsed2 = extractJSON(raw2);
-          if (typeof parsed1 !== 'object' || Array.isArray(parsed1)) throw new Error('Unexpected response format (part 1). Please try again.');
-          if (typeof parsed2 !== 'object' || Array.isArray(parsed2)) throw new Error('Unexpected response format (part 2). Please try again.');
-          const parsed = { ...parsed1, ...parsed2 };
+          const raw = await callClaude(apiKey, MODEL_M3, BASE_ICP_CONTEXT, prompt, 1800);
+          // extractJSON already returns a parsed JS object — do NOT double-parse
+          const parsed = extractJSON(raw);
+          if (typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Unexpected response format. Please try again.');
           setPovData(prev => {
             const next = { ...prev, [account.name]: parsed };
             localStorage.setItem(`conga_pov_${account.name}`, JSON.stringify(parsed));
@@ -3536,6 +3726,32 @@ Make everything specific to ${account.name}'s industry, profile, and known signa
                 </div>
               </div>
 
+              {/* API key banner — shown when key is missing */}
+              {(!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') && (
+                <div style={{
+                  background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.25)',
+                  borderRadius:10,padding:'14px 18px',marginBottom:16,display:'flex',
+                  flexDirection:'column',gap:10
+                }}>
+                  <div style={{fontSize:13,fontWeight:600,color:'#ef4444'}}>🔑 API Key Required</div>
+                  <div style={{fontSize:12,color:'var(--tmuted)'}}>Enter your Anthropic API key to generate POVs. It's saved only in your browser.</div>
+                  <div style={{display:'flex',gap:8}}>
+                    <input
+                      type="password"
+                      className="form-input"
+                      style={{flex:1,fontFamily:'var(--f-mono)',fontSize:12}}
+                      placeholder="sk-ant-api03-..."
+                      value={localKeyDraft}
+                      onChange={e=>setLocalKeyDraft(e.target.value)}
+                      onKeyDown={e=>{ if(e.key==='Enter') saveLocalKey(); }}
+                    />
+                    <button className="btn-primary" style={{whiteSpace:'nowrap'}} onClick={saveLocalKey} disabled={!localKeyDraft.trim()}>
+                      Save Key
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Generate button */}
               {generating && (
                 <div className="pov-generating">
@@ -3603,6 +3819,7 @@ Make everything specific to ${account.name}'s industry, profile, and known signa
               account={account}
               pov={currentPov}
               currentModule={3}
+              apiKey={apiKey}
               model={model}
             />
           </div>
@@ -3728,7 +3945,7 @@ Make everything specific to ${account.name}'s industry, profile, and known signa
       );
     }
 
-    function Module4({ territory, onBack, onContinue, model }) {
+    function Module4({ territory, onBack, onContinue, apiKey: apiKeyProp, model }) {
       const loadAccounts = () => {
         try {
           const d = JSON.parse(localStorage.getItem('conga_activated_data') || '[]');
@@ -3742,6 +3959,17 @@ Make everything specific to ${account.name}'s industry, profile, and known signa
       const accounts = loadAccounts();
       const getScore = a => a.combined_score || a.icp_score || a.score || null;
       const getSignals = a => a.buying_signals || a.signals || [];
+
+      const [localKeyDraft4, setLocalKeyDraft4] = useState('');
+      const [localKeySaved4, setLocalKeySaved4] = useState(() => localStorage.getItem('conga_api_key') || EMBEDDED_API_KEY);
+      const apiKey = localKeySaved4 || apiKeyProp || '';
+      function saveLocalKey4() {
+        const k = localKeyDraft4.trim();
+        if (!k) return;
+        localStorage.setItem('conga_api_key', k);
+        setLocalKeySaved4(k);
+        setLocalKeyDraft4('');
+      }
 
       const [activeIdx, setActiveIdx]   = useState(0);
       const [chatOpen, setChatOpen]     = useState(false);
@@ -3789,6 +4017,10 @@ Make everything specific to ${account.name}'s industry, profile, and known signa
       }
 
       async function enrichContact(draft) {
+        if (!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') {
+          setGenError('No API key set — enter your Anthropic key in the field above.');
+          return null;
+        }
         setEnriching(true);
         const pov = (() => { try { return JSON.parse(localStorage.getItem(`conga_pov_${account.name}`) || 'null'); } catch { return null; } })();
         const sigArr = getSignals(account);
@@ -3824,7 +4056,7 @@ Return this JSON structure:
   "pain_points": ["pain point 1 specific to their role", "pain point 2", "pain point 3"]
 }`;
         try {
-          const raw = await callClaude(model, BASE_ICP_CONTEXT, prompt, 1500);
+          const raw = await callClaude(apiKey, MODEL_M4_BRIEF, BASE_ICP_CONTEXT, prompt, 800);
           const parsed = extractJSON(raw);
           if (typeof parsed !== 'object' || Array.isArray(parsed)) throw new Error('Unexpected format');
           return { ...draft, ...parsed, _manual: true };
@@ -3864,6 +4096,7 @@ Return this JSON structure:
 
       async function generateContacts() {
         if (!account) return;
+        if (!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') { setGenError('No API key set — enter your Anthropic key in the field above.'); return; }
         setGenerating(true);
         setGenError(null);
 
@@ -3903,7 +4136,7 @@ Return ONLY a JSON array, no markdown:
 Make contact names realistic for this company (use known executives if you know them, otherwise use 'Likely [Title]'). Make conversation starters sharp and specific — no generic openers.`;
 
         try {
-          const raw = await callClaude(model, BASE_ICP_CONTEXT, prompt, 4000);
+          const raw = await callClaude(apiKey, MODEL_M4_DEEP, BASE_ICP_CONTEXT, prompt, 2500);
           const parsed = extractJSON(raw);
           if (!Array.isArray(parsed)) throw new Error('Unexpected format — please try again.');
           saveContacts(account.name, parsed);
@@ -3987,6 +4220,25 @@ Make contact names realistic for this company (use known executives if you know 
                   </div>
                 )}
               </div>
+
+              {/* API key banner for Module 4 */}
+              {(!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') && (
+                <div style={{
+                  background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.25)',
+                  borderRadius:10,padding:'14px 18px',marginBottom:16,display:'flex',
+                  flexDirection:'column',gap:10
+                }}>
+                  <div style={{fontSize:13,fontWeight:600,color:'#ef4444'}}>🔑 API Key Required</div>
+                  <div style={{fontSize:12,color:'var(--tmuted)'}}>Enter your Anthropic API key to research contacts.</div>
+                  <div style={{display:'flex',gap:8}}>
+                    <input type="password" className="form-input" style={{flex:1,fontFamily:'var(--f-mono)',fontSize:12}}
+                      placeholder="sk-ant-api03-..." value={localKeyDraft4}
+                      onChange={e=>setLocalKeyDraft4(e.target.value)}
+                      onKeyDown={e=>{ if(e.key==='Enter') saveLocalKey4(); }}/>
+                    <button className="btn-primary" style={{whiteSpace:'nowrap'}} onClick={saveLocalKey4} disabled={!localKeyDraft4.trim()}>Save Key</button>
+                  </div>
+                </div>
+              )}
 
               {/* Generate / action row */}
               {generating && (
@@ -4136,6 +4388,7 @@ Make contact names realistic for this company (use known executives if you know 
               account={account}
               pov={povForChat}
               currentModule={4}
+              apiKey={apiKey}
               model={model}
             />
           </div>
@@ -4307,7 +4560,17 @@ Make contact names realistic for this company (use known executives if you know 
       );
     }
 
-    function Module5({ territory, model, onBack, onContinue }) {
+    function Module5({ territory, apiKey: apiKeyProp, model, onBack, onContinue }) {
+      const [localKeyDraft5, setLocalKeyDraft5] = useState('');
+      const [localKeySaved5, setLocalKeySaved5] = useState(() => localStorage.getItem('conga_api_key') || EMBEDDED_API_KEY);
+      const apiKey = localKeySaved5 || apiKeyProp || '';
+      function saveLocalKey5() {
+        const k = localKeyDraft5.trim();
+        if (!k) return;
+        localStorage.setItem('conga_api_key', k);
+        setLocalKeySaved5(k);
+        setLocalKeyDraft5('');
+      }
 
       const repProfile = (() => { try { return JSON.parse(localStorage.getItem('conga_rep_profile')||'{}'); } catch { return {}; } })();
       const repSig = [repProfile.name, repProfile.title, repProfile.phone, repProfile.linkedin].filter(Boolean).join(' | ');
@@ -4402,6 +4665,7 @@ Make contact names realistic for this company (use known executives if you know 
 
       async function generateSequence() {
         if (!account) return;
+        if (!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') { setGenError('No API key set — enter your Anthropic key in the field above.'); return; }
         setGenerating(true);
         setGenError(null);
 
@@ -4419,13 +4683,24 @@ Make contact names realistic for this company (use known executives if you know 
             }).join('\n')
           : 'Not yet researched — generate generic sequence';
 
+        const fmt = v => Array.isArray(v) ? v.join(' | ') : (v || '');
+        const povBlock = pov ? [
+          pov.executive_summary ? `Value Statement: ${pov.executive_summary}`  : null,
+          pov.pain_points       ? `Pain Points: ${fmt(pov.pain_points)}`        : null,
+          pov.conga_fit         ? `Why Conga/PROS: ${fmt(pov.conga_fit)}`       : null,
+          pov.use_cases         ? `Use Cases: ${fmt(pov.use_cases)}`            : null,
+          pov.proof_points      ? `Proof Points: ${fmt(pov.proof_points)}`      : null,
+        ].filter(Boolean).join('\n') : 'Not yet built — use buying signals and ICP context';
+
         const prompt = `Generate a 10-step outreach sequence for ${account.name}.
 Use the account context, POV, and contacts below. Where specific contacts are provided, address messages TO them by name.
 
-ACCOUNT: ${account.name} | ${account.industry || 'Unknown'} | ICP ${score}/10
-POV SUMMARY: ${pov?.executive_summary || 'See buying signals below'}
+ACCOUNT: ${account.name} | ${account.industry || 'Unknown'} | ICP ${score}/10${account.outreach_angle ? `\nOUTREACH ANGLE: ${account.outreach_angle}` : ''}
 BUYING SIGNALS: ${signals}
 PRODUCT FOCUS: ${productFocus}
+
+PROSPECTING POV:
+${povBlock}
 
 CONTACTS TO SEQUENCE (write to these specific people):
 ${contactSummary}
@@ -4444,14 +4719,14 @@ Return ONLY a raw JSON array of exactly 10 steps. Do NOT wrap in markdown code b
     "contact_name": "Specific person this step targets (use their real name from the contacts above)",
     "contact_role": "Economic Buyer|Champion|Technical|All",
     "action": "Short description of the action to take",
-    "message": "Full message/script (email body, call talk track, or LinkedIn message) — address the person by their first name",
+    "message": "Full message/script — address the person by first name. Opening line MUST reference a specific signal from the buying signals or contact background (e.g. 'I noticed...', 'Given your role in...'). Body MUST tie to a specific pain point and use case from the POV above.",
     "timing_note": "Best time/day to reach out"
   }
 ]
-Make messages specific to ${account.name}, their industry, and the Conga/PROS value prop. Address contacts by first name. No generic templates.`;
+Make every message specific to ${account.name}, their industry, and the contacts above. No generic templates. Reference contact background and buying signals in opening lines. Use the proof points and use cases from the POV to anchor value claims.`;
 
         try {
-          const raw = await callClaude(model, BASE_ICP_CONTEXT, prompt, 10000);
+          const raw = await callClaude(apiKey, MODEL_M5_SEQ, BASE_ICP_CONTEXT, prompt, 6000);
           const parsed = extractJSON(raw);
           if (!Array.isArray(parsed)) throw new Error('Unexpected format — please try again.');
           saveSeq(account.name, parsed);
@@ -4475,7 +4750,7 @@ ${newContact.name ? 'Provided name: ' + newContact.name : ''}
 ${newContact.title ? 'Provided title: ' + newContact.title : ''}
 ${newContact.email ? 'Provided email: ' + newContact.email : ''}
 ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
-          const raw = await callClaude(model, BASE_ICP_CONTEXT, prompt, 1000);
+          const raw = await callClaude(apiKey, MODEL_M5_VAR, BASE_ICP_CONTEXT, prompt, 800);
           const parsed = extractJSON(raw);
           const contact = { ...parsed, name: parsed.name || newContact.name, title: parsed.title || newContact.title, email: parsed.email || newContact.email, linkedinUrl: parsed.linkedinUrl || newContact.linkedinUrl };
           setCustomContacts(prev => [...prev, contact]);
@@ -4672,6 +4947,25 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
                 );
               })()}
 
+              {/* API key banner for Module 5 */}
+              {(!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') && (
+                <div style={{
+                  background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.25)',
+                  borderRadius:10,padding:'14px 18px',marginBottom:16,display:'flex',
+                  flexDirection:'column',gap:10
+                }}>
+                  <div style={{fontSize:13,fontWeight:600,color:'#ef4444'}}>🔑 API Key Required</div>
+                  <div style={{fontSize:12,color:'var(--tmuted)'}}>Enter your Anthropic API key to generate sequences.</div>
+                  <div style={{display:'flex',gap:8}}>
+                    <input type="password" className="form-input" style={{flex:1,fontFamily:'var(--f-mono)',fontSize:12}}
+                      placeholder="sk-ant-api03-..." value={localKeyDraft5}
+                      onChange={e=>setLocalKeyDraft5(e.target.value)}
+                      onKeyDown={e=>{ if(e.key==='Enter') saveLocalKey5(); }}/>
+                    <button className="btn-primary" style={{whiteSpace:'nowrap'}} onClick={saveLocalKey5} disabled={!localKeyDraft5.trim()}>Save Key</button>
+                  </div>
+                </div>
+              )}
+
               {/* Generate / action row */}
               {generating && (
                 <div className="pov-generating">
@@ -4751,6 +5045,7 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
               account={account}
               pov={povForChat}
               currentModule={5}
+              apiKey={apiKey}
               model={model}
             />
           </div>
@@ -5316,7 +5611,9 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
       const [uploadedFile, setUploadedFile]   = useState(null);
       const [manualAccounts, setManualAccounts] = useState([]);
 
-      const model = localStorage.getItem('conga_model') || DEFAULT_MODEL;
+      // Read API key + model from localStorage so all modules can use them
+      const apiKey = localStorage.getItem('conga_api_key') || EMBEDDED_API_KEY;
+      const model  = localStorage.getItem('conga_model')   || DEFAULT_MODEL;
 
       function nav(n) {
         setCurrentModule(n);
@@ -5387,6 +5684,7 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
           {currentModule === 3 && (
             <Module3
               territory={territory}
+              apiKey={apiKey}
               model={model}
               onBack={()=>nav(2)}
               onContinue={()=>nav(4)}
@@ -5395,6 +5693,7 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
           {currentModule === 4 && (
             <Module4
               territory={territory}
+              apiKey={apiKey}
               model={model}
               onBack={()=>nav(3)}
               onContinue={()=>nav(5)}
@@ -5403,6 +5702,7 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
           {currentModule === 5 && (
             <Module5
               territory={territory}
+              apiKey={apiKey}
               model={model}
               onBack={()=>nav(4)}
               onContinue={()=>nav(6)}
@@ -5441,9 +5741,7 @@ ${newContact.linkedinUrl ? 'LinkedIn: ' + newContact.linkedinUrl : ''}`;
       );
     }
 
-    const _rootEl = document.getElementById('root');
-    _rootEl.innerHTML = '';
-    ReactDOM.createRoot(_rootEl).render(<App/>);
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
   </script>
 </body>
 </html>

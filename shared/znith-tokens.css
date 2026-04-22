@@ -1,0 +1,224 @@
+/* Znith v4 — Design System Tokens
+   Source of truth for all system-wide CSS custom properties.
+   Do NOT define these in per-app <style> blocks.
+   App-specific tokens (chart palettes, module accents) stay in local :root. */
+
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap');
+
+:root {
+  /* ── Typography ── */
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui:    'Barlow', sans-serif;
+  --f-mono:  'IBM Plex Mono', monospace;
+
+  /* ── Info role — muted slate for non-action informational content ── */
+  --info:        #7A94B8;
+  --info-deep:   #4E6A8E;
+  --info-muted:  rgba(122,148,184,0.14);
+  --info-faint:  rgba(122,148,184,0.06);
+
+  /* ── Semantic role aliases (amber = Action) ── */
+  --accent:       var(--amber);
+  --accent-deep:  var(--amber-deep);
+  --accent-glow:  var(--amber-glow);
+  --accent-muted: var(--amber-muted);
+  --accent-faint: var(--amber-faint);
+
+  /* ── Amber — internal tool signature ── */
+  --amber:       #E5A83A;
+  --amber-deep:  #B8860B;   /* hover / pressed only */
+  --amber-glow:  rgba(229,168,58,0.22);
+  --amber-muted: rgba(229,168,58,0.12);
+  --amber-faint: rgba(229,168,58,0.06);
+
+  /* ── Base palette — dark (default) ── */
+  --bg:     #05070F;
+  --surf:   #0F1520;
+  --surf-2: #0A0E1A;
+  --surf-3: #070A13;
+
+  /* ── Borders ── */
+  --border:    rgba(255,255,255,0.08);
+  --border-md: rgba(255,255,255,0.14);
+  --border-dk: rgba(255,255,255,0.22);
+
+  /* ── Text ── */
+  --text:   rgba(255,255,255,0.92);
+  --tmuted: rgba(255,255,255,0.62);
+  --tfaint: rgba(255,255,255,0.42);  /* AA-compliant at 13px+ */
+  --tghost: rgba(255,255,255,0.22);  /* decorative only — never readable text */
+
+  /* ── Status ── */
+  --status-ok:   #34D399;
+  --status-warn: #F59E0B;
+  --status-risk: #EF4444;
+
+  /* ── v1 status aliases (backward compat) ── */
+  --green:        var(--status-ok);
+  --yellow:       var(--status-warn);
+  --red:          var(--status-risk);
+  --blue:         #63B3ED;
+  --green-muted:  rgba(52,211,153,0.14);
+  --yellow-muted: rgba(245,158,11,0.14);
+  --red-muted:    rgba(239,68,68,0.14);
+  --blue-muted:   rgba(99,179,237,0.14);
+
+  /* ── Stage pill colors ── */
+  --stage-discovery:   #63B3ED;
+  --stage-demo:        var(--amber);
+  --stage-proposal:    #A78BFA;
+  --stage-negotiation: #FB923C;
+  --stage-closed-won:  var(--status-ok);
+  --stage-closed-lost: var(--tfaint);
+
+  /* ── Health / status shadows ── */
+  --sh-ok:   0 0 6px rgba(52,211,153,0.35);
+  --sh-warn: 0 0 6px rgba(245,158,11,0.35);
+  --sh-risk: 0 0 6px rgba(239,68,68,0.35);
+
+  /* ── Geometry ── */
+  --clip-lg:  polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0% calc(100% - 10px), 0% 10px);
+  --clip-sm:  polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px);
+  --clip-fwd: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+  --clip-lead: polygon(12px 0, 100% 0, 100% 100%, 12px 100%, 0 50%);
+
+  /* ── Motion ── */
+  --transition: 220ms cubic-bezier(0.4,0,0.2,1);
+  --spring:     400ms cubic-bezier(0.34,1.56,0.64,1);
+
+  /* ── Shadow (dark: glow-based) ── */
+  --sh-amber: 0 0 8px var(--amber-glow);
+  --sh-sm:    0 1px 2px rgba(0,0,0,0.3);
+  --sh-md:    0 2px 8px rgba(0,0,0,0.35);
+  --sh-lg:    0 8px 28px rgba(0,0,0,0.4);
+
+}
+
+/* ── Light theme ── */
+:root[data-theme="light"] {
+  --info:        #5A7396;
+  --info-deep:   #324A70;
+  --info-muted:  rgba(90,115,150,0.12);
+  --info-faint:  rgba(90,115,150,0.05);
+
+  --amber:       #C98C20;   /* fills on white */
+  --amber-text:  #946C00;   /* text / icons — AA pass */
+  --amber-deep:  #6E5000;   /* hover / pressed */
+  --amber-glow:  rgba(201,140,32,0.18);
+  --amber-muted: rgba(201,140,32,0.10);
+  --amber-faint: rgba(201,140,32,0.05);
+
+  --bg:     #F4F2ED;   /* warm paper */
+  --surf:   #FFFFFF;
+  --surf-2: #FAF8F2;
+  --surf-3: #EFEBE0;
+
+  --border:    #E3E0D8;
+  --border-md: #CFCBBE;
+  --border-dk: #B5B0A4;
+
+  --text:   #1A1914;
+  --tmuted: #5A564C;
+  --tfaint: #7A7466;
+  --tghost: #9A9484;
+
+  /* ── Shadow (light: drop-shadow-based) ── */
+  --sh-amber: 0 2px 12px rgba(201,140,32,0.24);
+  --sh-sm:    0 1px 2px rgba(26,25,20,0.04), 0 1px 1px rgba(26,25,20,0.03);
+  --sh-md:    0 2px 8px rgba(26,25,20,0.06), 0 1px 3px rgba(26,25,20,0.04);
+  --sh-lg:    0 8px 28px rgba(26,25,20,0.08), 0 2px 8px rgba(26,25,20,0.05);
+
+  /* ── v1 status aliases (light — proper hex for contrast on white) ── */
+  --status-ok:   #16A34A;
+  --status-warn: #B47814;
+  --status-risk: #C83232;
+  --green:        #16A34A;
+  --yellow:       #B47814;
+  --red:          #C83232;
+  --blue:         #2B6FAE;
+
+  /* ── v1 muted aliases (light) ── */
+  --green-muted:  rgba(22,163,74,0.12);
+  --yellow-muted: rgba(180,120,20,0.12);
+  --red-muted:    rgba(200,50,50,0.10);
+  --blue-muted:   rgba(43,111,174,0.12);
+
+  /* ── Health shadows (light: tighter, less glow) ── */
+  --sh-ok:   0 1px 3px rgba(22,163,74,0.2);
+  --sh-warn: 0 1px 3px rgba(180,120,20,0.2);
+  --sh-risk: 0 1px 3px rgba(200,50,50,0.2);
+}
+
+/* ── Theme toggle SVG icon visibility ── */
+.theme-toggle-btn .icon-sun,
+.theme-toggle .icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle-btn .icon-moon,
+:root[data-theme="light"] .theme-toggle .icon-moon { display: none; }
+:root[data-theme="light"] .theme-toggle-btn .icon-sun,
+:root[data-theme="light"] .theme-toggle .icon-sun { display: block; }
+:root[data-theme="light"] .theme-toggle-btn,
+:root[data-theme="light"] .theme-toggle { color: var(--text); border-color: var(--border-md); }
+
+/* ── Tabular nums — scoped to numeric display classes ── */
+.kpi-value, .kpi-value *,
+.meddpicc-score-val, .drawer-value-chip-val, .drawer-dim-score,
+.meta-val, .score, [data-num] {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── KPI number treatment — prefix / num / unit ── */
+.kpi-value {
+  font-family: var(--f-brand);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+}
+.kpi-value .prefix,
+.kpi-value .unit {
+  font-size: 0.5em;
+  opacity: 0.55;
+  font-weight: 600;
+  margin: 0 0.08em;
+}
+.kpi-value .num { font-size: 1em; }
+
+/* ── Hero KPI — one amber metric per tool ── */
+.kpi-hero { color: var(--amber); }
+.kpi-hero .kpi-value { color: var(--amber); }
+
+/* ── Conga Symbol ── */
+.conga-mark { width: 28px; height: 28px; color: #FFFFFF; }
+:root[data-theme="light"] .conga-mark { color: #1A1914; }
+
+/* ── Standard footer ── */
+.znith-footer {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 34px;
+  background: var(--surf-2);
+  border-top: 2px solid var(--amber);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 20px;
+  z-index: 200;
+}
+.znith-wordmark {
+  display: flex; align-items: center; gap: 1px;
+  font-size: 12px; font-weight: 800; line-height: 1;
+  text-decoration: none;
+  user-select: none;
+}
+.znith-wordmark .slash { font-family: var(--f-mono); color: var(--amber); font-weight: 700; }
+.znith-wordmark .z     { font-family: var(--f-brand); color: var(--amber); font-weight: 800; }
+.znith-wordmark .rest  { font-family: var(--f-brand); color: var(--tghost); font-weight: 800; }
+.znith-footer-meta {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--tghost);
+}
+.znith-footer-pip {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: var(--tghost);
+}
