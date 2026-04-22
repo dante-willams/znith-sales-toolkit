@@ -1749,11 +1749,13 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
                     return out;
                   });
                 }
-                // Find header row
+                // Find header row — pick the row with the most non-empty cells
+                // (handles Salesforce exports with 10+ metadata rows before the real header)
                 let headerIdx = 0;
-                for (let i = 0; i < Math.min(10, rows.length); i++) {
+                let maxNonEmpty = 0;
+                for (let i = 0; i < Math.min(30, rows.length); i++) {
                   const nonEmpty = rows[i].filter(c => c !== '' && c !== null && c !== undefined);
-                  if (nonEmpty.length >= 2) { headerIdx = i; break; }
+                  if (nonEmpty.length > maxNonEmpty) { maxNonEmpty = nonEmpty.length; headerIdx = i; }
                 }
                 const headers = rows[headerIdx].map(h => String(h || ''));
                 const dataRows = rows.slice(headerIdx + 1);
