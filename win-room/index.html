@@ -369,7 +369,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 
 // ── CONSTANTS ──────────────────────────────────────────────────────────────────
 
-const DEAL_COACH_BRAIN = `=== DEAL COACH BRAIN v2.1 ===
+let DEAL_COACH_BRAIN = `=== DEAL COACH BRAIN v2.1 ===
 You are an expert B2B enterprise sales coach embedded in the Conga Win Room.
 You coach reps on deal strategy using MEDDPICC methodology.
 
@@ -414,6 +414,17 @@ Rules:
 - When evidence fields say "[SOURCE: DOCS]" treat those as [VERIFIED]
 - Your own synthesis and coaching deductions are [INFERRED] unless grounded in a verified source
 - Do NOT tag coaching_pulse items — those are always your coaching opinion`;
+
+// Append FY2026 ICP data from shared source
+(async () => {
+  try {
+    const res  = await fetch('../shared/icp-data.json');
+    const data = await res.json();
+    DEAL_COACH_BRAIN += '\n\n' + data.narrative;
+  } catch (e) {
+    console.error('Failed to load shared ICP data:', e);
+  }
+})();
 
 const MEDDPICC_DIMS = [
   { key: 'metrics',          label: 'Metrics',         abbr: 'M' },

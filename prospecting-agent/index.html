@@ -1083,12 +1083,12 @@
     // Compatibility shim — EMBEDDED_API_KEY no longer used; key lives in ANTHROPIC_API_KEY env var on the server
     const EMBEDDED_API_KEY = '';
 
-    // Load ICP data from icp-data.json at startup
+    // Load ICP data from shared/icp-data.json at startup
     (async () => {
       try {
-        const res = await fetch('./icp-data.json');
+        const res = await fetch('../shared/icp-data.json');
         const data = await res.json();
-        BASE_ICP_CONTEXT = data.base;
+        BASE_ICP_CONTEXT = data.narrative;
         _icpProducts = data.products;
       } catch (e) {
         console.error('Failed to load ICP data — API calls will have no system context:', e);

@@ -1,0 +1,139 @@
+{
+  "meta": {
+    "version": "FY2026",
+    "generated": "2026-04",
+    "author": "Reeves Goepfert",
+    "source": "Conga_ICP_FY2026.docx — 14,277 closed-won + 23,482 closed-lost deals FY2022–FY2026"
+  },
+
+  "narrative": "=== CONGA IDEAL CUSTOMER PROFILE — FY2026 ===\nBased on analysis of 14,277 closed-won and 23,482 closed-lost deals from FY2022–FY2026, supplemented by PROS competitive win/loss data and 1,878 East region prospect accounts. Overall win rate: 38%. Avg ACV (won): $13.8K.\n\nTIER 1 — HIGHEST PRIORITY SEGMENTS:\n- Financial Services, Banking & Insurance: 2,167 won deals, 41.8% win rate. Complex contracts, CLM and Composer high demand, large ACV.\n- Services & Consulting: 2,645 won deals, 40.0% win rate. Highest deal volume, fast cycles, strong Composer adoption.\n- Engineering & Construction: 653 won deals, 45.7% win rate. Document-heavy workflows drive Composer and CLM.\n- Federal Government: 137 won deals, 55.7% win rate. Highest win rate of any segment. Compliance needs align well with CLM.\n\nTIER 2 — STRONG FIT SEGMENTS:\n- Healthcare & Life Sciences: 925 won deals, 35.7% win rate. Highest ACV of any vertical (>$50K deals lead all segments). Compliance drives CLM.\n- Non-Profit: 749 won deals, 42.1% win rate. Often Salesforce-native. Composer very sticky.\n- Education: 575 won deals, 40.9% win rate. Good win rate. Composer and CLM for vendor/grant contracts.\n- Technology (HW/SW/Services): 1,641 won deals, 35.8% win rate. High volume. CPQ and CLM strong. Competitive market.\n\nTIER 3 — DEPRIORITIZE:\n- Manufacturing: 1,670 won deals, 33.2% win rate. Strong PROS competition.\n- Retail & Restaurants: 466 won deals, 33.5% win rate. High churn risk, typically low ACV.\n- Energy, Oil & Utilities: 391 won deals, 31.1% win rate. Long procurement cycles, limited Salesforce penetration.\n- Transportation, Distribution & Logistics: 236 won deals, 29.0% win rate. Worst win rate of all segments. Avoid without a strong champion.\n\nFIRMOGRAPHIC SWEET SPOT:\n- Revenue: $100M–$5B. Companies <$50M rarely justify enterprise CLM/CPQ. >$5B often have custom builds.\n- Employees: 500–5,000. Below 200: too small for ROI. Above 10K: longer cycles, more competitive.\n- Geography: AMER primary (69% of all lost deals), EMEA secondary (22%). APAC growing opportunity.\n- Salesforce: Active Salesforce CRM customer is the strongest single buy signal. Conga's core products live inside Salesforce.\n- ERP: SAP, Oracle EBS, NetSuite. ERP = operational complexity = need for contract/revenue automation.\n- Segment: Commercial (500–2,500 EEs) = highest volume. Enterprise = highest ACV.\n\nPRODUCT-TO-SEGMENT FIT:\n- CLM primary: Healthcare & Life Sciences, Financial Services & Banking, Technology, Federal & State Government\n- CPQ primary: Manufacturing, Technology (strong secondary)\n- Composer primary: Services & Consulting, Non-Profit & Education\n- CLM secondary: Services & Consulting, Engineering & Construction, Non-Profit & Education\n\nWHY DEALS ARE LOST:\n- No Decision (48%): Lack of urgency, weak champion, stalled initiative. Fix: Executive sponsor early, tie to a business event (renewal, audit, M&A).\n- Competitive Loss (13%): Competitor better positioned or longer relationship. Fix: Leverage ROI data, identify PROS/DocuSign displacement.\n- Not Qualified (13%): Poor lead quality, wrong segment or size. Fix: Apply ICP filter before building pipeline.\n- Duplicate/Admin (8%): Pipeline hygiene issue.\n- Non-Competitive Loss (8%): Budget, timeline, internal reprioritization. Fix: Multi-thread, set next-step commitments at every stage.\nKEY INSIGHT: Nearly half of all losses are No Decision. This is a qualification and urgency problem, not a product problem.\n\nBUYING SIGNALS & TECH STACK:\nPositive signals: Active Salesforce CRM user (strongest), SAP or Oracle ERP in place, currently using DocuSign or Adobe Sign (displacement opportunity), manual document generation via Word/Excel, legacy contract repository (shared drive, SharePoint).\nBusiness event triggers: Recent M&A activity, compliance or regulatory audit in past 12 months, new CFO or CLO, Salesforce platform expansion or upgrade, headcount reduction driving automation urgency.\n\nCOMPETITIVE CONTEXT — PROS:\nPROS customers run: Salesforce CRM (57%), Microsoft Dynamics (22%), SAP CRM (8%). ERP: SAP all variants (55%), MS Dynamics 365 (7%), Oracle EBS (7%).\nDisplacement signal: PROS-using accounts in Manufacturing and Industrial segments that also run Salesforce are ideal displacement targets for Conga CPQ. Lead with total cost of ownership and Salesforce-native integration advantages.\n\nWHO NOT TO TARGET:\n- Companies under 200 employees or below $50M revenue.\n- No Salesforce CRM (requires significant integration work, lacks native value prop).\n- Transportation/Logistics (29%), Energy/Oil/Utilities (31%), Retail/Restaurants (33%) — persistent underperformance.\n- No executive sponsor (48% of losses are No Decision — without exec champion, deals stall).\n- Startups and early-stage companies (lack contract volume, procurement maturity, budget).\n\nQUICK REFERENCE — IDEAL ACCOUNT:\n✅ Industry: Financial Services, Services & Consulting, Engineering & Construction, Federal Govt, or Healthcare\n✅ Revenue: $100M–$5B\n✅ Employees: 500–5,000\n✅ Tech: Salesforce CRM + SAP or Oracle ERP\n✅ Trigger: M&A, compliance audit, Salesforce expansion, new CLO/CFO\n✅ Buyer: CLO, VP Legal, VP Sales Ops, VP Finance\n✅ Product: CLM (high ACV) or Composer (high volume)\n\nPASS OR PARK IF:\n❌ Industry: Transportation/Logistics, Energy/Oil/Utilities, Retail/Restaurants\n❌ Under 200 employees or below $50M revenue\n❌ Not on Salesforce CRM\n❌ No identified executive champion\n❌ No clear business trigger or event\n❌ Early-stage or pre-revenue company\n❌ Budget not yet allocated or initiative deprioritized",
+
+  "tiers": {
+    "tier1": [
+      { "segment": "Financial Services, Banking & Insurance", "won_deals": 2167, "win_rate": 0.418, "why": "Complex contracts, CLM and Composer high demand, large ACV deals" },
+      { "segment": "Services & Consulting", "won_deals": 2645, "win_rate": 0.400, "why": "Highest deal volume; fast sales cycles; strong Composer adoption" },
+      { "segment": "Engineering & Construction", "won_deals": 653, "win_rate": 0.457, "why": "3rd best win rate; document-heavy workflows drive Composer and CLM" },
+      { "segment": "Federal Government", "won_deals": 137, "win_rate": 0.557, "why": "Highest win rate of any segment; compliance needs align well with CLM" }
+    ],
+    "tier2": [
+      { "segment": "Healthcare & Life Sciences", "won_deals": 925, "win_rate": 0.357, "why": "Highest ACV of any vertical (>$50K deals lead all segments); compliance drives CLM" },
+      { "segment": "Non-Profit", "won_deals": 749, "win_rate": 0.421, "why": "Solid win rate; often Salesforce-native; Composer very sticky" },
+      { "segment": "Education", "won_deals": 575, "win_rate": 0.409, "why": "Good win rate; Composer and CLM for vendor/grant contracts" },
+      { "segment": "Technology (HW/SW/Services)", "won_deals": 1641, "win_rate": 0.358, "why": "High volume; CPQ and CLM strong; competitive market" }
+    ],
+    "tier3": [
+      { "segment": "Manufacturing", "won_deals": 1670, "win_rate": 0.332, "why": "High volume but below-average win rate; strong PROS competition" },
+      { "segment": "Retail & Restaurants", "won_deals": 466, "win_rate": 0.335, "why": "Low win rate; high churn risk; typically low ACV" },
+      { "segment": "Energy, Oil & Utilities", "won_deals": 391, "win_rate": 0.311, "why": "Low win rate; long procurement cycles; limited Salesforce penetration" },
+      { "segment": "Transportation, Distribution & Logistics", "won_deals": 236, "win_rate": 0.290, "why": "Worst win rate of all segments; avoid without a strong champion" }
+    ]
+  },
+
+  "firmographics": {
+    "revenue": { "sweet_spot": "$100M – $5B", "note": "< $50M rarely justify enterprise CLM/CPQ; > $5B often have custom builds" },
+    "employees": { "sweet_spot": "500 – 5,000", "note": "< 200: too small for ROI; > 10K: longer cycles, more competitive" },
+    "geography": { "primary": "AMER", "secondary": "EMEA", "emerging": "APAC", "note": "AMER = 69% of all lost deals; EMEA = 22%" },
+    "crm": { "sweet_spot": "Active Salesforce CRM", "note": "Strongest single buy signal. Conga's core products live inside Salesforce." },
+    "erp": { "sweet_spot": ["SAP", "Oracle EBS", "NetSuite"], "note": "ERP = operational complexity = need for contract/revenue automation" },
+    "segment": { "commercial": "500–2,500 employees, highest deal volume", "enterprise": "2,500+ employees, highest ACV" }
+  },
+
+  "products": {
+    "CLM": {
+      "primary": ["Healthcare & Life Sciences", "Financial Services & Banking", "Technology (HW/SW/Services)", "Federal & State Government"],
+      "secondary": ["Services & Consulting", "Engineering & Construction", "Non-Profit & Education"]
+    },
+    "CPQ": {
+      "primary": ["Manufacturing"],
+      "secondary": ["Technology (HW/SW/Services)"]
+    },
+    "Composer": {
+      "primary": ["Services & Consulting", "Non-Profit & Education"],
+      "secondary": ["Healthcare & Life Sciences", "Financial Services & Banking", "Federal & State Government", "Engineering & Construction"]
+    },
+    "Price Optimization": {
+      "primary": ["Manufacturing", "Technology (HW/SW/Services)"],
+      "secondary": ["Services & Consulting"]
+    },
+    "DocAuto": {
+      "primary": ["Services & Consulting", "Engineering & Construction"],
+      "secondary": ["Healthcare & Life Sciences", "Financial Services & Banking"]
+    },
+    "Aime": {
+      "primary": ["Financial Services & Banking", "Healthcare & Life Sciences", "Technology (HW/SW/Services)"],
+      "secondary": ["Services & Consulting"]
+    },
+    "RLM": {
+      "primary": ["Technology (HW/SW/Services)", "Financial Services & Banking"],
+      "secondary": ["Healthcare & Life Sciences", "Manufacturing"]
+    },
+    "All Products": {
+      "primary": ["Financial Services & Banking", "Technology (HW/SW/Services)", "Healthcare & Life Sciences"],
+      "secondary": ["Services & Consulting", "Manufacturing", "Engineering & Construction"]
+    }
+  },
+
+  "signals": {
+    "positive": [
+      "Active Salesforce CRM user (strongest signal)",
+      "SAP or Oracle ERP in place",
+      "Currently using DocuSign or Adobe Sign (displacement opportunity)",
+      "Manual document generation via Word or Excel",
+      "Legacy contract repository (shared drive, SharePoint)"
+    ],
+    "tech_stack": ["Salesforce CRM", "SAP", "Oracle EBS", "NetSuite", "DocuSign", "Adobe Sign"],
+    "business_events": [
+      "Recent M&A activity (new scale = new contracts)",
+      "Compliance or regulatory audit in the past 12 months",
+      "New CFO or CLO (fresh lens on contract risk)",
+      "Salesforce platform expansion or upgrade",
+      "Headcount reduction driving automation urgency"
+    ]
+  },
+
+  "competitive": {
+    "PROS": {
+      "overlap": "Manufacturing and Industrial segments running Salesforce — ideal Conga CPQ displacement targets",
+      "crm_stack": { "Salesforce": 0.57, "Microsoft Dynamics": 0.22, "SAP CRM": 0.08 },
+      "erp_stack": { "SAP (all variants)": 0.55, "MS Dynamics 365": 0.07, "Oracle EBS": 0.07 },
+      "displacement_angle": "Lead with total cost of ownership and Salesforce-native integration advantages"
+    }
+  },
+
+  "loss_reasons": [
+    { "reason": "No Decision", "pct": 0.48, "root_cause": "Lack of urgency, weak champion, stalled initiative", "fix": "Establish executive sponsor early; tie to a business event (renewal, audit, M&A)" },
+    { "reason": "Competitive Loss", "pct": 0.13, "root_cause": "Competitor better positioned or longer relationship", "fix": "Leverage ROI data; identify PROS/DocuSign displacement opportunities" },
+    { "reason": "Not Qualified", "pct": 0.13, "root_cause": "Poor lead quality; wrong segment or size", "fix": "Apply ICP filter before building pipeline; disqualify early" },
+    { "reason": "Duplicate / Admin", "pct": 0.08, "root_cause": "Pipeline hygiene issue", "fix": "Clean CRM data; deduplicate at lead stage" },
+    { "reason": "Non-Competitive Loss", "pct": 0.08, "root_cause": "Budget, timeline, or internal reprioritization", "fix": "Multi-thread relationships; set next-step commitments at every stage" }
+  ],
+
+  "exclusions": [
+    "Companies under 200 employees or below $50M revenue",
+    "Accounts without Salesforce CRM",
+    "Transportation/Logistics (29% win rate), Energy/Oil/Utilities (31%), Retail/Restaurants (33%)",
+    "No executive sponsor identified (48% of losses are No Decision)",
+    "Startups and early-stage / pre-revenue companies"
+  ],
+
+  "quick_ref": {
+    "ideal": [
+      "Industry: Financial Services, Services & Consulting, Engineering & Construction, Federal Govt, or Healthcare",
+      "Revenue: $100M – $5B",
+      "Employees: 500 – 5,000",
+      "Tech: Salesforce CRM + SAP or Oracle ERP",
+      "Trigger: M&A, compliance audit, Salesforce expansion, new CLO/CFO",
+      "Buyer: CLO, VP Legal, VP Sales Ops, VP Finance",
+      "Product: CLM (high ACV) or Composer (high volume)"
+    ],
+    "pass": [
+      "Industry: Transportation/Logistics, Energy/Oil/Utilities, Retail/Restaurants",
+      "Under 200 employees or below $50M revenue",
+      "Not on Salesforce CRM",
+      "No identified executive champion",
+      "No clear business trigger or event",
+      "Early-stage or pre-revenue company",
+      "Budget not yet allocated or initiative deprioritized"
+    ]
+  }
+}

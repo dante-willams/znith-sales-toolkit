@@ -877,7 +877,7 @@ select option { background: var(--surf-2); }
 // Paste the knowledge brain content between the backticks when ready.
 // This is injected into every synthesis prompt automatically.
 // ─────────────────────────────────────────────────────────────────────────────
-const KNOWLEDGE_BRAIN = `
+let KNOWLEDGE_BRAIN = `
 === CONGA KNOWLEDGE BRAIN v1.0 ===
 Built from: rep field notes, competitive slide decks, product briefs, Dellwood/Palmetto deal context.
 Use this to generate account-specific, competitor-aware, stage-appropriate sales outputs.
@@ -1218,6 +1218,17 @@ Counter: Substance over marketing. "Every vendor is claiming AI leadership right
 
 [END OF KNOWLEDGE BRAIN v1.0 — GAPS TO FILL: CPQ competitive detail, AiMe specifics, RLM detail, contract cycle reduction stats, ROI benchmarks. Collect from enterprise team and CS. Add to knowledge-brain-v1.md file.]
 `;
+
+// Append FY2026 ICP data from shared source
+(async () => {
+  try {
+    const res  = await fetch('../shared/icp-data.json');
+    const data = await res.json();
+    KNOWLEDGE_BRAIN += '\n\n' + data.narrative;
+  } catch (e) {
+    console.error('Failed to load shared ICP data:', e);
+  }
+})();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // MODULE REGISTRY
