@@ -4,7 +4,7 @@
 <script src="/auth.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Win Room · Conga</title>
+<title>Conga Win Room</title>
 <link rel="stylesheet" href="../shared/znith-tokens.css">
 <style>
 :root{
@@ -29,20 +29,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .topbar-deal{display:flex;align-items:center;gap:10px;min-width:0;flex:1;}
 .topbar-company{font-family:var(--f-brand);font-size:15px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .topbar-stage{flex-shrink:0;padding:2px 9px;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;clip-path:var(--clip-sm);}
-.stage-discovery  {background:rgba(99,179,237,0.15);color:#63B3ED;}
+.stage-discovery  {background:rgba(99,179,237,0.15);color:var(--stage-discovery);}
 .stage-demo       {background:var(--amber-muted);color:var(--amber);}
-.stage-proposal   {background:rgba(167,139,250,0.15);color:#A78BFA;}
-.stage-negotiation{background:rgba(251,146,60,0.15);color:#FB923C;}
-.stage-closed_won {background:rgba(52,211,153,0.15);color:#34D399;}
+.stage-proposal   {background:rgba(167,139,250,0.15);color:var(--stage-proposal);}
+.stage-negotiation{background:rgba(251,146,60,0.15);color:var(--stage-negotiation);}
+.stage-closed_won {background:var(--green-muted);color:var(--stage-closed-won);}
 .stage-closed_lost{background:rgba(255,255,255,0.06);color:var(--tfaint);}
 .topbar-health{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:3px 10px;clip-path:var(--clip-sm);}
-.health-green{background:var(--green-muted);color:var(--green);}
-.health-yellow{background:var(--yellow-muted);color:var(--yellow);}
-.health-red{background:var(--red-muted);color:var(--red);}
+.health-green{background:var(--green-muted);color:var(--status-ok);}
+.health-yellow{background:var(--yellow-muted);color:var(--status-warn);}
+.health-red{background:var(--red-muted);color:var(--status-risk);}
 .health-dot{width:6px;height:6px;border-radius:50%;}
-.health-green .health-dot{background:var(--green);}
-.health-yellow .health-dot{background:var(--yellow);}
-.health-red .health-dot{background:var(--red);}
+.health-green .health-dot{background:var(--status-ok);}
+.health-yellow .health-dot{background:var(--status-warn);}
+.health-red .health-dot{background:var(--status-risk);}
 .topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0;}
 .btn-topbar{
   display:flex;align-items:center;gap:6px;
@@ -90,7 +90,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .synthesis-step{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--tmuted);}
 .synthesis-step svg{flex-shrink:0;}
 .synthesis-step.active{color:var(--text);}
-.synthesis-step.done{color:var(--green);}
+.synthesis-step.done{color:var(--status-ok);}
 .pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--amber);animation:pulse-anim 1.2s ease-in-out infinite;}
 @keyframes pulse-anim{0%,100%{opacity:0.3;transform:scale(0.8);}50%{opacity:1;transform:scale(1.2);}}
 
@@ -119,9 +119,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .gap-severity{
   width:4px;border-radius:2px;flex-shrink:0;align-self:stretch;
 }
-.sev-high{background:var(--red);}
-.sev-medium{background:var(--yellow);}
-.sev-low{background:var(--blue);}
+.sev-high{background:var(--status-risk);}
+.sev-medium{background:var(--status-warn);}
+.sev-low{background:var(--stage-discovery);}
 .gap-body{}
 .gap-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
 .gap-evidence{font-size:12px;color:var(--tmuted);margin-bottom:8px;line-height:1.5;}
@@ -192,9 +192,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 }
 .meddpicc-item:hover{border-color:var(--border-md);}
 .meddpicc-indicator{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.ind-green{background:var(--green);box-shadow:0 0 6px rgba(22,163,74,0.4);}
-.ind-yellow{background:var(--yellow);box-shadow:0 0 6px rgba(217,119,6,0.4);}
-.ind-red{background:var(--red);box-shadow:0 0 6px rgba(220,38,38,0.4);}
+.ind-green{background:var(--status-ok);box-shadow:var(--sh-ok);}
+.ind-yellow{background:var(--status-warn);box-shadow:var(--sh-warn);}
+.ind-red{background:var(--status-risk);box-shadow:var(--sh-risk);}
 .ind-unknown{background:var(--border-md);}
 .meddpicc-dim{flex:1;min-width:0;}
 .meddpicc-dim-label{font-size:11px;font-weight:600;color:var(--text);}
@@ -205,7 +205,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .md-detail{background:var(--surf-2);border:1px solid var(--border);border-top:none;padding:10px 12px;margin-bottom:2px;}
 .md-evidence{font-size:12px;color:var(--tmuted);line-height:1.55;white-space:pre-wrap;word-break:break-word;}
 .md-gaps{margin-top:8px;}
-.md-gap-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);display:block;margin-bottom:4px;}
+.md-gap-label{font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--status-risk);display:block;margin-bottom:4px;}
 .md-gap-item{font-size:11px;color:var(--tmuted);margin-bottom:3px;line-height:1.4;}
 .md-edit-link{display:inline-block;margin-top:8px;font-size:10px;font-weight:600;color:var(--amber);text-decoration:none;letter-spacing:0.04em;}
 .md-edit-link:hover{text-decoration:underline;}
@@ -223,7 +223,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .side-news-headline{font-size:12px;color:var(--text);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .side-news-meta{display:flex;align-items:center;gap:6px;margin-top:4px;}
 .side-news-source{font-size:10px;color:var(--tfaint);font-family:var(--f-mono);}
-.side-news-fresh{width:5px;height:5px;border-radius:50%;background:var(--green);box-shadow:0 0 4px rgba(22,163,74,0.5);flex-shrink:0;}
+.side-news-fresh{width:5px;height:5px;border-radius:50%;background:var(--status-ok);box-shadow:var(--sh-ok);flex-shrink:0;}
 .side-news-loading{font-size:11px;color:var(--tfaint);font-style:italic;}
 .side-news-viewall{font-size:10px;font-weight:600;color:var(--amber);text-decoration:none;letter-spacing:0.05em;display:inline-block;margin-top:8px;}
 .side-news-viewall:hover{text-decoration:underline;}
@@ -274,7 +274,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 <div class="topbar" id="topbar">
   <a href="../dashboard/" class="topbar-logo" title="Back to deals">
     <div class="topbar-logo-mark">
-      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#99f6e4">
+      <svg class="conga-mark" viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
         <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
       </svg>
     </div>
@@ -581,7 +581,7 @@ function renderMainNews(items) {
     const dateStr = n.date ? new Date(n.date).toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }) : '';
     return `<div class="news-item">
       <div class="news-headline" style="display:flex;align-items:center;gap:8px;">
-        ${isFresh ? '<span style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 4px rgba(22,163,74,0.5);flex-shrink:0;display:inline-block;"></span>' : ''}
+        ${isFresh ? '<span style="width:6px;height:6px;border-radius:50%;background:var(--status-ok);box-shadow:var(--sh-ok);flex-shrink:0;display:inline-block;"></span>' : ''}
         ${n.url ? `<a href="${n.url}" target="_blank" style="color:var(--text);text-decoration:none;">${n.headline||''}</a>` : (n.headline||'')}
       </div>
       ${n.summary ? `<div style="font-size:12px;color:var(--tmuted);margin-top:4px;line-height:1.5;">${n.summary}</div>` : ''}
@@ -880,7 +880,7 @@ function renderSidebar() {
       : null;
     docInfo.innerHTML = `
       <div style="font-size:12px;color:var(--text);margin-bottom:4px;">
-        <span style="color:var(--green);">●</span> ${dc.doc_count} doc${dc.doc_count !== 1 ? 's' : ''} condensed
+        <span style="color:var(--status-ok);">●</span> ${dc.doc_count} doc${dc.doc_count !== 1 ? 's' : ''} condensed
       </div>
       <div style="font-size:11px;color:var(--tfaint);">${(dc.summary.length/1000).toFixed(1)}k chars · ${age !== null ? (age < 1 ? 'just now' : age + 'h ago') : 'unknown time'}</div>
       <div style="font-size:11px;color:var(--tfaint);margin-top:4px;">${(dc.doc_names||[]).join(', ')}</div>`;
@@ -890,7 +890,7 @@ function renderSidebar() {
       docSec.style.display = 'block';
       docInfo.innerHTML = `
         <div style="font-size:12px;color:var(--text);margin-bottom:4px;">
-          <span style="color:var(--yellow);">●</span> ${rawDocs.length} raw doc${rawDocs.length !== 1 ? 's' : ''}
+          <span style="color:var(--status-warn);">●</span> ${rawDocs.length} raw doc${rawDocs.length !== 1 ? 's' : ''}
         </div>
         <div style="font-size:11px;color:var(--tfaint);">Re-run Account Brief with uploads to generate a condensed summary</div>`;
     } else {
@@ -934,7 +934,7 @@ function renderMEDDPICC() {
 
     const indClass   = `ind-${status}`;
     const scoreStr   = score !== null ? score : '—';
-    const scoreColor = status==='green'?'var(--green)':status==='red'?'var(--red)':status==='yellow'?'var(--yellow)':'var(--tfaint)';
+    const scoreColor = status==='green'?'var(--status-ok)':status==='red'?'var(--status-risk)':status==='yellow'?'var(--status-warn)':'var(--tfaint)';
     const shortNote  = evidence.length > 55 ? evidence.slice(0, 55) + '…' : evidence;
     const gapsHtml   = gaps.length
       ? `<div class="md-gaps"><span class="md-gap-label">Gaps</span>${gaps.map(g=>`<div class="md-gap-item">• ${g}</div>`).join('')}</div>`
