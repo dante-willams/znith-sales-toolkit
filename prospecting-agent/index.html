@@ -1442,12 +1442,23 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
               });
             }
 
-            // Find header row: first row with 3+ non-empty string cells
+            // Find header row: prefer a row containing "account name" or "company name",
+            // fall back to first row with 3+ non-empty string cells
+            const NAME_CANDIDATES = ['account name', 'company name', 'company', 'organization', 'name'];
             let headerIdx = 0;
-            for (let i = 0; i < Math.min(25, rows.length); i++) {
-              const nonEmpty = rows[i].filter(c => c !== '' && c !== null && c !== undefined);
-              const strCells = nonEmpty.filter(c => isNaN(Number(c)));
-              if (strCells.length >= 3) { headerIdx = i; break; }
+            let foundNameHeader = false;
+            for (let i = 0; i < Math.min(30, rows.length); i++) {
+              const lower = rows[i].map(c => String(c || '').toLowerCase());
+              if (NAME_CANDIDATES.some(n => lower.some(h => h.includes(n)))) {
+                headerIdx = i; foundNameHeader = true; break;
+              }
+            }
+            if (!foundNameHeader) {
+              for (let i = 0; i < Math.min(30, rows.length); i++) {
+                const nonEmpty = rows[i].filter(c => c !== '' && c !== null && c !== undefined);
+                const strCells = nonEmpty.filter(c => isNaN(Number(c)));
+                if (strCells.length >= 3) { headerIdx = i; break; }
+              }
             }
             const headers = rows[headerIdx].map(h => String(h || ''));
             const dataRows = rows.slice(headerIdx + 1);
