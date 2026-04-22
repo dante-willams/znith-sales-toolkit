@@ -3684,20 +3684,27 @@ function readFile(file, doc) {
     reader.onerror = () => { doc.status = 'error'; renderFileChips(); };
     reader.readAsText(file);
   } else if (['docx','doc'].includes(ext)) {
-    // Read as ArrayBuffer, extract raw text from XML inside the zip
+    // Read as ArrayBuffer, unzip with JSZip and parse word/document.xml properly
     const reader = new FileReader();
-    reader.onload = e => {
+    reader.onload = async e => {
       try {
-        // Basic extraction: find w:t tags in word/document.xml content
-        const bytes = new Uint8Array(e.target.result);
-        let str = '';
-        for (let i = 0; i < bytes.length; i++) {
-          if (bytes[i] >= 32 && bytes[i] < 127) str += String.fromCharCode(bytes[i]);
+        if (!window.JSZip) {
+          await new Promise((res, rej) => {
+            const s = document.createElement('script');
+            s.src = 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js';
+            s.onload = res; s.onerror = rej;
+            document.head.appendChild(s);
+          });
         }
-        // Extract text between XML tags (crude but catches most content)
-        const matches = str.match(/(?<=\>)[A-Za-z0-9 .,;:'"!?()\-\/\n]{4,}(?=\<)/g) || [];
-        doc.textContent = matches.join(' ').replace(/\s+/g,' ').slice(0, 8000);
-        doc.status = doc.textContent.length > 20 ? 'ready' : 'error';
+        const zip = await window.JSZip.loadAsync(e.target.result);
+        const xmlFile = zip.file('word/document.xml');
+        if (!xmlFile) throw new Error('No document.xml');
+        const xml = await xmlFile.async('string');
+        // Extract text from w:t elements (the real Word text nodes)
+        const matches = xml.match(/<w:t[^>]*>([^<]*)<\/w:t>/g) || [];
+        const text = matches.map(m => m.replace(/<[^>]+>/g, '')).join(' ').replace(/\s+/g, ' ').trim().slice(0, 8000);
+        doc.textContent = text;
+        doc.status = text.length > 5 ? 'ready' : 'error';
       } catch(ex) { doc.status = 'error'; }
       renderFileChips();
     };
