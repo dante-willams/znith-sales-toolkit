@@ -18,33 +18,18 @@
     --violet-glow:  rgba(139,92,246,0.28);
     --violet-muted: rgba(139,92,246,0.12);
 
-    /* Legacy aliases (used throughout CSS) */
+    /* App-specific aliases */
     --navy:        #0e0d0b;
     --navy-mid:    #181714;
     --navy-light:  #181714;
     --navy-border: rgba(255,255,255,0.07);
-    --gold:        #8B5CF6;
-    --gold-light:  #a78bfa;
-    --gold-dim:    rgba(139,92,246,0.14);
-    --gold-glow:   rgba(139,92,246,0.08);
-    --white:       rgba(255,255,255,0.9);
-    --white-dim:   rgba(255,255,255,0.5);
-    --white-faint: rgba(255,255,255,0.06);
-    --teal:        #0D9488;
-    --teal-dim:    rgba(13,148,136,0.14);
-    --red:         #ff8fa3;
-    --red-dim:     rgba(255,143,163,0.12);
-    --purple:      #c4b5fd;
-    --purple-dim:  rgba(196,181,253,0.13);
-    --green:       #7ee8a2;
-    --green-dim:   rgba(126,232,162,0.10);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     background: var(--navy);
-    color: var(--white);
+    color: var(--text);
     font-family: 'Barlow', sans-serif;
     font-weight: 400;
     min-height: 100vh;
@@ -122,7 +107,7 @@
     font-weight: 500;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: var(--white-dim);
+    color: var(--tmuted);
     border: 1px solid transparent;
     transition: all 0.3s ease;
     cursor: default;
@@ -135,9 +120,9 @@
   }
 
   .step-pill.done {
-    color: var(--teal);
+    color: var(--status-ok);
     border-color: rgba(13,148,136,0.25);
-    background: var(--teal-dim);
+    background: rgba(13,148,136,0.14);
   }
 
   .step-dot {
@@ -170,8 +155,8 @@
   }
 
   @keyframes glow-pulse {
-    0%,100% { box-shadow: 0 0 5px rgba(139,92,246,0.4); }
-    50%      { box-shadow: 0 0 12px rgba(139,92,246,0.7); }
+    0%,100% { box-shadow: 0 0 5px var(--violet-glow); }
+    50%      { box-shadow: 0 0 12px var(--violet-glow); }
   }
 
   /* ── TYPOGRAPHY ── */
@@ -190,13 +175,13 @@
     font-size: 36px;
     font-weight: 700;
     line-height: 1.15;
-    color: var(--white);
+    color: var(--text);
     margin-bottom: 12px;
   }
 
   .phase-subtitle {
     font-size: 15px;
-    color: var(--white-dim);
+    color: var(--tmuted);
     line-height: 1.65;
     max-width: 600px;
     margin-bottom: 40px;
@@ -221,7 +206,7 @@
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--gold);
+    color: var(--violet);
     margin-bottom: 8px;
     display: flex; align-items: center; gap: 8px;
   }
@@ -232,7 +217,7 @@
 
   .card-hint {
     font-size: 13px;
-    color: var(--white-faint);
+    color: rgba(255,255,255,0.06);
     margin-bottom: 14px;
     line-height: 1.5;
   }
@@ -245,7 +230,7 @@
     background: rgba(34,32,24,0.7);
     border: 1px solid var(--navy-border);
     clip-path: var(--clip-sm);
-    color: var(--white);
+    color: var(--text);
     font-family: 'Barlow', sans-serif;
     font-size: 14px;
     padding: 12px 16px;
@@ -284,11 +269,11 @@
   .tag {
     display: flex; align-items: center; gap: 6px;
     padding: 5px 12px;
-    background: var(--gold-dim);
+    background: var(--violet-muted);
     border: 1px solid rgba(139,92,246,0.25);
     clip-path: var(--clip-sm);
     font-size: 12px;
-    color: var(--gold-light);
+    color: var(--stage-proposal);
     cursor: pointer;
     transition: all 0.2s;
     user-select: none;
@@ -336,7 +321,7 @@
     display: inline-flex; align-items: center; gap: 10px;
     padding: 12px 24px;
     background: transparent;
-    color: var(--white-dim);
+    color: var(--tmuted);
     border: 1px solid var(--navy-border);
     clip-path: var(--clip-sm);
     font-family: 'Barlow', sans-serif;
@@ -348,8 +333,8 @@
 
   .btn-secondary:hover {
     border-color: rgba(240,244,255,0.3);
-    color: var(--white);
-    background: var(--white-faint);
+    color: var(--text);
+    background: rgba(255,255,255,0.06);
   }
 
   .btn-row {
@@ -379,7 +364,7 @@
 
   .research-status {
     font-size: 14px;
-    color: var(--white-dim);
+    color: var(--tmuted);
     min-height: 24px;
     transition: all 0.3s;
   }
@@ -396,8 +381,8 @@
   }
 
   .log-line { padding: 2px 0; }
-  .log-line.done { color: var(--teal); }
-  .log-line.active { color: var(--gold-light); }
+  .log-line.done { color: var(--status-ok); }
+  .log-line.active { color: var(--stage-proposal); }
 
   /* ── SOURCES BOX ── */
   .sources-grid {
@@ -420,7 +405,7 @@
 
   .source-title {
     font-weight: 600;
-    color: var(--white);
+    color: var(--text);
     margin-bottom: 4px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -429,7 +414,7 @@
   }
 
   .source-url {
-    color: var(--teal);
+    color: var(--status-ok);
     text-decoration: none;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
@@ -446,7 +431,7 @@
     border: 1px solid var(--navy-border);
     border-radius: 16px 16px 0 0;
     padding: 32px 40px;
-    border-bottom: 2px solid var(--gold);
+    border-bottom: 2px solid var(--violet);
     position: relative;
     overflow: hidden;
   }
@@ -463,17 +448,17 @@
     font-family: 'Epilogue', sans-serif;
     font-size: 28px;
     font-weight: 700;
-    color: var(--white);
+    color: var(--text);
   }
 
   .vm-meta {
     font-size: 13px;
-    color: var(--white-dim);
+    color: var(--tmuted);
     margin-top: 6px;
   }
 
   .vm-meta span {
-    color: var(--gold);
+    color: var(--violet);
     font-weight: 600;
   }
 
@@ -505,21 +490,21 @@
     flex-shrink: 0;
   }
 
-  .vm-section-num.gold { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(229,168,58,0.25); }
-  .vm-section-num.teal { background: var(--teal-dim); color: var(--teal); border: 1px solid rgba(61,224,200,0.25); }
-  .vm-section-num.purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(167,139,250,0.25); }
-  .vm-section-num.green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(74,222,128,0.25); }
+  .vm-section-num.gold { background: var(--violet-muted); color: var(--violet); border: 1px solid rgba(229,168,58,0.25); }
+  .vm-section-num.teal { background: rgba(13,148,136,0.14); color: var(--status-ok); border: 1px solid rgba(61,224,200,0.25); }
+  .vm-section-num.purple { background: rgba(196,181,253,0.13); color: var(--violet); border: 1px solid rgba(167,139,250,0.25); }
+  .vm-section-num.green { background: rgba(52,211,153,0.12); color: var(--status-ok); border: 1px solid rgba(74,222,128,0.25); }
 
   .vm-section-title {
     font-family: 'Epilogue', sans-serif;
     font-size: 18px;
     font-weight: 600;
-    color: var(--white);
+    color: var(--text);
   }
 
   .vm-section-sub {
     font-size: 12px;
-    color: var(--white-dim);
+    color: var(--tmuted);
     margin-top: 2px;
   }
 
@@ -548,11 +533,11 @@
   }
 
   .initiative-card.c1 { border-color: rgba(229,168,58,0.2); background: rgba(229,168,58,0.06); }
-  .initiative-card.c1::before { background: var(--gold); }
+  .initiative-card.c1::before { background: var(--violet); }
   .initiative-card.c2 { border-color: rgba(61,224,200,0.2); background: rgba(61,224,200,0.04); }
-  .initiative-card.c2::before { background: var(--teal); }
+  .initiative-card.c2::before { background: var(--status-ok); }
   .initiative-card.c3 { border-color: rgba(167,139,250,0.2); background: rgba(167,139,250,0.04); }
-  .initiative-card.c3::before { background: var(--purple); }
+  .initiative-card.c3::before { background: var(--violet); }
 
   .initiative-label {
     font-size: 10px;
@@ -562,35 +547,35 @@
     margin-bottom: 8px;
   }
 
-  .c1 .initiative-label { color: var(--gold); }
-  .c2 .initiative-label { color: var(--teal); }
-  .c3 .initiative-label { color: var(--purple); }
+  .c1 .initiative-label { color: var(--violet); }
+  .c2 .initiative-label { color: var(--status-ok); }
+  .c3 .initiative-label { color: var(--violet); }
 
   .initiative-text {
     font-size: 13px;
-    color: var(--white);
+    color: var(--text);
     line-height: 1.55;
   }
 
   /* Prose content */
   .vm-prose {
     font-size: 13.5px;
-    color: var(--white-dim);
+    color: var(--tmuted);
     line-height: 1.75;
   }
 
   .vm-prose strong {
-    color: var(--white);
+    color: var(--text);
     font-weight: 600;
   }
 
   .vm-prose .highlight {
-    color: var(--gold-light);
+    color: var(--stage-proposal);
     font-weight: 600;
   }
 
-  .vm-prose .teal-text { color: var(--teal); font-weight: 500; }
-  .vm-prose .purple-text { color: var(--purple); font-weight: 500; }
+  .vm-prose .teal-text { color: var(--status-ok); font-weight: 500; }
+  .vm-prose .purple-text { color: var(--violet); font-weight: 500; }
 
   /* Metric chips */
   .metric-row {
@@ -607,21 +592,21 @@
   }
 
   .metric-chip.current {
-    background: var(--red-dim);
+    background: rgba(255,143,163,0.12);
     border: 1px solid rgba(255,107,107,0.2);
-    color: var(--red);
+    color: var(--status-risk);
   }
 
   .metric-chip.target {
-    background: var(--green-dim);
+    background: rgba(52,211,153,0.12);
     border: 1px solid rgba(74,222,128,0.2);
-    color: var(--green);
+    color: var(--status-ok);
   }
 
   .metric-chip.value {
-    background: var(--gold-dim);
+    background: var(--violet-muted);
     border: 1px solid rgba(229,168,58,0.2);
-    color: var(--gold-light);
+    color: var(--stage-proposal);
   }
 
   /* Timeline */
@@ -635,7 +620,7 @@
     position: absolute;
     left: 9px; top: 8px; bottom: 8px;
     width: 2px;
-    background: linear-gradient(to bottom, var(--gold), var(--teal), var(--purple), var(--green));
+    background: linear-gradient(to bottom, var(--violet), var(--status-ok), var(--violet), var(--status-ok));
     border-radius: 2px;
   }
 
@@ -654,30 +639,30 @@
     background: var(--navy-light);
   }
 
-  .tl-item:nth-child(1)::before { border-color: var(--gold); }
-  .tl-item:nth-child(2)::before { border-color: var(--teal); }
-  .tl-item:nth-child(3)::before { border-color: var(--purple); }
-  .tl-item:nth-child(4)::before { border-color: var(--green); }
+  .tl-item:nth-child(1)::before { border-color: var(--violet); }
+  .tl-item:nth-child(2)::before { border-color: var(--status-ok); }
+  .tl-item:nth-child(3)::before { border-color: var(--violet); }
+  .tl-item:nth-child(4)::before { border-color: var(--status-ok); }
 
   .tl-phase {
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--white-dim);
+    color: var(--tmuted);
     margin-bottom: 4px;
   }
 
   .tl-title {
     font-size: 14px;
     font-weight: 600;
-    color: var(--white);
+    color: var(--text);
     margin-bottom: 6px;
   }
 
   .tl-body {
     font-size: 13px;
-    color: var(--white-dim);
+    color: var(--tmuted);
     line-height: 1.6;
   }
 
@@ -685,11 +670,11 @@
   .proof-tag {
     display: inline-block;
     padding: 3px 10px;
-    background: var(--teal-dim);
+    background: rgba(13,148,136,0.14);
     border: 1px solid rgba(13,148,136,0.25);
     clip-path: var(--clip-sm);
     font-size: 11px;
-    color: var(--teal);
+    color: var(--status-ok);
     font-weight: 600;
     margin-right: 6px;
     margin-bottom: 6px;
@@ -707,7 +692,7 @@
     font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--white-dim);
+    color: var(--tmuted);
     margin-bottom: 12px;
   }
 
@@ -734,18 +719,18 @@
 
   .copy-toolbar-label {
     font-size: 12px;
-    color: var(--white-dim);
+    color: var(--tmuted);
     white-space: nowrap;
   }
 
   /* ── ERROR ── */
   .error-box {
-    background: var(--red-dim);
+    background: rgba(255,143,163,0.12);
     border: 1px solid rgba(255,107,107,0.3);
     clip-path: var(--clip-sm);
     padding: 16px 20px;
     font-size: 13px;
-    color: var(--red);
+    color: var(--status-risk);
     margin-top: 16px;
     display: none;
   }
@@ -777,8 +762,8 @@
     display: flex; align-items: center; justify-content: center;
   }
   #dropZone:hover, #dropZone.drag-over {
-    border-color: var(--gold);
-    background: var(--gold-glow);
+    border-color: var(--violet);
+    background: var(--violet-glow);
   }
   #dropZone.drag-over { border-style: solid; }
   #dropZone.has-files {
@@ -801,8 +786,8 @@
     transition: background 0.2s;
   }
   #dropZone:hover .drop-icon, #dropZone.drag-over .drop-icon { background: rgba(139,92,246,0.25); }
-  .drop-title { font-size: 14px; font-weight: 600; color: var(--white); }
-  .drop-sub { font-size: 12px; color: var(--white-dim); }
+  .drop-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .drop-sub { font-size: 12px; color: var(--tmuted); }
 
   /* Drop zone with files loaded: shows add-more prompt inline */
   #dropZone.has-files #dropZoneContent {
@@ -815,7 +800,7 @@
     flex-shrink: 0;
   }
   #dropZone.has-files .drop-icon svg { width: 16px; height: 16px; }
-  #dropZone.has-files .drop-title { font-size: 12px; font-weight: 500; color: var(--white-dim); }
+  #dropZone.has-files .drop-title { font-size: 12px; font-weight: 500; color: var(--tmuted); }
 
   /* File chip list below the drop zone */
   #fileChipList {
@@ -848,15 +833,15 @@
 
   .file-chip-icon { font-size: 18px; flex-shrink: 0; }
   .file-chip-name {
-    font-size: 13px; font-weight: 600; color: var(--white);
+    font-size: 13px; font-weight: 600; color: var(--text);
     flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
   .file-chip-size {
-    font-size: 11px; color: var(--teal); font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px; color: var(--status-ok); font-family: 'IBM Plex Mono', monospace;
     white-space: nowrap; flex-shrink: 0;
   }
   .file-chip-status {
-    font-size: 11px; color: var(--white-dim);
+    font-size: 11px; color: var(--tmuted);
     white-space: nowrap; flex-shrink: 0;
   }
   .file-chip-remove {
@@ -866,7 +851,7 @@
     cursor: pointer; display: flex; align-items: center; justify-content: center;
     flex-shrink: 0; transition: color 0.2s; border-radius: 4px; padding: 0;
   }
-  .file-chip-remove:hover { color: var(--red); background: var(--red-dim); }
+  .file-chip-remove:hover { color: var(--status-risk); background: rgba(255,143,163,0.12); }
 
   .notes-divider {
     display: flex; align-items: center; gap: 12px;
@@ -922,18 +907,18 @@
   }
   .chat-title {
     display: flex; align-items: center; gap: 8px;
-    font-size: 12px; font-weight: 600; color: var(--gold);
+    font-size: 12px; font-weight: 600; color: var(--violet);
     letter-spacing: 0.04em; text-transform: uppercase;
   }
   .chat-toggle {
     background: none; border: none; cursor: pointer;
-    color: var(--white-dim); padding: 4px;
+    color: var(--tmuted); padding: 4px;
     display: flex; align-items: center;
     border-radius: 4px; transition: color 0.2s;
   }
-  .chat-toggle:hover { color: var(--white); }
+  .chat-toggle:hover { color: var(--text); }
   .chat-hint {
-    font-size: 11px; color: var(--white-dim);
+    font-size: 11px; color: var(--tmuted);
     padding: 10px 18px; border-bottom: 1px solid var(--navy-border);
     flex-shrink: 0; line-height: 1.5;
   }
@@ -951,29 +936,29 @@
   .chat-msg.user {
     background: rgba(139,92,246,0.15);
     border: 1px solid rgba(139,92,246,0.25);
-    color: var(--white);
+    color: var(--text);
     align-self: flex-end;
     max-width: 88%;
   }
   .chat-msg.assistant {
     background: var(--navy);
     border: 1px solid var(--navy-border);
-    color: var(--white-dim);
+    color: var(--tmuted);
     align-self: flex-start;
   }
   .chat-msg.assistant a {
-    color: var(--gold-light); text-decoration: underline;
+    color: var(--stage-proposal); text-decoration: underline;
   }
   .chat-msg.thinking {
     background: var(--navy); border: 1px solid var(--navy-border);
-    color: var(--white-dim); align-self: flex-start;
+    color: var(--tmuted); align-self: flex-start;
     font-style: italic; opacity: 0.7;
   }
   .chat-edit-pill {
     display: inline-flex; align-items: center; gap: 5px;
     background: rgba(74,222,128,0.1);
     border: 1px solid rgba(74,222,128,0.25);
-    color: var(--green); clip-path: var(--clip-sm);
+    color: var(--status-ok); clip-path: var(--clip-sm);
     font-size: 10px; font-weight: 600;
     padding: 2px 8px; margin-top: 6px;
     letter-spacing: 0.04em;
@@ -988,14 +973,14 @@
   .chat-input {
     flex: 1; background: var(--navy-light);
     border: 1px solid var(--navy-border);
-    clip-path: var(--clip-sm); color: var(--white);
+    clip-path: var(--clip-sm); color: var(--text);
     font-family: 'Barlow', sans-serif;
     font-size: 12.5px; padding: 9px 12px;
     outline: none; resize: none; line-height: 1.5;
     transition: border-color 0.2s;
     min-height: 40px; max-height: 120px;
   }
-  .chat-input:focus { border-color: var(--gold); }
+  .chat-input:focus { border-color: var(--violet); }
   .chat-send {
     background: var(--amber); border: none;
     clip-path: var(--clip-sm);
@@ -1034,10 +1019,10 @@
     font-size: 12px; font-weight: 500;
     background: var(--navy-light);
     border: 1px solid var(--navy-border);
-    color: var(--white-dim);
+    color: var(--tmuted);
     cursor: pointer; transition: all 0.2s; user-select: none;
   }
-  .stage-pill:hover { border-color: rgba(139,92,246,0.4); color: var(--white); }
+  .stage-pill:hover { border-color: rgba(139,92,246,0.4); color: var(--text); }
   .stage-pill.selected {
     background: var(--amber);
     border-color: var(--amber);
@@ -1046,7 +1031,7 @@
   }
   .maps-tab { cursor: pointer; gap: 7px; }
   .maps-tab:hover { color: var(--amber); border-color: var(--amber-muted); background: rgba(229,168,58,0.06); }
-  .maps-tab.active-tab { color: var(--white); border-color: rgba(255,255,255,0.15); background: var(--white-faint); }
+  .maps-tab.active-tab { color: var(--text); border-color: rgba(255,255,255,0.15); background: rgba(255,255,255,0.06); }
   .maps-count {
     background: var(--amber); color: #000;
     font-size: 10px; font-weight: 700; padding: 1px 6px;
@@ -1062,7 +1047,7 @@
   }
   .export-toolbar-label {
     font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--white-dim); white-space: nowrap;
+    text-transform: uppercase; color: var(--tmuted); white-space: nowrap;
   }
   .export-btn-group { display: flex; gap: 8px; flex-wrap: wrap; flex: 1; }
   .btn-export {
@@ -1071,13 +1056,13 @@
     font-family: 'Barlow', sans-serif; font-size: 13px; font-weight: 600;
     cursor: pointer; transition: all 0.2s; border: 1px solid;
   }
-  .btn-word { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.4); color: var(--gold-light); }
+  .btn-word { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.4); color: var(--stage-proposal); }
   .btn-word:hover { background: rgba(139,92,246,0.28); }
-  .btn-pdf { background: rgba(255,143,163,0.1); border-color: rgba(255,143,163,0.3); color: var(--red); }
+  .btn-pdf { background: rgba(255,143,163,0.1); border-color: rgba(255,143,163,0.3); color: var(--status-risk); }
   .btn-pdf:hover { background: rgba(255,143,163,0.2); }
-  .btn-copy { background: var(--white-faint); border-color: var(--navy-border); color: var(--white-dim); }
-  .btn-copy:hover { background: rgba(244,240,255,0.15); color: var(--white); }
-  .btn-edit { background: rgba(126,232,162,0.08); border-color: rgba(126,232,162,0.25); color: var(--green); }
+  .btn-copy { background: rgba(255,255,255,0.06); border-color: var(--navy-border); color: var(--tmuted); }
+  .btn-copy:hover { background: rgba(244,240,255,0.15); color: var(--text); }
+  .btn-edit { background: rgba(126,232,162,0.08); border-color: rgba(126,232,162,0.25); color: var(--status-ok); }
   .btn-edit:hover { background: rgba(126,232,162,0.18); }
 
   /* ── EDIT FORM ── */
@@ -1095,7 +1080,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-weight: 700; flex-shrink: 0;
   }
-  .edit-block-title { font-size: 14px; font-weight: 600; color: var(--white); }
+  .edit-block-title { font-size: 14px; font-weight: 600; color: var(--text); }
   .edit-fields-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
   }
@@ -1104,11 +1089,11 @@
   .edit-field.full-width { grid-column: 1 / -1; }
   .edit-field-label {
     font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--white-dim);
+    text-transform: uppercase; color: var(--tmuted);
   }
   .edit-field input, .edit-field textarea {
     background: rgba(34,32,24,0.5); border: 1px solid var(--navy-border);
-    clip-path: var(--clip-sm); color: var(--white); font-family: 'Barlow', sans-serif;
+    clip-path: var(--clip-sm); color: var(--text); font-family: 'Barlow', sans-serif;
     font-size: 13px; padding: 9px 12px; outline: none;
     transition: border-color 0.2s; resize: vertical;
   }
@@ -1117,7 +1102,7 @@
   }
   .edit-section-header {
     font-size: 10px; font-weight: 600; letter-spacing: 0.12em;
-    text-transform: uppercase; color: var(--gold);
+    text-transform: uppercase; color: var(--violet);
     margin: 18px 0 12px; padding-bottom: 6px;
     border-bottom: 1px solid rgba(139,92,246,0.15);
   }
@@ -1143,23 +1128,23 @@
   .saved-map-card:hover { border-color: rgba(139,92,246,0.4); }
   .saved-map-icon {
     width: 40px; height: 40px; flex-shrink: 0;
-    background: var(--gold-dim); border: 1px solid rgba(139,92,246,0.3);
+    background: var(--violet-muted); border: 1px solid rgba(139,92,246,0.3);
     clip-path: var(--clip-sm); display: flex; align-items: center; justify-content: center;
   }
   .saved-map-info { flex: 1; min-width: 0; }
-  .saved-map-company { font-size: 15px; font-weight: 600; color: var(--white); }
-  .saved-map-meta { font-size: 12px; color: var(--white-dim); margin-top: 3px; }
+  .saved-map-company { font-size: 15px; font-weight: 600; color: var(--text); }
+  .saved-map-meta { font-size: 12px; color: var(--tmuted); margin-top: 3px; }
   .saved-map-actions { display: flex; gap: 8px; flex-shrink: 0; }
   .saved-map-btn {
     padding: 7px 16px; clip-path: var(--clip-sm); font-size: 12px; font-weight: 600;
     cursor: pointer; border: 1px solid; font-family: 'Barlow', sans-serif; transition: all 0.2s;
   }
-  .saved-map-btn-load { background: var(--gold-dim); border-color: rgba(139,92,246,0.3); color: var(--gold-light); }
+  .saved-map-btn-load { background: var(--violet-muted); border-color: rgba(139,92,246,0.3); color: var(--stage-proposal); }
   .saved-map-btn-load:hover { background: rgba(139,92,246,0.25); }
-  .saved-map-btn-delete { background: transparent; border-color: var(--navy-border); color: var(--white-dim); }
-  .saved-map-btn-delete:hover { border-color: rgba(255,143,163,0.4); color: var(--red); }
+  .saved-map-btn-delete { background: transparent; border-color: var(--navy-border); color: var(--tmuted); }
+  .saved-map-btn-delete:hover { border-color: rgba(255,143,163,0.4); color: var(--status-risk); }
   .no-saved-maps {
-    text-align: center; padding: 60px 24px; color: var(--white-dim); font-size: 14px;
+    text-align: center; padding: 60px 24px; color: var(--tmuted); font-size: 14px;
     background: var(--navy-light); border: 1px solid var(--navy-border); clip-path: var(--clip-lg);
   }
   .no-saved-maps svg { display: block; margin: 0 auto 16px; opacity: 0.3; }
@@ -1186,6 +1171,10 @@
     .export-toolbar { flex-direction: column; align-items: flex-start; }
     .btn-save-map { margin-left: 0; }
   }
+  .znith-footer{position:fixed;bottom:0;left:0;right:0;z-index:90;height:34px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:var(--surf);border-top:2px solid var(--violet);}
+  .znith-wordmark{display:flex;align-items:center;gap:1px;font-family:var(--f-brand);font-size:12px;font-weight:800;line-height:1;}
+  .znith-footer-meta{display:flex;align-items:center;gap:8px;}
+  .znith-footer-pip{width:4px;height:4px;border-radius:50%;background:var(--violet);box-shadow:0 0 6px var(--violet-glow);}
 </style>
 </head>
 <body>
@@ -1195,8 +1184,8 @@
   <div class="header-inner">
   <div class="header-logo">
     <div class="logo-mark">
-      <svg viewBox="0 0 1039.041 1080" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
-        <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z" fill="#8B5CF6"/>
+      <svg class="conga-mark" viewBox="0 0 1039.041 1080" width="18" height="18" xmlns="http://www.w3.org/2000/svg">
+        <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z" fill="currentColor"/>
       </svg>
     </div>
     <div class="logo-text">
@@ -1259,7 +1248,7 @@
       <div class="card">
         <div class="card-label">
           <span class="card-label-icon">📊</span> Deal Stage
-          <span style="font-weight:400;color:var(--white-dim);text-transform:none;letter-spacing:0">(optional — shapes MSP timeline and output framing)</span>
+          <span style="font-weight:400;color:var(--tmuted);text-transform:none;letter-spacing:0">(optional — shapes MSP timeline and output framing)</span>
         </div>
         <div class="card-hint">Your Salesforce deal stage. Drives how metrics, proof points, and next steps are framed.</div>
         <div class="stage-pills" id="stagePills">
@@ -1274,7 +1263,7 @@
       <div class="card">
         <div class="card-label">
           <span class="card-label-icon">⚡</span> Conga Products in Scope
-          <span style="font-weight:400;color:var(--white-dim);text-transform:none;letter-spacing:0">(optional)</span>
+          <span style="font-weight:400;color:var(--tmuted);text-transform:none;letter-spacing:0">(optional)</span>
         </div>
         <div class="card-hint">Select products being considered. Focuses capabilities and proof points on what's relevant.</div>
         <div class="tag-container" id="productTags">
@@ -1321,7 +1310,7 @@
     </div>
 
     <div class="card">
-      <div class="card-label"><span class="card-label-icon">🎯</span> Current Tools / Situation <span style="font-weight:400;color:var(--white-dim);text-transform:none;letter-spacing:0">(optional)</span></div>
+      <div class="card-label"><span class="card-label-icon">🎯</span> Current Tools / Situation <span style="font-weight:400;color:var(--tmuted);text-transform:none;letter-spacing:0">(optional)</span></div>
       <div class="card-hint">What are they using today? Any known Salesforce usage, ERP, or CLM tools?</div>
       <input type="text" id="currentTools" placeholder="e.g. Salesforce CRM, manual Word contracts, DocuSign for e-sig only" />
     </div>
@@ -1339,7 +1328,7 @@
   <!-- ══ PHASE 2: RESEARCH ══ -->
   <div class="phase" id="phase-2">
     <p class="phase-eyebrow">Step 02 — Intelligence Gathering</p>
-    <h1 class="phase-title">Researching <span id="researchCompanyName" style="color:var(--gold)">your account</span>.</h1>
+    <h1 class="phase-title">Researching <span id="researchCompanyName" style="color:var(--violet)">your account</span>.</h1>
     <p class="phase-subtitle">Scanning earnings calls, press releases, industry benchmarks, and recent news to ground your Value Map in facts.</p>
 
     <div class="research-container">
@@ -1354,7 +1343,7 @@
   <!-- ══ PHASE 3: SYNTHESIS ══ -->
   <div class="phase" id="phase-3">
     <p class="phase-eyebrow">Step 03 — Value Map Synthesis</p>
-    <h1 class="phase-title">Building your <span style="color:var(--gold)">Value Map.</span></h1>
+    <h1 class="phase-title">Building your <span style="color:var(--violet)">Value Map.</span></h1>
     <p class="phase-subtitle">Combining your discovery inputs with research findings to construct all four sections. This takes 20–40 seconds.</p>
 
     <div class="research-container">
@@ -1431,7 +1420,7 @@
   <!-- ══ PHASE 6: EDIT VALUE MAP ══ -->
   <div class="phase" id="phase-6">
     <p class="phase-eyebrow">Edit Mode</p>
-    <h1 class="phase-title">Refine your <span style="color:var(--gold)">Value Map.</span></h1>
+    <h1 class="phase-title">Refine your <span style="color:var(--violet)">Value Map.</span></h1>
     <p class="phase-subtitle">Edit any field below. Changes apply instantly when you click Apply Edits.</p>
     <div id="edit-form-container"></div>
     <div class="btn-row" style="margin-top: 24px">
@@ -1447,7 +1436,7 @@
   </div>
 
 <!-- Copy confirmation toast -->
-<div id="toast" style="position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--teal);color:var(--navy);padding:10px 24px;border-radius:30px;font-weight:600;font-size:13px;opacity:0;transition:all 0.3s ease;pointer-events:none;z-index:999;">
+<div id="toast" style="position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--status-ok);color:var(--navy);padding:10px 24px;border-radius:30px;font-weight:600;font-size:13px;opacity:0;transition:all 0.3s ease;pointer-events:none;z-index:999;">
   ✓ Copied to clipboard
 </div>
 
@@ -1983,7 +1972,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
     }).join('');
 
     // MSP timeline
-    const mspColors = ['var(--gold)','var(--teal)','var(--purple)','var(--green)'];
+    const mspColors = ['var(--violet)','var(--status-ok)','var(--violet)','var(--status-ok)'];
     const mspHtml = vm.milestones.map((m, i) => `
       <div class="msp-card">
         <div class="msp-line" style="background:${mspColors[i]}"></div>
@@ -1992,7 +1981,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         <div class="msp-body">
           <div class="msp-row"><span class="msp-lbl">Activities</span><span>${escHtml(m.activities)}</span></div>
           <div class="msp-row"><span class="msp-lbl">Owner</span><span>${escHtml(m.owner)}</span></div>
-          <div class="msp-row"><span class="msp-lbl">Done when</span><span style="color:var(--green)">${escHtml(m.success)}</span></div>
+          <div class="msp-row"><span class="msp-lbl">Done when</span><span style="color:var(--status-ok)">${escHtml(m.success)}</span></div>
         </div>
       </div>`).join('');
 
@@ -2024,21 +2013,21 @@ Include company websites, news articles, press releases, earnings calls, analyst
           background: var(--navy-light);
           border: 1px solid var(--navy-border);
           border-radius: 16px 16px 0 0;
-          border-bottom: 3px solid var(--gold);
+          border-bottom: 3px solid var(--violet);
           padding: 28px 32px;
           display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;
         }
         .vm-masthead-left { display: flex; align-items: center; gap: 14px; }
         .vm-masthead-logo {
           width: 40px; height: 40px;
-          background: var(--gold-dim);
+          background: var(--violet-muted);
           border: 1px solid rgba(139,92,246,0.3);
           border-radius: 10px;
           display: flex; align-items: center; justify-content: center;
         }
-        .vm-masthead-co { font-family: 'Epilogue', sans-serif; font-size: 22px; font-weight: 700; color: var(--white); }
-        .vm-masthead-meta { font-size: 12px; color: var(--white-dim); margin-top: 3px; }
-        .vm-masthead-meta span { color: var(--gold); }
+        .vm-masthead-co { font-family: 'Epilogue', sans-serif; font-size: 22px; font-weight: 700; color: var(--text); }
+        .vm-masthead-meta { font-size: 12px; color: var(--tmuted); margin-top: 3px; }
+        .vm-masthead-meta span { color: var(--violet); }
 
         /* Column header row */
         .vm-col-headers {
@@ -2059,7 +2048,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
           font-family: 'IBM Plex Mono', monospace;
           font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
         }
-        .vm-col-header-title { font-size: 13px; font-weight: 700; color: var(--white); }
+        .vm-col-header-title { font-size: 13px; font-weight: 700; color: var(--text); }
 
         /* Stakeholder row */
         .vm-stakeholder-row {
@@ -2073,7 +2062,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
           padding: 10px 16px;
           display: flex; align-items: center; gap: 8px;
           font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-          text-transform: uppercase; color: var(--white-dim);
+          text-transform: uppercase; color: var(--tmuted);
         }
 
         /* Matrix rows */
@@ -2095,22 +2084,22 @@ Include company websites, news articles, press releases, earnings calls, analyst
           background: rgba(24,23,20,0.4);
         }
         .row-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
-        .row-label-text { font-size: 12px; font-weight: 600; color: var(--white); }
+        .row-label-text { font-size: 12px; font-weight: 600; color: var(--text); }
         .row-label-desc { font-size: 11px; color: rgba(244,240,255,0.35); margin-top: 2px; }
 
         .vm-cell {
           padding: 12px 14px;
           display: flex; align-items: flex-start; flex-wrap: wrap;
-          font-size: 12.5px; color: var(--white-dim); line-height: 1.5;
+          font-size: 12.5px; color: var(--tmuted); line-height: 1.5;
           border-left: 1px solid var(--navy-border);
           min-width: 0; overflow: hidden;
         }
         .vm-cell-text { display: block; word-break: break-word; }
-        .highlight-text { color: var(--white); font-weight: 500; }
+        .highlight-text { color: var(--text); font-weight: 500; }
         .src-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:0.06em;padding:1px 5px;border-radius:2px;vertical-align:middle;margin-left:4px;white-space:nowrap;}
-        .src-verified{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3);}
-        .src-rep{background:rgba(249,115,22,0.15);color:#fb923c;border:1px solid rgba(249,115,22,0.3);}
-        .src-inferred{background:rgba(239,68,68,0.15);color:#f87171;border:1px solid rgba(239,68,68,0.3);}
+        .src-verified{background:rgba(34,197,94,0.15);color:var(--status-ok);border:1px solid rgba(34,197,94,0.3);}
+        .src-rep{background:rgba(249,115,22,0.15);color:var(--stage-negotiation);border:1px solid rgba(249,115,22,0.3);}
+        .src-inferred{background:rgba(239,68,68,0.15);color:var(--status-risk);border:1px solid rgba(239,68,68,0.3);}
         .vm-cell-highlight { background: transparent; }
 
         /* Chips */
@@ -2118,22 +2107,22 @@ Include company websites, news articles, press releases, earnings calls, analyst
           display: inline-block; padding: 4px 10px;
           border-radius: 6px; font-size: 11.5px; font-weight: 600; line-height: 1.4;
         }
-        .state-current { background: rgba(255,143,163,0.1); border: 1px solid rgba(255,143,163,0.25); color: var(--red); }
-        .state-target  { background: rgba(126,232,162,0.1); border: 1px solid rgba(126,232,162,0.2); color: var(--green); }
+        .state-current { background: rgba(255,143,163,0.1); border: 1px solid rgba(255,143,163,0.25); color: var(--status-risk); }
+        .state-target  { background: rgba(126,232,162,0.1); border: 1px solid rgba(126,232,162,0.2); color: var(--status-ok); }
         .value-chip {
           display: inline-block; padding: 5px 10px;
           background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3);
-          border-radius: 6px; font-size: 12px; font-weight: 700; color: var(--gold-light); line-height: 1.4;
+          border-radius: 6px; font-size: 12px; font-weight: 700; color: var(--stage-proposal); line-height: 1.4;
         }
         .proof-chip {
-          display: inline-block; font-size: 11.5px; color: var(--teal);
+          display: inline-block; font-size: 11.5px; color: var(--status-ok);
           font-style: italic; line-height: 1.5;
         }
         .prod-tag {
           display: inline-block; margin: 2px 3px 2px 0;
           padding: 2px 8px; border-radius: 4px;
           background: rgba(196,181,253,0.1); border: 1px solid rgba(196,181,253,0.2);
-          font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: var(--purple);
+          font-size: 10px; font-weight: 700; letter-spacing: 0.05em; color: var(--violet);
           white-space: nowrap;
         }
         .prod-tags-wrap { display: flex; flex-wrap: wrap; gap: 2px; }
@@ -2147,7 +2136,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
           padding: 10px 16px 6px;
           font-family: 'IBM Plex Mono', monospace;
           font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-          color: var(--gold); background: var(--navy-light);
+          color: var(--violet); background: var(--navy-light);
           border: 1px solid var(--navy-border); border-top: none;
           border-bottom: 1px solid rgba(139,92,246,0.15);
         }
@@ -2161,7 +2150,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
         }
         .msp-header {
           font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
-          text-transform: uppercase; color: var(--white-dim);
+          text-transform: uppercase; color: var(--tmuted);
           margin-bottom: 16px; padding-bottom: 12px;
           border-bottom: 1px solid var(--navy-border);
           display: flex; align-items: center; gap: 8px;
@@ -2175,10 +2164,10 @@ Include company websites, news articles, press releases, earnings calls, analyst
           position: relative; overflow: hidden;
         }
         .msp-line { position: absolute; top: 0; left: 0; right: 0; height: 3px; }
-        .msp-time { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--white-dim); margin-bottom: 4px; }
-        .msp-phase { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 10px; }
+        .msp-time { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--tmuted); margin-bottom: 4px; }
+        .msp-phase { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
         .msp-body { display: flex; flex-direction: column; gap: 6px; }
-        .msp-row { font-size: 11.5px; color: var(--white-dim); line-height: 1.45; }
+        .msp-row { font-size: 11.5px; color: var(--tmuted); line-height: 1.45; }
         .msp-lbl { display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(244,240,255,0.3); margin-bottom: 2px; }
 
         /* Sources */
@@ -2187,7 +2176,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
           border-radius: 0 0 16px 16px;
           background: var(--navy-light); padding: 24px 28px;
         }
-        .sources-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .sources-label { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tmuted); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
         .sources-list { display: flex; flex-direction: column; gap: 8px; }
         .source-item {
           display: flex; align-items: flex-start; gap: 10px;
@@ -2200,13 +2189,13 @@ Include company websites, news articles, press releases, earnings calls, analyst
         .source-item:hover { border-color: rgba(139,92,246,0.3); }
         .source-num {
           font-family: 'IBM Plex Mono', monospace; font-size: 10px;
-          color: var(--gold); font-weight: 600; flex-shrink: 0; margin-top: 2px;
+          color: var(--violet); font-weight: 600; flex-shrink: 0; margin-top: 2px;
           min-width: 20px;
         }
         .source-content { flex: 1; min-width: 0; }
-        .source-title { font-size: 12px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+        .source-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
         .source-url {
-          font-size: 11px; color: var(--teal); text-decoration: none;
+          font-size: 11px; color: var(--status-ok); text-decoration: none;
           font-family: 'IBM Plex Mono', monospace;
           overflow: hidden; display: -webkit-box;
           -webkit-line-clamp: 1; -webkit-box-orient: vertical;
@@ -2221,14 +2210,14 @@ Include company websites, news articles, press releases, earnings calls, analyst
         <div class="vm-masthead">
           <div class="vm-masthead-left">
             <div class="vm-masthead-logo">
-              <svg viewBox="0 0 1039.041 1080" width="22" height="22"><path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z" fill="#dbd2ff"/></svg>
+              <svg class="conga-mark" viewBox="0 0 1039.041 1080" width="22" height="22"><path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z" fill="currentColor"/></svg>
             </div>
             <div>
               <div class="vm-masthead-co">${escHtml(state.company)}</div>
               <div class="vm-masthead-meta"><span>${escHtml(state.industry || 'Industry identified via research')}</span> · ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
             </div>
           </div>
-          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);opacity:0.7">Value Map · Confidential</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--violet);opacity:0.7">Value Map · Confidential</div>
         </div>
 
         <!-- COLUMN HEADERS -->
@@ -2496,7 +2485,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
     const ta = document.getElementById('discoveryNotes');
     const header = `[Extracted from: ${fileName}]\n`;
     ta.value = ta.value ? ta.value + '\n\n' + header + text : header + text;
-    ta.style.borderColor = 'var(--gold)';
+    ta.style.borderColor = 'var(--violet)';
     setTimeout(() => { ta.style.borderColor = ''; }, 1500);
   }
 
@@ -2504,7 +2493,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
     const sub = document.getElementById('dropZoneSub');
     const prev = sub.textContent;
     sub.textContent = '⚠ ' + msg;
-    sub.style.color = 'var(--red)';
+    sub.style.color = 'var(--status-risk)';
     setTimeout(() => {
       sub.style.color = '';
       updateDropZoneState(); // restore correct label
@@ -2634,14 +2623,14 @@ Include company websites, news articles, press releases, earnings calls, analyst
       container.innerHTML = `
         <div class="no-saved-maps">
           <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path d="M3 7h18M3 12h18M3 17h18"/></svg>
-          <div style="font-size:15px;font-weight:600;color:var(--white);margin-bottom:8px">No saved maps yet</div>
+          <div style="font-size:15px;font-weight:600;color:var(--text);margin-bottom:8px">No saved maps yet</div>
           <div style="font-size:13px">Maps are saved automatically when generated. Your first map will appear here.</div>
         </div>`;
     } else {
       container.innerHTML = maps.map(m => `
         <div class="saved-map-card" onclick="loadSavedMap(${m.id})">
           <div class="saved-map-icon">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--gold)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="color:var(--violet)"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           </div>
           <div class="saved-map-info">
             <div class="saved-map-company">${escHtml(m.company)}</div>
@@ -2740,13 +2729,13 @@ Include company websites, news articles, press releases, earnings calls, analyst
     // MSP edit block
     html += `<div class="edit-initiative-block">
       <div class="edit-block-header">
-        <div class="edit-block-num" style="background:var(--green-dim);color:var(--green);border:1px solid rgba(126,232,162,0.25)">📅</div>
+        <div class="edit-block-num" style="background:rgba(52,211,153,0.12);color:var(--status-ok);border:1px solid rgba(126,232,162,0.25)">📅</div>
         <div class="edit-block-title">Mutual Success Plan</div>
       </div>
       <div class="edit-msp-grid">`;
     vm.milestones.forEach((m, mi) => {
       html += `<div style="background:rgba(24,23,20,0.6);border:1px solid var(--navy-border);border-radius:10px;padding:14px 16px">
-        <div class="edit-field-label" style="margin-bottom:10px;color:var(--gold)">Milestone ${mi+1}: ${escHtml(m.phase)}</div>
+        <div class="edit-field-label" style="margin-bottom:10px;color:var(--violet)">Milestone ${mi+1}: ${escHtml(m.phase)}</div>
         <div class="edit-field" style="margin-bottom:8px">
           <div class="edit-field-label">Timing</div>
           <input type="text" data-msp="${mi}" data-key="time" value="${escHtmlAttr(m.time||'')}">
@@ -3303,7 +3292,7 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
     if (deal.research) {
       state.accountBriefResearch = deal.research;
       bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-        <span style="color:#A78BFA;font-size:10px;">✦</span>
+        <span style="color:var(--stage-proposal);font-size:10px;">✦</span>
         <span>Account Brief — exec POV, company profile, call strategy</span>
       </div>`);
     }
@@ -3311,7 +3300,7 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
     if (deal.document_context?.summary) {
       state.docContext = deal.document_context;
       bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-        <span style="color:#34D399;font-size:10px;">✓</span>
+        <span style="color:var(--status-ok);font-size:10px;">✓</span>
         <span>Deal intelligence summary — ${deal.document_context.doc_count} doc${deal.document_context.doc_count !== 1 ? 's' : ''} condensed</span>
         <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(deal.document_context.summary.length/1000).toFixed(1)}k chars</span>
       </div>`);
@@ -3320,7 +3309,7 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
       if (docs.length) {
         state.dealDocs = docs;
         docs.forEach(d => bannerRows.push(`<div style="display:flex;align-items:center;gap:8px;font-size:12px;color:rgba(255,255,255,0.65);">
-          <span style="color:#34D399;font-size:10px;">✓</span>
+          <span style="color:var(--status-ok);font-size:10px;">✓</span>
           <span>${d.name}</span>
           <span style="color:rgba(255,255,255,0.25);font-size:10px;">${(d.extracted_text.length/1000).toFixed(1)}k chars</span>
         </div>`));
@@ -3396,16 +3385,16 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
   Assistant
 </button>
-<!-- ZNITH FOOTER -->
-<footer style="position:fixed;bottom:0;left:0;right:0;width:100%;background:var(--surf,#181714);border-top:1px solid rgba(229,168,58,0.15);display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:34px;z-index:98;">
-  <div style="display:flex;align-items:center;gap:5px;">
-    <span style="font-family:'IBM Plex Mono',monospace;color:var(--amber);font-weight:700;font-size:13px;">/</span>
-    <span style="font-family:'Epilogue',sans-serif;font-weight:800;font-size:13px;color:var(--amber);">Z</span><span style="font-family:'Epilogue',sans-serif;font-weight:800;font-size:13px;color:rgba(255,255,255,0.4);">nith</span>
+<footer class="znith-footer">
+  <div class="znith-wordmark">
+    <span style="font-family:var(--f-mono);color:var(--violet);font-weight:700;">/</span>
+    <span style="font-family:var(--f-brand);font-weight:800;color:var(--violet);">Z</span>
+    <span style="font-family:var(--f-brand);font-weight:800;color:rgba(255,255,255,0.25);">nith</span>
   </div>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.2);">Value Map</span>
-    <div style="width:4px;height:4px;border-radius:50%;background:#8B5CF6;box-shadow:0 0 6px rgba(139,92,246,0.5);animation:glow-pulse 2.5s ease-in-out infinite;"></div>
-    <span style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.1em;color:rgba(255,255,255,0.2);">v2.0</span>
+  <div class="znith-footer-meta">
+    <span style="font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">Value Map</span>
+    <div class="znith-footer-pip"></div>
+    <span style="font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;">v2.0</span>
   </div>
 </footer>
 </div><!-- /.app-shell -->
