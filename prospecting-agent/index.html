@@ -1080,8 +1080,8 @@
       return _icpProducts[product] || _icpProducts['All Products'] || '';
     }
 
-    // Compatibility shim — EMBEDDED_API_KEY no longer used; key lives in ANTHROPIC_API_KEY env var on the server
-    const EMBEDDED_API_KEY = '';
+    // API key lives server-side in ANTHROPIC_API_KEY env var — proxy handles auth
+    const EMBEDDED_API_KEY = 'proxy';
 
     // Load ICP data from shared/icp-data.json at startup
     (async () => {
@@ -2444,7 +2444,7 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
       }
 
       async function runAnalysis() {
-        if (!apiKey) { setShowSettings(true); return; }
+        // API key lives in server-side env — no client-side key needed
         setError(null); setResults(null);
         setPass1Done(false);
 
@@ -2651,33 +2651,6 @@ Return ONLY the JSON array.`;
               : 'No list? No problem. Tell Claude where to look and it will research and surface the best accounts in your territory.'}
           </p>
 
-          {/* API Key Gate */}
-          {showSettings ? (
-            <div className="api-key-gate">
-              <div className="api-key-gate-title">🔑 API Key Required</div>
-              <div className="api-key-gate-sub">Enter your Anthropic API key to power the AI analysis. It's stored only in your browser.</div>
-              <div className="api-key-row">
-                <div className="api-key-field">
-                  <label className="form-label">Anthropic API Key</label>
-                  <input className="form-input" type="password" placeholder="sk-ant-..." value={keyDraft}
-                    onChange={e=>setKeyDraft(e.target.value)} onKeyDown={e=>e.key==='Enter'&&saveApiKey()}/>
-                </div>
-                <div className="api-key-field" style={{maxWidth:220}}>
-                  <label className="form-label">Model</label>
-                  <input className="form-input" type="text" placeholder={DEFAULT_MODEL} value={modelDraft}
-                    onChange={e=>setModelDraft(e.target.value)}/>
-                </div>
-                <button className="btn-save-key" onClick={saveApiKey} disabled={!keyDraft}>Save & Continue</button>
-              </div>
-            </div>
-          ) : (
-            <div style={{display:'flex',justifyContent:'flex-end',marginBottom:16}}>
-              <button className="api-key-saved" onClick={()=>setShowSettings(true)}>
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                API key saved — <span style={{textDecoration:'underline',color:'var(--tmuted)'}}>change</span>
-              </button>
-            </div>
-          )}
 
           {/* Mode selector + clear cache */}
           {!isAnalyzing && (
@@ -2822,9 +2795,6 @@ Return ONLY the JSON array.`;
                       <IconBolt size={15}/> Run Analysis
                     </button>
                   </div>
-                  {(!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') && (
-                    <p style={{textAlign:'right',fontSize:12,color:'var(--red)',marginTop:8}}>Enter your API key above to run the analysis.</p>
-                  )}
                 </>
               )}
             </>
