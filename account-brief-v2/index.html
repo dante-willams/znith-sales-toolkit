@@ -2056,7 +2056,8 @@ async function callClaude(userPrompt, systemPrompt = 'You are a helpful analyst.
     model: 'claude-haiku-4-5-20251001',
     max_tokens: maxTokens,
     system: systemPrompt,
-    messages: [{ role: 'user', content: messageContent }]
+    messages: [{ role: 'user', content: messageContent }],
+    metadata: { tool: 'account-brief-v2' }
   };
 
   if (useWebSearch) {
@@ -4582,7 +4583,8 @@ async function sendChatMessage(overrideText) {
       max_tokens: 3000,
       system: buildBriefContext(),
       tools: [{ type: 'web_search_20250305', name: 'web_search' }],
-      messages: chatState.messages
+      messages: chatState.messages,
+      metadata: { tool: 'account-brief-v2' }
     };
 
     const res = await fetch('/api/claude', {

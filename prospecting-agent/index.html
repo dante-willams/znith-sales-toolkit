@@ -1480,6 +1480,7 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
           max_tokens: maxTokens,
           system: systemPrompt,
           messages,
+          metadata: { tool: 'prospecting-agent' },
         }),
       });
       if (!res.ok) {

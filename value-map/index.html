@@ -1811,7 +1811,8 @@ Include company websites, news articles, press releases, earnings calls, analyst
     const body = {
       model: "claude-haiku-4-5-20251001",
       max_tokens: useWebSearch ? 4000 : 6000,
-      messages: [{ role: "user", content: prompt }]
+      messages: [{ role: "user", content: prompt }],
+      metadata: { tool: 'value-map' }
     };
 
     if (systemMessage) {
@@ -3127,7 +3128,8 @@ TONE: Concise, confident, conversational. Plain text only — no markdown, no as
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 1500,
         system: systemPrompt,
-        messages: chatHistory
+        messages: chatHistory,
+        metadata: { tool: 'value-map' }
       };
       if (needsSearch) {
         body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];

@@ -17,6 +17,12 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const start = Date.now();
+  const { metadata: _meta, ...anthropicBody } = req.body || {};
+  const model = anthropicBody.model ?? null;
+  const tool = _meta?.tool ?? null;
+  const deal_id = _meta?.deal_id ?? null;
+
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -26,13 +32,42 @@ module.exports = async function handler(req, res) {
         'anthropic-beta': 'prompt-caching-2024-07-31',
         'x-api-key': process.env.ANTHROPIC_API_KEY,
       },
-      body: JSON.stringify(req.body),
+      body: JSON.stringify(anthropicBody),
     });
 
     const data = await response.json();
+
+    console.log(JSON.stringify({
+      ts: new Date().toISOString(),
+      deal_id,
+      tool,
+      model,
+      input_tokens: data.usage?.input_tokens ?? null,
+      output_tokens: data.usage?.output_tokens ?? null,
+      cache_creation_input_tokens: data.usage?.cache_creation_input_tokens ?? null,
+      cache_read_input_tokens: data.usage?.cache_read_input_tokens ?? null,
+      latency_ms: Date.now() - start,
+      status: response.status,
+      error: null,
+    }));
+
     return res.status(response.status).json(data);
 
   } catch (error) {
+    console.log(JSON.stringify({
+      ts: new Date().toISOString(),
+      deal_id,
+      tool,
+      model,
+      input_tokens: null,
+      output_tokens: null,
+      cache_creation_input_tokens: null,
+      cache_read_input_tokens: null,
+      latency_ms: Date.now() - start,
+      status: 500,
+      error: error.message,
+    }));
+
     return res.status(500).json({ error: 'Proxy error', details: error.message });
   }
 }

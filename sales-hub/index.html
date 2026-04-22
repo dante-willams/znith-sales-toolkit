@@ -1315,7 +1315,7 @@ const state = {
 // Swap endpoint in API_CONFIG to migrate to backend.
 // ─────────────────────────────────────────────────────────────────────────────
 async function callAPI({ model, messages, system = null, tools = null, maxTokens = 3000 }) {
-  const body = { model, messages, max_tokens: maxTokens };
+  const body = { model, messages, max_tokens: maxTokens, metadata: { tool: 'sales-hub' } };
   if (system) body.system = system;
   if (tools)  body.tools  = tools;
 

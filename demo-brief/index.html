@@ -890,7 +890,8 @@ async function startGenerate(){
         model:'claude-sonnet-4-20250514',
         max_tokens:16000,
         system:buildSystemFoundation(),
-        messages:[{role:'user',content:userContentA}]
+        messages:[{role:'user',content:userContentA}],
+        metadata:{tool:'demo-brief'}
       })
     });
     if(!resA.ok){
@@ -913,7 +914,8 @@ async function startGenerate(){
           model:'claude-sonnet-4-20250514',
           max_tokens:16000,
           system:buildSystemDesign(),
-          messages:[{role:'user',content:[{type:'text',text:buildMessageDesign(fCtx,allText)}]}]
+          messages:[{role:'user',content:[{type:'text',text:buildMessageDesign(fCtx,allText)}]}],
+          metadata:{tool:'demo-brief'}
         })
       }),
       fetch('/api/claude',{
@@ -923,7 +925,8 @@ async function startGenerate(){
           model:'claude-sonnet-4-20250514',
           max_tokens:16000,
           system:buildSystemTech(),
-          messages:[{role:'user',content:[{type:'text',text:buildMessageTech(fCtx,allText)}]}]
+          messages:[{role:'user',content:[{type:'text',text:buildMessageTech(fCtx,allText)}]}],
+          metadata:{tool:'demo-brief'}
         })
       })
     ]);
@@ -2389,7 +2392,8 @@ When updating: preserve every unchanged section exactly. Only modify what was ex
         tools:[{type:'web_search_20250305',name:'web_search'}],
         messages:[
           ...S.chatHistory.slice(-12)
-        ]
+        ],
+        metadata:{tool:'demo-brief'}
       })
     });
 

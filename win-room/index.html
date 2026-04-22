@@ -1437,7 +1437,7 @@ Markdown format. Concise bullets <= 20 words. Quantify where possible. Reference
 // ═══════════════════════════════════════════════════════════════════
 
 async function callAPI({ model, messages, system = null, tools = null, maxTokens = 3000 }) {
-  const body = { model, messages, max_tokens: maxTokens };
+  const body = { model, messages, max_tokens: maxTokens, metadata: { tool: 'win-room' } };
   if (system) body.system = system;
   if (tools) body.tools = tools;
   const res = await fetch(API_CONFIG.endpoint, {
