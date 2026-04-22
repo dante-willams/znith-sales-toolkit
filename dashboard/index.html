@@ -4,7 +4,7 @@
 <script src="/auth.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Znith · Deals</title>
+<title>Conga Sales Intelligence</title>
 <link rel="icon" type="image/x-icon" href="./favicon.ico">
 <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
@@ -160,11 +160,11 @@ header{
 }
 
 /* Stage colors */
-.stage-discovery  {background:rgba(99,179,237,0.15);color:#63B3ED;}
+.stage-discovery  {background:rgba(99,179,237,0.15);color:var(--stage-discovery);}
 .stage-demo       {background:var(--amber-muted);color:var(--amber);}
-.stage-proposal   {background:rgba(167,139,250,0.15);color:#A78BFA;}
-.stage-negotiation{background:rgba(251,146,60,0.15);color:#FB923C;}
-.stage-closed_won {background:rgba(52,211,153,0.15);color:#34D399;}
+.stage-proposal   {background:rgba(167,139,250,0.15);color:var(--stage-proposal);}
+.stage-negotiation{background:rgba(251,146,60,0.15);color:var(--stage-negotiation);}
+.stage-closed_won {background:var(--green-muted);color:var(--stage-closed-won);}
 .stage-closed_lost{background:rgba(255,255,255,0.06);color:var(--tfaint);}
 
 /* ── DEAL META ── */
@@ -178,9 +178,9 @@ header{
 .meddpicc-bar-wrap{flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;}
 .meddpicc-bar{height:100%;border-radius:2px;transition:width 0.6s ease;}
 .meddpicc-score-val{font-family:var(--f-mono);font-size:11px;font-weight:500;min-width:28px;text-align:right;}
-.score-low  {background:#EF4444;color:#EF4444;}
-.score-mid  {background:#F59E0B;color:#F59E0B;}
-.score-high {background:#34D399;color:#34D399;}
+.score-low  {background:var(--status-risk);color:var(--status-risk);}
+.score-mid  {background:var(--status-warn);color:var(--status-warn);}
+.score-high {background:var(--status-ok);color:var(--status-ok);}
 .score-none {background:var(--border);color:var(--tfaint);}
 
 /* ── TOOL GRID ── */
@@ -196,7 +196,7 @@ header{
 .tool-btn:hover{border-color:var(--border-md);color:var(--text);}
 .tool-btn.done{color:var(--text);border-color:rgba(255,255,255,0.12);}
 .tool-status-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:rgba(255,255,255,0.12);}
-.tool-btn.done .tool-status-dot{background:#34D399;}
+.tool-btn.done .tool-status-dot{background:var(--status-ok);}
 
 /* ── WIN ROOM CTA ── */
 .win-room-btn{
@@ -363,7 +363,7 @@ header{
 .drawer-check-item.done{color:var(--text);}
 .drawer-check-item.pending{color:var(--tmuted);}
 .drawer-check-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.drawer-check-item.done .drawer-check-dot{background:#34D399;}
+.drawer-check-item.done .drawer-check-dot{background:var(--status-ok);}
 .drawer-check-item.pending .drawer-check-dot{background:rgba(255,255,255,0.12);}
 .drawer-value-row{
   display:flex;gap:12px;
@@ -407,7 +407,7 @@ header{
 <header>
   <div class="header-logo">
     <div class="logo-mark">
-      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#99f6e4">
+      <svg class="conga-mark" viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
         <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
       </svg>
     </div>
@@ -765,7 +765,7 @@ function renderDrawerOverview(deal) {
       <div class="drawer-value-row">
         <div class="drawer-value-chip">
           <div class="drawer-value-chip-label">Overall</div>
-          <div class="drawer-value-chip-val" style="color:${sc==='score-high'?'#34D399':sc==='score-mid'?'#F59E0B':'#EF4444'}">${score}</div>
+          <div class="drawer-value-chip-val" style="color:${sc==='score-high'?'var(--status-ok)':sc==='score-mid'?'var(--status-warn)':'var(--status-risk)'}">${score}</div>
         </div>
       </div>
     </div>` : ''}
@@ -834,7 +834,7 @@ function renderDrawerQualify(deal) {
   const rows = Object.entries(dimLabels).map(([k, label]) => {
     const d = q[k] || {};
     const score = d.score ?? 0;
-    const color = score>=70?'#34D399':score>=40?'#F59E0B':'#EF4444';
+    const color = score>=70?'var(--status-ok)':score>=40?'var(--status-warn)':'var(--status-risk)';
     return `<div class="drawer-dim-row">
       <div class="drawer-dim-name">${label}</div>
       <div class="drawer-dim-bar-wrap"><div class="drawer-dim-bar" style="width:${score}%;background:${color}"></div></div>
