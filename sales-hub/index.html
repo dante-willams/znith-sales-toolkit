@@ -3025,6 +3025,28 @@ function loadHistoryEntry(id) {
 buildModuleGrid();
 updateHistoryBadge();
 
+// Pre-fill from Prospecting Agent handoff
+(function applyProspectingAgentPrefill() {
+  try {
+    const raw = localStorage.getItem('znith_prefill');
+    if (!raw) return;
+    localStorage.removeItem('znith_prefill');
+    const p = JSON.parse(raw);
+    if (p.account) document.getElementById('accountName').value = p.account;
+    if (p.stage)   document.getElementById('dealStage').value   = p.stage;
+    if (p.primary_reason || p.outreach_angle) {
+      const notes = document.getElementById('extraNotes');
+      if (notes) notes.value = [
+        p.primary_reason   ? `Why now: ${p.primary_reason}`         : null,
+        p.outreach_angle   ? `Outreach angle: ${p.outreach_angle}`  : null,
+        p.buying_signals?.length ? `Signals: ${p.buying_signals.join(', ')}` : null,
+        p.icp_score        ? `ICP Score: ${p.icp_score}/10`         : null,
+      ].filter(Boolean).join('\n');
+    }
+    toast(`Opened from Prospecting Agent: ${p.account}`);
+  } catch(e) {}
+})();
+
 // Pre-warm the KNOWLEDGE_BRAIN prompt cache so synthesis calls get cache hits
 // on first generation. Silent — failure is fine, it just means no warm cache.
 (function warmCache() {
