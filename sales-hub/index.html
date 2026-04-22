@@ -23,11 +23,8 @@
   --c-qualify:       #16A34A; --c-qualify-glow:  rgba(22,163,74,0.28);   --c-qualify-muted:  rgba(22,163,74,0.12);
 
   /* Base palette */
-  --bg:     #0e0d0b;
   --surf:   #181714;
   --surf-2: #222018;
-  --border: rgba(255,255,255,0.07);
-  --text:   rgba(255,255,255,0.85);
   --tmuted: rgba(255,255,255,0.45);
   --tfaint: rgba(255,255,255,0.20);
 
@@ -261,7 +258,7 @@ select option { background: var(--surf-2); }
 .log-line { display: flex; align-items: center; gap: 9px; padding: 3px 0; font-size: 12px; color: var(--tmuted); }
 .log-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: all 0.3s; }
 .log-line.active .log-dot { background: var(--amber); box-shadow: 0 0 8px var(--amber-glow); animation: blink 1.2s ease-in-out infinite; }
-.log-line.done  .log-dot { background: var(--c-qualify); box-shadow: 0 0 6px rgba(22,163,74,0.3); animation: none; }
+.log-line.done  .log-dot { background: var(--c-qualify); box-shadow: var(--sh-ok); animation: none; }
 .log-line.error .log-dot { background: #E11D48; }
 .log-line.active { color: var(--text); }
 @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
@@ -279,7 +276,7 @@ select option { background: var(--surf-2); }
 .mod-prog-item.error  { border-color: rgba(225,29,72,0.35); }
 .mod-prog-pip { width: 7px; height: 7px; border-radius: 50%; background: var(--border); flex-shrink: 0; }
 .mod-prog-item.active .mod-prog-pip { background: var(--mp-accent); box-shadow: 0 0 6px var(--mp-glow); animation: blink 1.2s ease-in-out infinite; }
-.mod-prog-item.done   .mod-prog-pip { background: var(--c-qualify); box-shadow: 0 0 6px rgba(22,163,74,0.3); animation: none; }
+.mod-prog-item.done   .mod-prog-pip { background: var(--c-qualify); box-shadow: var(--sh-ok); animation: none; }
 .mod-prog-item.error  .mod-prog-pip { background: #E11D48; animation: none; }
 .mod-prog-name { font-size: 11px; font-weight: 500; color: var(--tmuted); }
 .mod-prog-item.active .mod-prog-name, .mod-prog-item.done .mod-prog-name { color: var(--text); }
@@ -593,7 +590,7 @@ select option { background: var(--surf-2); }
 <header>
   <div class="header-logo">
     <div class="logo-mark">
-      <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#E5A83A">
+      <svg class="conga-mark" viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
         <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
       </svg>
     </div>
@@ -2307,11 +2304,8 @@ function downloadPDF() {
   --mod-color: ${accent};
   --mod-glow: ${accentGlow};
   --mod-muted: ${accentMuted};
-  --bg:     #0e0d0b;
   --surf:   #181714;
   --surf-2: #222018;
-  --border: rgba(255,255,255,0.07);
-  --text:   rgba(255,255,255,0.85);
   --tmuted: rgba(255,255,255,0.45);
   --tfaint: rgba(255,255,255,0.20);
   --amber:  #E5A83A;
