@@ -113,6 +113,17 @@ test('smoke: Anthropic API key is valid and not rate-limited', async () => {
   assert.equal(res.status, 200, `Unexpected status: ${res.status}`);
 });
 
+// ── Page loads ────────────────────────────────────────────────────────────────
+
+test('smoke: prospecting-agent page loads with expected content', async () => {
+  const res = await fetch(`${SMOKE_URL}/prospecting-agent/`, {
+    headers: { ...(TOOLKIT_PASSWORD ? { 'x-toolkit-password': TOOLKIT_PASSWORD } : {}) },
+  });
+  assert.equal(res.status, 200, `Expected 200, got ${res.status}`);
+  const html = await res.text();
+  assert.ok(html.includes('Prospecting'), 'Page should contain "Prospecting"');
+});
+
 // ── Latency ────────────────────────────────────────────────────────────────────
 
 test('smoke: response latency under 15s', async () => {
