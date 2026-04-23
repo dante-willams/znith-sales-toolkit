@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <script src="/auth.js"></script>
+<script>(function(){var T='demo-brief';function re(d){fetch('/api/log-error',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({tool:T},d))}).catch(function(){});}window.onerror=function(m,s,l,c,e){re({message:m,stack:e&&e.stack,url:s,line:l,col:c});};window.onunhandledrejection=function(e){re({message:e.reason&&e.reason.message||String(e.reason),stack:e.reason&&e.reason.stack});};})();</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Conga · Demo Brief Generator</title>
