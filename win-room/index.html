@@ -109,7 +109,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .health-reason{margin-top:8px;font-size:12px;color:var(--tmuted);font-style:italic;}
 
 /* ── GAP CARDS ── */
-.gap-list{display:flex;flex-direction:column;gap:10px;}
+.gap-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .gap-card{
   background:var(--surf);border:1px solid var(--border);
   clip-path:var(--clip-lg);padding:16px 18px;
@@ -123,8 +123,20 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
 .sev-high{background:var(--status-risk);}
 .sev-medium{background:var(--status-warn);}
 .sev-low{background:var(--stage-discovery);}
-.gap-body{}
-.gap-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.gap-body{min-width:0;}
+.gap-details{list-style:none;}
+.gap-details summary{
+  font-size:15px;font-weight:700;color:var(--text);
+  cursor:pointer;list-style:none;display:flex;align-items:flex-start;
+  justify-content:space-between;gap:8px;
+}
+.gap-details summary::-webkit-details-marker{display:none;}
+.gap-chevron{
+  flex-shrink:0;margin-top:3px;color:var(--tfaint);
+  transition:transform var(--transition);font-size:12px;line-height:1;
+}
+.gap-details[open] .gap-chevron{transform:rotate(180deg);}
+.gap-expand{padding-top:8px;}
 .gap-evidence{font-size:12px;color:var(--tmuted);margin-bottom:8px;line-height:1.5;}
 .gap-action{
   display:inline-flex;align-items:center;gap:5px;
@@ -515,7 +527,7 @@ async function fetchRecentNews(deal) {
 
   const company  = deal.context.account_name || '';
   const industry = deal.research?.industry?.name || deal.research?.industry || '';
-  const query    = `"${company}" ${industry} news announcements earnings 2025`;
+  const query    = `"${company}" ${industry} news announcements earnings ${new Date().getFullYear()}`;
 
   try {
     const raw = await callClaudeWebSearch(
@@ -1038,12 +1050,19 @@ function renderMain() {
           <div class="gap-card">
             <div class="gap-severity ${severityClass(g.severity)}"></div>
             <div class="gap-body">
-              <div class="gap-title">${renderWithBadges(g.gap)}</div>
-              ${g.evidence ? `<div class="gap-evidence">${renderWithBadges(g.evidence)}</div>` : ''}
-              ${g.action ? `<div class="gap-action">
-                <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                ${renderWithBadges(g.action)}
-              </div>` : ''}
+              <details class="gap-details">
+                <summary>
+                  ${renderWithBadges(g.gap)}
+                  <span class="gap-chevron">▾</span>
+                </summary>
+                <div class="gap-expand">
+                  ${g.evidence ? `<div class="gap-evidence">${renderWithBadges(g.evidence)}</div>` : ''}
+                  ${g.action ? `<div class="gap-action">
+                    <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    ${renderWithBadges(g.action)}
+                  </div>` : ''}
+                </div>
+              </details>
             </div>
           </div>`).join('')}
       </div>

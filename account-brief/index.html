@@ -1260,7 +1260,7 @@ input[type=checkbox].chip-check{display:none;}
         <div class="drop-zone-sub">Up to 5 files · Contents are read and used to sharpen every section</div>
         <div class="drop-zone-types">.pdf · .txt · .docx · .md · .csv</div>
       </div>
-      <input type="file" id="fileInput" multiple accept=".pdf,.txt,.docx,.md,.csv,.eml"
+      <input type="file" id="fileInput" multiple accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff,.heic,.heif,.pptx,.ppt,.xlsx,.xls,.csv,.tsv,.md,.rtf,.html,.htm,.eml,.json,.xml"
         style="display:none" onchange="handleFileInputChange(this.files)">
       <div class="file-chips" id="fileChips"></div>
     </div>
@@ -2773,7 +2773,7 @@ window.addEventListener('load', function() { setTimeout(function(){ window.print
     <div class="chat-file-preview" id="chat-file-preview"></div>
     <div class="chat-input-row" style="display:flex;align-items:flex-end;gap:8px;">
       <button class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" title="Attach file">📎</button>
-      <input type="file" id="chat-file-input" style="display:none" multiple accept=".pdf,.txt,.docx,.md" onchange="handleChatFileUpload(this.files)">
+      <input type="file" id="chat-file-input" style="display:none" multiple accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff,.heic,.heif,.pptx,.ppt,.xlsx,.xls,.csv,.tsv,.md,.rtf,.html,.htm,.eml,.json,.xml" onchange="handleChatFileUpload(this.files)">
       <textarea class="chat-input" id="chat-input" rows="1"
         placeholder="Ask anything about this account…"
         onkeydown="handleChatKey(event)"
@@ -3320,7 +3320,8 @@ async function exportWord() {
   const PUR     = '8B5CF6';
   const LAV     = 'C4B5FD';
   const WHITE   = 'FFFFFF';
-  const DARK    = '1C1838';
+  const DARK    = 'EDE9FE';  /* light lavender — was dark navy */
+  const DARK_TXT= '4C1D95'; /* dark purple text on light header bg */
   const BDR     = '2E2A4A';
   const BODY_TXT= '374151';
   const MID     = '6B7280';
@@ -3473,8 +3474,8 @@ async function exportWord() {
     ...secHead('Competitors'),
     new Table({width:{size:W,type:WidthType.DXA},columnWidths:[2600,6760],rows:[
       row([
-        cell([p('Competitor',{bold:true,size:17,color:WHITE})],{fill:DARK,w:2600}),
-        cell([p('How They Compete',{bold:true,size:17,color:WHITE})],{fill:DARK,w:6760})
+        cell([p('Competitor',{bold:true,size:17,color:DARK_TXT})],{fill:DARK,w:2600}),
+        cell([p('How They Compete',{bold:true,size:17,color:DARK_TXT})],{fill:DARK,w:6760})
       ],{header:true}),
       ...compRows
     ]})
@@ -3493,9 +3494,9 @@ async function exportWord() {
     ...secHead('Contact Intelligence'),
     new Table({width:{size:W,type:WidthType.DXA},columnWidths:[2200,3000,4160],rows:[
       row([
-        cell([p('Name / Title',{bold:true,size:17,color:WHITE})],{fill:DARK,w:2200}),
-        cell([p('Tenure & Background',{bold:true,size:17,color:WHITE})],{fill:DARK,w:3000}),
-        cell([p('Talking Angle',{bold:true,size:17,color:WHITE})],{fill:DARK,w:4160})
+        cell([p('Name / Title',{bold:true,size:17,color:DARK_TXT})],{fill:DARK,w:2200}),
+        cell([p('Tenure & Background',{bold:true,size:17,color:DARK_TXT})],{fill:DARK,w:3000}),
+        cell([p('Talking Angle',{bold:true,size:17,color:DARK_TXT})],{fill:DARK,w:4160})
       ],{header:true}),
       ...contactRows
     ]})
@@ -3610,10 +3611,10 @@ async function exportWord() {
     ...secHead('Suggested Stakeholders'),
     new Table({width:{size:W,type:WidthType.DXA},columnWidths:[2000,2600,3000,1760],rows:[
       row([
-        cell([p('Role',{bold:true,size:17,color:WHITE})],{fill:DARK,w:2000}),
-        cell([p('Title',{bold:true,size:17,color:WHITE})],{fill:DARK,w:2600}),
-        cell([p('Why They Matter',{bold:true,size:17,color:WHITE})],{fill:DARK,w:3000}),
-        cell([p('How to Find',{bold:true,size:17,color:WHITE})],{fill:DARK,w:1760})
+        cell([p('Role',{bold:true,size:17,color:DARK_TXT})],{fill:DARK,w:2000}),
+        cell([p('Title',{bold:true,size:17,color:DARK_TXT})],{fill:DARK,w:2600}),
+        cell([p('Why They Matter',{bold:true,size:17,color:DARK_TXT})],{fill:DARK,w:3000}),
+        cell([p('How to Find',{bold:true,size:17,color:DARK_TXT})],{fill:DARK,w:1760})
       ],{header:true}),
       ...stakeRows
     ]})
@@ -4107,7 +4108,7 @@ updateChatSuggestions(1);
     <div class="chat-file-preview" id="chat-file-preview"></div>
     <div class="chat-input-row" style="display:flex;align-items:flex-end;gap:8px;">
       <button class="chat-attach-btn" onclick="document.getElementById('chat-file-input').click()" title="Attach file">📎</button>
-      <input type="file" id="chat-file-input" style="display:none" multiple accept=".pdf,.txt,.docx,.md" onchange="handleChatFileUpload(this.files)">
+      <input type="file" id="chat-file-input" style="display:none" multiple accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff,.heic,.heif,.pptx,.ppt,.xlsx,.xls,.csv,.tsv,.md,.rtf,.html,.htm,.eml,.json,.xml" onchange="handleChatFileUpload(this.files)">
       <textarea class="chat-input" id="chat-input" rows="1"
         placeholder="Ask anything about this account…"
         onkeydown="handleChatKey(event)"

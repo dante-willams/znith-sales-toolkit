@@ -260,7 +260,7 @@
     <div class="card">
       <div class="card-title"><span>02</span> Upload Documents</div>
       <div class="dz" id="dropZone">
-        <input type="file" id="fileInput" multiple accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg,.webp,.gif,.csv" />
+        <input type="file" id="fileInput" multiple accept=".pdf,.docx,.doc,.txt,.png,.jpg,.jpeg,.webp,.gif,.bmp,.tiff,.heic,.heif,.pptx,.ppt,.xlsx,.xls,.csv,.tsv,.md,.rtf,.html,.htm,.eml,.json,.xml" />
         <div class="dz-icon">📎</div>
         <div class="dz-title">Drop files here or click to browse</div>
         <div class="dz-sub">PDF, Word, TXT, images — call transcripts, RFPs, discovery notes, org charts</div>
@@ -802,7 +802,7 @@ function renderResults(entry){
         </div>
       </div>
       <div class="m-body">
-        <div class="m-content" id="content-${f.key}" data-raw="${escapeHtml(content)}">${renderWithBadges(escapeHtml(content))}</div>
+        <div class="m-content" id="content-${f.key}" data-raw="${escapeHtml(content).replace(/"/g,'&quot;')}">${renderWithBadges(escapeHtml(content))}</div>
         <button class="copy-btn" onclick="copyField('${f.key}', this)">Copy</button>
       </div>
     </div>`;
