@@ -4450,14 +4450,23 @@ async function exportWord() {
   };
 
   // ── POV BUILDER (Word) ────────────────────────────────────
+  const POV_BODY = 'F5F3FF';  // very light lavender body
+  const POV_TXT  = '1F2937';  // near-black body text
+  const POV_ACC  = PUR;       // purple for bullets/labels
   const povBuilderSection = (pov.povPitch || pov.povDriver) ? [
+    // Header bar — dark navy, stands out
     new Table({width:{size:W,type:WidthType.DXA},columnWidths:[W],rows:[
       row([cell([
         new Paragraph({
-          spacing:{before:0,after:80},
+          spacing:{before:0,after:0},
           children:[new TextRun({text:'WHAT YOU KNOW GOING IN', size:15, bold:true, color:WHITE, font:'Arial', characterSpacing:120})]
-        }),
-        // Pitch bullets — handle array or string
+        })
+      ], {fill:NAVY, nb:false, mt:100, mb:100})])
+    ]}),
+    // Body — light background, dark text
+    new Table({width:{size:W,type:WidthType.DXA},columnWidths:[W],rows:[
+      row([cell([
+        // Pitch bullets
         ...(() => {
           const raw = pov.povPitch;
           const bullets = Array.isArray(raw)
@@ -4467,35 +4476,34 @@ async function exportWord() {
             new Paragraph({
               spacing:{before:60,after:40},
               children:[
-                new TextRun({text:'• ', bold:true, size:22, color:LAV, font:'Arial'}),
-                new TextRun({text:b, bold:true, size:22, color:WHITE, font:'Arial'})
+                new TextRun({text:'• ', bold:true, size:21, color:POV_ACC, font:'Arial'}),
+                new TextRun({text:b, bold:true, size:21, color:POV_TXT, font:'Arial'})
               ]
             })
           );
         })(),
         ...(pov.povDriver ? [
-          new Paragraph({spacing:{before:120,after:20},children:[new TextRun({text:'SIGNAL', size:14, bold:true, color:LAV, font:'Arial', characterSpacing:80})]}),
-          new Paragraph({spacing:{before:0,after:60},children:[new TextRun({text:pov.povDriver, size:18, color:WHITE, font:'Arial', italics:true})]})
+          new Paragraph({spacing:{before:120,after:20},children:[new TextRun({text:'SIGNAL', size:14, bold:true, color:POV_ACC, font:'Arial', characterSpacing:80})]}),
+          new Paragraph({spacing:{before:0,after:60},children:[new TextRun({text:pov.povDriver, size:18, color:POV_TXT, font:'Arial', italics:true})]})
         ] : []),
-        // Logic chain
         ...((pov.povLogicChain||[]).length ? [
-          new Paragraph({spacing:{before:100,after:30},children:[new TextRun({text:'REASONING CHAIN', size:14, bold:true, color:LAV, font:'Arial', characterSpacing:80})]})
+          new Paragraph({spacing:{before:100,after:30},children:[new TextRun({text:'REASONING CHAIN', size:14, bold:true, color:POV_ACC, font:'Arial', characterSpacing:80})]})
         ] : []),
         ...(pov.povLogicChain||[]).map(item=>
           new Paragraph({
             spacing:{before:40,after:40},
             children:[
-              new TextRun({text:(item.signal||''), size:18, color:WHITE, font:'Arial'}),
-              new TextRun({text:'  →  ', size:18, color:LAV, font:'Arial'}),
-              new TextRun({text:(item.implication||''), size:18, color:WHITE, font:'Arial', italics:true}),
-              new TextRun({text:'  ['+(item.product||'')+']', size:16, bold:true, color:LAV, font:'Arial'})
+              new TextRun({text:(item.signal||''), size:18, color:POV_TXT, font:'Arial'}),
+              new TextRun({text:'  →  ', size:18, color:POV_ACC, font:'Arial'}),
+              new TextRun({text:(item.implication||''), size:18, color:POV_TXT, font:'Arial', italics:true}),
+              new TextRun({text:'  ['+(item.product||'')+']', size:16, bold:true, color:POV_ACC, font:'Arial'})
             ]
           })
         ),
         ...(pov.leadProducts&&pov.leadProducts.length ? [
-          new Paragraph({spacing:{before:100,after:20},children:[new TextRun({text:'LEAD WITH: '+pov.leadProducts.join(' · '), size:16, bold:true, color:LAV, font:'Arial'})]}),
+          new Paragraph({spacing:{before:100,after:20},children:[new TextRun({text:'LEAD WITH: '+pov.leadProducts.join(' · '), size:16, bold:true, color:POV_ACC, font:'Arial'})]}),
         ] : [])
-      ], {fill:NAVY, purBorder:true, mt:160, mb:160})])
+      ], {fill:POV_BODY, purBorder:true, mt:120, mb:120})])
     ]}),
     p('',{before:60,after:60})
   ] : [];
