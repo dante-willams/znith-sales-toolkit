@@ -466,10 +466,10 @@ async function callAPI({ model, messages, system = null, tools = null, maxTokens
   const body = { model, messages, max_tokens: maxTokens, metadata: { tool: 'win-room' } };
   if (system) body.system = system;
   if (tools) body.tools = tools;
-  const res = await fetch(API_CONFIG.endpoint, {
+  const res = await fetch('/api/claude', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-6', messages, system, max_tokens: maxTokens })
+    body: JSON.stringify(body)
   });
   if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API ${res.status}`); }
   const data = await res.json();
