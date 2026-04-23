@@ -469,7 +469,7 @@ async function callAPI({ model, messages, system = null, tools = null, maxTokens
   const res = await fetch(API_CONFIG.endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-6', messages, system, max_tokens: maxTokens })
+    body: JSON.stringify(body),
   });
   if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API ${res.status}`); }
   const data = await res.json();
@@ -778,7 +778,7 @@ Return ONLY valid JSON, no preamble, no markdown fences:
 
 Include 3-5 priority gaps (ranked high→low). Include 3-4 next actions. Keep coaching_pulse to 2-3 points maximum.`;
 
-    const raw = await callClaude([{ role: 'user', content: prompt }], DEAL_COACH_BRAIN, 3000);
+    const raw = await callAPI({ model: 'claude-sonnet-4-6', messages: [{ role: 'user', content: prompt }], system: DEAL_COACH_BRAIN, maxTokens: 3000 });
     synthesis = safeJSON(raw);
 
     if (!synthesis) throw new Error('Could not parse synthesis response');
