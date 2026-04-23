@@ -5,6 +5,8 @@ on:
     branches: ['**']
   pull_request:
     branches: ['**']
+  schedule:
+    - cron: '0 14 * * 1-5'  # 9am ET, weekdays
 
 jobs:
   test:
@@ -16,3 +18,16 @@ jobs:
           node-version: '20'
       - run: npm test
       - run: npm run lint:stale-fns
+
+  smoke:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm run test:smoke
+        env:
+          SMOKE_URL: https://znith-sales-toolkit.vercel.app
+          TOOLKIT_PASSWORD: ${{ secrets.TOOLKIT_PASSWORD }}
