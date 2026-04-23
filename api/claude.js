@@ -22,6 +22,7 @@ module.exports = async function handler(req, res) {
   const model = anthropicBody.model ?? null;
   const tool = _meta?.tool ?? null;
   const deal_id = _meta?.deal_id ?? null;
+  const ip = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || null;
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -42,6 +43,7 @@ module.exports = async function handler(req, res) {
       deal_id,
       tool,
       model,
+      ip,
       input_tokens: data.usage?.input_tokens ?? null,
       output_tokens: data.usage?.output_tokens ?? null,
       cache_creation_input_tokens: data.usage?.cache_creation_input_tokens ?? null,
