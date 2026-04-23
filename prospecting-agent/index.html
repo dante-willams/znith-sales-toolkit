@@ -1633,16 +1633,41 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
     }
 
     // Pre-filter by ICP heuristics when list > 200
+    // Hospital/health-system name keywords — these accounts score 0 (excluded industries)
+    const PRE_FILTER_HOSPITAL_KEYWORDS = [
+      'hospital', 'health system', 'health network', 'medical center', 'medical centre',
+      'integrated delivery', 'health plan', 'children\'s hospital', 'memorial health',
+      'community health', 'regional health', 'regional medical', 'university hospital',
+      'university health', 'university medical', 'county hospital', 'general hospital',
+    ];
     function preFilterAccounts(accounts, max = 200) {
       if (accounts.length <= max) return accounts;
-      const p1 = ['healthcare','life science','technology','financial','banking','insurance','fintech','biotech','pharma','medtech'];
-      const p2 = ['service','consult','manufactur'];
+      // Industry keyword buckets — healthcare EXCLUDES hospital sub-type
+      const p1HLS   = ['pharma','biotech','medtech','life science','medical device','biopharma','payer','health insur','health it','digital health'];
+      const p1Other = ['technology','software','financial','banking','fintech','saas'];
+      const p2 = ['insurance','manufactur','distribut','wholesale','telecom','energy'];
       const scored = accounts.map(a => {
         let s = 0;
-        const ind = (a.industry || '').toLowerCase();
-        if (p1.some(k => ind.includes(k))) s += 40;
-        else if (p2.some(k => ind.includes(k))) s += 25;
-        else s += 10;
+        const ind  = (a.industry || '').toLowerCase();
+        const name = (a.name || '').toLowerCase();
+
+        // Hard penalty for hospital/health-system accounts — they are EXCLUDED for all products
+        const isHospital = PRE_FILTER_HOSPITAL_KEYWORDS.some(k => name.includes(k) || ind.includes(k));
+        if (isHospital) {
+          s = -100; // push to bottom
+        } else if (p1HLS.some(k => ind.includes(k) || name.includes(k))) {
+          s += 40;
+        } else if (p1Other.some(k => ind.includes(k))) {
+          s += 35;
+        } else if (p2.some(k => ind.includes(k))) {
+          s += 25;
+        } else if (ind.includes('healthcare') || ind.includes('life science')) {
+          // Broad HLS label without sub-type — moderate priority, let Claude sub-classify
+          s += 20;
+        } else {
+          s += 10;
+        }
+
         if (a.revenue) {
           if (a.revenue >= 1e9) s += 35;
           else if (a.revenue >= 5e8) s += 28;
@@ -3051,9 +3076,6 @@ Return ONLY the JSON array.`;
                       <IconBolt size={15}/> Run Analysis
                     </button>
                   </div>
-                  {(!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') && (
-                    <p style={{textAlign:'right',fontSize:12,color:'var(--red)',marginTop:8}}>Enter your API key above to run the analysis.</p>
-                  )}
                 </>
               )}
             </>
