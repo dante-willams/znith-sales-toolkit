@@ -33,6 +33,9 @@
   }
   :root[data-theme="light"] body::before,
   :root[data-theme="light"] body::after { opacity: 0.08; }
+  [data-theme="light"] header {
+    background: rgba(244,242,237,0.94);
+  }
   [data-theme="light"] .vm-header {
     background: linear-gradient(135deg, #FFFFFF 0%, #F4F2ED 100%);
   }
@@ -43,7 +46,8 @@
   }
   [data-theme="light"] input[type="url"],
   [data-theme="light"] input[type="text"],
-  [data-theme="light"] textarea {
+  [data-theme="light"] textarea,
+  [data-theme="light"] select {
     background: rgba(26,25,20,0.05);
   }
 
