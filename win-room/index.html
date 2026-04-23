@@ -338,6 +338,12 @@ body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14
       <a href="#mainNewsSection" class="side-news-viewall" id="sideNewsViewAll" style="display:none">View all →</a>
     </div>
 
+    <!-- ICP Fit -->
+    <div class="side-section" id="icpFitSection" style="display:none">
+      <div class="side-label">ICP Fit</div>
+      <div id="icpFitCard"></div>
+    </div>
+
     <!-- MEDDPICC -->
     <div class="side-section">
       <div class="side-label">MEDDPICC</div>
@@ -745,6 +751,17 @@ function buildDealContext(d) {
     }
   }
 
+  // ICP Score
+  if (res?.icp_score) {
+    const icp = res.icp_score;
+    ctx += `### ICP Fit Score\n`;
+    ctx += `Overall: ${icp.overall}/10 (${icp.fit_tier || ''})\n`;
+    if (icp.top_products?.length) ctx += `Top product fits: ${icp.top_products.join(', ')}\n`;
+    if (icp.reasoning) ctx += `Reasoning: ${icp.reasoning}\n`;
+    if (icp.key_signals?.length) ctx += `Key signals: ${icp.key_signals.join(', ')}\n`;
+    ctx += '\n';
+  }
+
   // Rep notes
   if (d.context?.notes) {
     ctx += `### Rep Notes [SOURCE: REP_NOTES]\n${d.context.notes}\n\n`;
@@ -871,6 +888,7 @@ function renderSidebar() {
   ).join('');
 
   // MEDDPICC
+  renderICPFit();
   renderMEDDPICC();
 
   // Stakeholders
@@ -917,6 +935,34 @@ function renderSidebar() {
       docSec.style.display = 'none';
     }
   }
+}
+
+function renderICPFit() {
+  const icp = deal.research?.icp_score;
+  const section = document.getElementById('icpFitSection');
+  const card    = document.getElementById('icpFitCard');
+  if (!section || !card) return;
+  if (!icp) { section.style.display = 'none'; return; }
+
+  section.style.display = '';
+  const color = icp.overall >= 7.5 ? 'var(--status-ok)'
+    : icp.overall >= 5 ? 'var(--status-warn)'
+    : 'var(--status-risk)';
+
+  const signals = (icp.key_signals || []).slice(0, 3).map(s =>
+    `<div style="font-size:10px;color:var(--tfaint);padding:2px 0;">• ${s}</div>`
+  ).join('');
+
+  card.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <div style="font-size:20px;font-weight:700;font-family:var(--f-mono);color:${color};">${icp.overall}</div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text);">${icp.fit_tier || 'Scored'}</div>
+        <div style="font-size:10px;color:var(--tfaint);">${(icp.top_products || []).join(' · ')}</div>
+      </div>
+    </div>
+    ${icp.reasoning ? `<div style="font-size:10px;color:var(--tfaint);line-height:1.5;margin-bottom:4px;">${icp.reasoning}</div>` : ''}
+    ${signals}`;
 }
 
 function renderMEDDPICC() {

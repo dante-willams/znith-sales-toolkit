@@ -1822,7 +1822,13 @@ input[type=checkbox].chip-check{display:none;}
         <div class="section-label"><span class="section-icon"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span>Deal Brief</div>
 
         <!-- Health + Status Row -->
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:12px;" id="out-deal-status-grid"></div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px;" id="out-deal-status-grid"></div>
+
+        <!-- ICP Reasoning -->
+        <div class="deal-assessment" style="margin-bottom:10px;border-color:rgba(161,100,255,0.2);display:none;">
+          <div class="deal-assessment-label" style="color:rgba(161,100,255,0.9);">ICP Fit Analysis</div>
+          <div id="out-icp-reasoning"></div>
+        </div>
 
         <!-- Where We Stand -->
         <div class="deal-assessment" style="margin-bottom:10px;">
@@ -2031,9 +2037,19 @@ const state = {
     congaPOV: null,
     callStrategy: null,
     dealBrief: null,
+    icpScore: null,
     allSources: []
   }
 };
+
+// ════════════════════════════════════════════════════
+// ICP SCORING ENGINE
+// ════════════════════════════════════════════════════
+let SCORING_ENGINE = null;
+fetch('../shared/icp-scoring-engine.json')
+  .then(r => r.json())
+  .then(d => { SCORING_ENGINE = d; })
+  .catch(() => {});
 
 // ════════════════════════════════════════════════════
 // API HELPER
@@ -2328,6 +2344,82 @@ Return ONLY valid JSON starting with {:
         state.results.industry = { tailwinds:['Industry data unavailable — verify company name and retry'], headwinds:['Industry data unavailable'], relevantTrends:[], benchmarks:[], congaRelevanceNote:'' };
       }
       addLog('done', 'Industry analysis complete');
+    })(),
+
+    // ── PASS ICP: ICP Fit Scoring ─────────────────────
+    (async () => {
+      addLog('active', 'Scoring ICP fit…');
+      const productList = products.length ? products.join(', ') : 'All Products';
+      const detectedIndustry2 = industry || state.results.company?.industry || 'Unknown';
+
+      // Build scoring context from engine
+      let engineContext = '';
+      if (SCORING_ENGINE) {
+        const weights = SCORING_ENGINE.scoring_weights;
+        const matrix  = SCORING_ENGINE.industry_matrix;
+        const notes   = SCORING_ENGINE.product_notes || {};
+        const signals = (SCORING_ENGINE.signal_taxonomy || []).slice(0, 10).map(s => `- ${s.signal} (base ${s.base_score})`).join('\n');
+
+        // Industry scores for selected products
+        const productKeys = products.map(p =>
+          p === 'Price Optimization' ? 'POM' : p.replace(/\s+/g,'').slice(0,6)
+        );
+        const industryRows = Object.entries(matrix).slice(0, 15).map(([ind, val]) => {
+          const scores = productKeys.map(k => `${k}:${val.scores[k]??'—'}`).join(' ');
+          return `  ${ind}: ${scores}`;
+        }).join('\n');
+
+        const productNoteLines = productKeys.map(k => notes[k] ? `${k}: ${notes[k]}` : '').filter(Boolean).join('\n');
+
+        engineContext = `
+ICP SCORING ENGINE:
+Weights: signals(35%) growth(20%) industry_fit(15%) strategic_alignment(15%) business_model(10%) hiring(5%)
+
+Top buying signals (score these 1-10 based on evidence):
+${signals}
+
+Industry fit scores for ${productList}:
+${industryRows}
+
+Product-specific notes:
+${productNoteLines}`;
+      }
+
+      const icpPrompt = `You are a Conga ICP scoring analyst. Score this company's ICP fit for the products being sold.
+
+Company: ${company}
+Industry: ${detectedIndustry2}
+Products: ${productList}
+Company profile: ${JSON.stringify(state.results.company || {}).slice(0, 1500)}
+${engineContext}
+
+Score this company's ICP fit. Use the scoring engine above — do not guess from intuition alone.
+
+Return ONLY valid JSON:
+{
+  "overall": <0.0-10.0, one decimal — weighted average across all dimensions>,
+  "product_scores": {
+    "<product1>": <0-10>,
+    "<product2>": <0-10>
+  },
+  "top_products": ["<best fit product>", "<second best>"],
+  "industry_key": "<matched industry matrix key>",
+  "score_breakdown": {
+    "signals": <0-10>,
+    "growth_indicators": <0-10>,
+    "industry_fit": <0-10>,
+    "strategic_alignment": <0-10>,
+    "business_model_fit": <0-10>,
+    "hiring_trends": <0-10>
+  },
+  "reasoning": "<2-3 sentences: why this score, citing specific evidence from the company profile — revenue tier, industry fit, tech stack, signals detected>",
+  "key_signals": ["<signal 1 detected>", "<signal 2 detected>", "<signal 3 detected>"],
+  "fit_tier": "<Strong Fit | Good Fit | Moderate Fit | Poor Fit>"
+}`;
+
+      const icpRaw = await callClaude(icpPrompt, 'You are a Conga ICP scoring analyst. Return ONLY valid JSON starting with {. Score rigorously against the engine data provided.', false);
+      state.results.icpScore = safeParseJSON(icpRaw) || null;
+      addLog('done', 'ICP scoring complete');
     })(),
 
     // ── PASS 1c: Public Company Intel (only if public) ─────────
@@ -3737,17 +3829,40 @@ function renderDealBrief() {
 
   // Health score status grid
   const healthColor = { Green:'var(--status-ok)', Yellow:'var(--stage-negotiation)', Red:'var(--status-risk)' }[db.dealHealthScore] || 'var(--white-dim)';
+  // ICP score card
+  const icpData = state.results.icpScore;
+  const icpColor = !icpData ? 'var(--white-dim)'
+    : icpData.overall >= 7.5 ? 'var(--status-ok)'
+    : icpData.overall >= 5   ? 'var(--stage-negotiation)'
+    : 'var(--status-risk)';
+
   const statusItems = [
     { label:'Deal Health', value: db.dealHealthScore || '—', color: healthColor },
     { label:'Champion', value: db.championStatus?.split('—')[0]?.trim() || 'Unknown' },
     { label:'Economic Buyer', value: db.economicBuyerStatus?.split('—')[0]?.trim() || 'Unknown' },
     { label:'Decision Process', value: db.decisionProcessClarity?.split('—')[0]?.trim() || 'Unknown' },
+    { label:'ICP Fit', value: icpData ? `${icpData.overall}/10` : '—', color: icpColor, sub: icpData?.fit_tier || '' },
   ];
   document.getElementById('out-deal-status-grid').innerHTML = statusItems.map(s => `
     <div class="snapshot-stat" style="border-color:${s.color||'var(--navy-border)'}20;">
       <div class="snapshot-label">${s.label}</div>
       <div class="snapshot-value" style="color:${s.color||'var(--white)'}">${s.value}</div>
+      ${s.sub ? `<div style="font-size:10px;color:var(--white-dim);margin-top:2px;">${s.sub}</div>` : ''}
     </div>`).join('');
+
+  // ICP reasoning
+  const icpReasonEl = document.getElementById('out-icp-reasoning');
+  if (icpReasonEl) {
+    if (icpData?.reasoning) {
+      const signals = (icpData.key_signals || []).map(s => `<span style="font-size:11px;padding:2px 8px;background:rgba(61,224,200,0.1);border:1px solid rgba(61,224,200,0.2);border-radius:4px;color:var(--accent);">${s}</span>`).join(' ');
+      icpReasonEl.innerHTML = `
+        <div style="font-size:12px;color:var(--white-dim);line-height:1.6;margin-bottom:6px;">${icpData.reasoning}</div>
+        ${signals ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${signals}</div>` : ''}`;
+      icpReasonEl.closest('.deal-assessment').style.display = '';
+    } else {
+      icpReasonEl.closest('.deal-assessment').style.display = 'none';
+    }
+  }
 
   // Where we stand
   document.getElementById('out-where-we-stand').textContent = db.whereWeStand || '—';
@@ -3895,6 +4010,7 @@ function syncToDeal(company) {
     exec_pov:        state.results.congaPOV  || null,
     call_strategy:   state.results.callStrategy || null,
     deal_brief:      state.results.dealBrief || null,
+    icp_score:       state.results.icpScore  || null,
     // News pulled from company profile — gets its own TTL
     news: {
       last_checked: new Date().toISOString(),
