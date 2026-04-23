@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node --test",
-    "test:watch": "node --test --watch"
+    "test": "node --test tests/utils.test.js tests/proxy.test.js",
+    "test:smoke": "node --test tests/smoke.test.js",
+    "test:watch": "node --test --watch",
+    "lint:stale-fns": "! grep -n 'callClaude(' win-room/index.html | grep -v 'callClaudeWebSearch'"
   },
   "engines": {
     "node": ">=20"
