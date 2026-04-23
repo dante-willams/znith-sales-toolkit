@@ -4110,13 +4110,14 @@ async function exportWord() {
   const notes = state.repNotes || {};
 
   // ── PALETTE ───────────────────────────────────────────────────
-  const NAVY    = '0D0B1A';
-  const PUR     = '8B5CF6';
-  const LAV     = 'C4B5FD';
+  const NAVY    = '1B3A6B';  // professional navy blue (was near-black)
+  const PUR     = '5B21B6';  // deep purple
+  const LAV     = 'A78BFA';  // medium lavender
   const WHITE   = 'FFFFFF';
-  const DARK    = '1C1838';
-  const BDR     = '2E2A4A';
-  const BODY_TXT= '374151';
+  const DARK    = 'EDE9FE';  // light lavender for table headers (was near-black)
+  const HDR_TXT = '3B0764';  // dark purple text on light header bg
+  const BDR     = 'DDD6FE';  // light lavender border (was dark purple)
+  const BODY_TXT= '1F2937';
   const MID     = '6B7280';
   const W       = 9360;  // content width US Letter 1" margins
 
@@ -4267,8 +4268,8 @@ async function exportWord() {
     ...secHead('Competitors'),
     new Table({width:{size:W,type:WidthType.DXA},columnWidths:[2600,6760],rows:[
       row([
-        cell([p('Competitor',{bold:true,size:17,color:WHITE})],{fill:DARK,w:2600}),
-        cell([p('How They Compete',{bold:true,size:17,color:WHITE})],{fill:DARK,w:6760})
+        cell([p('Competitor',{bold:true,size:17,color:HDR_TXT})],{fill:DARK,w:2600}),
+        cell([p('How They Compete',{bold:true,size:17,color:HDR_TXT})],{fill:DARK,w:6760})
       ],{header:true}),
       ...compRows
     ]})
@@ -4287,9 +4288,9 @@ async function exportWord() {
     ...secHead('Contact Intelligence'),
     new Table({width:{size:W,type:WidthType.DXA},columnWidths:[2200,3000,4160],rows:[
       row([
-        cell([p('Name / Title',{bold:true,size:17,color:WHITE})],{fill:DARK,w:2200}),
-        cell([p('Tenure & Background',{bold:true,size:17,color:WHITE})],{fill:DARK,w:3000}),
-        cell([p('Talking Angle',{bold:true,size:17,color:WHITE})],{fill:DARK,w:4160})
+        cell([p('Name / Title',{bold:true,size:17,color:HDR_TXT})],{fill:DARK,w:2200}),
+        cell([p('Tenure & Background',{bold:true,size:17,color:HDR_TXT})],{fill:DARK,w:3000}),
+        cell([p('Talking Angle',{bold:true,size:17,color:HDR_TXT})],{fill:DARK,w:4160})
       ],{header:true}),
       ...contactRows
     ]})
@@ -4404,10 +4405,10 @@ async function exportWord() {
     ...secHead('Suggested Stakeholders'),
     new Table({width:{size:W,type:WidthType.DXA},columnWidths:[2000,2600,3000,1760],rows:[
       row([
-        cell([p('Role',{bold:true,size:17,color:WHITE})],{fill:DARK,w:2000}),
-        cell([p('Title',{bold:true,size:17,color:WHITE})],{fill:DARK,w:2600}),
-        cell([p('Why They Matter',{bold:true,size:17,color:WHITE})],{fill:DARK,w:3000}),
-        cell([p('How to Find',{bold:true,size:17,color:WHITE})],{fill:DARK,w:1760})
+        cell([p('Role',{bold:true,size:17,color:HDR_TXT})],{fill:DARK,w:2000}),
+        cell([p('Title',{bold:true,size:17,color:HDR_TXT})],{fill:DARK,w:2600}),
+        cell([p('Why They Matter',{bold:true,size:17,color:HDR_TXT})],{fill:DARK,w:3000}),
+        cell([p('How to Find',{bold:true,size:17,color:HDR_TXT})],{fill:DARK,w:1760})
       ],{header:true}),
       ...stakeRows
     ]})
