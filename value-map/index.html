@@ -25,6 +25,14 @@
     --navy-light:  #181714;
     --navy-border: rgba(255,255,255,0.07);
   }
+  :root[data-theme="light"] {
+    --navy:        #F4F2ED;
+    --navy-mid:    #FFFFFF;
+    --navy-light:  #FFFFFF;
+    --navy-border: #E3E0D8;
+  }
+  :root[data-theme="light"] body::before,
+  :root[data-theme="light"] body::after { opacity: 0.08; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1627,7 +1635,7 @@ SOURCE CONFIDENCE TAGGING — add inline after key claims in text fields (challe
 - [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
 - [REP_STATED] — came from rep notes or verbal input only
 - [INFERRED] — your synthesis or hypothesis; no direct source
-Tag substantive claims only. Skip generic statements. Do not tag chip fields (congaCapability, value, proof point labels).`;
+IMPORTANT: Every substantive claim in text fields (challenge, howCongaHelps, pain metrics, proof) MUST end with a source tag — no exceptions. If you cannot verify a claim from the source material, tag it [INFERRED]. Do not skip tagging any claim. Do not tag chip fields (congaCapability, value, proof point labels).`;
       const response = await callClaude(prompt, false, synthesisSystem);
       state.valueMap = parseValueMap(response);
 
