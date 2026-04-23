@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <script src="/auth.js"></script>
-<script>(function(){var T='prospecting-agent';function re(d){fetch('/api/log-error',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({tool:T},d))}).catch(function(){});}window.onerror=function(m,s,l,c,e){re({message:m,stack:e&&e.stack,url:s,line:l,col:c});};window.onunhandledrejection=function(e){re({message:e.reason&&e.reason.message||String(e.reason),stack:e.reason&&e.reason.stack});};})();</script>
+  <script>(function(){var T='prospecting-agent';function re(d){fetch('/api/log-error',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({tool:T},d))}).catch(function(){});}window.onerror=function(m,s,l,c,e){re({message:m,stack:e&&e.stack,url:s,line:l,col:c});};window.onunhandledrejection=function(e){re({message:e.reason&&e.reason.message||String(e.reason),stack:e.reason&&e.reason.stack});};})();</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Conga Prospecting Agent</title>
@@ -20,6 +20,16 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
+      /* Typography */
+      --f-brand: 'Epilogue', sans-serif;
+      --f-ui:    'Barlow', sans-serif;
+      --f-mono:  'IBM Plex Mono', monospace;
+
+      /* Amber system color */
+      --amber:        #B8860B;
+      --amber-glow:   rgba(184,134,11,0.28);
+      --amber-muted:  rgba(184,134,11,0.12);
+
       /* Base palette */
       --bg:      #0e0d0b;
       --surf:    #181714;
@@ -101,7 +111,7 @@
     .phase-label {
       font-size: 11px; font-weight: 600;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--tfaint); margin-bottom: 12px;
+      color: var(--amber); margin-bottom: 12px;
       font-family: var(--f-mono);
     }
     .phase-title {
@@ -1013,20 +1023,7 @@
   </style>
 </head>
 <body>
-  <div id="root">
-    <div id="boot-loader" style="min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;background:#0e0d0b;">
-      <div style="width:40px;height:40px;border:3px solid rgba(229,168,58,0.2);border-top-color:#E5A83A;border-radius:50%;animation:spin 0.9s linear infinite;"></div>
-      <span style="font-family:'Barlow',sans-serif;font-size:13px;color:rgba(255,255,255,0.4);letter-spacing:0.05em;">Loading Prospecting Agent…</span>
-      <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
-    </div>
-  </div>
-
-  <script>
-    window.onerror = function(msg, src, line, col, err) {
-      var root = document.getElementById('root');
-      root.innerHTML = '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0e0d0b;padding:40px;"><div style="max-width:520px;background:#181714;border:1px solid rgba(248,113,113,0.3);border-radius:12px;padding:28px;"><p style="font-family:monospace;font-size:13px;color:#f87171;margin:0 0 12px;">App failed to load</p><p style="font-family:monospace;font-size:12px;color:rgba(255,255,255,0.5);margin:0;word-break:break-word;">' + msg + (src ? '<br><br>' + src + ':' + line : '') + '</p></div></div>';
-    };
-  </script>
+  <div id="root"></div>
 
   <script type="text/babel">
     const { useState, useEffect, useRef } = React;
@@ -1075,23 +1072,174 @@
     const MODEL_M5_VAR   = 'claude-haiku-4-5-20251001';  // variation generation (800 tokens)
     const MODEL_CHAT     = 'claude-sonnet-4-6';          // chat panel quick Q&A
 
-    // ICP context — populated at startup by fetching icp-data.json
+    // ICP context — populated at startup by fetching icp-data.json and icp-scoring-engine.json
     let BASE_ICP_CONTEXT = '';
     let _icpProducts = {};
+    let SCORING_ENGINE = null; // structured scoring engine loaded from icp-scoring-engine.json
+
     function getProductICP(product) {
       return _icpProducts[product] || _icpProducts['All Products'] || '';
     }
 
-    // API key lives server-side in ANTHROPIC_API_KEY env var — proxy handles auth
-    const EMBEDDED_API_KEY = 'proxy';
+    // Normalise product name → JSON matrix key
+    function toProductKey(product) {
+      if (product === 'Price Optimization') return 'POM';
+      return product; // CLM, CPQ, DocAuto, Aime, RLM already match
+    }
 
-    // Load ICP data from shared/icp-data.json at startup
+    // Keywords that indicate the account IS a hospital / health system regardless of the
+    // Salesforce industry label (which is often the broad "Healthcare and Life Sciences")
+    const HOSPITAL_KEYWORDS = [
+      'hospital', 'health system', 'health network', 'medical center', 'medical centre',
+      'integrated delivery', ' idn', 'health plan', 'ascension', 'hca healthcare',
+      'commonspirit', 'advocate health', 'kaiser permanente', 'cleveland clinic',
+      'mayo clinic', 'johns hopkins', 'intermountain', 'memorial health',
+      'providence health', 'dignity health', 'banner health', 'bjc healthcare',
+      'sutter health', 'geisinger', 'christus', 'inova', 'piedmont healthcare',
+    ];
+
+    // Returns the industry_matrix score for a given industry + product, or null if not found
+    function getIndustryScore(industry, product) {
+      if (!SCORING_ENGINE) return null;
+      const productKey = toProductKey(product);
+      const matrix = SCORING_ENGINE.industry_matrix;
+      const ind = industry.toLowerCase();
+
+      // 1. Hospital-keyword override — "Healthcare and Life Sciences" accounts that are
+      //    clearly hospital/health systems must map to "Hospital Systems" (EXCLUDE for all products)
+      if (HOSPITAL_KEYWORDS.some(k => ind.includes(k))) {
+        return matrix['Hospital Systems']?.scores[productKey] ?? 'EXCLUDE';
+      }
+
+      // 2. salesforce_industry_map — explicit label → matrix key mappings
+      const sfMap = SCORING_ENGINE.salesforce_industry_map || {};
+      for (const [sfLabel, mapping] of Object.entries(sfMap)) {
+        if (ind === sfLabel.toLowerCase()) {
+          if (mapping.matrix_key) return matrix[mapping.matrix_key]?.scores[productKey] ?? null;
+          // 'requires_subclassification' — can't determine safely; return null (no exclude, no score)
+          return null;
+        }
+      }
+
+      // 3. Direct match on matrix key
+      if (matrix[industry]) return matrix[industry].scores[productKey] ?? null;
+
+      // 4. Fuzzy match — check containment in both directions
+      for (const [key, val] of Object.entries(matrix)) {
+        if (ind.includes(key.toLowerCase()) || key.toLowerCase().includes(ind)) {
+          return val.scores[productKey] ?? null;
+        }
+      }
+      return null;
+    }
+
+    // Returns true if industry should be EXCLUDED for the given product
+    function isExcluded(industry, product) {
+      const score = getIndustryScore(industry, product);
+      return score === 'EXCLUDE';
+    }
+
+    // Builds a compact scoring engine summary to inject into Claude prompts
+    function buildScoringEnginePrompt(product) {
+      if (!SCORING_ENGINE) return '';
+      const se = SCORING_ENGINE;
+      const productKey = product === 'Price Optimization' ? 'POM' : product;
+
+      // Build industry score list for this product
+      const industryLines = Object.entries(se.industry_matrix).map(([name, row]) => {
+        const score = row.scores[productKey];
+        const excl = score === 'EXCLUDE' ? ' ← EXCLUDE THIS INDUSTRY' : ` → base score ${score}/10`;
+        return `  ${name}:${excl}`;
+      }).join('\n');
+
+      // Build signal taxonomy
+      const signalLines = se.signal_taxonomy.map(s =>
+        `  [${s.base_score}] ${s.signal}${s.product_gate === 'flag_for_CLM' ? ' ← ALWAYS flag for CLM' : ''}`
+      ).join('\n');
+
+      // Build hiring signals for this product
+      const hiringKeys = [productKey, 'Transformation_CoE'];
+      const hiringLines = hiringKeys.flatMap(k => se.hiring_signals[k] || []).join(', ');
+
+      // Business model threshold
+      const bmt = se.business_model_thresholds[productKey];
+      const bmtLine = bmt ? `High propensity: ${bmt.high_propensity}` : '';
+
+      return `
+=== STRUCTURED ICP SCORING ENGINE (Product: ${product}) ===
+
+SCORING WEIGHTS (must sum to 1.0):
+  Signals (recency-weighted):  ${se.scoring_weights.signals * 100}%
+  Growth indicators:           ${se.scoring_weights.growth_indicators * 100}%
+  Industry fit:                ${se.scoring_weights.industry_fit * 100}%
+  Strategic alignment (Y/N/?): ${se.scoring_weights.strategic_alignment * 100}%
+  Business model fit:          ${se.scoring_weights.business_model_fit * 100}%
+  Hiring trends:               ${se.scoring_weights.hiring_trends * 100}%
+
+RECENCY DECAY (apply to signal base scores):
+  <3 months ago:   ×1.00 (full score)
+  3–6 months ago:  ×0.85
+  6–12 months ago: ×0.60
+  12–24 months:    ×0.30
+  >24 months:      ×0.00 (ignore)
+
+INDUSTRY SCORES FOR ${product.toUpperCase()}:
+${industryLines}
+
+SUB-VERTICAL OVERRIDE RULES:
+  - "Pharmaceutical Manufacturing" in Salesforce → use HLS - Pharma & Biotech scores
+  - "Medical Device Manufacturing" → use HLS - Medical Device scores
+  - "Biotech / Life Sciences R&D" → use HLS - Pharma & Biotech scores
+  - "IT Services & Consulting" → use IT Services & Consulting scores (NOT SaaS/Technology)
+  - "Investment Banking" → CLM=9, DocAuto=9 override
+
+HEALTHCARE LABEL SUB-CLASSIFICATION (MANDATORY — applies to EVERY healthcare account):
+Salesforce often reports "Healthcare and Life Sciences" as a single bucket. You MUST identify the true sub-type:
+  → Hospital / health system / health network / IDN / academic medical center → "Hospital Systems" → EXCLUDED for ALL products
+  → Pharma / biotech / biopharma / pharmaceutical mfr → "HLS - Pharma & Biotech"
+  → Medical device / diagnostics / medtech → "HLS - Medical Device"
+  → Health insurance / managed care / payer → "HLS - Payers & Health Insurance"
+  → Healthcare SaaS / health IT / digital health platform → "HLS - Healthcare Services & SaaS"
+  → Cannot determine sub-type → default to "Hospital Systems" → EXCLUDED
+NEVER return "Healthcare and Life Sciences" as a final industry label — always resolve to a sub-type.
+
+SIGNAL TAXONOMY (base scores — multiply by recency decay):
+${signalLines}
+
+HIRING SIGNALS FOR ${product} (score hiring_trends dimension higher if found):
+  ${hiringLines}
+
+BUSINESS MODEL FIT:
+  ${bmtLine}
+
+STRATEGIC ALIGNMENT — score this Y / N / ? per account:
+  Y (×1.0): Company has announced initiative matching: digital transformation, ERP/CRM migration, M&A integration, compliance mandate, pricing modernization, contract standardization, RevOps buildout, CoE establishment, subscription model shift, international expansion, operational efficiency program
+  ? (×0.5): Initiative mentioned but unclear or early-stage
+  N (×0.0): No strategic alignment signal found
+
+SCORING FORMULA:
+  combined_score = (signal_score×0.35) + (growth_score×0.20) + (industry_score×0.15) + (strategic_score×0.15) + (biz_model_score×0.10) + (hiring_score×0.05)
+  Where strategic_score: Y=10, ?=5, N=0
+
+IMPORTANT: If an industry is marked EXCLUDE for this product, set combined_score=0 and flag the account.
+=== END SCORING ENGINE ===`;
+    }
+
+    // Compatibility shim — EMBEDDED_API_KEY no longer used; key lives in ANTHROPIC_API_KEY env var on the server
+    const EMBEDDED_API_KEY = '';
+
+    // Load ICP data and scoring engine at startup
     (async () => {
       try {
-        const res = await fetch('../shared/icp-data.json');
-        const data = await res.json();
-        BASE_ICP_CONTEXT = data.narrative;
+        const [icpRes, seRes] = await Promise.all([
+          fetch('./icp-data.json'),
+          fetch('../shared/icp-scoring-engine.json')
+        ]);
+        const data = await icpRes.json();
+        BASE_ICP_CONTEXT = data.base;
         _icpProducts = data.products;
+        SCORING_ENGINE = await seRes.json();
+        console.log('ICP data and scoring engine loaded.');
       } catch (e) {
         console.error('Failed to load ICP data — API calls will have no system context:', e);
       }
@@ -1444,23 +1592,12 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
               });
             }
 
-            // Find header row: prefer a row containing "account name" or "company name",
-            // fall back to first row with 3+ non-empty string cells
-            const NAME_CANDIDATES = ['account name', 'company name', 'company', 'organization', 'name'];
+            // Find header row: first row with 3+ non-empty string cells
             let headerIdx = 0;
-            let foundNameHeader = false;
-            for (let i = 0; i < Math.min(30, rows.length); i++) {
-              const lower = rows[i].map(c => String(c || '').toLowerCase());
-              if (NAME_CANDIDATES.some(n => lower.some(h => h.includes(n)))) {
-                headerIdx = i; foundNameHeader = true; break;
-              }
-            }
-            if (!foundNameHeader) {
-              for (let i = 0; i < Math.min(30, rows.length); i++) {
-                const nonEmpty = rows[i].filter(c => c !== '' && c !== null && c !== undefined);
-                const strCells = nonEmpty.filter(c => isNaN(Number(c)));
-                if (strCells.length >= 3) { headerIdx = i; break; }
-              }
+            for (let i = 0; i < Math.min(25, rows.length); i++) {
+              const nonEmpty = rows[i].filter(c => c !== '' && c !== null && c !== undefined);
+              const strCells = nonEmpty.filter(c => isNaN(Number(c)));
+              if (strCells.length >= 3) { headerIdx = i; break; }
             }
             const headers = rows[headerIdx].map(h => String(h || ''));
             const dataRows = rows.slice(headerIdx + 1);
@@ -1539,7 +1676,6 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
           max_tokens: maxTokens,
           system: systemPrompt,
           messages,
-          metadata: { tool: 'prospecting-agent' },
         }),
       });
       if (!res.ok) {
@@ -1751,13 +1887,11 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
                     return out;
                   });
                 }
-                // Find header row — pick the row with the most non-empty cells
-                // (handles Salesforce exports with 10+ metadata rows before the real header)
+                // Find header row
                 let headerIdx = 0;
-                let maxNonEmpty = 0;
-                for (let i = 0; i < Math.min(30, rows.length); i++) {
+                for (let i = 0; i < Math.min(10, rows.length); i++) {
                   const nonEmpty = rows[i].filter(c => c !== '' && c !== null && c !== undefined);
-                  if (nonEmpty.length > maxNonEmpty) { maxNonEmpty = nonEmpty.length; headerIdx = i; }
+                  if (nonEmpty.length >= 2) { headerIdx = i; break; }
                 }
                 const headers = rows[headerIdx].map(h => String(h || ''));
                 const dataRows = rows.slice(headerIdx + 1);
@@ -2460,7 +2594,7 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
       }
 
       async function runAnalysis() {
-        // API key lives in server-side env — no client-side key needed
+        if (!apiKey) { setShowSettings(true); return; }
         setError(null); setResults(null);
         setPass1Done(false);
 
@@ -2471,7 +2605,8 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
           let accountList;
           let pass1Prompt;
 
-          const productContext = BASE_ICP_CONTEXT + '\n\n' + getProductICP(territory?.product || 'All Products');
+          const selectedProduct = territory?.product || 'All Products';
+          const productContext = BASE_ICP_CONTEXT + '\n\n' + getProductICP(selectedProduct) + '\n\n' + buildScoringEnginePrompt(selectedProduct);
 
           if (mode === 'upload') {
             if (!parsedAccounts?.length) { setError('No accounts found to analyze.'); setStatus('error'); return; }
@@ -2484,24 +2619,39 @@ Score on overall Conga + PROS fit. Look for: multiple pain points spanning CLM +
               industry: a.industry || 'Unknown',
               type: a.type || 'Unknown',
             })));
-            pass1Prompt = `TERRITORY: Region=${territory?.geo||'All'}, Segment=${territory?.segment||'All'}, Product Focus=${territory?.product||'All Products'}
+            pass1Prompt = `TERRITORY: Region=${territory?.geo||'All'}, Segment=${territory?.segment||'All'}, Product Focus=${selectedProduct}
 
-Analyze this list of ${parsedAccounts.length} accounts for ICP fit.
+Analyze this list of ${parsedAccounts.length} accounts for ICP fit using the STRUCTURED SCORING ENGINE above.
+
+CRITICAL RULES:
+- If an industry is marked EXCLUDE for ${selectedProduct}, set icp_score=0 and industry_excluded=true for that account.
+- Apply sub-vertical override rules: e.g. "Pharmaceutical Manufacturing" → use HLS - Pharma & Biotech scores, not general Manufacturing.
+- Score industry_fit using the industry matrix scores for ${selectedProduct}, not general intuition.
+
+HEALTHCARE AND LIFE SCIENCES SUB-CLASSIFICATION RULE (MANDATORY):
+Salesforce often reports "Healthcare and Life Sciences" as a single bucket. You MUST identify the true sub-type for each company and apply the correct industry label:
+  • Hospital system, health system, health network, IDN, integrated delivery network, academic medical center, children's hospital → industry = "Hospital Systems" → EXCLUDED for ALL products → set icp_score=0, industry_excluded=true
+  • Pharma, biotech, biopharma, pharmaceutical manufacturer → industry = "HLS - Pharma & Biotech"
+  • Medical device, diagnostics, medtech → industry = "HLS - Medical Device"
+  • Health insurance, managed care, payer → industry = "HLS - Payers & Health Insurance"
+  • Healthcare SaaS, health IT, digital health platform → industry = "HLS - Healthcare Services & SaaS"
+If you cannot determine the sub-type, default to "Hospital Systems" and exclude the account.
 
 ACCOUNTS:
 ${acctJSON}
 
-Score each account and return the TOP 30 as a JSON array:
+Score each account and return the TOP 30 as a JSON array (include excluded accounts at the bottom with score 0):
 {
   "id": <original id>,
   "name": "<company name>",
   "icp_score": <1-10, one decimal>,
-  "industry": "<industry>",
+  "industry": "<use specific HLS sub-vertical from the list above — never return generic 'Healthcare and Life Sciences'>",
+  "industry_excluded": <true|false>,
   "state": "<state>",
   "revenue": "<revenue>",
   "employees": <number or null>,
   "industry_tier": "<Priority 1|Priority 2|Priority 3>",
-  "primary_reason": "<one sentence why strong fit for ${territory?.product||'All Products'}>",
+  "primary_reason": "<one sentence why strong or poor fit for ${selectedProduct}>",
   "recommended_product": "<CLM|CPQ|DocAuto|Aime|Price Optimization|RLM|All Products>",
   "company_type": "<Prospect|Customer>"
 }
@@ -2517,22 +2667,31 @@ Return ONLY the JSON array.`;
               return '';
             })();
 
-            pass1Prompt = `TERRITORY: Region=${territory?.geo||'All'}, Segment=${territory?.segment||'All'}, Product Focus=${territory?.product||'All Products'}
+            pass1Prompt = `TERRITORY: Region=${territory?.geo||'All'}, Segment=${territory?.segment||'All'}, Product Focus=${selectedProduct}
 Sub-regions: ${discoverStates.length>0 ? discoverStates.join(', ') : 'All of '+(territory?.geo||'region')}
 Industries: ${discoverIndustries.length>0 ? discoverIndustries.join(', ') : 'All priority industries'}
 ${segmentRevenueRule ? '\n' + segmentRevenueRule + '\n' : ''}
-Identify the TOP 30 real companies in these markets that are strong ICP fits for ${territory?.product||'All Products'}. Only include companies you are confident actually exist.
+Using the STRUCTURED SCORING ENGINE above, identify the TOP 30 real companies in these markets that are strong ICP fits for ${selectedProduct}.
+
+CRITICAL RULES:
+- DO NOT include companies in industries marked EXCLUDE for ${selectedProduct} in the scoring engine.
+- DO NOT include hospital systems, health systems, health networks, IDNs, academic medical centers, or children's hospitals — these are EXCLUDED for ALL products.
+- Prioritize industries with the highest base scores for ${selectedProduct} from the industry matrix.
+- Apply sub-vertical override rules (e.g. Pharmaceutical Manufacturing → HLS - Pharma & Biotech, not general Manufacturing).
+- When including any healthcare company, use a specific HLS sub-vertical label (HLS - Pharma & Biotech, HLS - Medical Device, HLS - Payers & Health Insurance, HLS - Healthcare Services & SaaS) — never the generic "Healthcare and Life Sciences" label.
+- Only include companies you are confident actually exist.
 
 Return a JSON array:
 {
   "name": "<company name>",
   "icp_score": <1-10, one decimal>,
-  "industry": "<industry>",
+  "industry": "<specific sub-vertical if possible>",
+  "industry_excluded": false,
   "state": "<state or country>",
   "estimated_revenue": "<revenue range>",
   "estimated_employees": "<employee range>",
   "industry_tier": "<Priority 1|Priority 2|Priority 3>",
-  "primary_reason": "<one sentence why strong fit for ${territory?.product||'All Products'}>",
+  "primary_reason": "<one sentence why strong fit for ${selectedProduct} based on scoring engine>",
   "recommended_product": "<CLM|CPQ|DocAuto|Aime|Price Optimization|RLM|All Products>",
   "company_type": "Prospect"
 }
@@ -2540,45 +2699,84 @@ Return ONLY the JSON array.`;
           }
 
           const pass1Text = await callClaude(apiKey, MODEL_M2, productContext, pass1Prompt, 8000);
-          const pass1Results = extractJSON(pass1Text);
-          setPass1Count(pass1Results.length);
+          let pass1Results = extractJSON(pass1Text);
+
+          // Client-side EXCLUDE enforcement after Pass 1
+          const productKey = selectedProduct === 'Price Optimization' ? 'POM' : selectedProduct;
+          pass1Results = pass1Results.map(a => {
+            if (isExcluded(a.industry || '', selectedProduct)) {
+              return { ...a, icp_score: 0, industry_excluded: true };
+            }
+            return a;
+          });
+          // Move excluded accounts to the bottom, sort rest by icp_score
+          pass1Results.sort((a, b) => {
+            if (a.industry_excluded && !b.industry_excluded) return 1;
+            if (!a.industry_excluded && b.industry_excluded) return -1;
+            return (b.icp_score || 0) - (a.icp_score || 0);
+          });
+          // Only pass non-excluded to Pass 2
+          const pass1Qualified = pass1Results.filter(a => !a.industry_excluded);
+
+          setPass1Count(pass1Qualified.length);
           setPass1Done(true);
 
-          // ─ Pass 2: Deep research ─
+          // ─ Pass 2: Deep research with explicit weighted scoring ─
           setStatus('pass2');
 
-          const p2ProductFocus = territory?.product || 'All Products';
+          const p2ProductFocus = selectedProduct;
           const p2SegmentRule = (() => {
-            if (mode !== 'discover') return ''; // upload mode: respect whatever was in the list
+            if (mode !== 'discover') return '';
             const seg = territory?.segment || '';
             if (seg === 'Commercial') return '\nSEGMENT ENFORCEMENT: This is a Commercial territory. Remove any account over $1B revenue from the final list and replace with a $100M–$1B fit instead.';
             if (seg === 'Growth')     return '\nSEGMENT ENFORCEMENT: This is a Growth territory. Remove any account over $100M revenue.';
             if (seg === 'Enterprise') return '\nSEGMENT ENFORCEMENT: This is an Enterprise territory. Only include accounts between $1B–$10B revenue.';
             return '';
           })();
-          const pass2Prompt = `You identified these ${pass1Results.length} accounts as strong ICP fits. Now do deeper research on each.${p2SegmentRule}
 
-For each company, use your knowledge to identify:
-1. Known or likely CRM platform (Salesforce, SAP, Oracle, MS Dynamics, etc.)
-2. Business model and revenue structure
-3. Known M&A, PE backing, recent funding, or IPO activity
-4. Specific pain points that map to ${p2ProductFocus} (and other Conga/PROS products)
-5. Any other buying signals or propensity indicators
+          const pass2Prompt = `You identified these ${pass1Qualified.length} accounts as ICP fits. Now do deep research on each and produce a FINAL weighted score using the STRUCTURED SCORING ENGINE in your system context.${p2SegmentRule}
 
-If this account shows strong propensity for a DIFFERENT product than the primary focus (${p2ProductFocus}), list those in cross_sell_products. Only include genuine fits.
+For each company, research and score ALL of the following dimensions:
 
-Then re-rank as FINAL TOP 20, combining ICP score with signal strength.
+1. SIGNALS (35% weight) — Find and score the strongest buying signal present. Apply recency decay:
+   - <3 months ago: ×1.0 | 3–6 months: ×0.85 | 6–12 months: ×0.60 | 12–24 months: ×0.30 | >24 months: ×0.0
+   - Signal score = signal_taxonomy base_score × recency_multiplier
+   - FDA pre-approval/approval: ALWAYS add a clm_flag=true regardless of selected product
+   - Report the top 3 signals detected with their recency
+
+2. GROWTH INDICATORS (20% weight) — Score 1–10:
+   - Verified Salesforce usage: +3 points
+   - Revenue or headcount growth ≥20% YoY: +3 points
+   - PE-backed or recently funded: +2 points
+   - No growth signals: score 3 or below
+
+3. INDUSTRY FIT (15% weight) — Use the industry matrix score for ${p2ProductFocus} from the scoring engine. Apply sub-vertical overrides.
+
+4. STRATEGIC ALIGNMENT (15% weight) — Score Y / ? / N:
+   - Y (score 10): Company has publicly announced initiative matching any in the scoring engine's strategic_alignment_initiatives list
+   - ? (score 5): Initiative mentioned but unclear
+   - N (score 0): No alignment signal found
+
+5. BUSINESS MODEL FIT (10% weight) — Use the business_model_thresholds for ${p2ProductFocus}. Score 1–10.
+
+6. HIRING TRENDS (5% weight) — Check for job postings or recent hires matching the hiring_signals map for ${p2ProductFocus} and Transformation_CoE. Score 1–10 (10 = multiple relevant open roles).
+
+FINAL combined_score formula:
+  combined_score = (signal_score×0.35) + (growth_score×0.20) + (industry_score×0.15) + (strategic_score×0.15) + (biz_model_score×0.10) + (hiring_score×0.05)
+
+If account shows strong fit for a DIFFERENT product than ${p2ProductFocus}, list in cross_sell_products.
 
 ACCOUNTS:
-${JSON.stringify(pass1Results)}
+${JSON.stringify(pass1Qualified)}
 
-Return a JSON array of the FINAL TOP 20 with:
+Return a JSON array of the FINAL TOP 20 (sorted by combined_score descending):
 {
   "name": "<company name>",
-  "icp_score": <1-10>,
-  "signal_score": <1-10>,
-  "combined_score": <1-10, weighted average>,
-  "industry": "<industry>",
+  "icp_score": <1-10, industry + product fit alone>,
+  "signal_score": <1-10, best signal × recency decay>,
+  "combined_score": <1-10, full weighted formula>,
+  "industry": "<specific sub-vertical>",
+  "industry_excluded": false,
   "state": "<state>",
   "revenue": "<revenue>",
   "estimated_revenue": "<revenue if no exact>",
@@ -2587,28 +2785,42 @@ Return a JSON array of the FINAL TOP 20 with:
   "industry_tier": "<Priority 1|2|3>",
   "recommended_product": "<product>",
   "primary_reason": "<why strong ICP fit>",
-  "buying_signals": ["<signal 1>", "<signal 2>", "<signal 3>"],
+  "buying_signals": ["<signal with approximate recency, e.g. 'Acquired Acme Corp (3 months ago)'>", "<signal 2>", "<signal 3>"],
+  "top_signal": "<single strongest signal>",
+  "top_signal_score": <signal base score × recency multiplier, one decimal>,
+  "clm_flag": <true if FDA pre-approval or approval detected, otherwise false>,
+  "strategic_alignment": "<Y|N|?>",
+  "strategic_initiative": "<matched initiative name or empty string>",
   "tech_stack": ["<known tech>"],
   "outreach_angle": "<one-line recommended opening for outreach>",
   "company_type": "<Prospect|Customer>",
   "cross_sell_products": ["<product>"],
   "cross_sell_reason": "<one line or empty string>",
   "est_acv_range": "<e.g. $15,000–$45,000 based on industry + segment + product>",
-  "key_competitors": ["<top competitor 1 of this company>", "<top competitor 2>", "<top competitor 3>"],
-  "industry_headwinds": ["<industry challenge/headwind 1>", "<industry challenge/headwind 2>"],
-  "industry_tailwinds": ["<industry growth driver/tailwind 1>", "<industry growth driver/tailwind 2>"],
+  "key_competitors": ["<competitor 1>", "<competitor 2>", "<competitor 3>"],
+  "industry_headwinds": ["<headwind 1>", "<headwind 2>"],
+  "industry_tailwinds": ["<tailwind 1>", "<tailwind 2>"],
   "score_breakdown": {
-    "industry_fit":        { "score": <1-10>, "rationale": "<one line>" },
-    "revenue_band":        { "score": <1-10>, "rationale": "<one line>" },
-    "tech_stack":          { "score": <1-10>, "rationale": "<one line>" },
-    "business_model":      { "score": <1-10>, "rationale": "<one line>" },
-    "relationship_signal": { "score": <1-10>, "rationale": "<one line>" }
+    "signals":             { "score": <1-10>, "rationale": "<strongest signal found + recency>" },
+    "growth_indicators":   { "score": <1-10>, "rationale": "<Salesforce confirmed? Revenue growth? PE-backed?>" },
+    "industry_fit":        { "score": <1-10>, "rationale": "<matrix score for this industry + product>" },
+    "strategic_alignment": { "score": <0|5|10>, "rationale": "<matched initiative or none>" },
+    "business_model_fit":  { "score": <1-10>, "rationale": "<volume thresholds met?>" },
+    "hiring_trends":       { "score": <1-10>, "rationale": "<relevant open roles or recent hires found>" }
   }
 }
 Return ONLY the JSON array.`;
 
           const pass2Text = await callClaude(apiKey, MODEL_M2, productContext, pass2Prompt, 10000);
           let finalResults = extractJSON(pass2Text);
+
+          // Client-side EXCLUDE enforcement after Pass 2 (safety net)
+          finalResults = finalResults.map(a => {
+            if (isExcluded(a.industry || '', selectedProduct)) {
+              return { ...a, combined_score: 0, icp_score: 0, industry_excluded: true };
+            }
+            return a;
+          });
 
           // Client-side segment revenue enforcement for Discover mode
           if (mode === 'discover') {
@@ -2624,8 +2836,9 @@ Return ONLY the JSON array.`;
               return n;
             };
             finalResults = finalResults.filter(a => {
+              if (a.industry_excluded) return false; // strip excluded
               const rev = parseRev(a.revenue || a.estimated_revenue);
-              if (rev === null) return true; // unknown — keep
+              if (rev === null) return true;
               if (seg === 'Commercial') return rev >= 1e8 && rev <= 1e9;
               if (seg === 'Growth')     return rev < 1e8;
               if (seg === 'Enterprise') return rev >= 1e9 && rev <= 1e10;
@@ -2633,7 +2846,7 @@ Return ONLY the JSON array.`;
             });
           }
 
-          // Sort by combined_score descending
+          // Sort by combined_score descending (excluded accounts already stripped or at bottom)
           finalResults.sort((a,b)=>(b.combined_score||b.icp_score||0)-(a.combined_score||a.icp_score||0));
 
           setResults(finalResults);
@@ -2667,6 +2880,33 @@ Return ONLY the JSON array.`;
               : 'No list? No problem. Tell Claude where to look and it will research and surface the best accounts in your territory.'}
           </p>
 
+          {/* API Key Gate */}
+          {showSettings ? (
+            <div className="api-key-gate">
+              <div className="api-key-gate-title">🔑 API Key Required</div>
+              <div className="api-key-gate-sub">Enter your Anthropic API key to power the AI analysis. It's stored only in your browser.</div>
+              <div className="api-key-row">
+                <div className="api-key-field">
+                  <label className="form-label">Anthropic API Key</label>
+                  <input className="form-input" type="password" placeholder="sk-ant-..." value={keyDraft}
+                    onChange={e=>setKeyDraft(e.target.value)} onKeyDown={e=>e.key==='Enter'&&saveApiKey()}/>
+                </div>
+                <div className="api-key-field" style={{maxWidth:220}}>
+                  <label className="form-label">Model</label>
+                  <input className="form-input" type="text" placeholder={DEFAULT_MODEL} value={modelDraft}
+                    onChange={e=>setModelDraft(e.target.value)}/>
+                </div>
+                <button className="btn-save-key" onClick={saveApiKey} disabled={!keyDraft}>Save & Continue</button>
+              </div>
+            </div>
+          ) : (
+            <div style={{display:'flex',justifyContent:'flex-end',marginBottom:16}}>
+              <button className="api-key-saved" onClick={()=>setShowSettings(true)}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--green)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                API key saved — <span style={{textDecoration:'underline',color:'var(--tmuted)'}}>change</span>
+              </button>
+            </div>
+          )}
 
           {/* Mode selector + clear cache */}
           {!isAnalyzing && (
@@ -2811,6 +3051,9 @@ Return ONLY the JSON array.`;
                       <IconBolt size={15}/> Run Analysis
                     </button>
                   </div>
+                  {(!apiKey || apiKey === 'PASTE_YOUR_API_KEY_HERE') && (
+                    <p style={{textAlign:'right',fontSize:12,color:'var(--red)',marginTop:8}}>Enter your API key above to run the analysis.</p>
+                  )}
                 </>
               )}
             </>

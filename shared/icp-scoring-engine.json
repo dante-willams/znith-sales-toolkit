@@ -1,0 +1,420 @@
+{
+  "version": "1.2",
+  "as_of": "2026-04-23",
+  "description": "Conga + PROS ICP Scoring Engine — structured weighted scoring data. Edit industry_matrix and signal_taxonomy here; prompts in index.html reference this file.",
+
+  "scoring_weights": {
+    "description": "Weights must sum to 1.0. Adjust here to shift priority across dimensions.",
+    "signals":             0.35,
+    "growth_indicators":   0.20,
+    "industry_fit":        0.15,
+    "strategic_alignment": 0.15,
+    "business_model_fit":  0.10,
+    "hiring_trends":       0.05
+  },
+
+  "recency_decay": {
+    "description": "Multiplier applied to a signal's base_score based on how recently it occurred. Signal score = base_score × multiplier. 2-year hard cutoff.",
+    "under_3_months":  1.00,
+    "3_to_6_months":   0.85,
+    "6_to_12_months":  0.60,
+    "12_to_24_months": 0.30,
+    "over_24_months":  0.00
+  },
+
+  "signal_taxonomy": [
+    {
+      "signal": "Publicly announced transformation initiative",
+      "base_score": 10,
+      "product_gate": "all",
+      "notes": "Any iteration of 'transformation' — digital, operational, commercial, business"
+    },
+    {
+      "signal": "CRM or ERP migration or consolidation project",
+      "base_score": 10,
+      "product_gate": "all",
+      "notes": "SAP S/4HANA migration, Salesforce implementation, Oracle consolidation, etc."
+    },
+    {
+      "signal": "Recent FDA product pre-approval",
+      "base_score": 10,
+      "product_gate": "flag_for_CLM",
+      "notes": "ALWAYS flag this account for CLM regardless of product selected. Pre-approval drives compliance docs, submission workflows, contract complexity."
+    },
+    {
+      "signal": "Recent M&A or funding round",
+      "base_score": 9,
+      "product_gate": "all",
+      "notes": "Acquisition, merger, PE backing, Series C+, growth equity. Post-M&A = contract standardization need."
+    },
+    {
+      "signal": "Recent FDA product approval",
+      "base_score": 9,
+      "product_gate": "flag_for_CLM",
+      "notes": "Post-approval commercial launch creates contract, document, and distribution complexity."
+    },
+    {
+      "signal": "Recent hiring spree (10%+ headcount growth in 1 year)",
+      "base_score": 8,
+      "product_gate": "all",
+      "notes": "Rapid headcount growth signals scale pressure on manual processes."
+    },
+    {
+      "signal": "Recent C-suite hire",
+      "base_score": 8,
+      "product_gate": "all",
+      "notes": "New CEO, CFO, CRO, CLO, CPO, CPTO — new leaders often mandate tooling change in first 90 days."
+    },
+    {
+      "signal": "News citing revenue leakage, contract dispute, missed renewal, or billing error",
+      "base_score": 8,
+      "product_gate": "all",
+      "notes": "Explicit public pain signal. Highest buying urgency indicator."
+    },
+    {
+      "signal": "New relevant VP hire (product-specific)",
+      "base_score": 7,
+      "product_gate": "product_specific",
+      "notes": "Use hiring_signals map per product to determine relevance."
+    },
+    {
+      "signal": "News citing growth, new markets, expansion, or rapid scale",
+      "base_score": 7,
+      "product_gate": "all"
+    },
+    {
+      "signal": "Earnings call or 10-K citing digital transformation, margin expansion, customer experience, or operational efficiency",
+      "base_score": 7,
+      "product_gate": "all",
+      "notes": "Public company signal; implies strategic budget exists."
+    },
+    {
+      "signal": "Verified Salesforce CRM usage",
+      "base_score": 6,
+      "product_gate": "all",
+      "notes": "Highest-fit integration path for all Conga products. Confirmed via BuiltWith, HG Insights, or LinkedIn."
+    },
+    {
+      "signal": "Glassdoor reviews mentioning contracts are a mess, quoting is manual, no deal desk, or legal slows everything down",
+      "base_score": 6,
+      "product_gate": "CLM_CPQ",
+      "notes": "Internal pain signal sourced from employee sentiment."
+    },
+    {
+      "signal": "LinkedIn post from Sales Ops or Legal Ops leader discussing process pain or tooling gaps",
+      "base_score": 6,
+      "product_gate": "all"
+    },
+    {
+      "signal": "Job postings in relevant fields per product hiring map",
+      "base_score": 5,
+      "product_gate": "product_specific",
+      "notes": "See hiring_signals map. Score 5 base; elevate to 7 if multiple openings in same function."
+    },
+    {
+      "signal": "Rapid international expansion — new country offices or foreign entity filings",
+      "base_score": 5,
+      "product_gate": "all"
+    },
+    {
+      "signal": "Conference speaker or panelist on contract automation, scaling revenue ops, or CLM strategy",
+      "base_score": 5,
+      "product_gate": "CLM_CPQ"
+    },
+    {
+      "signal": "LinkedIn company page shows Legal, Finance, and Sales all listed as large departments",
+      "base_score": 5,
+      "product_gate": "CLM",
+      "notes": "Signals contract complexity exists across multiple functions."
+    },
+    {
+      "signal": "High revenue or employee count growth verified (20%+ YoY)",
+      "base_score": 7,
+      "product_gate": "all",
+      "notes": "Growth indicator; part of growth_indicators dimension."
+    }
+  ],
+
+  "industry_matrix": {
+    "Hospital Systems": {
+      "description": "General and surgical hospitals — procurement-driven, Epic/Oracle stack, rarely buy",
+      "scores": { "CLM": "EXCLUDE", "CPQ": "EXCLUDE", "POM": "EXCLUDE", "DocAuto": "EXCLUDE", "Aime": "EXCLUDE", "RLM": "EXCLUDE" }
+    },
+    "HLS - Pharma & Biotech": {
+      "description": "Pharmaceutical manufacturing, biotech, biotech R&D — top sub-vertical across all products",
+      "scores": { "CLM": 9, "CPQ": 6, "POM": 7, "DocAuto": 9, "Aime": 9, "RLM": 4 },
+      "notes": "FDA signals amplify CLM/DocAuto/Aime scores. Sub-verticals: Pharmaceutical Manufacturing, Biotech, Biotech R&D, Generic Pharmaceuticals, Life Sciences R&D."
+    },
+    "HLS - Medical Device": {
+      "description": "Medical device manufacturers and surgical equipment",
+      "scores": { "CLM": 8, "CPQ": 6, "POM": 6, "DocAuto": 8, "Aime": 8, "RLM": 4 },
+      "notes": "High contract complexity, compliance docs, regulatory submissions. Sub-verticals: Surgical and Medical Devices, General Healthcare Equipment."
+    },
+    "HLS - Payers & Health Insurance": {
+      "description": "Health insurers, managed care organizations, payers",
+      "scores": { "CLM": 7, "CPQ": 4, "POM": 5, "DocAuto": 8, "Aime": 7, "RLM": 5 },
+      "notes": "High document volume and compliance requirements. CPQ/POM weak fit."
+    },
+    "HLS - Healthcare Services & SaaS": {
+      "description": "Healthcare IT/SaaS companies, healthcare services providers — NOT hospital systems",
+      "scores": { "CLM": 7, "CPQ": 5, "POM": 6, "DocAuto": 7, "Aime": 6, "RLM": 5 },
+      "notes": "SaaS-like billing complexity. Better fit than hospital systems. Sub-verticals: Health Care Management Software."
+    },
+    "SaaS / Technology": {
+      "description": "Pure software and SaaS companies. High fit across all products.",
+      "scores": { "CLM": 8, "CPQ": 7, "POM": 5, "DocAuto": 7, "Aime": 7, "RLM": 8 },
+      "notes": "Subscription + usage billing = RLM fit. Complex contracts = CLM. Do NOT apply these scores to IT Services & Consulting sub-vertical — use that row instead."
+    },
+    "IT Services & Consulting": {
+      "description": "IT consulting firms, managed services, system integrators — separate from SaaS",
+      "scores": { "CLM": 4, "CPQ": 3, "POM": 3, "DocAuto": 4, "Aime": 4, "RLM": 3 },
+      "notes": "Worst closed-lost rate across all products (4–8%). Services model = low fit. Consistently top loss sub-vertical. Do not conflate with SaaS/Technology."
+    },
+    "FinServ - Banking & Investment": {
+      "description": "Commercial banks, investment banks, private equity, asset management",
+      "scores": { "CLM": 8, "CPQ": 4, "POM": 3, "DocAuto": 8, "Aime": 8, "RLM": 6 },
+      "notes": "Investment banking is a top DocGen sub-vertical — active market. CPQ/POM weak fit."
+    },
+    "FinServ - Insurance": {
+      "description": "P&C, life, health insurance carriers and brokers",
+      "scores": { "CLM": 7, "CPQ": 4, "POM": 4, "DocAuto": 9, "Aime": 7, "RLM": 5 },
+      "notes": "High document volume and compliance requirements. DocAuto strongest fit. High volume services companies (HomeServe-type) also qualify here."
+    },
+    "Manufacturing - General": {
+      "description": "General manufacturing not otherwise classified",
+      "scores": { "CLM": 6, "CPQ": 8, "POM": 8, "DocAuto": 5, "Aime": 5, "RLM": 6 },
+      "notes": "Medium CLM/DocAuto. High CPQ/POM. Check sub-vertical — Pharma/Med Device manufacturing should use HLS scores."
+    },
+    "Manufacturing - Chemical & Industrial": {
+      "description": "Chemical manufacturers, industrial goods, electrical & automotive parts",
+      "scores": { "CLM": 5, "CPQ": 9, "POM": 9, "DocAuto": 4, "Aime": 3, "RLM": 5 },
+      "notes": "High POM/CPQ per win rate data and user guidance. POM chemical win rate = 17.5% (competitive but market exists)."
+    },
+    "Wholesale & Distribution": {
+      "description": "Distributors, wholesalers, industrial machinery distribution",
+      "scores": { "CLM": 5, "CPQ": 8, "POM": 9, "DocAuto": 4, "Aime": 3, "RLM": 5 },
+      "notes": "Rental services = 60% POM win rate. Core distribution motion for POM. Industrial Machinery Distribution is a top CPQ closed-lost sub-vertical = active market."
+    },
+    "Building Materials & Construction": {
+      "description": "Building materials manufacturers, construction companies, contractors",
+      "scores": { "CLM": 4, "CPQ": 8, "POM": 8, "DocAuto": 4, "Aime": 3, "RLM": 4 },
+      "notes": "High CPQ/POM per user guidance. Low CLM/DocAuto."
+    },
+    "Food & Beverage / Consumer Goods": {
+      "description": "Food manufacturers, beverage companies, FMCG/CPG",
+      "scores": { "CLM": 4, "CPQ": 7, "POM": 8, "DocAuto": 4, "Aime": 3, "RLM": 5 },
+      "notes": "High POM/CPQ per user guidance. Complex pricing and distribution."
+    },
+    "Cargo & Logistics": {
+      "description": "Freight, shipping, logistics, supply chain services",
+      "scores": { "CLM": 4, "CPQ": 7, "POM": 8, "DocAuto": 5, "Aime": 3, "RLM": 5 },
+      "notes": "Airlines = 42.4% POM win rate. Some DocAuto for freight/shipping documentation."
+    },
+    "Telecom": {
+      "description": "Telecommunications carriers, equipment providers, internet services",
+      "scores": { "CLM": 6, "CPQ": 7, "POM": 6, "DocAuto": 6, "Aime": 5, "RLM": 8 },
+      "notes": "Complex billing (subscription + transactional + usage) = strong RLM fit. CPQ for service bundling."
+    },
+    "Energy / Oil & Gas": {
+      "description": "Oil and gas producers, energy utilities, renewables",
+      "scores": { "CLM": 5, "CPQ": 6, "POM": 3, "DocAuto": 5, "Aime": 4, "RLM": 5 },
+      "notes": "POM = 7.1% win rate — avoid unless warm referral. CLM/DocAuto moderate for regulatory compliance docs."
+    },
+    "Professional Services": {
+      "description": "Management consulting, legal services, accounting firms — NOT IT consulting",
+      "scores": { "CLM": 5, "CPQ": 4, "POM": 3, "DocAuto": 8, "Aime": 5, "RLM": 4 },
+      "notes": "DocGen strongest here per closed-lost data. Home warranty / disaster remediation services = DocAuto 9. Management consulting = low fit overall."
+    },
+    "Retail": {
+      "description": "Retail chains, e-commerce, direct-to-consumer",
+      "scores": { "CLM": 4, "CPQ": 5, "POM": 6, "DocAuto": 4, "Aime": 3, "RLM": 4 },
+      "notes": "Retail pricing = POM market exists. Otherwise low fit. Pure B2C/DTC with 10,000+ docs/month can qualify for DocAuto."
+    },
+    "Education & Nonprofit": {
+      "description": "Colleges, universities, nonprofits, charities",
+      "scores": { "CLM": 2, "CPQ": 2, "POM": 2, "DocAuto": 5, "Aime": 2, "RLM": 2 },
+      "notes": "DocGen/eSign has Education presence. Otherwise very low fit. Max score 4 in existing ICP."
+    },
+    "Government": {
+      "description": "Federal, state, and local government agencies",
+      "scores": { "CLM": 3, "CPQ": 2, "POM": 2, "DocAuto": 4, "Aime": 2, "RLM": 2 },
+      "notes": "Highest loss rate in existing ICP. Procurement constraints. Avoid unless existing relationship."
+    }
+  },
+
+  "sub_vertical_overrides": [
+    {
+      "sub_vertical": "Pharmaceutical Manufacturing",
+      "salesforce_likely_shows_as": "Manufacturing",
+      "use_scores_from": "HLS - Pharma & Biotech"
+    },
+    {
+      "sub_vertical": "Medical Device Manufacturing",
+      "salesforce_likely_shows_as": "Manufacturing",
+      "use_scores_from": "HLS - Medical Device"
+    },
+    {
+      "sub_vertical": "Biotech / Biotech R&D",
+      "salesforce_likely_shows_as": "Life Sciences or Healthcare",
+      "use_scores_from": "HLS - Pharma & Biotech"
+    },
+    {
+      "sub_vertical": "SaaS company in healthcare space",
+      "salesforce_likely_shows_as": "Health Care Management Software",
+      "use_scores_from": "SaaS / Technology",
+      "notes": "A SaaS company serving healthcare is better scored as SaaS than HLS."
+    },
+    {
+      "sub_vertical": "Home warranty / disaster remediation",
+      "salesforce_likely_shows_as": "Personal Services",
+      "use_scores_from": "Professional Services",
+      "override_scores": { "DocAuto": 9 },
+      "notes": "High doc volume service company — DocAuto score overrides Professional Services row."
+    },
+    {
+      "sub_vertical": "Investment Banking",
+      "salesforce_likely_shows_as": "Financial Services",
+      "use_scores_from": "FinServ - Banking & Investment",
+      "override_scores": { "CLM": 9, "DocAuto": 9 }
+    },
+    {
+      "sub_vertical": "IT Services & Consulting",
+      "salesforce_likely_shows_as": "Technology or Information Technology",
+      "use_scores_from": "IT Services & Consulting",
+      "notes": "Do NOT use SaaS / Technology scores. This sub-vertical is the worst closed-lost performer across all products."
+    }
+  ],
+
+  "hiring_signals": {
+    "description": "Job titles that indicate buying intent by product. Match against LinkedIn job postings and recent hires.",
+    "CLM": [
+      "General Counsel", "Chief Legal Officer", "VP Legal", "SVP Legal",
+      "Contract Manager", "Contract Administrator", "Paralegal",
+      "Legal Operations", "Legal Ops", "Revenue Operations", "RevOps"
+    ],
+    "CPQ": [
+      "VP RevOps", "Director RevOps", "VP Revenue Operations", "Director Revenue Operations",
+      "VP Sales Engineering", "Director Sales Engineering",
+      "Pricing Manager", "Director Pricing", "VP Pricing",
+      "Revenue Operations", "Deal Desk Manager", "Sales Operations"
+    ],
+    "POM": [
+      "VP Pricing", "Director Pricing", "SVP Pricing",
+      "Director Pricing Analytics", "Pricing Analyst", "Pricing Strategist",
+      "VP Revenue Management", "Director Revenue Management",
+      "Chief Pricing Officer"
+    ],
+    "DocAuto": [
+      "VP Communications", "Director Communications",
+      "Director Proposals", "Proposal Manager", "Proposal Specialist",
+      "RFP Manager", "RFP Coordinator",
+      "Director Document Management", "Content Operations Manager"
+    ],
+    "Aime": [
+      "General Counsel", "Chief Legal Officer", "VP Legal",
+      "Legal Operations", "Contract Intelligence", "AI Legal",
+      "Contract Analytics"
+    ],
+    "Transformation_CoE": [
+      "Chief Transformation Officer", "VP Digital", "VP Digital Transformation",
+      "Director Center of Excellence", "VP Transformation",
+      "Director Transformation", "VP Innovation", "Director Innovation",
+      "Center of Excellence Lead", "Head of Center of Excellence",
+      "VP Operational Excellence", "Director Operational Excellence"
+    ]
+  },
+
+  "business_model_thresholds": {
+    "description": "Volume thresholds that indicate high fit for each product. Use these to score the business_model_fit dimension.",
+    "CLM": {
+      "high_propensity":   "1,000+ contracts executed per year",
+      "medium_propensity": "500+ contracts executed per year",
+      "score_high": 9,
+      "score_medium": 6
+    },
+    "CPQ": {
+      "high_propensity":   "250+ quotes generated per month",
+      "medium_propensity": "100+ quotes generated per month",
+      "score_high": 9,
+      "score_medium": 6
+    },
+    "DocAuto": {
+      "high_propensity":   "5,000+ documents or eSignatures per month",
+      "score_high": 9,
+      "notes": "Salesforce CRM is a hard requirement for high score. Without Salesforce, cap at 6."
+    },
+    "POM": {
+      "high_propensity":   "10,000+ legacy quotes for historical pricing context; or 10,000+ SKUs",
+      "score_high": 9
+    },
+    "Aime": {
+      "high_propensity":   "Large existing contract repository (10,000+ contracts); existing CLM or CLM in evaluation",
+      "score_high": 9,
+      "notes": "Not a greenfield product — requires existing contract volume."
+    },
+    "RLM": {
+      "high_propensity":   "Multiple revenue streams: subscription + transactional + professional services billing",
+      "score_high": 9
+    }
+  },
+
+  "strategic_alignment_initiatives": {
+    "description": "If a company's announced strategy matches any of these, score strategic_alignment as Y (1.0 multiplier). If unclear, score as ? (0.5 multiplier). If none, N (0 multiplier).",
+    "initiatives": [
+      "Digital transformation program",
+      "ERP or CRM migration / consolidation",
+      "Merger or acquisition integration",
+      "Compliance mandate (FDA, SOX, GDPR, HIPAA, etc.)",
+      "Pricing modernization or margin expansion initiative",
+      "Contract standardization or legal operations transformation",
+      "Revenue operations (RevOps) buildout",
+      "Center of Excellence (CoE) establishment",
+      "Sales process automation",
+      "International or market expansion",
+      "Operational efficiency or cost reduction program",
+      "Customer experience transformation",
+      "Subscription or recurring revenue model shift"
+    ]
+  },
+
+  "salesforce_industry_map": {
+    "_description": "Maps broad Salesforce CRM industry labels to the correct matrix key. 'requires_subclassification' means Claude must identify the sub-type before scoring.",
+    "Healthcare and Life Sciences": {
+      "action": "requires_subclassification",
+      "note": "Salesforce rolls hospital systems, pharma, biotech, medtech, payers, and healthcare SaaS into one label. Claude MUST sub-classify each account.",
+      "sub_type_rules": {
+        "Hospital system / health system / IDN / academic medical center / children's hospital": "Hospital Systems",
+        "Pharma / biotech / biopharma / pharmaceutical manufacturer": "HLS - Pharma & Biotech",
+        "Medical device / diagnostics / medtech": "HLS - Medical Device",
+        "Health insurance / managed care / payer": "HLS - Payers & Health Insurance",
+        "Healthcare SaaS / health IT / digital health platform": "HLS - Healthcare Services & SaaS",
+        "Cannot determine": "Hospital Systems"
+      }
+    },
+    "Technology": { "matrix_key": "SaaS / Technology" },
+    "Software": { "matrix_key": "SaaS / Technology" },
+    "Financial Services": { "matrix_key": "FinServ - Banking & Investment" },
+    "Banking": { "matrix_key": "FinServ - Banking & Investment" },
+    "Insurance": { "matrix_key": "FinServ - Insurance" },
+    "Manufacturing": { "matrix_key": "Manufacturing - General" },
+    "Transportation and Warehousing": { "matrix_key": "Cargo & Logistics" },
+    "Logistics": { "matrix_key": "Cargo & Logistics" },
+    "Services and Consulting": { "matrix_key": "IT Services & Consulting" },
+    "Energy": { "matrix_key": "Energy / Oil & Gas" },
+    "Utilities": { "matrix_key": "Energy / Oil & Gas" },
+    "Retail": { "matrix_key": "Retail" },
+    "Education": { "matrix_key": "Education & Nonprofit" },
+    "Nonprofit": { "matrix_key": "Education & Nonprofit" },
+    "Government": { "matrix_key": "Government" },
+    "Telecommunications": { "matrix_key": "Telecom" }
+  },
+
+  "product_notes": {
+    "CLM":    "Primary motion: Enterprise and Commercial, $50M+ revenue minimum. Pharma/Biotech/MedDevice + Salesforce = highest scores (9–10). Not a new logo product below $50M.",
+    "CPQ":    "Pure enterprise product, $250M+ minimum. Primary motion is expansion from existing Conga CLM or Composer customer. 23.7% Not Qualified rate — requires genuine configurable complexity.",
+    "POM":    "New logo close rate only 29.8%. Vertical-based scoring overrides revenue tier. Oil & Gas 7.1% win rate — avoid. Rental/Distribution 60% win rate — prioritize.",
+    "DocAuto":"Critical: <0.1% new logo win rate from cold prospecting. Best as expansion from existing Conga customer or warm referral. Salesforce + document volume = high score.",
+    "Aime":   "87% Enterprise/Strategic. Requires large contract repository. Not greenfield. Best post-M&A or with existing CLM customer.",
+    "RLM":    "Requires multiple revenue stream complexity. Best for SaaS, Telecom, FinServ. Only 12 deals in data — limited statistical base."
+  }
+}
