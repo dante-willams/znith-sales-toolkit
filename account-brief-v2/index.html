@@ -3028,7 +3028,7 @@ function downloadPDF() {
   const strat = state.results.callStrategy || {};
 
   // helpers
-  const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   const dot = cls => `<span class="dot ${cls}"></span>`;
   const sec = t => `<div class="sec">${t}</div>`;
   const item = (txt,cls='dot-t') => `<div class="item">${dot(cls)}${esc(txt)}</div>`;
