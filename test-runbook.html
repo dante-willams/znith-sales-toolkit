@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f0f;
+    color: #e8e8e8;
+    padding: 40px;
+    width: 720px;
+  }
+  .card {
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    border-radius: 12px;
+    padding: 32px;
+  }
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .logo {
+    background: #16a34a;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    letter-spacing: -0.5px;
+  }
+  h1 { font-size: 17px; font-weight: 600; color: #fff; }
+  h1 span { color: #6b7280; font-weight: 400; font-size: 14px; margin-left: 6px; }
+  .section { margin-bottom: 24px; }
+  .section:last-child { margin-bottom: 0; }
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6b7280;
+    margin-bottom: 10px;
+  }
+  .command-block {
+    background: #111;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12.5px;
+    color: #a3e635;
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-right: 6px;
+    margin-bottom: 6px;
+  }
+  .tag-green { background: #14532d; color: #86efac; }
+  .tag-blue  { background: #1e3a5f; color: #93c5fd; }
+  .tag-yellow{ background: #422006; color: #fcd34d; }
+  .desc {
+    font-size: 13px;
+    color: #9ca3af;
+    line-height: 1.55;
+    margin-bottom: 8px;
+  }
+  .checklist { list-style: none; }
+  .checklist li {
+    font-size: 13px;
+    color: #d1d5db;
+    padding: 5px 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .checklist li::before {
+    content: '✓';
+    color: #16a34a;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .url {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 11.5px;
+    color: #60a5fa;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid #2a2a2a;
+    margin: 20px 0;
+  }
+  .badge-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .steps { list-style: none; margin-top: 10px; }
+  .steps li {
+    font-size: 13px;
+    color: #d1d5db;
+    padding: 5px 0 5px 0;
+    display: flex;
+    gap: 10px;
+    line-height: 1.5;
+  }
+  .step-num {
+    background: #2a2a2a;
+    color: #9ca3af;
+    font-size: 11px;
+    font-weight: 600;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 12px; color: #a3e635; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="logo">ZN</div>
+    <h1>Test Runbook <span>Znith Sales Toolkit</span></h1>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Unit + Proxy Tests — runs offline, no API calls</div>
+    <ul class="steps">
+      <li><span class="step-num">1</span>Open <strong>Terminal</strong> (Cmd + Space → type Terminal)</li>
+      <li><span class="step-num">2</span>Type: <code>cd ~/Library/CloudStorage/OneDrive-Conga/Desktop/claude/znith-sales-toolkit</code></li>
+      <li><span class="step-num">3</span>Type: <code>npm test</code> and press Enter</li>
+      <li><span class="step-num">4</span>All 40 tests should show ✔ — any ✖ means something broke</li>
+    </ul>
+    <div class="badge-row" style="margin-top:12px;">
+      <span class="tag tag-green">40 tests</span>
+      <span class="tag tag-blue">CI auto-runs on push</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">Smoke Tests — hits live production (run after deploys)</div>
+    <ul class="steps">
+      <li><span class="step-num">1</span>Open <strong>Terminal</strong> (Cmd + Space → type Terminal)</li>
+      <li><span class="step-num">2</span>Type: <code>cd ~/Library/CloudStorage/OneDrive-Conga/Desktop/claude/znith-sales-toolkit</code></li>
+      <li><span class="step-num">3</span>Run the command below, replacing <code>your-password</code> with the toolkit password:</li>
+    </ul>
+    <div class="command-block" style="margin-top:10px;">SMOKE_URL=https://znith-sales-toolkit.vercel.app \<br>TOOLKIT_PASSWORD=your-password \<br>npm run test:smoke</div>
+    <ul class="steps">
+      <li><span class="step-num">4</span>All 3 tests should show ✔ — run this after every significant deploy</li>
+    </ul>
+    <div class="badge-row" style="margin-top:8px;">
+      <span class="tag tag-yellow">requires TOOLKIT_PASSWORD</span>
+      <span class="tag tag-green">3 tests</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">CI — GitHub Actions</div>
+    <p class="desc">Runs <code style="color:#a3e635;font-size:12px;">npm test</code> automatically on every push and pull request.</p>
+    <span class="url">github.com/dante-willams/znith-sales-toolkit/actions</span>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section">
+    <div class="section-title">Observability — Vercel Logs</div>
+    <p class="desc">Structured JSON logged on every API call. Filter by tool name in the search bar.</p>
+    <span class="url">vercel.com → znith-sales-toolkit → Logs</span>
+    <div class="badge-row" style="margin-top:8px;">
+      <span class="tag tag-green">tool</span>
+      <span class="tag tag-green">latency_ms</span>
+      <span class="tag tag-green">input_tokens</span>
+      <span class="tag tag-green">cache_read_input_tokens</span>
+      <span class="tag tag-green">status</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

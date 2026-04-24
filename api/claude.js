@@ -40,6 +40,7 @@ module.exports = async function handler(req, res) {
 
     console.log(JSON.stringify({
       ts: new Date().toISOString(),
+      type: 'proxy_request',
       deal_id,
       tool,
       model,
@@ -58,6 +59,7 @@ module.exports = async function handler(req, res) {
   } catch (error) {
     console.log(JSON.stringify({
       ts: new Date().toISOString(),
+      type: 'proxy_request',
       deal_id,
       tool,
       model,

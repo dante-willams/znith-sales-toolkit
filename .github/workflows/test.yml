@@ -31,3 +31,10 @@ jobs:
         env:
           SMOKE_URL: https://znith-sales-toolkit.vercel.app
           TOOLKIT_PASSWORD: ${{ secrets.TOOLKIT_PASSWORD }}
+      - name: Alert on smoke failure
+        if: failure()
+        continue-on-error: true
+        run: |
+          curl -s -X POST "${{ secrets.SMOKE_ALERT_WEBHOOK }}" \
+            -H 'Content-type: application/json' \
+            --data '{"text":"⚠️ *znith-sales-toolkit* smoke tests failed. <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View run>"}'
