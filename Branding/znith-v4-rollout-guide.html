@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<title>Znith v4 · Rollout Guide for Claude Code</title>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --f-brand:'Epilogue',sans-serif;
+  --f-ui:'Barlow',sans-serif;
+  --f-mono:'IBM Plex Mono',monospace;
+  --amber:#E5A83A;
+  --amber-glow:rgba(229,168,58,0.22);
+  --amber-muted:rgba(229,168,58,0.12);
+  --bg:#05070F;
+  --surf:#0F1520;
+  --border:rgba(255,255,255,0.08);
+  --border-md:rgba(255,255,255,0.14);
+  --text:rgba(255,255,255,0.92);
+  --tmuted:rgba(255,255,255,0.62);
+  --tfaint:rgba(255,255,255,0.42);
+  --tghost:rgba(255,255,255,0.22);
+  --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  --ok:#34D399;
+  --warn:#F59E0B;
+  --risk:#EF4444;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;line-height:1.6;padding-bottom:60px;}
+.wrap{max-width:1000px;margin:0 auto;padding:48px 32px;}
+.eyebrow{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber);margin-bottom:14px;}
+h1{font-family:var(--f-brand);font-size:44px;font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:10px;}
+.sub{font-size:16px;color:var(--tmuted);margin-bottom:32px;max-width:70ch;}
+h2{font-family:var(--f-brand);font-size:22px;font-weight:700;letter-spacing:-0.01em;margin:40px 0 14px;padding-top:28px;border-top:1px solid var(--border);position:relative;}
+h2::before{content:'';position:absolute;top:-1px;left:0;width:48px;height:2px;background:var(--amber);}
+h2 .num{font-family:var(--f-mono);color:var(--amber);font-size:12px;font-weight:700;letter-spacing:0.14em;margin-right:10px;vertical-align:2px;}
+h3{font-family:var(--f-brand);font-size:16px;font-weight:700;margin:20px 0 8px;color:var(--text);}
+p{color:var(--tmuted);margin-bottom:10px;max-width:72ch;}
+p strong{color:var(--text);font-weight:600;}
+code{font-family:var(--f-mono);font-size:12px;background:var(--surf);border:1px solid var(--border);padding:1px 6px;clip-path:var(--clip-sm);color:var(--amber);}
+pre{background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-lg);padding:16px 20px;font-family:var(--f-mono);font-size:12px;line-height:1.65;color:var(--text);overflow-x:auto;margin:12px 0;}
+pre .c{color:var(--tghost);}
+pre .k{color:var(--amber);}
+pre .s{color:#8BC4E5;}
+pre .rm{color:var(--risk);text-decoration:line-through;opacity:0.7;}
+pre .add{color:var(--ok);}
+ul,ol{margin:10px 0 14px 22px;color:var(--tmuted);}
+li{margin-bottom:5px;}
+li strong{color:var(--text);}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px;}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+th{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--tfaint);background:var(--surf);}
+td{color:var(--tmuted);}
+td code{font-size:11px;}
+.rule{background:linear-gradient(135deg,var(--amber-muted),transparent 60%);border:1px solid rgba(229,168,58,0.28);clip-path:var(--clip-lg);padding:14px 18px;margin:12px 0;}
+.rule strong{color:var(--amber);font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;display:block;margin-bottom:6px;}
+.danger{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);clip-path:var(--clip-lg);padding:14px 18px;margin:12px 0;}
+.danger strong{color:var(--risk);font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;display:block;margin-bottom:6px;}
+.ok{background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.22);clip-path:var(--clip-lg);padding:14px 18px;margin:12px 0;}
+.ok strong{color:var(--ok);font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;display:block;margin-bottom:6px;}
+.hd{border-bottom:2px solid var(--amber);padding-bottom:20px;margin-bottom:24px;}
+.version-chip{display:inline-flex;gap:10px;align-items:center;font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;}
+.version-chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber-glow);}
+.toc{background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-lg);padding:18px 22px;margin-bottom:28px;}
+.toc-title{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:10px;}
+.toc ol{list-style:none;margin:0;padding:0;columns:2;column-gap:28px;}
+.toc li{font-size:13px;color:var(--tmuted);margin-bottom:5px;}
+.toc li a{color:var(--tmuted);text-decoration:none;}
+.toc li a:hover{color:var(--amber);}
+.toc .num{font-family:var(--f-mono);color:var(--amber);margin-right:8px;font-size:11px;font-weight:700;}
+.checklist{background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-lg);padding:14px 22px;margin:12px 0;}
+.checklist-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border);font-size:13px;color:var(--text);}
+.checklist-item:last-child{border-bottom:none;}
+.checklist-item .box{width:14px;height:14px;border:1px solid var(--border-md);flex-shrink:0;margin-top:3px;}
+.step{display:flex;gap:14px;margin:14px 0;padding:14px 18px;background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-lg);}
+.step-num{font-family:var(--f-brand);font-size:22px;font-weight:800;color:var(--amber);line-height:1;min-width:28px;}
+.step-body{flex:1;}
+.step-body h4{font-family:var(--f-brand);font-size:14px;font-weight:700;margin-bottom:4px;color:var(--text);}
+.step-body p{font-size:13px;margin-bottom:6px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hd">
+  <div class="version-chip">Znith · v4 · Rollout Guide</div>
+  <h1>Rolling <span style="color:var(--amber);">Znith v4</span> across the suite</h1>
+  <p class="sub">This is an operational guide for Claude Code. Read <code>znith-v4-branding-spec.html</code> first for the "why"; this document covers the "how." Target repo: <code>dante-willams/znith-sales-toolkit</code>. Work in a <code>preview</code> branch — do not push to <code>main</code> until user approves.</p>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><span class="num">01</span><a href="#scope">Scope &amp; order of operations</a></li>
+    <li><span class="num">02</span><a href="#tokens">Step 1 · Extract tokens to shared file</a></li>
+    <li><span class="num">03</span><a href="#logos">Step 2 · Swap logos to Conga</a></li>
+    <li><span class="num">04</span><a href="#headers">Step 3 · Rename product strings</a></li>
+    <li><span class="num">05</span><a href="#footer">Step 4 · Standardize footer</a></li>
+    <li><span class="num">06</span><a href="#contrast">Step 5 · Contrast fixes</a></li>
+    <li><span class="num">07</span><a href="#amber">Step 6 · Brighten amber</a></li>
+    <li><span class="num">08</span><a href="#numbers">Step 7 · Number treatment</a></li>
+    <li><span class="num">09</span><a href="#light">Step 8 · Light theme rebuild</a></li>
+    <li><span class="num">10</span><a href="#v1">Step 9 · v1→v3→v4 cleanup</a></li>
+    <li><span class="num">11</span><a href="#per-app">Per-app checklist</a></li>
+    <li><span class="num">12</span><a href="#verify">Verification protocol</a></li>
+    <li><span class="num">13</span><a href="#pitfalls">Known pitfalls</a></li>
+  </ol>
+</div>
+
+<h2 id="scope"><span class="num">01</span>Scope &amp; order of operations</h2>
+
+<p><strong>Files in scope:</strong></p>
+<ul>
+  <li><code>dashboard.html</code> <em>(the shell)</em></li>
+  <li><code>account-brief/index.html</code> and <code>account-brief-v2/index.html</code></li>
+  <li><code>demo-brief/index.html</code></li>
+  <li><code>prospecting-agent/index.html</code></li>
+  <li><code>qualify-iq/index.html</code></li>
+  <li><code>sales-hub/index.html</code></li>
+  <li><code>value-map/index.html</code></li>
+  <li><code>win-room/index.html</code></li>
+  <li><code>shared/*.js</code> <em>(do not touch unless noted)</em></li>
+</ul>
+
+<div class="rule"><strong>Rule · Branch strategy</strong>
+Create <code>feat/znith-v4</code> from current branch. All work lands there. User will review the preview deploy before merging to <code>main</code>. Never force-push.</div>
+
+<p><strong>Order matters.</strong> Do steps 1–4 across <em>all</em> files first (they're mechanical and low-risk), then 5–8 sequentially per file (they require visual review), then 9 last.</p>
+
+<h2 id="tokens"><span class="num">02</span>Step 1 · Extract tokens to a shared file</h2>
+
+<p>Currently each app redefines the <code>:root</code> token block. This has caused drift (v1 files use <code>#0e0d0b</code>, v3 files use <code>#05070F</code>). Consolidate.</p>
+
+<ol>
+  <li>Create <code>shared/znith-tokens.css</code> with the v4 token block from the branding spec (both dark + light).</li>
+  <li>In each app's HTML, add <code>&lt;link rel="stylesheet" href="../shared/znith-tokens.css"&gt;</code> at the top of <code>&lt;head&gt;</code> (use <code>./shared/</code> for <code>dashboard.html</code>).</li>
+  <li>Remove the duplicate <code>:root</code> blocks from inline <code>&lt;style&gt;</code>.</li>
+  <li><strong>Keep any app-specific tokens</strong> (e.g. a chart palette unique to <code>value-map</code>) in the local <code>:root</code> — just remove the system-wide ones.</li>
+</ol>
+
+<pre><span class="c">/* shared/znith-tokens.css */</span>
+<span class="k">:root</span> {
+  <span class="k">--f-brand</span>: <span class="s">'Epilogue', sans-serif</span>;
+  <span class="k">--f-ui</span>:    <span class="s">'Barlow', sans-serif</span>;
+  <span class="k">--f-mono</span>:  <span class="s">'IBM Plex Mono', monospace</span>;
+
+  <span class="k">--amber</span>:        <span class="s">#E5A83A</span>;
+  <span class="k">--amber-deep</span>:   <span class="s">#B8860B</span>;
+  <span class="k">--amber-glow</span>:   <span class="s">rgba(229,168,58,0.22)</span>;
+  <span class="k">--amber-muted</span>:  <span class="s">rgba(229,168,58,0.12)</span>;
+  <span class="k">--amber-faint</span>:  <span class="s">rgba(229,168,58,0.06)</span>;
+
+  <span class="k">--bg</span>:           <span class="s">#05070F</span>;
+  <span class="k">--surf</span>:         <span class="s">#0F1520</span>;
+  <span class="k">--surf-2</span>:       <span class="s">#0A0E1A</span>;
+  <span class="k">--surf-3</span>:       <span class="s">#070A13</span>;
+
+  <span class="k">--border</span>:       <span class="s">rgba(255,255,255,0.08)</span>;
+  <span class="k">--border-md</span>:    <span class="s">rgba(255,255,255,0.14)</span>;
+
+  <span class="k">--text</span>:         <span class="s">rgba(255,255,255,0.92)</span>;
+  <span class="k">--tmuted</span>:       <span class="s">rgba(255,255,255,0.62)</span>;
+  <span class="k">--tfaint</span>:       <span class="s">rgba(255,255,255,0.42)</span>;
+  <span class="k">--tghost</span>:       <span class="s">rgba(255,255,255,0.22)</span>;
+
+  <span class="k">--status-ok</span>:    <span class="s">#34D399</span>;
+  <span class="k">--status-warn</span>:  <span class="s">#F59E0B</span>;
+  <span class="k">--status-risk</span>:  <span class="s">#EF4444</span>;
+
+  <span class="k">--clip-lg</span>: <span class="s">polygon(10px 0%, calc(100% - 10px) 0%, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0% calc(100% - 10px), 0% 10px)</span>;
+  <span class="k">--clip-sm</span>: <span class="s">polygon(5px 0%, calc(100% - 5px) 0%, 100% 5px, 100% calc(100% - 5px), calc(100% - 5px) 100%, 5px 100%, 0% calc(100% - 5px), 0% 5px)</span>;
+}
+
+<span class="k">[data-theme="light"]</span> {
+  <span class="k">--amber</span>:        <span class="s">#C98C20</span>;
+  <span class="k">--amber-text</span>:   <span class="s">#946C00</span>;
+  <span class="k">--amber-deep</span>:   <span class="s">#6E5000</span>;
+  <span class="k">--bg</span>:           <span class="s">#F4F2ED</span>;
+  <span class="k">--surf</span>:         <span class="s">#FFFFFF</span>;
+  <span class="k">--surf-2</span>:       <span class="s">#FAF8F2</span>;
+  <span class="k">--surf-3</span>:       <span class="s">#EFEBE0</span>;
+  <span class="k">--border</span>:       <span class="s">#E3E0D8</span>;
+  <span class="k">--border-md</span>:    <span class="s">#CFCBBE</span>;
+  <span class="k">--text</span>:         <span class="s">#1A1914</span>;
+  <span class="k">--tmuted</span>:       <span class="s">#5A564C</span>;
+  <span class="k">--tfaint</span>:       <span class="s">#7A7466</span>;
+  <span class="k">--tghost</span>:       <span class="s">#9A9484</span>;
+}</pre>
+
+<h2 id="logos"><span class="num">03</span>Step 2 · Swap headers to the Conga Symbol</h2>
+
+<p>Every app's header currently embeds a teal-tinted <code>Z</code> SVG path. Swap to the Conga Symbol.</p>
+
+<ol>
+  <li>Copy <code>Conga_Symbol_White.svg</code> and <code>Conga_Symbol_Black.svg</code> into <code>shared/brand/</code>.</li>
+  <li>In each header, replace the inline SVG path. Use this pattern:</li>
+</ol>
+
+<pre><span class="c">&lt;!-- BEFORE --&gt;</span>
+<span class="rm">&lt;svg viewBox="0 0 1039 1080" fill="#99f6e4"&gt;
+  &lt;path d="M760.081..."/&gt;
+&lt;/svg&gt;</span>
+
+<span class="c">&lt;!-- AFTER (dark theme default) --&gt;</span>
+<span class="add">&lt;svg viewBox="0 0 1039.041 1080" fill="currentColor" class="conga-mark"&gt;
+  &lt;path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/&gt;
+&lt;/svg&gt;</span></pre>
+
+<p>Add this CSS so the mark auto-swaps color by theme:</p>
+
+<pre><span class="k">.conga-mark</span> { <span class="k">width</span>: <span class="s">28px</span>; <span class="k">height</span>: <span class="s">28px</span>; <span class="k">color</span>: <span class="s">#FFFFFF</span>; }
+<span class="k">[data-theme="light"] .conga-mark</span> { <span class="k">color</span>: <span class="s">#1A1914</span>; }</pre>
+
+<div class="rule"><strong>Rule · Sizing</strong>Header mark is 28px. Do not scale up beyond 36px in any header. For favicons and splash screens, use the wordmark SVG instead.</div>
+
+<h2 id="headers"><span class="num">04</span>Step 3 · Rename product strings</h2>
+
+<p>Every header's product string must follow <code>Conga [Product Name]</code>. Current state is inconsistent — some say "Znith · Deals," some say "Znith Win Room," etc.</p>
+
+<table>
+<thead><tr><th>File</th><th>Before</th><th>After</th></tr></thead>
+<tbody>
+<tr><td><code>dashboard.html</code></td><td>Conga Sales Intelligence <em>(already correct)</em></td><td>Conga Sales Intelligence</td></tr>
+<tr><td><code>win-room/index.html</code></td><td>Znith Win Room</td><td>Conga Win Room</td></tr>
+<tr><td><code>account-brief-v2/index.html</code></td><td>Znith Account Brief</td><td>Conga Account Brief</td></tr>
+<tr><td><code>value-map/index.html</code></td><td>Znith Value Map</td><td>Conga Value Map</td></tr>
+<tr><td><code>qualify-iq/index.html</code></td><td>Znith Qualify IQ</td><td>Conga Qualify IQ</td></tr>
+<tr><td><code>demo-brief/index.html</code></td><td>Znith Demo Brief</td><td>Conga Demo Brief</td></tr>
+<tr><td><code>prospecting-agent/index.html</code></td><td>Znith Prospecting Agent</td><td>Conga Prospecting Agent</td></tr>
+<tr><td><code>sales-hub/index.html</code></td><td>Znith Sales Hub</td><td>Conga Sales Hub</td></tr>
+</tbody>
+</table>
+
+<p>Also update each file's <code>&lt;title&gt;</code> tag to match: <code>&lt;title&gt;Conga Win Room&lt;/title&gt;</code></p>
+
+<div class="danger"><strong>Do not</strong>Do not use "Znith" anywhere in the header, page body, or tab title. The only place Znith appears in UI is the footer wordmark (step 4).</div>
+
+<h2 id="footer"><span class="num">05</span>Step 4 · Standardize the /Znith footer</h2>
+
+<p>The dashboard already has the correct footer. Copy it verbatim to every other app. The right-side meta must update per-app.</p>
+
+<pre><span class="c">&lt;!-- Paste at end of &lt;body&gt; in every app --&gt;</span>
+&lt;footer class="znith-footer"&gt;
+  &lt;div class="znith-wordmark"&gt;
+    &lt;span style="font-family:var(--f-mono);color:var(--amber);font-weight:700;"&gt;/&lt;/span&gt;
+    &lt;span style="font-family:var(--f-brand);font-weight:800;color:var(--amber);"&gt;Z&lt;/span&gt;
+    &lt;span style="font-family:var(--f-brand);font-weight:800;color:var(--tghost);"&gt;nith&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="znith-footer-meta"&gt;
+    &lt;span&gt;<span class="add">[Product Name — e.g. Win Room]</span>&lt;/span&gt;
+    &lt;div class="znith-footer-pip"&gt;&lt;/div&gt;
+    &lt;span&gt;v4.0&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;</pre>
+
+<p>Ensure <code>body</code> has <code>padding-bottom: 40px</code> so content does not hide under the fixed footer.</p>
+
+<h2 id="contrast"><span class="num">06</span>Step 5 · Contrast fixes</h2>
+
+<p>The v3 <code>--tfaint</code> at 0.28 opacity fails WCAG AA. Bump everywhere to 0.42 (already in shared tokens from step 1). Then audit usages:</p>
+
+<ol>
+  <li>Grep each app for <code>tfaint</code>. If it is used on text smaller than 12px, either bump to <code>--tmuted</code> or enlarge to 13px.</li>
+  <li>Replace decorative-only uses (axis labels, dot patterns, chrome backgrounds) with <code>--tghost</code>.</li>
+  <li>Check all <code>rgba(255,255,255,0.XX)</code> inline values. Anything below <code>0.42</code> for text → replace with <code>--tghost</code> or bump up.</li>
+</ol>
+
+<h2 id="amber"><span class="num">07</span>Step 6 · Brighten amber</h2>
+
+<p>Global find-and-replace:</p>
+<pre><span class="rm">#B8860B</span>  →  <span class="add">#E5A83A</span>
+<span class="rm">#d4a012</span>  →  <span class="add">#B8860B</span>   <span class="c">(hover/pressed — now uses old amber)</span>
+<span class="rm">rgba(184,134,11,0.22)</span>  →  <span class="add">rgba(229,168,58,0.22)</span>
+<span class="rm">rgba(184,134,11,0.12)</span>  →  <span class="add">rgba(229,168,58,0.12)</span>
+<span class="rm">rgba(184,134,11,0.07)</span>  →  <span class="add">rgba(229,168,58,0.06)</span></pre>
+
+<div class="rule"><strong>Rule · Amber buttons</strong>On amber-fill buttons (e.g. <code>.btn-new-deal</code>), the text color should be <code>#0A0E1A</code> (surface-2) — keep that. Do not change button text to white; amber is too light for white text at AA.</div>
+
+<h2 id="numbers"><span class="num">08</span>Step 7 · Number treatment</h2>
+
+<p>Apply the number-treatment primitives to any KPI, metric, score, or tabular number:</p>
+
+<ol>
+  <li>Add <code>font-variant-numeric: tabular-nums;</code> to <code>body</code> in the shared token file <em>(already done)</em>.</li>
+  <li>Audit hero numbers. If rendered as <code>"$24.8M"</code> in one span, split into three spans:
+<pre>&lt;span class="kpi-value"&gt;
+  &lt;span class="prefix"&gt;$&lt;/span&gt;
+  &lt;span class="num"&gt;24.8&lt;/span&gt;
+  &lt;span class="unit"&gt;M&lt;/span&gt;
+&lt;/span&gt;</pre>
+  </li>
+  <li>Add the delta-chip component anywhere ± values appear (MEDDPICC changes, forecast deltas, etc.). Reference implementation: <code>znith-v31-prototype.html</code>.</li>
+</ol>
+
+<h2 id="light"><span class="num">09</span>Step 8 · Light theme rebuild</h2>
+
+<p>The current <code>[data-theme="light"]</code> block in <code>dashboard.html</code> is a minimal token swap. It needs to become a full parallel design.</p>
+
+<p><strong>Per-app tasks</strong>:</p>
+<ol>
+  <li>Remove the local <code>[data-theme="light"]</code> block (it is now in <code>shared/znith-tokens.css</code>).</li>
+  <li>Audit every inline <code>box-shadow</code> or <code>filter: drop-shadow</code> rule. Dark glows don't translate to light. Wrap in theme-aware form:
+<pre><span class="c">/* Before */</span>
+<span class="rm">box-shadow: 0 0 8px var(--amber-glow);</span>
+
+<span class="c">/* After */</span>
+<span class="add">box-shadow: var(--sh-amber);</span>
+
+<span class="c">/* And in shared tokens: */</span>
+<span class="k">--sh-amber</span>: <span class="s">0 0 8px var(--amber-glow)</span>;         <span class="c">/* dark: glow */</span>
+<span class="k">[data-theme="light"]</span> { <span class="k">--sh-amber</span>: <span class="s">0 2px 12px rgba(201,140,32,0.24)</span>; } <span class="c">/* light: shadow */</span></pre>
+  </li>
+  <li>Audit <code>backdrop-filter: blur()</code> usages. They work on both themes but the <code>rgba</code> background must be theme-paired.</li>
+  <li>Test the amber accents. On light, <code>--amber</code> (<code>#C98C20</code>) is used for fills; <code>--amber-text</code> (<code>#946C00</code>) for text. Make sure buttons use the right variable.</li>
+</ol>
+
+<h2 id="v1"><span class="num">10</span>Step 9 · v1 cleanup</h2>
+
+<p><code>account-brief/</code> (v1) and <code>win-room/</code> older variants may still reference v1 warm-bronze tokens (<code>#0e0d0b</code>, <code>#181714</code>). Either:</p>
+<ul>
+  <li><strong>Option A (preferred):</strong> delete the v1 folders if unused. Confirm with user first.</li>
+  <li><strong>Option B:</strong> migrate them to v4 by following steps 1–8.</li>
+</ul>
+
+<h2 id="per-app"><span class="num">11</span>Per-app checklist</h2>
+
+<p>Run this checklist against every HTML file in scope before declaring done:</p>
+
+<div class="checklist">
+  <div class="checklist-item"><div class="box"></div>Shared <code>znith-tokens.css</code> linked in <code>&lt;head&gt;</code></div>
+  <div class="checklist-item"><div class="box"></div>Local <code>:root</code> block cleaned of system-wide tokens</div>
+  <div class="checklist-item"><div class="box"></div>Header uses Conga Symbol SVG (not Z)</div>
+  <div class="checklist-item"><div class="box"></div>Header text reads <code>Conga [Product Name]</code></div>
+  <div class="checklist-item"><div class="box"></div><code>&lt;title&gt;</code> tag matches header</div>
+  <div class="checklist-item"><div class="box"></div>Footer is the standard <code>/Znith</code> + product + version block</div>
+  <div class="checklist-item"><div class="box"></div>No occurrence of "Znith" in the &lt;body&gt; outside the footer wordmark</div>
+  <div class="checklist-item"><div class="box"></div>All <code>#B8860B</code> replaced with <code>#E5A83A</code></div>
+  <div class="checklist-item"><div class="box"></div>No <code>rgba(255,255,255,0.28)</code> or lower used for readable text</div>
+  <div class="checklist-item"><div class="box"></div>Hero numbers split into prefix/num/unit spans where applicable</div>
+  <div class="checklist-item"><div class="box"></div>Theme toggle works and light mode does not regress</div>
+  <div class="checklist-item"><div class="box"></div><code>body { padding-bottom: 40px }</code> so content clears fixed footer</div>
+  <div class="checklist-item"><div class="box"></div>No emoji in UI (except the theme toggle, which is acceptable)</div>
+  <div class="checklist-item"><div class="box"></div>Console clean — no 404s on <code>shared/znith-tokens.css</code> or SVG paths</div>
+</div>
+
+<h2 id="verify"><span class="num">12</span>Verification protocol</h2>
+
+<p>For each app:</p>
+
+<div class="step"><div class="step-num">1</div><div class="step-body">
+  <h4>Local screenshot — dark</h4>
+  <p>Open the app. Screenshot. Compare to <code>znith-v31-prototype.html</code> for chrome consistency (header height, footer border, amber accent color).</p>
+</div></div>
+
+<div class="step"><div class="step-num">2</div><div class="step-body">
+  <h4>Local screenshot — light</h4>
+  <p>Toggle theme. Verify no glow-shadow regression, amber reads dark-gold not bright-yellow, borders are solid not translucent.</p>
+</div></div>
+
+<div class="step"><div class="step-num">3</div><div class="step-body">
+  <h4>Contrast audit</h4>
+  <p>Use Chrome DevTools → Lighthouse → Accessibility. Aim for zero AA contrast failures. Document any accepted failures (charts, brand-required) with a comment.</p>
+</div></div>
+
+<div class="step"><div class="step-num">4</div><div class="step-body">
+  <h4>Click-through</h4>
+  <p>From <code>dashboard.html</code>, create a test deal. Navigate into each sub-tool. Use the back button. Ensure the <code>?deal=</code> query parameter is preserved and tools still load data correctly.</p>
+</div></div>
+
+<div class="step"><div class="step-num">5</div><div class="step-body">
+  <h4>Deploy to preview</h4>
+  <p>Push <code>feat/znith-v4</code> and trigger the preview deploy. Share URL with user. Do not merge to <code>main</code>.</p>
+</div></div>
+
+<h2 id="pitfalls"><span class="num">13</span>Known pitfalls</h2>
+
+<div class="danger"><strong>Clip-path + focus rings</strong>
+<code>outline</code> and <code>box-shadow</code>-based focus rings get <em>clipped</em> by <code>clip-path</code>. For any <code>input</code>, <code>select</code>, <code>textarea</code> — do <em>not</em> chamfer. Use <code>border-radius: 3px</code> and a proper focus ring instead.</div>
+
+<div class="danger"><strong>Clip-path + dropdowns</strong>
+A chamfered card cannot render a dropdown that escapes its bounds — <code>clip-path</code> forces <code>overflow: hidden</code> effectively. If a tool has a dropdown inside a chamfered card, either (a) portal the dropdown to <code>body</code>, or (b) remove the chamfer from that specific card.</div>
+
+<div class="danger"><strong>Sticky header + backdrop-filter</strong>
+Some Chromium versions composite sticky + backdrop-filter incorrectly on scroll. If the header flickers, add <code>transform: translateZ(0)</code> to force its own layer.</div>
+
+<div class="danger"><strong>localStorage theme key</strong>
+Current code uses <code>localStorage.getItem('znith-theme')</code>. Keep this key — do not rename it to <code>conga-theme</code>. Users have existing values stored and renaming breaks their preference.</div>
+
+<div class="ok"><strong>Safe to touch</strong>
+All styling, all HTML chrome, all inline SVG paths in headers.</div>
+
+<div class="danger"><strong>Do not touch</strong>
+<code>shared/dealStore.js</code> data model. <code>auth.js</code>. Any <code>?deal=</code> query parameter handling. Netlify/Vercel config files.</div>
+
+<h2>Final handoff</h2>
+
+<p>When the checklist is green for every file and the preview deploy is live, report back with:</p>
+<ul>
+  <li>Preview deploy URL</li>
+  <li>Per-app checklist screenshots (12 items × N files)</li>
+  <li>Lighthouse accessibility scores (before/after)</li>
+  <li>Diff summary grouped by step (1–9)</li>
+  <li>Anything that needed a judgment call that deviated from this guide</li>
+</ul>
+
+<p>User will review in preview and either approve for merge to <code>main</code> or send back specific changes.</p>
+
+</div>
+</body>
+</html>

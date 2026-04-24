@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Znith — Design Guide v3.0 (Prescriptive)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+/* ── GUIDE TOKENS ── */
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui:    'Barlow', sans-serif;
+  --f-mono:  'IBM Plex Mono', monospace;
+
+  --amber:       #B8860B;
+  --amber-glow:  rgba(184,134,11,0.22);
+  --amber-muted: rgba(184,134,11,0.12);
+  --amber-faint: rgba(184,134,11,0.07);
+
+  --bg:     #05070F;
+  --surf:   #0F1520;
+  --surf-2: #0A0E1A;
+  --surf-3: #070A13;
+  --border: rgba(255,255,255,0.08);
+  --border-md: rgba(255,255,255,0.14);
+  --text:   rgba(255,255,255,0.88);
+  --tmuted: rgba(255,255,255,0.50);
+  --tfaint: rgba(255,255,255,0.28);
+  --navy:   #0A0E1A;
+
+  --clip-lg: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  --transition: 220ms cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-ui);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── GUIDE LAYOUT ── */
+.page {
+  max-width: 1020px;
+  margin: 0 auto;
+  padding: 60px 28px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+}
+
+/* ── SECTION HEADER ── */
+.s-label {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 4px;
+}
+.s-title {
+  font-family: var(--f-brand);
+  font-size: 20px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+.s-sub {
+  font-size: 13px;
+  color: var(--tmuted);
+  max-width: 620px;
+  margin-bottom: 24px;
+}
+.divider {
+  height: 1px;
+  background: var(--border);
+  width: 100%;
+}
+
+/* ── HERO ── */
+.hero {
+  text-align: center;
+  padding: 32px 0 0;
+}
+.hero-eyebrow {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: var(--f-brand);
+  font-size: 44px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.95);
+  letter-spacing: -0.025em;
+  margin-bottom: 10px;
+}
+.hero p {
+  font-size: 14px;
+  color: var(--tmuted);
+  max-width: 560px;
+  margin: 0 auto 20px;
+  line-height: 1.7;
+}
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--f-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tfaint);
+  background: var(--surf);
+  border: 1px solid var(--border);
+  padding: 5px 14px;
+  clip-path: var(--clip-sm);
+}
+.hero-tag span { color: var(--amber); }
+
+/* ── RULE CALLOUT (Claude instructions) ── */
+.rule-box {
+  background: rgba(184,134,11,0.06);
+  border: 1px solid rgba(184,134,11,0.2);
+  border-left: 3px solid var(--amber);
+  clip-path: var(--clip-lg);
+  overflow: hidden;
+  padding: 14px 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.rule-tag {
+  font-family: var(--f-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: rgba(184,134,11,0.12);
+  border: 1px solid rgba(184,134,11,0.25);
+  padding: 3px 8px;
+  clip-path: var(--clip-sm);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.rule-body {
+  font-family: var(--f-ui);
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.65;
+}
+.rule-body strong { color: rgba(255,255,255,0.92); font-weight: 600; }
+
+/* ── DANGER CALLOUT ── */
+.danger-box {
+  background: rgba(225,29,72,0.05);
+  border: 1px solid rgba(225,29,72,0.18);
+  border-left: 3px solid #E11D48;
+  clip-path: var(--clip-lg);
+  overflow: hidden;
+  padding: 14px 18px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.danger-tag {
+  font-family: var(--f-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #E11D48;
+  background: rgba(225,29,72,0.08);
+  border: 1px solid rgba(225,29,72,0.2);
+  padding: 3px 8px;
+  clip-path: var(--clip-sm);
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.danger-body {
+  font-family: var(--f-ui);
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.65;
+}
+.danger-body strong { color: rgba(255,255,255,0.92); }
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: #040608;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 20px 22px;
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  line-height: 1.9;
+  color: rgba(255,255,255,0.55);
+  overflow-x: auto;
+  clip-path: var(--clip-lg);
+  position: relative;
+}
+.code-block .c  { color: rgba(255,255,255,0.22); }
+.code-block .k  { color: #B8860B; }
+.code-block .v  { color: #7ec8a0; }
+.code-block .s  { color: #9d87f5; }
+.code-block .h  { color: rgba(255,255,255,0.88); }
+.code-block .d  { color: rgba(255,255,255,0.35); }
+.code-filename {
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tfaint);
+  background: var(--surf-2);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  clip-path: var(--clip-sm);
+  margin-bottom: 10px;
+}
+
+/* ── SPEC TABLE ── */
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surf);
+  clip-path: var(--clip-lg);
+  overflow: hidden;
+}
+.spec-table th {
+  text-align: left;
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tfaint);
+  padding: 10px 14px;
+  background: var(--surf-2);
+  border-bottom: 1px solid var(--border);
+}
+.spec-table td {
+  padding: 11px 14px;
+  font-family: var(--f-ui);
+  font-size: 13px;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.spec-table tr:last-child td { border-bottom: none; }
+.spec-table tr:hover td { background: rgba(255,255,255,0.02); }
+.spec-mono {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: rgba(255,255,255,0.65);
+}
+.spec-swatch {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-right: 8px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.spec-bold { font-weight: 600; color: rgba(255,255,255,0.92); }
+.spec-muted { color: var(--tmuted); font-size: 12px; }
+
+/* ── DO / DON'T GRID ── */
+.dod-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.dod-col {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  overflow: hidden;
+}
+.dod-head {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--f-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.dod-head.do   { background: rgba(22,163,74,0.06);  color: #34D399; border-color: rgba(22,163,74,0.15); }
+.dod-head.dont { background: rgba(225,29,72,0.06);  color: #E11D48; border-color: rgba(225,29,72,0.15); }
+.dod-body {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.dod-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--f-ui);
+  font-size: 12px;
+  color: var(--tmuted);
+  line-height: 1.55;
+}
+.dod-icon { flex-shrink: 0; font-family: var(--f-mono); font-size: 10px; margin-top: 2px; }
+.dod-icon.do   { color: #34D399; }
+.dod-icon.dont { color: #E11D48; }
+
+/* ── LIVE DEMO: HEADER ── */
+.demo-shell {
+  background: var(--surf-2);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  overflow: hidden;
+}
+.demo-header {
+  position: relative;
+  background: rgba(10,14,26,0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.demo-logo-wrap { display: flex; align-items: center; gap: 12px; }
+.demo-logo-mark {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.demo-logo-mark svg { width: 32px; height: 32px; }
+.demo-logo-divider { width: 1px; height: 22px; background: var(--border); }
+.demo-logo-text {
+  font-family: var(--f-ui);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.demo-logo-text span { color: var(--amber); font-weight: 400; }
+.demo-header-right { display: flex; align-items: center; gap: 10px; }
+.demo-badge {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: var(--amber-muted);
+  color: var(--amber);
+  border: 1px solid rgba(184,134,11,0.25);
+  clip-path: var(--clip-sm);
+}
+.demo-toggle {
+  background: transparent;
+  border: 1px solid var(--border-md);
+  color: var(--tmuted);
+  padding: 5px 10px;
+  clip-path: var(--clip-sm);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  display: flex; align-items: center;
+}
+.demo-btn-primary {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--amber);
+  color: #0A0E1A;
+  border: none;
+  padding: 8px 16px;
+  clip-path: var(--clip-sm);
+  font-family: var(--f-ui);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.demo-content-area {
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.demo-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.demo-card-label {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+.demo-card-title {
+  font-family: var(--f-brand);
+  font-size: 16px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.01em;
+}
+.demo-card-sub { font-size: 12px; color: var(--tmuted); }
+.demo-metrics {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 10px;
+}
+.demo-metric {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  padding: 12px 14px;
+}
+.demo-metric-val {
+  font-family: var(--f-brand);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--amber);
+  line-height: 1;
+  margin-bottom: 3px;
+}
+.demo-metric-lbl {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tfaint);
+}
+.demo-footer {
+  background: var(--surf);
+  border-top: 2px solid var(--amber);
+  height: 34px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.demo-footer-wordmark {
+  display: flex; align-items: center; gap: 1px;
+  font-family: var(--f-brand); font-size: 12px; font-weight: 800; line-height: 1;
+}
+.demo-footer-meta {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono); font-size: 9px; color: rgba(255,255,255,0.25);
+  letter-spacing: 0.08em;
+}
+.demo-footer-pip {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 6px var(--amber-glow);
+}
+
+/* ── STEP DOTS (UI Switcher) ── */
+.step-dots-demo {
+  display: flex; align-items: center; gap: 8px;
+}
+.step-dot-demo {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--border-md);
+  transition: var(--transition);
+}
+.step-dot-demo.active {
+  background: var(--amber);
+  box-shadow: 0 0 6px var(--amber-glow);
+}
+.step-dot-demo.done {
+  background: var(--amber);
+  opacity: 0.55;
+}
+
+/* ── COLOR PALETTE ── */
+.palette-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  overflow: hidden;
+}
+.palette-row {
+  display: grid;
+  grid-template-columns: 48px 180px 130px 1fr 80px;
+  align-items: stretch;
+  border-bottom: 1px solid var(--border);
+}
+.palette-row:last-child { border-bottom: none; }
+.palette-swatch { min-height: 44px; }
+.palette-name-col {
+  padding: 10px 14px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.palette-name { font-family: var(--f-ui); font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.88); }
+.palette-token { font-family: var(--f-mono); font-size: 10px; color: var(--tfaint); }
+.palette-hex-col {
+  padding: 10px 14px;
+  display: flex; flex-direction: column; justify-content: center;
+  border-left: 1px solid var(--border);
+  font-family: var(--f-mono); font-size: 11px; color: var(--tfaint);
+}
+.palette-role-col {
+  padding: 10px 14px;
+  display: flex; align-items: center;
+  border-left: 1px solid var(--border);
+  font-family: var(--f-ui); font-size: 12px; color: var(--tmuted);
+}
+.palette-tier {
+  display: flex; align-items: center; justify-content: center;
+  border-left: 1px solid var(--border);
+  padding: 0 14px;
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.tier-1 { color: #B8860B; background: rgba(184,134,11,0.08); }
+.tier-2 { color: rgba(255,255,255,0.35); }
+.tier-3 { color: rgba(255,255,255,0.2); }
+
+/* ── TYPE SPECIMEN ── */
+.type-grid {
+  display: flex; flex-direction: column; gap: 0;
+  border: 1px solid var(--border); clip-path: var(--clip-lg); overflow: hidden;
+}
+.type-row-spec {
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 24px;
+  align-items: center;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.type-row-spec:last-child { border-bottom: none; }
+.type-meta-right { text-align: right; }
+.type-meta-font { font-family: var(--f-mono); font-size: 10px; color: var(--amber); letter-spacing: 0.06em; }
+.type-meta-spec { font-family: var(--f-mono); font-size: 10px; color: var(--tfaint); margin-top: 2px; }
+.type-meta-use  { font-family: var(--f-ui); font-size: 11px; color: var(--tmuted); margin-top: 4px; }
+
+/* ── COMPONENT DEMOS ── */
+.comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.comp-card {
+  background: var(--surf); border: 1px solid var(--border);
+  clip-path: var(--clip-lg); overflow: hidden;
+}
+.comp-card-head {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--amber); background: var(--surf-2);
+}
+.comp-card-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+
+/* Buttons for demo */
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--amber); color: #0A0E1A;
+  border: none; padding: 9px 20px;
+  font-family: var(--f-ui); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition); clip-path: var(--clip-sm);
+}
+.btn-primary:hover { background: #d4a012; transform: translateY(-1px); }
+.btn-ghost {
+  display: inline-flex; align-items: center;
+  background: transparent; color: var(--tmuted);
+  border: 1px solid var(--border); padding: 9px 18px;
+  font-family: var(--f-ui); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: var(--transition); clip-path: var(--clip-sm);
+}
+.btn-ghost:hover { border-color: var(--border-md); color: var(--text); }
+.btn-danger {
+  display: inline-flex; align-items: center;
+  background: rgba(225,29,72,0.07); color: #E11D48;
+  border: 1px solid rgba(225,29,72,0.2); padding: 9px 18px;
+  font-family: var(--f-ui); font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: var(--transition); clip-path: var(--clip-sm);
+}
+
+/* Badges */
+.badge-row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.badge {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 9px; clip-path: var(--clip-sm);
+}
+.badge-amber   { background: var(--amber-muted); color: var(--amber); border: 1px solid rgba(184,134,11,0.25); }
+.badge-teal    { background: rgba(13,148,136,0.1); color: #0D9488; border: 1px solid rgba(13,148,136,0.22); }
+.badge-green   { background: rgba(22,163,74,0.1);  color: #16A34A; border: 1px solid rgba(22,163,74,0.22); }
+.badge-rose    { background: rgba(225,29,72,0.08); color: #E11D48; border: 1px solid rgba(225,29,72,0.2); }
+.badge-neutral { background: rgba(255,255,255,0.05); color: var(--tmuted); border: 1px solid var(--border); }
+
+/* Inputs */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-lbl {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--tfaint);
+}
+.input {
+  background: var(--surf-2);
+  border: 1px solid var(--border);
+  padding: 9px 12px;
+  color: var(--text); font-family: var(--f-ui); font-size: 13px;
+  outline: none; transition: border-color var(--transition), box-shadow var(--transition);
+  clip-path: var(--clip-sm); width: 100%;
+}
+.input:focus { border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-muted); }
+.input::placeholder { color: var(--tfaint); }
+.input-active { border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-muted); }
+
+/* Chamfer demo */
+.chamfer-demo {
+  display: flex; flex-wrap: wrap; gap: 14px; align-items: center;
+}
+.chamfer-box {
+  background: var(--surf-2);
+  border: 1px solid var(--border-md);
+  padding: 18px 24px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; flex-direction: column;
+}
+.chamfer-box.lg { clip-path: var(--clip-lg); }
+.chamfer-box.sm { clip-path: var(--clip-sm); }
+.chamfer-box.none { border-radius: 4px; }
+.chamfer-lbl { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tfaint); }
+
+/* Layout ruler */
+.layout-ruler {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.ruler-label { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--tfaint); }
+.ruler-bar {
+  height: 28px;
+  background: rgba(184,134,11,0.08);
+  border: 1px solid rgba(184,134,11,0.2);
+  position: relative;
+  clip-path: var(--clip-sm);
+  display: flex; align-items: center; padding: 0 12px;
+}
+.ruler-val { font-family: var(--f-mono); font-size: 11px; color: var(--amber); font-weight: 700; }
+.ruler-desc { font-family: var(--f-ui); font-size: 11px; color: var(--tmuted); margin-left: 8px; }
+
+/* Debt list */
+.debt-list { display: flex; flex-direction: column; gap: 8px; }
+.debt-item {
+  display: flex; align-items: flex-start; gap: 14px;
+  background: var(--surf); border: 1px solid var(--border);
+  clip-path: var(--clip-lg); padding: 12px 16px;
+  transition: border-color var(--transition);
+}
+.debt-item:hover { border-color: var(--border-md); }
+.debt-priority {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 8px; clip-path: var(--clip-sm); flex-shrink: 0; margin-top: 1px;
+}
+.debt-priority.high   { background: rgba(225,29,72,0.08);  color: #E11D48; border: 1px solid rgba(225,29,72,0.2); }
+.debt-priority.med    { background: rgba(234,88,12,0.08);  color: #EA580C; border: 1px solid rgba(234,88,12,0.2); }
+.debt-priority.low    { background: rgba(22,163,74,0.08);  color: #16A34A; border: 1px solid rgba(22,163,74,0.2); }
+.debt-content { flex: 1; }
+.debt-title { font-family: var(--f-ui); font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.88); margin-bottom: 3px; }
+.debt-detail { font-family: var(--f-ui); font-size: 12px; color: var(--tmuted); line-height: 1.5; }
+
+/* ── ANIMATIONS ── */
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 4px rgba(184,134,11,0.3); }
+  50%      { box-shadow: 0 0 10px rgba(184,134,11,0.55); }
+}
+.pip-live { animation: glow-pulse 2.5s ease-in-out infinite; }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="hero-eyebrow">Znith Sales Toolkit — Design Guide v3.0</div>
+    <h1>/Znith</h1>
+    <p>A prescriptive rulebook for Claude when designing pages in the sales toolkit. Follow these rules exactly. Do not deviate from the token values, chrome structure, or component patterns defined here.</p>
+    <div class="hero-tag">
+      <span>↑</span> derived from claude/funny-haibt-6098d6 — dark-first, amber system, chamfer geometry
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 01: PROTECTED CHROME -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="s-label">01</div>
+    <div class="s-title">Protected Chrome — Never Change These</div>
+    <div class="s-sub">These three elements define the Znith identity across every page. Their structure, dimensions, and token usage are locked. When building any new page, copy them verbatim.</div>
+
+    <div class="rule-box" style="margin-bottom:20px;">
+      <div class="rule-tag">Locked</div>
+      <div class="rule-body">The <strong>header</strong>, <strong>/Znith footer</strong>, and <strong>Conga logo mark</strong> must appear on every page in the toolkit. Their layout, dimensions, and amber amber accent are non-negotiable. The theme toggle (🌙/☀️) is the "UI switcher" — it must remain in the header-right area on all pages.</div>
+    </div>
+
+    <!-- Live demo -->
+    <div class="demo-shell">
+
+      <!-- HEADER -->
+      <div class="demo-header">
+        <div class="demo-logo-wrap">
+          <div class="demo-logo-mark">
+            <svg viewBox="0 0 1039 1080" xmlns="http://www.w3.org/2000/svg" fill="#99f6e4">
+              <path d="M760.081,809.993c-54.616,21.347-116.877,31.991-186.827,31.991-92.119,0-165.068-25.169-218.802-75.507-53.749-50.308-80.623-119.846-80.623-208.584v-51.161c0-95.53,20.038-169.332,60.144-221.375,40.061-52.043,95.971-78.065,167.626-78.065,68.23,0,118.567,17.083,150.999,51.191,32.387,34.137,48.618,86.18,48.618,156.1v51.191h273.844v-51.191c0-134.754-40.106-237.576-120.287-308.378C774.562,35.431,659.391,0,509.274,0,169.743,0,0,180.005,0,539.985,0,715.727,49.015,849.657,147.147,941.777c98.088,92.149,235.856,138.223,413.317,138.223,97.25,0,187.664-13.702,271.286-40.958,83.563-27.286,152.675-62.276,207.291-104.939l-94.692-217.523c-68.259,40.958-129.682,72.096-184.268,93.413Z"/>
+            </svg>
+          </div>
+          <div class="demo-logo-divider"></div>
+          <div class="demo-logo-text">Conga <span>Sales Intelligence</span></div>
+        </div>
+        <div class="demo-header-right">
+          <!-- Module badge (optional, shown on tool pages) -->
+          <div class="demo-badge">Account Brief</div>
+          <!-- Step dots (UI Switcher — multi-step tools only) -->
+          <div class="step-dots-demo" title="Step progress (UI Switcher)">
+            <div class="step-dot-demo done"></div>
+            <div class="step-dot-demo active"></div>
+            <div class="step-dot-demo"></div>
+          </div>
+          <!-- Theme toggle: always present -->
+          <div class="demo-toggle" title="Theme toggle (UI Switcher)">🌙</div>
+          <!-- Primary CTA (page-specific) -->
+          <div class="demo-btn-primary">
+            <svg width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Next Step
+          </div>
+        </div>
+      </div>
+
+      <!-- PAGE CONTENT (abbreviated) -->
+      <div class="demo-content-area">
+        <div class="demo-metrics">
+          <div class="demo-metric">
+            <div class="demo-metric-val">$2.4M</div>
+            <div class="demo-metric-lbl">Deal Value</div>
+          </div>
+          <div class="demo-metric">
+            <div class="demo-metric-val">73</div>
+            <div class="demo-metric-lbl">MEDDPICC Score</div>
+          </div>
+          <div class="demo-metric">
+            <div class="demo-metric-val">14d</div>
+            <div class="demo-metric-lbl">Close Window</div>
+          </div>
+        </div>
+        <div class="demo-card">
+          <div class="demo-card-label">Account Brief</div>
+          <div class="demo-card-title">Acme Corporation</div>
+          <div class="demo-card-sub">Enterprise · Manufacturing · $4.2B ARR</div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="demo-footer">
+        <div class="demo-footer-wordmark">
+          <span style="font-family:var(--f-mono);color:var(--amber);font-weight:700;">/</span>
+          <span style="font-family:var(--f-brand);font-weight:800;color:var(--amber);">Z</span>
+          <span style="font-family:var(--f-brand);font-weight:800;color:rgba(255,255,255,0.22);">nith</span>
+        </div>
+        <div class="demo-footer-meta">
+          <span>Account Brief</span>
+          <div class="demo-footer-pip pip-live"></div>
+          <span>v2.0</span>
+        </div>
+      </div>
+
+    </div><!-- /demo-shell -->
+
+    <!-- Spec table: header -->
+    <div style="margin-top:20px;">
+      <div class="code-filename">header.css — copy verbatim</div>
+      <div class="code-block"><span class="h">header</span> {
+  <span class="k">position</span>: <span class="v">sticky</span>; <span class="k">top</span>: <span class="v">0</span>; <span class="k">z-index</span>: <span class="v">100</span>;
+  <span class="k">background</span>: <span class="v">rgba(10,14,26,0.92)</span>;
+  <span class="k">backdrop-filter</span>: <span class="v">blur(16px)</span>;
+  <span class="k">border-bottom</span>: <span class="v">1px solid var(--border)</span>;
+  <span class="k">padding</span>: <span class="v">0 40px</span>;
+  <span class="k">display</span>: <span class="v">flex</span>; <span class="k">align-items</span>: <span class="v">center</span>; <span class="k">justify-content</span>: <span class="v">space-between</span>;
+  <span class="k">height</span>: <span class="v">64px</span>; <span class="c">/* always 64px — do not change */</span>
+}
+
+<span class="c">/* Left: Conga logo (locked) */</span>
+<span class="h">.header-logo</span> { <span class="k">display</span>: <span class="v">flex</span>; <span class="k">align-items</span>: <span class="v">center</span>; <span class="k">gap</span>: <span class="v">14px</span>; }
+<span class="h">.logo-mark</span> { <span class="k">width</span>: <span class="v">36px</span>; <span class="k">height</span>: <span class="v">36px</span>; }  <span class="c">/* SVG fill="#99f6e4" */</span>
+<span class="h">.logo-divider</span> { <span class="k">width</span>: <span class="v">1px</span>; <span class="k">height</span>: <span class="v">24px</span>; <span class="k">background</span>: <span class="v">var(--border)</span>; }
+<span class="h">.logo-text</span> { <span class="k">font</span>: <span class="v">600 13px/1 var(--f-ui)</span>; <span class="k">letter-spacing</span>: <span class="v">0.04em</span>; <span class="k">text-transform</span>: <span class="v">uppercase</span>; }
+<span class="h">.logo-text span</span> { <span class="k">color</span>: <span class="v">var(--amber)</span>; <span class="k">font-weight</span>: <span class="v">400</span>; } <span class="c">/* "Sales Intelligence" */</span>
+
+<span class="c">/* Right: UI Switcher area */</span>
+<span class="h">.header-right</span> { <span class="k">display</span>: <span class="v">flex</span>; <span class="k">align-items</span>: <span class="v">center</span>; <span class="k">gap</span>: <span class="v">10px</span>; }
+<span class="h">.theme-toggle-btn</span> { <span class="c">/* 🌙/☀️ — always present */</span>
+  <span class="k">background</span>: <span class="v">transparent</span>; <span class="k">border</span>: <span class="v">1px solid var(--border-md)</span>;
+  <span class="k">color</span>: <span class="v">var(--tmuted)</span>; <span class="k">padding</span>: <span class="v">5px 10px</span>; <span class="k">clip-path</span>: <span class="v">var(--clip-sm)</span>;
+}
+<span class="h">.theme-toggle-btn:hover</span> { <span class="k">border-color</span>: <span class="v">var(--amber)</span>; <span class="k">color</span>: <span class="v">var(--amber)</span>; }</div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <div class="code-filename">footer.css — copy verbatim</div>
+      <div class="code-block"><span class="h">.znith-footer</span> {
+  <span class="k">position</span>: <span class="v">fixed</span>; <span class="k">bottom</span>: <span class="v">0</span>; <span class="k">left</span>: <span class="v">0</span>; <span class="k">right</span>: <span class="v">0</span>;
+  <span class="k">z-index</span>: <span class="v">90</span>; <span class="c">/* below header (100), above content */</span>
+  <span class="k">height</span>: <span class="v">34px</span>; <span class="c">/* always 34px */</span>
+  <span class="k">padding</span>: <span class="v">0 16px</span>;
+  <span class="k">display</span>: <span class="v">flex</span>; <span class="k">align-items</span>: <span class="v">center</span>; <span class="k">justify-content</span>: <span class="v">space-between</span>;
+  <span class="k">background</span>: <span class="v">var(--surf)</span>;
+  <span class="k">border-top</span>: <span class="v">2px solid var(--amber)</span>; <span class="c">/* signature amber top-border */</span>
+}
+<span class="h">.znith-footer-pip</span> {
+  <span class="k">width</span>: <span class="v">4px</span>; <span class="k">height</span>: <span class="v">4px</span>; <span class="k">border-radius</span>: <span class="v">50%</span>;
+  <span class="k">background</span>: <span class="v">var(--amber)</span>; <span class="k">box-shadow</span>: <span class="v">0 0 6px var(--amber-glow)</span>;
+}
+
+<span class="c">/* HTML structure */</span>
+&lt;<span class="h">footer</span> <span class="k">class</span>=<span class="s">"znith-footer"</span>&gt;
+  &lt;<span class="h">div</span> <span class="k">class</span>=<span class="s">"znith-wordmark"</span>&gt;
+    &lt;<span class="h">span</span> <span class="k">style</span>=<span class="s">"font-family:var(--f-mono);color:var(--amber);font-weight:700;"</span>&gt;/&lt;/<span class="h">span</span>&gt;
+    &lt;<span class="h">span</span> <span class="k">style</span>=<span class="s">"font-family:var(--f-brand);font-weight:800;color:var(--amber);"</span>&gt;Z&lt;/<span class="h">span</span>&gt;
+    &lt;<span class="h">span</span> <span class="k">style</span>=<span class="s">"font-family:var(--f-brand);font-weight:800;color:rgba(255,255,255,0.25);"</span>&gt;nith&lt;/<span class="h">span</span>&gt;
+  &lt;/<span class="h">div</span>&gt;
+  &lt;<span class="h">div</span> <span class="k">class</span>=<span class="s">"znith-footer-meta"</span>&gt;
+    &lt;<span class="h">span</span> <span class="k">style</span>=<span class="s">"font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;"</span>&gt;[Module Name]&lt;/<span class="h">span</span>&gt;
+    &lt;<span class="h">div</span> <span class="k">class</span>=<span class="s">"znith-footer-pip"</span>&gt;&lt;/<span class="h">div</span>&gt;
+    &lt;<span class="h">span</span> <span class="k">style</span>=<span class="s">"font-family:var(--f-mono);font-size:9px;color:rgba(255,255,255,0.25);letter-spacing:0.08em;"</span>&gt;v2.0&lt;/<span class="h">span</span>&gt;
+  &lt;/<span class="h">div</span>&gt;
+&lt;/<span class="h">footer</span>&gt;</div>
+    </div>
+
+    <div class="rule-box" style="margin-top:16px;">
+      <div class="rule-tag">UI Switcher</div>
+      <div class="rule-body">The theme toggle (<strong>🌙/☀️</strong>) is the primary "UI switcher" — it must always live in <strong>.header-right</strong>. On multi-step tool pages, add step-dot indicators alongside it (see Section 06). Never replace the theme toggle with a different component or remove it.</div>
+    </div>
+
+  </div><!-- /section 01 -->
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 02: TOKEN REFERENCE -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="s-label">02</div>
+    <div class="s-title">Token Reference — Copy This Exactly</div>
+    <div class="s-sub">Every page must open with this <code style="font-family:var(--f-mono);font-size:12px;color:var(--amber);">:root</code> block verbatim. Do not rename tokens, do not add new color names without a documented purpose, do not use raw hex values outside of this block.</div>
+
+    <div class="code-filename">:root — paste into every new page</div>
+    <div class="code-block">:root {
+  <span class="c">/* ── FONTS ── */</span>
+  <span class="k">--f-brand</span>: <span class="s">'Epilogue', sans-serif</span>;    <span class="c">/* headings, wordmarks, big numbers */</span>
+  <span class="k">--f-ui</span>:    <span class="s">'Barlow', sans-serif</span>;      <span class="c">/* body copy, buttons, labels */</span>
+  <span class="k">--f-mono</span>:  <span class="s">'IBM Plex Mono', monospace</span>; <span class="c">/* eyebrows, badges, code, meta */</span>
+
+  <span class="c">/* ── AMBER — system color: header, footer, CTAs, metric values ── */</span>
+  <span class="k">--amber</span>:       <span class="v">#B8860B</span>;
+  <span class="k">--amber-glow</span>:  <span class="v">rgba(184,134,11,0.22)</span>;
+  <span class="k">--amber-muted</span>: <span class="v">rgba(184,134,11,0.12)</span>;
+  <span class="k">--amber-faint</span>: <span class="v">rgba(184,134,11,0.07)</span>;
+
+  <span class="c">/* ── MODULE ACCENTS — use only for badges, pips, left-border strips ── */</span>
+  <span class="k">--c-account</span>:  <span class="v">#0D9488</span>; <span class="k">--c-account-glow</span>:  <span class="v">rgba(13,148,136,0.22)</span>;  <span class="k">--c-account-muted</span>:  <span class="v">rgba(13,148,136,0.10)</span>;
+  <span class="k">--c-valuemap</span>: <span class="v">#8B5CF6</span>; <span class="k">--c-valuemap-glow</span>: <span class="v">rgba(139,92,246,0.22)</span>;  <span class="k">--c-valuemap-muted</span>: <span class="v">rgba(139,92,246,0.10)</span>;
+  <span class="k">--c-demo</span>:     <span class="v">#EA580C</span>; <span class="k">--c-demo-glow</span>:     <span class="v">rgba(234,88,12,0.22)</span>;   <span class="k">--c-demo-muted</span>:     <span class="v">rgba(234,88,12,0.10)</span>;
+  <span class="k">--c-qualify</span>:  <span class="v">#16A34A</span>; <span class="k">--c-qualify-glow</span>:  <span class="v">rgba(22,163,74,0.22)</span>;   <span class="k">--c-qualify-muted</span>:  <span class="v">rgba(22,163,74,0.10)</span>;
+
+  <span class="c">/* ── STATUS COLORS — data only: scores, health, outcomes ── */</span>
+  <span class="k">--status-ok</span>:   <span class="v">#34D399</span>;
+  <span class="k">--status-warn</span>: <span class="v">#F59E0B</span>;
+  <span class="k">--status-risk</span>: <span class="v">#EF4444</span>;
+
+  <span class="c">/* ── BASE PALETTE (dark default) ── */</span>
+  <span class="k">--bg</span>:       <span class="v">#05070F</span>;
+  <span class="k">--surf</span>:     <span class="v">#0F1520</span>;
+  <span class="k">--surf-2</span>:   <span class="v">#0A0E1A</span>;
+  <span class="k">--surf-3</span>:   <span class="v">#070A13</span>;
+  <span class="k">--border</span>:   <span class="v">rgba(255,255,255,0.08)</span>;
+  <span class="k">--border-md</span>:<span class="v">rgba(255,255,255,0.14)</span>;
+  <span class="k">--text</span>:     <span class="v">rgba(255,255,255,0.88)</span>;
+  <span class="k">--tmuted</span>:   <span class="v">rgba(255,255,255,0.50)</span>;
+  <span class="k">--tfaint</span>:   <span class="v">rgba(255,255,255,0.28)</span>;
+
+  <span class="c">/* ── GEOMETRY ── */</span>
+  <span class="k">--clip-lg</span>: <span class="v">polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px)</span>;
+  <span class="k">--clip-sm</span>: <span class="v">polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px)</span>;
+
+  <span class="c">/* ── MOTION ── */</span>
+  <span class="k">--transition</span>: <span class="v">220ms cubic-bezier(0.4,0,0.2,1)</span>;
+  <span class="k">--spring</span>:     <span class="v">400ms cubic-bezier(0.34,1.56,0.64,1)</span>;
+}
+
+<span class="c">/* ── LIGHT THEME OVERRIDE (add when page supports theme toggle) ── */</span>
+[data-theme="light"] {
+  <span class="k">--bg</span>:       <span class="v">#F4F5F6</span>;
+  <span class="k">--surf</span>:     <span class="v">#FFFFFF</span>;
+  <span class="k">--surf-2</span>:   <span class="v">#F4F5F6</span>;
+  <span class="k">--surf-3</span>:   <span class="v">#ECEEF0</span>;
+  <span class="k">--border</span>:   <span class="v">#E2E5E9</span>;
+  <span class="k">--border-md</span>:<span class="v">#CBD0D8</span>;
+  <span class="k">--text</span>:     <span class="v">#1A2332</span>;
+  <span class="k">--tmuted</span>:   <span class="v">#6B7280</span>;
+  <span class="k">--tfaint</span>:   <span class="v">#9CA3AF</span>;
+}</div>
+
+    <div style="margin-top:20px;">
+      <table class="spec-table">
+        <thead>
+          <tr>
+            <th>Swatch</th>
+            <th>Token</th>
+            <th>Hex / Value</th>
+            <th>Permitted Uses</th>
+            <th>Tier</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="spec-swatch" style="background:#B8860B;"></span></td>
+            <td><span class="spec-bold">--amber</span></td>
+            <td><span class="spec-mono">#B8860B</span></td>
+            <td>Primary buttons, footer border, metric values, eyebrows, active states, step dots</td>
+            <td class="palette-tier tier-1" style="border:none;">Core</td>
+          </tr>
+          <tr>
+            <td><span class="spec-swatch" style="background:#0D9488;"></span></td>
+            <td><span class="spec-bold">--c-account</span></td>
+            <td><span class="spec-mono">#0D9488</span></td>
+            <td>Account Brief badges, left-border strips, module pip only</td>
+            <td class="palette-tier tier-2" style="border:none;">Module</td>
+          </tr>
+          <tr>
+            <td><span class="spec-swatch" style="background:#8B5CF6;"></span></td>
+            <td><span class="spec-bold">--c-valuemap</span></td>
+            <td><span class="spec-mono">#8B5CF6</span></td>
+            <td>Value Map badges, left-border strips, module pip only</td>
+            <td class="palette-tier tier-2" style="border:none;">Module</td>
+          </tr>
+          <tr>
+            <td><span class="spec-swatch" style="background:#EA580C;"></span></td>
+            <td><span class="spec-bold">--c-demo</span></td>
+            <td><span class="spec-mono">#EA580C</span></td>
+            <td>Demo Brief badges, left-border strips, module pip only</td>
+            <td class="palette-tier tier-2" style="border:none;">Module</td>
+          </tr>
+          <tr>
+            <td><span class="spec-swatch" style="background:#16A34A;"></span></td>
+            <td><span class="spec-bold">--c-qualify</span></td>
+            <td><span class="spec-mono">#16A34A</span></td>
+            <td>Qualify IQ badges, MEDDPICC score bars, module pip only</td>
+            <td class="palette-tier tier-2" style="border:none;">Module</td>
+          </tr>
+          <tr>
+            <td><span class="spec-swatch" style="background:#34D399;"></span></td>
+            <td><span class="spec-bold">--status-ok</span></td>
+            <td><span class="spec-mono">#34D399</span></td>
+            <td>Health indicators, score ≥70, Closed Won — data only</td>
+            <td class="palette-tier tier-3" style="border:none;">Status</td>
+          </tr>
+          <tr>
+            <td><span class="spec-swatch" style="background:#EF4444;"></span></td>
+            <td><span class="spec-bold">--status-risk</span></td>
+            <td><span class="spec-mono">#EF4444</span></td>
+            <td>Risk indicators, score &lt;40, errors — data only</td>
+            <td class="palette-tier tier-3" style="border:none;">Status</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="danger-box" style="margin-top:16px;">
+      <div class="danger-tag">Never</div>
+      <div class="danger-body">Do <strong>not</strong> use module accent colors (<code style="font-size:11px;font-family:var(--f-mono);">--c-account</code>, etc.) for backgrounds, button fills, or large areas. They are for <strong>badges, pips, and left-border accent strips only</strong>. Amber is the only color that should dominate any UI surface.</div>
+    </div>
+
+  </div><!-- /section 02 -->
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 03: TYPOGRAPHY SCALE -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="s-label">03</div>
+    <div class="s-title">Typography Scale</div>
+    <div class="s-sub">Three fonts, each with a single job. Do not mix roles. Sizes are standardized — pick from this scale, not arbitrary values.</div>
+
+    <div class="type-grid">
+      <div class="type-row-spec">
+        <div>
+          <div style="font-family:'Epilogue',sans-serif;font-size:32px;font-weight:800;color:rgba(255,255,255,0.95);letter-spacing:-0.025em;line-height:1.1;">Page Headline</div>
+        </div>
+        <div class="type-meta-right">
+          <div class="type-meta-font">Epilogue</div>
+          <div class="type-meta-spec">32px · 800 · −0.025em</div>
+          <div class="type-meta-use">Page H1 title (hero)</div>
+        </div>
+      </div>
+      <div class="type-row-spec">
+        <div>
+          <div style="font-family:'Epilogue',sans-serif;font-size:22px;font-weight:800;color:rgba(255,255,255,0.92);letter-spacing:-0.015em;line-height:1.2;">Section heading or tool title</div>
+        </div>
+        <div class="type-meta-right">
+          <div class="type-meta-font">Epilogue</div>
+          <div class="type-meta-spec">22px · 800 · −0.015em</div>
+          <div class="type-meta-use">Section H2 / card titles</div>
+        </div>
+      </div>
+      <div class="type-row-spec">
+        <div>
+          <div style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:400;color:rgba(255,255,255,0.88);line-height:1.65;">Body copy — clear, legible, generous line-height. Standard reading weight.</div>
+        </div>
+        <div class="type-meta-right">
+          <div class="type-meta-font">Barlow</div>
+          <div class="type-meta-spec">14px · 400 · 1.65lh</div>
+          <div class="type-meta-use">Body copy, descriptions</div>
+        </div>
+      </div>
+      <div class="type-row-spec">
+        <div>
+          <div style="font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;color:rgba(255,255,255,0.88);line-height:1.5;">Sub-labels, card metadata, supporting text</div>
+        </div>
+        <div class="type-meta-right">
+          <div class="type-meta-font">Barlow</div>
+          <div class="type-meta-spec">13px · 600 · 1.5lh</div>
+          <div class="type-meta-use">Card labels, button text</div>
+        </div>
+      </div>
+      <div class="type-row-spec">
+        <div>
+          <div style="font-family:'Epilogue',sans-serif;font-size:22px;font-weight:800;color:#B8860B;letter-spacing:-0.015em;line-height:1;">$2.4M</div>
+        </div>
+        <div class="type-meta-right">
+          <div class="type-meta-font">Epilogue + amber</div>
+          <div class="type-meta-spec">20–28px · 800 · amber</div>
+          <div class="type-meta-use">Metric values only</div>
+        </div>
+      </div>
+      <div class="type-row-spec">
+        <div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;color:#B8860B;letter-spacing:0.2em;text-transform:uppercase;line-height:1;">Account Brief · v2.0</div>
+        </div>
+        <div class="type-meta-right">
+          <div class="type-meta-font">IBM Plex Mono</div>
+          <div class="type-meta-spec">9–11px · 700 · 0.18em LS · UC</div>
+          <div class="type-meta-use">Eyebrows, badges, meta, labels</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-box" style="margin-top:16px;">
+      <div class="rule-tag">Rule</div>
+      <div class="rule-body"><strong>Epilogue</strong> = brand + numbers only. <strong>Barlow</strong> = all body/UI text. <strong>IBM Plex Mono</strong> = labels, badges, eyebrows, code, and any all-caps metadata. Never use mono for paragraphs; never use Epilogue for form labels.</div>
+    </div>
+
+  </div><!-- /section 03 -->
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 04: GEOMETRY — CHAMFER SYSTEM -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="s-label">04</div>
+    <div class="s-title">Geometry — The Chamfer System</div>
+    <div class="s-sub">Every UI element uses chamfered corners via CSS clip-path — not border-radius. This is the defining geometric signature of the toolkit. Apply it consistently.</div>
+
+    <div class="chamfer-demo">
+      <div class="chamfer-box lg" style="width:160px;height:80px;">
+        <div class="chamfer-lbl">--clip-lg</div>
+        <div style="font-family:var(--f-mono);font-size:9px;color:var(--amber);letter-spacing:0.06em;">10px cut</div>
+        <div style="font-family:var(--f-ui);font-size:11px;color:var(--tmuted);">cards · modals · panels</div>
+      </div>
+      <div class="chamfer-box sm" style="width:140px;height:68px;">
+        <div class="chamfer-lbl">--clip-sm</div>
+        <div style="font-family:var(--f-mono);font-size:9px;color:var(--amber);letter-spacing:0.06em;">5px cut</div>
+        <div style="font-family:var(--f-ui);font-size:11px;color:var(--tmuted);">buttons · badges · inputs</div>
+      </div>
+      <div class="chamfer-box none" style="width:120px;height:60px;opacity:0.35;">
+        <div class="chamfer-lbl">border-radius</div>
+        <div style="font-family:var(--f-ui);font-size:11px;color:#E11D48;">❌ Do not use</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;" class="dod-grid">
+      <div class="dod-col">
+        <div class="dod-head do">✓ Apply clip-path to</div>
+        <div class="dod-body">
+          <div class="dod-item"><span class="dod-icon do">→</span> All card / panel containers (clip-lg)</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> All buttons, primary and ghost (clip-sm)</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> All form inputs and textareas (clip-sm)</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> All badges and status pills (clip-sm)</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Modals and drawer panels (clip-lg)</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Step number indicators (clip-sm)</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Code blocks and pre elements (clip-lg)</div>
+        </div>
+      </div>
+      <div class="dod-col">
+        <div class="dod-head dont">✗ Do not use chamfer on</div>
+        <div class="dod-body">
+          <div class="dod-item"><span class="dod-icon dont">→</span> The header or footer (these span full width)</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Dividers and horizontal rules</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Circular elements (pips, avatar dots)</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> SVG icons</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> body or html elements</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Any element with overflow:visible children that need to escape</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="danger-box" style="margin-top:16px;">
+      <div class="danger-tag">Never</div>
+      <div class="danger-body">Do <strong>not</strong> use <code style="font-family:var(--f-mono);font-size:11px;">border-radius</code> as a substitute for clip-path on interactive elements. These are not interchangeable — border-radius creates a fundamentally different visual language. The exception: pure circles (4px pip dots use <code style="font-family:var(--f-mono);font-size:11px;">border-radius:50%</code>).</div>
+    </div>
+
+  </div><!-- /section 04 -->
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 05: COMPONENT RULES -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="s-label">05</div>
+    <div class="s-title">Component Rules</div>
+    <div class="s-sub">Standard components with canonical styles. Copy these patterns directly — do not invent new button styles, badge shapes, or input treatments.</div>
+
+    <div class="comp-grid">
+
+      <!-- Buttons -->
+      <div class="comp-card">
+        <div class="comp-card-head">Buttons</div>
+        <div class="comp-card-body">
+          <div class="btn-row">
+            <button class="btn-primary">Primary CTA</button>
+            <button class="btn-ghost">Secondary</button>
+            <button class="btn-danger">Destructive</button>
+          </div>
+          <div style="font-family:var(--f-mono);font-size:9px;color:var(--tfaint);letter-spacing:0.06em;margin-top:4px;">
+            Primary: amber fill · dark text · clip-sm<br>
+            Ghost: transparent · border · clip-sm<br>
+            Hover: translateY(-1px) on primary
+          </div>
+        </div>
+      </div>
+
+      <!-- Badges -->
+      <div class="comp-card">
+        <div class="comp-card-head">Badges &amp; Status Pills</div>
+        <div class="comp-card-body">
+          <div class="badge-row">
+            <span class="badge badge-amber">Active</span>
+            <span class="badge badge-teal">Account</span>
+            <span class="badge badge-green">Closed Won</span>
+            <span class="badge badge-rose">At Risk</span>
+            <span class="badge badge-neutral">Draft</span>
+          </div>
+          <div style="font-family:var(--f-mono);font-size:9px;color:var(--tfaint);letter-spacing:0.06em;margin-top:4px;">
+            Mono · 9px · 700 · 0.1em LS · uppercase · clip-sm<br>
+            Muted bg + accent text + accent border — always
+          </div>
+        </div>
+      </div>
+
+      <!-- Inputs -->
+      <div class="comp-card">
+        <div class="comp-card-head">Form Inputs</div>
+        <div class="comp-card-body">
+          <div class="field">
+            <div class="field-lbl">Company Name</div>
+            <input class="input" placeholder="e.g. Acme Corporation" />
+          </div>
+          <div class="field">
+            <div class="field-lbl">Deal Value (focused)</div>
+            <input class="input input-active" value="$2,400,000" />
+          </div>
+          <div style="font-family:var(--f-mono);font-size:9px;color:var(--tfaint);letter-spacing:0.06em;">
+            Label: mono · 9px · 0.12em LS · tfaint<br>
+            Focus: border=amber + 3px amber-muted glow
+          </div>
+        </div>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="comp-card">
+        <div class="comp-card-head">Metric Cards</div>
+        <div class="comp-card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div style="background:var(--surf-2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:12px 14px;">
+              <div style="font-family:var(--f-brand);font-size:22px;font-weight:800;color:var(--amber);line-height:1;margin-bottom:3px;">$2.4M</div>
+              <div style="font-family:var(--f-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--tfaint);">Deal Value</div>
+            </div>
+            <div style="background:var(--surf-2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:12px 14px;">
+              <div style="font-family:var(--f-brand);font-size:22px;font-weight:800;color:var(--amber);line-height:1;margin-bottom:3px;">73</div>
+              <div style="font-family:var(--f-mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--tfaint);">MEDDPICC</div>
+            </div>
+          </div>
+          <div style="font-family:var(--f-mono);font-size:9px;color:var(--tfaint);letter-spacing:0.06em;">
+            Value: Epilogue 800 amber · Label: Mono tfaint<br>
+            Background: surf-2 · Chamfer: clip-lg
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /comp-grid -->
+
+    <!-- Callout box -->
+    <div style="margin-top:20px;background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-lg);overflow:hidden;">
+      <div style="padding:10px 14px;border-bottom:1px solid var(--border);font-family:var(--f-mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);background:var(--surf-2);">Callout / Rule Box Pattern</div>
+      <div style="padding:16px;">
+        <div class="rule-box" style="margin-bottom:10px;">
+          <div class="rule-tag">Rule</div>
+          <div class="rule-body">Use this <strong>amber callout</strong> for guidance, requirements, and important rules within tool pages (e.g. "Fill in all required fields before continuing").</div>
+        </div>
+        <div class="danger-box">
+          <div class="danger-tag">Never</div>
+          <div class="danger-body">Use this <strong>red callout</strong> for errors, blocked states, and hard constraints (e.g. "API key missing — cannot run research").</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /section 05 -->
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 06: UI SWITCHER — STEP DOTS -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="s-label">06</div>
+    <div class="s-title">UI Switcher — Step Progress Dots</div>
+    <div class="s-sub">Multi-step tool pages (Account Brief, Qualify IQ, Demo Brief, etc.) use step progress dots in the header-right area. This is the canonical navigation metaphor — do not replace it with numbered circles, tab bars, or text-based step indicators.</div>
+
+    <div class="comp-card" style="max-width:480px;">
+      <div class="comp-card-head">Step Dots — All States</div>
+      <div class="comp-card-body">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div class="step-dots-demo">
+              <div class="step-dot-demo active"></div>
+              <div class="step-dot-demo"></div>
+              <div class="step-dot-demo"></div>
+            </div>
+            <span style="font-family:var(--f-mono);font-size:9px;color:var(--tfaint);letter-spacing:0.08em;">Step 1 active, 2–3 pending</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div class="step-dots-demo">
+              <div class="step-dot-demo done"></div>
+              <div class="step-dot-demo active"></div>
+              <div class="step-dot-demo"></div>
+            </div>
+            <span style="font-family:var(--f-mono);font-size:9px;color:var(--tfaint);letter-spacing:0.08em;">Step 1 done, step 2 active</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div class="step-dots-demo">
+              <div class="step-dot-demo done"></div>
+              <div class="step-dot-demo done"></div>
+              <div class="step-dot-demo active"></div>
+            </div>
+            <span style="font-family:var(--f-mono);font-size:9px;color:var(--tfaint);letter-spacing:0.08em;">Steps 1–2 done, step 3 active</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <div class="code-filename">step-dot CSS</div>
+          <div class="code-block" style="font-size:10.5px;padding:14px 16px;">.step-dot { <span class="k">width</span>:<span class="v">8px</span>; <span class="k">height</span>:<span class="v">8px</span>; <span class="k">border-radius</span>:<span class="v">50%</span>; <span class="k">background</span>:<span class="v">var(--border-md)</span>; }
+.step-dot.active { <span class="k">background</span>:<span class="v">var(--amber)</span>; <span class="k">box-shadow</span>:<span class="v">0 0 6px var(--amber-glow)</span>; }
+.step-dot.done   { <span class="k">background</span>:<span class="v">var(--amber)</span>; <span class="k">opacity</span>:<span class="v">0.55</span>; }</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="danger-box" style="margin-top:16px;">
+      <div class="danger-tag">Never</div>
+      <div class="danger-body">Do <strong>not</strong> replace step dots with numbered circles (e.g. "① ② ③"), text tabs, or pill nav bars. Step dots are the correct, compact metaphor for in-header progress — they preserve header space while communicating position. If a tool has more than 5 steps, discuss before adding more dots.</div>
+    </div>
+
+  </div><!-- /section 06 -->
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 07: LAYOUT GRAMMAR -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="s-label">07</div>
+    <div class="s-title">Layout Grammar</div>
+    <div class="s-sub">Spacing, max-width, and padding values that create consistent rhythm across all pages. Use these as constraints — not suggestions.</div>
+
+    <div class="layout-ruler">
+      <div>
+        <div class="ruler-label">Page container</div>
+        <div class="ruler-bar" style="max-width:100%;">
+          <span class="ruler-val">max-width: 900px</span>
+          <span class="ruler-desc">margin: 0 auto · Prefer 860–960px range</span>
+        </div>
+      </div>
+      <div>
+        <div class="ruler-label">Horizontal padding</div>
+        <div class="ruler-bar" style="max-width:380px;">
+          <span class="ruler-val">padding: 0 40px</span>
+          <span class="ruler-desc">Mobile: drop to 24px at &lt;640px</span>
+        </div>
+      </div>
+      <div>
+        <div class="ruler-label">Top padding (accounts for sticky header)</div>
+        <div class="ruler-bar" style="max-width:320px;">
+          <span class="ruler-val">padding-top: 40px</span>
+          <span class="ruler-desc">Below the 64px sticky header</span>
+        </div>
+      </div>
+      <div>
+        <div class="ruler-label">Bottom padding (accounts for fixed footer)</div>
+        <div class="ruler-bar" style="max-width:300px;">
+          <span class="ruler-val">padding-bottom: 100px</span>
+          <span class="ruler-desc">Above the 34px fixed footer</span>
+        </div>
+      </div>
+      <div>
+        <div class="ruler-label">Card gap (grids)</div>
+        <div class="ruler-bar" style="max-width:200px;">
+          <span class="ruler-val">gap: 16px</span>
+          <span class="ruler-desc">Default. Use 10px for dense grids</span>
+        </div>
+      </div>
+      <div>
+        <div class="ruler-label">Section spacing (between content blocks)</div>
+        <div class="ruler-bar" style="max-width:260px;">
+          <span class="ruler-val">margin-top: 40–52px</span>
+          <span class="ruler-desc">Between distinct content sections</span>
+        </div>
+      </div>
+      <div>
+        <div class="ruler-label">Card internal padding</div>
+        <div class="ruler-bar" style="max-width:230px;">
+          <span class="ruler-val">padding: 20–24px</span>
+          <span class="ruler-desc">Standard card body</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rule-box" style="margin-top:16px;">
+      <div class="rule-tag">Rule</div>
+      <div class="rule-body">Always set <strong>body padding-bottom ≥ 100px</strong> to prevent content from hiding behind the fixed /Znith footer. Always set the main content container to <strong>max-width 860–960px</strong> centered — never full-width on wide screens. The <strong>8px grid</strong> underlies all spacing — use multiples of 8 for gap, margin, and padding values.</div>
+    </div>
+
+  </div><!-- /section 07 -->
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 08: DO / DON'T -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="s-label">08</div>
+    <div class="s-title">Do / Don't — Design Decisions</div>
+    <div class="s-sub">Common mistakes observed across the current toolkit pages. These have already degraded visual consistency — do not repeat them in new work.</div>
+
+    <div class="dod-grid">
+      <div class="dod-col">
+        <div class="dod-head do">✓ Do</div>
+        <div class="dod-body">
+          <div class="dod-item"><span class="dod-icon do">→</span> Use <strong>amber</strong> for all primary interactive states — buttons, focus rings, metric values, step dots</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Use <strong>clip-path chamfers</strong> on every interactive and card element</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Use <strong>IBM Plex Mono</strong> for all labels, eyebrows, and metadata — never Barlow for these</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Keep the header exactly <strong>64px tall</strong>, sticky, with glassmorphism background</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Let <strong>dark surfaces dominate</strong> — content sits on --surf (#0F1520), not raw --bg</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Use <strong>step dots in header-right</strong> for multi-step flows — this is the only navigation metaphor</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Match transition timing to <strong>--transition (220ms ease)</strong> on all hover states</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Use <strong>--c-[module]-muted</strong> as badge backgrounds — never full saturation fills</div>
+          <div class="dod-item"><span class="dod-icon do">→</span> Keep section eyebrows in <strong>mono · 9px · 0.18em LS · amber</strong></div>
+        </div>
+      </div>
+      <div class="dod-col">
+        <div class="dod-head dont">✗ Don't</div>
+        <div class="dod-body">
+          <div class="dod-item"><span class="dod-icon dont">→</span> Don't use module accent colors (<code style="font-size:10px;font-family:var(--f-mono);">--c-account</code>, etc.) as dominant fill colors</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Don't alias color tokens to wrong names (e.g. <code style="font-size:10px;font-family:var(--f-mono);">--gold: #8B5CF6</code> — this is purple, not gold)</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Don't vary header height between pages — it must be exactly <strong>64px everywhere</strong></div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Don't use <code style="font-size:10px;font-family:var(--f-mono);">border-radius</code> on buttons, cards, or inputs — use clip-path only</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Don't add DM Mono or any other monospace font — IBM Plex Mono is locked</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Don't create page-specific accent colors not in the token system</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Don't use different step/nav metaphors per tool (numbered circles, tab bars, pill navs)</div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Don't set <code style="font-size:10px;font-family:var(--f-mono);">--transition: all 0.15s ease</code> — use the canonical <strong>220ms cubic-bezier</strong></div>
+          <div class="dod-item"><span class="dod-icon dont">→</span> Don't skip padding-bottom on body — content will hide behind the footer</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /section 08 -->
+
+  <div class="divider"></div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <!-- 09: DESIGN DEBT TO RESOLVE -->
+  <!-- ══════════════════════════════════════════════════════════════════════════ -->
+  <div>
+    <div class="s-label">09</div>
+    <div class="s-title">Design Debt — Known Issues to Fix</div>
+    <div class="s-sub">These inconsistencies exist today in the toolkit (as of claude/funny-haibt-6098d6). When editing any of these pages, fix the issue in the same pass — do not leave debt in place.</div>
+
+    <div class="debt-list">
+
+      <div class="debt-item">
+        <div class="debt-priority high">High</div>
+        <div class="debt-content">
+          <div class="debt-title">qualify-iq and demo-brief use DM Mono instead of IBM Plex Mono</div>
+          <div class="debt-detail">These pages import DM Mono and use it for footer/badge mono text. Replace with IBM Plex Mono and remove the DM Mono import. Also correct <code style="font-size:11px;font-family:var(--f-mono);">border-top: 1px solid rgba(249,115,22,0.18)</code> in demo-brief footer — it should be <code style="font-size:11px;font-family:var(--f-mono);">border-top: 2px solid var(--amber)</code>.</div>
+        </div>
+      </div>
+
+      <div class="debt-item">
+        <div class="debt-priority high">High</div>
+        <div class="debt-content">
+          <div class="debt-title">account-brief-v2 has broken color aliases: --gold = violet, --conga-purple = teal</div>
+          <div class="debt-detail">In account-brief-v2/index.html, the token <code style="font-size:11px;font-family:var(--f-mono);">--gold</code> maps to <code style="font-size:11px;font-family:var(--f-mono)">#8B5CF6</code> (violet) and <code style="font-size:11px;font-family:var(--f-mono);">--conga-purple</code> maps to <code style="font-size:11px;font-family:var(--f-mono);">#0D9488</code> (teal). These are legacy template artifacts. Replace with <code style="font-size:11px;font-family:var(--f-mono);">--c-valuemap</code> and <code style="font-size:11px;font-family:var(--f-mono);">--c-account</code> respectively.</div>
+        </div>
+      </div>
+
+      <div class="debt-item">
+        <div class="debt-priority high">High</div>
+        <div class="debt-content">
+          <div class="debt-title">Theme support is inconsistent — only dashboard and win-room support light theme</div>
+          <div class="debt-detail">account-brief-v2, qualify-iq, demo-brief, and value-map are dark-only. All pages should include a <code style="font-size:11px;font-family:var(--f-mono);">[data-theme="light"]</code> override block and a theme toggle button. Use the canonical light palette tokens from Section 02.</div>
+        </div>
+      </div>
+
+      <div class="debt-item">
+        <div class="debt-priority med">Med</div>
+        <div class="debt-content">
+          <div class="debt-title">qualify-iq uses a different step indicator style (numbered circles) than the system</div>
+          <div class="debt-detail">qualify-iq renders step navigation as large numbered circles in the page body. The canonical pattern is small dots in header-right (see Section 06). Update qualify-iq to use step dots in the header, removing the custom step nav.</div>
+        </div>
+      </div>
+
+      <div class="debt-item">
+        <div class="debt-priority med">Med</div>
+        <div class="debt-content">
+          <div class="debt-title">Footer amber border is 1px on some pages instead of 2px</div>
+          <div class="debt-detail">qualify-iq footer uses <code style="font-size:11px;font-family:var(--f-mono);">border-top: 1px solid var(--amber-muted)</code>. Canonical spec is <code style="font-size:11px;font-family:var(--f-mono);">border-top: 2px solid var(--amber)</code>. All footer instances must use the 2px solid amber border — it is part of the protected chrome identity.</div>
+        </div>
+      </div>
+
+      <div class="debt-item">
+        <div class="debt-priority med">Med</div>
+        <div class="debt-content">
+          <div class="debt-title">Header heights are 56–64px across pages instead of a uniform 64px</div>
+          <div class="debt-detail">sales-hub, qualify-iq, and value-map headers are 56–58px. Standardize all pages to exactly <code style="font-size:11px;font-family:var(--f-mono);">height: 64px</code>. Adjust any <code style="font-size:11px;font-family:var(--f-mono);">padding-top</code> on main content accordingly.</div>
+        </div>
+      </div>
+
+      <div class="debt-item">
+        <div class="debt-priority low">Low</div>
+        <div class="debt-content">
+          <div class="debt-title">Transition timing uses 0.15s/0.18s on some pages instead of --transition</div>
+          <div class="debt-detail">Some pages use <code style="font-size:11px;font-family:var(--f-mono);">transition: all 0.15s ease</code> or <code style="font-size:11px;font-family:var(--f-mono);">0.18s</code> inline. Standardize to <code style="font-size:11px;font-family:var(--f-mono);">var(--transition)</code> everywhere to ensure consistent feel across hover states.</div>
+        </div>
+      </div>
+
+      <div class="debt-item">
+        <div class="debt-priority low">Low</div>
+        <div class="debt-content">
+          <div class="debt-title">Each page re-declares the full :root variable block (~40 lines of duplication)</div>
+          <div class="debt-detail">Long-term: extract tokens to <code style="font-size:11px;font-family:var(--f-mono);">shared/tokens.css</code> and <code style="font-size:11px;font-family:var(--f-mono);">shared/chrome.css</code>, import via link tag. Short-term: at minimum ensure all pages use identical variable names and values when copying the block.</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div><!-- /section 09 -->
+
+  <div class="divider"></div>
+
+  <!-- ── FOOTER NOTE ── -->
+  <div style="text-align:center;padding-bottom:20px;">
+    <div style="font-family:var(--f-mono);font-size:9px;letter-spacing:0.16em;text-transform:uppercase;color:var(--tfaint);margin-bottom:8px;">Design Guide v3.0 — Prescriptive Edition</div>
+    <div style="font-family:var(--f-ui);font-size:13px;color:var(--tmuted);max-width:480px;margin:0 auto;line-height:1.7;">
+      Derived from <code style="font-family:var(--f-mono);font-size:11px;color:rgba(255,255,255,0.4);">claude/funny-haibt-6098d6</code>.
+      When in doubt, refer back to <code style="font-family:var(--f-mono);font-size:11px;color:rgba(255,255,255,0.4);">dashboard.html</code> as the reference implementation — it is the closest to the canonical system.
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

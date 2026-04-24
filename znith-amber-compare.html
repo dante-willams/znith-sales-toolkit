@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Znith — Amber Comparison</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+/* ── GLOBAL ── */
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui:    'Barlow', sans-serif;
+  --f-mono:  'IBM Plex Mono', monospace;
+  --navy:    #1A2332;
+  --bg:      #F4F5F6;
+  --surf:    #FFFFFF;
+  --border:  #E2E5E9;
+  --text:    #2D3748;
+  --tmuted:  #4A5568;
+  --tfaint:  #718096;
+  --clip-lg: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+
+/* ── PER-COLUMN AMBER TOKENS ── */
+/* Every amber value in each column derives from these four variables only */
+
+.col-a {
+  --a:        #B8860B;
+  --a-glow:   rgba(184,134,11,0.22);
+  --a-muted:  rgba(184,134,11,0.12);
+  --a-faint:  rgba(184,134,11,0.08);
+}
+.col-b {
+  --a:        #A67C00;
+  --a-glow:   rgba(166,124,0,0.22);
+  --a-muted:  rgba(166,124,0,0.12);
+  --a-faint:  rgba(166,124,0,0.08);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: var(--f-ui);
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--navy);
+  padding: 26px 40px 22px;
+  text-align: center;
+  border-bottom: 2px solid rgba(255,255,255,0.06);
+}
+.page-header h1 {
+  font-family: var(--f-brand);
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 5px;
+}
+.page-header p {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* ── COMPARE GRID ── */
+.compare-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1px 1fr;
+  min-height: calc(100vh - 88px);
+}
+.divider-line { background: var(--border); }
+
+.col-a, .col-b {
+  padding: 32px 28px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ── COLUMN HEADER ── */
+.col-header {
+  padding-bottom: 18px;
+  border-bottom: 2px solid var(--a);
+  text-align: center;
+}
+.col-tag {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--a);
+  margin-bottom: 6px;
+}
+.col-hex {
+  font-family: var(--f-brand);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--a);
+  letter-spacing: -0.01em;
+  margin-bottom: 3px;
+}
+.col-desc {
+  font-family: var(--f-ui);
+  font-size: 12px;
+  color: var(--tmuted);
+}
+
+/* ── BLOCK LABEL ── */
+.blk { margin-bottom: 8px; font-family: var(--f-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tfaint); }
+
+/* ── WORDMARK BAR ── */
+.wm-bar {
+  background: var(--navy);
+  padding: 12px 18px;
+  clip-path: var(--clip-lg);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.wm-text {
+  font-family: var(--f-brand);
+  font-size: 15px; font-weight: 800; color: #fff;
+  display: flex; align-items: center; gap: 4px;
+}
+.wm-badge {
+  font-family: var(--f-mono);
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 9px;
+  clip-path: var(--clip-sm);
+  background: var(--a-muted);
+  color: var(--a);
+  border: 1px solid var(--a-glow);
+}
+
+/* ── CTA STRIP ── */
+.cta-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  clip-path: var(--clip-lg);
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--a);
+  color: #000;
+  border: none;
+  padding: 9px 20px;
+  font-family: var(--f-ui); font-size: 13px; font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--a-glow);
+  clip-path: var(--clip-sm);
+}
+.btn-ghost {
+  display: inline-flex; align-items: center;
+  padding: 9px 16px;
+  font-family: var(--f-ui); font-size: 13px; font-weight: 500;
+  color: var(--tmuted); background: transparent;
+  border: 1px solid var(--border);
+  clip-path: var(--clip-sm); cursor: pointer;
+}
+.kbd { font-family: var(--f-mono); font-size: 9px; color: var(--tfaint); letter-spacing: 0.06em; }
+
+/* ── METRICS ── */
+.metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.metric {
+  background: var(--surf); border: 1px solid var(--border);
+  padding: 12px 14px; clip-path: var(--clip-lg);
+}
+.metric-val { font-family: var(--f-brand); font-size: 22px; font-weight: 800; color: var(--a); line-height: 1; margin-bottom: 4px; }
+.metric-lbl { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tfaint); }
+
+/* ── EYEBROW / SECTION ── */
+.section-demo {
+  background: var(--surf); border: 1px solid var(--border);
+  padding: 14px 16px; clip-path: var(--clip-lg);
+}
+.eyebrow { font-family: var(--f-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--a); margin-bottom: 5px; }
+.sec-title { font-family: var(--f-brand); font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 3px; }
+.sec-sub { font-family: var(--f-ui); font-size: 12px; color: var(--tmuted); }
+
+/* ── STAGE BLOCK ── */
+.stage {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--a);
+  clip-path: var(--clip-lg); overflow: hidden;
+}
+.stage-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+}
+.stage-num {
+  width: 22px; height: 22px;
+  background: var(--a); color: #000;
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; clip-path: var(--clip-sm);
+}
+.stage-title { flex: 1; font-family: var(--f-ui); font-size: 12px; font-weight: 600; color: var(--navy); }
+.stage-badge {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 8px; clip-path: var(--clip-sm);
+  background: var(--a-faint); color: var(--a);
+  border: 1px solid var(--a-muted);
+}
+.stage-body { padding: 12px 14px; background: var(--bg); display: flex; flex-direction: column; gap: 9px; }
+.field-lbl { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tfaint); margin-bottom: 4px; }
+.input {
+  width: 100%; background: var(--surf); border: 1px solid var(--border);
+  padding: 8px 11px; color: var(--text);
+  font-family: var(--f-ui); font-size: 12px; outline: none;
+  clip-path: var(--clip-sm);
+}
+.input-focus {
+  border-color: var(--a);
+  box-shadow: 0 0 0 3px var(--a-faint);
+}
+
+/* ── BADGES ── */
+.badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 3px 9px; clip-path: var(--clip-sm);
+}
+.badge-amber   { background: var(--a-faint);  color: var(--a);     border: 1px solid var(--a-muted); }
+.badge-neutral { background: rgba(74,85,104,0.08); color: var(--tmuted); border: 1px solid var(--border); }
+
+/* ── FOOTER ── */
+.footer-bar {
+  background: var(--navy); clip-path: var(--clip-lg);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; height: 34px;
+  border-top: 2px solid var(--a);
+}
+.footer-brand { font-family: var(--f-brand); font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 4px; }
+.footer-info  { display: flex; align-items: center; gap: 7px; font-family: var(--f-mono); font-size: 9px; color: rgba(255,255,255,0.35); }
+.footer-pip   { width: 5px; height: 5px; border-radius: 50%; background: var(--a); box-shadow: 0 0 6px var(--a-glow); }
+
+/* ── VERDICT ── */
+.verdict {
+  background: var(--surf); border: 1px solid var(--border);
+  border-left: 3px solid var(--a);
+  padding: 14px 16px; clip-path: var(--clip-lg);
+  font-family: var(--f-ui); font-size: 12px; color: var(--tmuted); line-height: 1.65;
+}
+.verdict strong { font-weight: 600; color: var(--navy); }
+
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>/Znith — Amber Value Comparison</h1>
+  <p>Same components · Same surfaces · One variable changed</p>
+</div>
+
+<div class="compare-wrap">
+
+  <!-- ══ LEFT: #B8860B ══ -->
+  <div class="col-a">
+
+    <div class="col-header">
+      <div class="col-tag">Current · v1 Value</div>
+      <div class="col-hex">#B8860B</div>
+      <div class="col-desc">Dark Goldenrod — unchanged from v1</div>
+    </div>
+
+    <div>
+      <div class="blk">Wordmark + Header (navy bg)</div>
+      <div class="wm-bar">
+        <div class="wm-text">
+          <span style="font-family:'IBM Plex Mono';font-weight:700;color:var(--a);">/</span>
+          <span style="color:var(--a);">Z</span><span style="color:rgba(255,255,255,0.5);">nith</span>
+        </div>
+        <div class="wm-badge">Prospecting Agent</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">CTA Button — white card</div>
+      <div class="cta-card">
+        <button class="btn-primary">Build my brief →</button>
+        <button class="btn-ghost">Back</button>
+        <span class="kbd">or press Enter</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Metric Values — white card</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-val">34%</div><div class="metric-lbl">Faster Cycle</div></div>
+        <div class="metric"><div class="metric-val">$180K</div><div class="metric-lbl">Est. Value</div></div>
+        <div class="metric"><div class="metric-val">12d</div><div class="metric-lbl">Time Saved</div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Eyebrow Label + Section Title</div>
+      <div class="section-demo">
+        <div class="eyebrow">01 · Section Label</div>
+        <div class="sec-title">What does the account need to achieve?</div>
+        <div class="sec-sub">Helper text and secondary copy sits here below the title.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Active Stage Block</div>
+      <div class="stage">
+        <div class="stage-head">
+          <div class="stage-num">2</div>
+          <div class="stage-title">What does the account need to achieve?</div>
+          <div class="stage-badge">Active</div>
+        </div>
+        <div class="stage-body">
+          <div>
+            <div class="field-lbl">Initiative 1</div>
+            <input class="input input-focus" placeholder="e.g. Accelerate revenue by 30% in FY26">
+          </div>
+          <div>
+            <div class="field-lbl">Initiative 2</div>
+            <input class="input" placeholder="e.g. Reduce contract cycle time by half">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Badges</div>
+      <div class="badges">
+        <span class="badge badge-amber">Active</span>
+        <span class="badge badge-amber">v2.0</span>
+        <span class="badge badge-neutral">Optional</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Footer (navy bg)</div>
+      <div class="footer-bar">
+        <div class="footer-brand">
+          <span style="font-family:'IBM Plex Mono';font-weight:700;color:var(--a);">/</span>
+          <span style="color:var(--a);">Z</span><span style="color:rgba(255,255,255,0.45);">nith</span>
+        </div>
+        <div class="footer-info">
+          <span>Prospecting Agent</span>
+          <div class="footer-pip"></div>
+          <span>v2.0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <strong>#B8860B — Dark Goldenrod.</strong> The original. Warm on navy, recognizable on white. Slight yellow-green undertone is more visible on light surfaces but not distracting at this scale of usage.
+    </div>
+
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="divider-line"></div>
+
+  <!-- ══ RIGHT: #A67C00 ══ -->
+  <div class="col-b">
+
+    <div class="col-header">
+      <div class="col-tag">Adjusted · Grounded Gold</div>
+      <div class="col-hex">#A67C00</div>
+      <div class="col-desc">Deeper gold — reduced yellow, more refined on light</div>
+    </div>
+
+    <div>
+      <div class="blk">Wordmark + Header (navy bg)</div>
+      <div class="wm-bar">
+        <div class="wm-text">
+          <span style="font-family:'IBM Plex Mono';font-weight:700;color:var(--a);">/</span>
+          <span style="color:var(--a);">Z</span><span style="color:rgba(255,255,255,0.5);">nith</span>
+        </div>
+        <div class="wm-badge">Prospecting Agent</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">CTA Button — white card</div>
+      <div class="cta-card">
+        <button class="btn-primary">Build my brief →</button>
+        <button class="btn-ghost">Back</button>
+        <span class="kbd">or press Enter</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Metric Values — white card</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-val">34%</div><div class="metric-lbl">Faster Cycle</div></div>
+        <div class="metric"><div class="metric-val">$180K</div><div class="metric-lbl">Est. Value</div></div>
+        <div class="metric"><div class="metric-val">12d</div><div class="metric-lbl">Time Saved</div></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Eyebrow Label + Section Title</div>
+      <div class="section-demo">
+        <div class="eyebrow">01 · Section Label</div>
+        <div class="sec-title">What does the account need to achieve?</div>
+        <div class="sec-sub">Helper text and secondary copy sits here below the title.</div>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Active Stage Block</div>
+      <div class="stage">
+        <div class="stage-head">
+          <div class="stage-num">2</div>
+          <div class="stage-title">What does the account need to achieve?</div>
+          <div class="stage-badge">Active</div>
+        </div>
+        <div class="stage-body">
+          <div>
+            <div class="field-lbl">Initiative 1</div>
+            <input class="input input-focus" placeholder="e.g. Accelerate revenue by 30% in FY26">
+          </div>
+          <div>
+            <div class="field-lbl">Initiative 2</div>
+            <input class="input" placeholder="e.g. Reduce contract cycle time by half">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Badges</div>
+      <div class="badges">
+        <span class="badge badge-amber">Active</span>
+        <span class="badge badge-amber">v2.0</span>
+        <span class="badge badge-neutral">Optional</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk">Footer (navy bg)</div>
+      <div class="footer-bar">
+        <div class="footer-brand">
+          <span style="font-family:'IBM Plex Mono';font-weight:700;color:var(--a);">/</span>
+          <span style="color:var(--a);">Z</span><span style="color:rgba(255,255,255,0.45);">nith</span>
+        </div>
+        <div class="footer-info">
+          <span>Prospecting Agent</span>
+          <div class="footer-pip"></div>
+          <span>v2.0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="verdict">
+      <strong>#A67C00 — Grounded Gold.</strong> Slightly darker and cooler. Sits more quietly on white surfaces, marginally better contrast ratio (3.6:1 vs 3.1:1). On navy it reads a touch darker — same family, less vibrant.
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

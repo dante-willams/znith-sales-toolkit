@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Consumer Tools · Per-File Task Cards (Claude Code handoff)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui: 'Barlow', sans-serif;
+  --f-mono: 'IBM Plex Mono', monospace;
+  --amber: #E5A83A;
+  --amber-deep: #B8860B;
+  --amber-muted: rgba(229,168,58,0.12);
+  --bg: #05070F;
+  --surf: #0F1520;
+  --surf-2: #0A0E1A;
+  --border: rgba(255,255,255,0.08);
+  --border-md: rgba(255,255,255,0.14);
+  --text: rgba(255,255,255,0.92);
+  --tmuted: rgba(255,255,255,0.62);
+  --tfaint: rgba(255,255,255,0.42);
+  --tghost: rgba(255,255,255,0.28);
+  --ok: #34D399;
+  --warn: #F59E0B;
+  --risk: #EF4444;
+  --clip-sm: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  --clip-lg: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--f-ui); font-size: 14px; line-height: 1.65; padding: 56px 24px 80px; }
+.wrap { max-width: 1040px; margin: 0 auto; }
+.eye { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; font-weight: 700; }
+h1 { font-family: var(--f-brand); font-size: 34px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 14px; }
+h1 span { color: var(--amber); }
+.sub { color: var(--tmuted); max-width: 760px; font-size: 14px; }
+.sub code { font-family: var(--f-mono); font-size: 12px; color: var(--amber); background: var(--amber-muted); padding: 1px 5px; border-radius: 2px; }
+p { margin-bottom: 10px; color: var(--tmuted); }
+p strong { color: var(--text); font-weight: 700; }
+p code { font-family: var(--f-mono); font-size: 11.5px; color: var(--amber); background: var(--amber-muted); padding: 0 4px; }
+
+.meta { background: var(--surf); border: 1px solid var(--border); clip-path: var(--clip-lg); padding: 18px 22px; margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px 32px; font-size: 12.5px; }
+.meta strong { display: block; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--amber); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; }
+.meta code { font-family: var(--f-mono); font-size: 11.5px; color: var(--amber); background: var(--amber-muted); padding: 1px 5px; border-radius: 2px; }
+
+h2 { font-family: var(--f-brand); font-size: 22px; font-weight: 800; letter-spacing: -0.015em; margin: 52px 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; }
+h2 .num { font-family: var(--f-mono); font-size: 13px; color: var(--amber); font-weight: 700; letter-spacing: 0.1em; }
+h2 .pri { font-family: var(--f-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; clip-path: var(--clip-sm); }
+h2 .pri.p0 { background: rgba(239,68,68,0.18); color: var(--risk); border: 1px solid rgba(239,68,68,0.35); }
+h2 .pri.p1 { background: rgba(245,158,11,0.15); color: var(--warn); border: 1px solid rgba(245,158,11,0.32); }
+h2 .pri.p2 { background: rgba(99,179,237,0.12); color: #63B3ED; border: 1px solid rgba(99,179,237,0.28); }
+
+.callout { background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.22); clip-path: var(--clip-sm); padding: 14px 18px; margin: 16px 0; font-size: 13px; color: var(--tmuted); }
+.callout strong { color: var(--ok); }
+.callout.warn { background: rgba(245,158,11,0.07); border-color: rgba(245,158,11,0.25); }
+.callout.warn strong { color: var(--warn); }
+.callout.risk { background: rgba(239,68,68,0.07); border-color: rgba(239,68,68,0.26); }
+.callout.risk strong { color: var(--risk); }
+.callout code { font-family: var(--f-mono); font-size: 11.5px; color: var(--amber); background: var(--amber-muted); padding: 0 4px; }
+
+.section-lead { background: var(--surf); border-left: 3px solid var(--amber); padding: 16px 20px; margin: 18px 0 22px; font-size: 13.5px; color: var(--tmuted); }
+.section-lead strong { color: var(--text); }
+.section-lead code { font-family: var(--f-mono); font-size: 11.5px; color: var(--amber); }
+
+.step { background: var(--surf); border: 1px solid var(--border); clip-path: var(--clip-lg); padding: 18px 22px; margin-bottom: 12px; }
+.step-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; flex-wrap: wrap; }
+.step-num { font-family: var(--f-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: var(--amber); }
+.step-title { font-family: var(--f-brand); font-size: 16px; font-weight: 700; color: var(--text); flex: 1; }
+.step-body { font-size: 13px; color: var(--tmuted); }
+.step-body strong { color: var(--text); }
+.step-body code { font-family: var(--f-mono); font-size: 11.5px; color: var(--amber); background: var(--amber-muted); padding: 0 4px; }
+
+pre { background: var(--surf-2); border: 1px solid var(--border); clip-path: var(--clip-sm); padding: 12px 14px; overflow-x: auto; font-family: var(--f-mono); font-size: 11.5px; line-height: 1.6; color: var(--tmuted); margin: 8px 0; }
+pre .c { color: var(--tghost); }
+pre .k { color: var(--amber); }
+pre .s { color: #63B3ED; }
+pre .add { color: var(--ok); }
+pre .rm { color: var(--risk); text-decoration: line-through; opacity: 0.7; }
+pre .cmd { color: var(--amber); }
+
+.test { background: rgba(99,179,237,0.06); border: 1px solid rgba(99,179,237,0.22); clip-path: var(--clip-sm); padding: 14px 18px; margin-top: 10px; }
+.test .lbl { font-family: var(--f-mono); font-size: 10px; color: #63B3ED; letter-spacing: 0.14em; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+.test pre { margin: 6px 0; background: rgba(5,7,15,0.5); border-color: rgba(99,179,237,0.2); }
+
+.card { background: var(--surf); border: 1px solid var(--border); clip-path: var(--clip-lg); padding: 28px 32px; margin-bottom: 28px; }
+.card-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px; flex-wrap: wrap; }
+.card-id { font-family: var(--f-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.14em; color: var(--amber); text-transform: uppercase; }
+.card-file { font-family: var(--f-mono); font-size: 15px; font-weight: 700; color: var(--text); }
+.card-effort { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--tfaint); text-transform: uppercase; margin-left: auto; }
+.card-headline { font-family: var(--f-brand); font-size: 18px; font-weight: 700; color: var(--text); margin: 8px 0 14px; }
+.card-diagnostic { font-size: 12.5px; color: var(--tfaint); font-family: var(--f-mono); margin-bottom: 14px; padding: 10px 14px; background: var(--surf-2); clip-path: var(--clip-sm); border: 1px solid var(--border); }
+.card-diagnostic strong { color: var(--tmuted); }
+.card-diagnostic .pass { color: var(--ok); }
+.card-diagnostic .fail { color: var(--risk); }
+.card-diagnostic .warn { color: var(--warn); }
+
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 10px 0 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--tfaint); font-weight: 700; }
+td { color: var(--tmuted); }
+td.tool { font-family: var(--f-mono); font-size: 11.5px; color: var(--text); font-weight: 500; }
+td.status { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
+td.status.ok { color: var(--ok); }
+td.status.warn { color: var(--warn); }
+td.status.risk { color: var(--risk); }
+
+footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--tghost); text-transform: uppercase; display: flex; justify-content: space-between; }
+
+.toc { background: var(--surf-2); border: 1px solid var(--border); clip-path: var(--clip-lg); padding: 18px 22px; margin: 18px 0 28px; }
+.toc ol { list-style: none; counter-reset: item; }
+.toc li { counter-increment: item; padding: 8px 0; border-bottom: 1px solid var(--border); display: flex; align-items: baseline; gap: 12px; font-size: 13px; color: var(--tmuted); }
+.toc li:last-child { border-bottom: none; }
+.toc li::before { content: "TC-" counter(item, decimal-leading-zero); font-family: var(--f-mono); font-size: 10.5px; color: var(--amber); letter-spacing: 0.12em; font-weight: 700; min-width: 52px; }
+.toc a { color: var(--text); text-decoration: none; border-bottom: 1px dashed transparent; font-weight: 500; }
+.toc a:hover { border-bottom-color: var(--amber); color: var(--amber); }
+.toc .effort { margin-left: auto; font-family: var(--f-mono); font-size: 10.5px; color: var(--tfaint); letter-spacing: 0.1em; }
+.toc .prio { font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.14em; padding: 2px 6px; text-transform: uppercase; font-weight: 700; }
+.toc .prio.p0 { color: var(--risk); background: rgba(239,68,68,0.15); }
+.toc .prio.p1 { color: var(--warn); background: rgba(245,158,11,0.15); }
+.toc .prio.p2 { color: #63B3ED; background: rgba(99,179,237,0.12); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="eye">Znith v4 · Brand-Refresh · Per-File Task Cards</div>
+<h1>Consumer Tools <span>Final Sweep</span></h1>
+<p class="sub">Eight self-contained PRs — one per tool. Each card is a complete instruction set: architecture fix, mechanical sweeps, brand restoration, and grep-based acceptance tests. Do them as separate PRs so each completes end-to-end in a fresh context. <strong>Order doesn't matter</strong> — they're independent.</p>
+
+<div class="meta">
+  <div><strong>Branch</strong><code>brand-refresh</code></div>
+  <div><strong>Prerequisite</strong><code>shared/znith-tokens.css</code> v4 already landed ✓</div>
+  <div><strong>Target</strong>Ready to merge to <code>main</code></div>
+  <div><strong>Total effort</strong>~3 hrs across 8 PRs</div>
+</div>
+
+<div class="callout warn"><strong>How to use this doc —</strong> Give Claude Code ONE card per session. Do not paste the whole doc. After each PR, run the Acceptance Tests at the bottom of the card — if any fail, reject the PR and retry. This is how we stop the "confident but incomplete" pattern that broke the last sweep.</div>
+
+<h2 style="margin-top: 36px; border: none; padding: 0; font-size: 16px;"><span class="num">INDEX</span>Task cards</h2>
+<div class="toc">
+<ol>
+<li><a href="#tc01">dashboard/index.html</a> <span class="prio p0">P0</span> <span class="effort">~12 min</span></li>
+<li><a href="#tc02">win-room/index.html</a> <span class="prio p0">P0</span> <span class="effort">~25 min</span></li>
+<li><a href="#tc03">qualify-iq/index.html</a> <span class="prio p1">P1</span> <span class="effort">~18 min</span></li>
+<li><a href="#tc04">demo-brief/index.html</a> <span class="prio p1">P1</span> <span class="effort">~18 min</span></li>
+<li><a href="#tc05">sales-hub/index.html</a> <span class="prio p1">P1</span> <span class="effort">~22 min</span></li>
+<li><a href="#tc06">account-brief-v2/index.html</a> <span class="prio p1">P1</span> <span class="effort">~28 min</span></li>
+<li><a href="#tc07">value-map/index.html</a> <span class="prio p0">P0</span> <span class="effort">~32 min</span></li>
+<li><a href="#tc08">prospecting-agent/index.html</a> <span class="prio p2">P2</span> <span class="effort">HOLD — skip this PR</span></li>
+</ol>
+</div>
+
+<div class="callout"><strong>Universal rules that apply to every card —</strong> (1) Never delete the <code>&lt;link rel="stylesheet" href="../shared/znith-tokens.css"&gt;</code> tag. (2) Never modify <code>shared/znith-tokens.css</code> — it is the source of truth. (3) Preserve <code>&lt;script&gt;</code> blocks, <code>data-*</code> attributes, and any existing <code>&lt;meta&gt;</code> tags. (4) If a step says "remove the inline <code>:root</code> block" and the block has non-color tokens (e.g. app-specific chart colors, module accents), LEAVE those — only remove color/bg/amber/stage/status tokens that duplicate the shared file.</div>
+
+<!-- ═══════════════════════════ TC-01 DASHBOARD ═══════════════════════════ -->
+
+<div class="card" id="tc01">
+  <div class="card-head">
+    <span class="card-id">TC-01 · P0</span>
+    <span class="card-file">dashboard/index.html</span>
+    <span class="card-effort">~12 min · 3 steps</span>
+  </div>
+  <div class="card-headline">Restore Conga page title and mark (brand regression)</div>
+  <div class="card-diagnostic">
+    <strong>Current state:</strong>
+    shared_link=1 <span class="pass">✓</span> ·
+    inline_:root=0 <span class="pass">✓</span> ·
+    v3_amber=0 <span class="pass">✓</span> ·
+    light_blocks=7 <span class="pass">✓</span> ·
+    <strong>conga-mark=0 <span class="fail">✗ MISSING</span></strong> ·
+    <strong>title=Conga:0 <span class="fail">✗ MISSING</span></strong> ·
+    hardcoded_stage_hex=10 <span class="warn">⚠</span>
+  </div>
+
+  <p>This file is architecturally clean (no inline <code>:root</code> shadow, no v3 amber, light theme coverage). Previous sweep regressed two brand elements and never swept hardcoded stage hex.</p>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 1</span><span class="step-title">Restore &lt;title&gt; tag</span></div>
+    <div class="step-body">
+      Find the existing <code>&lt;title&gt;</code> tag in <code>&lt;head&gt;</code>. Replace with:
+      <pre><span class="add">&lt;title&gt;Conga Sales Intelligence&lt;/title&gt;</span></pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 2</span><span class="step-title">Restore Conga mark in header</span></div>
+    <div class="step-body">
+      Find the header element (look for <code>&lt;header&gt;</code> or the top brand area). Before the product name text, insert:
+      <pre><span class="add">&lt;svg class="conga-mark" viewBox="0 0 1039 1039" fill="currentColor" xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;use href="../shared/brand/Conga_Symbol_White.svg#a"/&gt;
+&lt;/svg&gt;</span></pre>
+      <p>If <code>&lt;use&gt;</code> doesn't resolve in this context, inline the SVG from <code>shared/brand/Conga_Symbol_White.svg</code> and give it <code>class="conga-mark"</code>. Styling comes from shared tokens — do not add inline color.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 3</span><span class="step-title">Swap hardcoded stage hex for tokens</span></div>
+    <div class="step-body">
+      File has 10 hardcoded stage hex (1×<code>#63B3ED</code>, 1×<code>#A78BFA</code>, 1×<code>#FB923C</code>, 7×<code>#34D399</code>). Replace each. Also check <code>rgba(…)</code> literals built from these hex — replace those too.
+      <pre><span class="rm">color: #63B3ED;</span>            <span class="add">color: var(--stage-discovery);</span>
+<span class="rm">color: #A78BFA;</span>            <span class="add">color: var(--stage-proposal);</span>
+<span class="rm">color: #FB923C;</span>            <span class="add">color: var(--stage-negotiation);</span>
+<span class="rm">color: #34D399;</span>            <span class="add">color: var(--stage-closed-won);</span>
+<span class="rm">background: rgba(52,211,153,0.14);</span>  <span class="add">background: var(--green-muted);</span>
+<span class="rm">color: rgba(239,68,68,0.9);</span>         <span class="add">color: var(--status-risk);</span></pre>
+    </div>
+  </div>
+
+  <div class="test">
+    <div class="lbl">Acceptance tests — all must pass before merge</div>
+    <pre><span class="cmd">$ grep -c '&lt;title&gt;Conga' dashboard/index.html</span>
+<span class="add">1</span>
+
+<span class="cmd">$ grep -c 'class="conga-mark"' dashboard/index.html</span>
+<span class="add">1</span>
+
+<span class="cmd">$ grep -cE '#63B3ED|#A78BFA|#FB923C|#34D399' dashboard/index.html</span>
+<span class="add">0</span>
+
+<span class="cmd">$ grep -c 'shared/znith-tokens.css' dashboard/index.html</span>
+<span class="add">1</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TC-02 WIN-ROOM ═══════════════════════════ -->
+
+<div class="card" id="tc02">
+  <div class="card-head">
+    <span class="card-id">TC-02 · P0</span>
+    <span class="card-file">win-room/index.html</span>
+    <span class="card-effort">~25 min · 5 steps</span>
+  </div>
+  <div class="card-headline">Title + mark restoration, inline :root removal, glow sweep</div>
+  <div class="card-diagnostic">
+    <strong>Current state:</strong>
+    shared_link=1 <span class="pass">✓</span> ·
+    <strong>inline_:root=1 <span class="fail">✗</span></strong> ·
+    v3_amber=0 <span class="pass">✓</span> ·
+    light_blocks=3 <span class="warn">thin</span> ·
+    <strong>conga-mark=0 <span class="fail">✗ MISSING</span></strong> ·
+    <strong>title=Conga:0 <span class="fail">✗ MISSING</span></strong> ·
+    hardcoded_glows=5 <span class="fail">✗</span> ·
+    hardcoded_stage_hex=4 <span class="warn">⚠</span> ·
+    broken_v1_vars=21 <span class="warn">⚠ (resolves via shared aliases but should remap)</span>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 1</span><span class="step-title">Restore &lt;title&gt; and Conga mark</span></div>
+    <div class="step-body">
+      <pre><span class="add">&lt;title&gt;Conga Win Room&lt;/title&gt;</span></pre>
+      Insert <code>&lt;svg class="conga-mark"&gt;</code> in the header (same pattern as TC-01 Step 2).
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 2</span><span class="step-title">Remove inline :root shadow</span></div>
+    <div class="step-body">
+      Find the inline <code>&lt;style&gt;</code> block containing <code>:root { ... }</code>. Delete ALL of these properties if present (they duplicate shared tokens): <code>--amber</code>, <code>--amber-deep</code>, <code>--amber-glow</code>, <code>--amber-muted</code>, <code>--amber-faint</code>, <code>--bg</code>, <code>--surf</code>, <code>--surf-2</code>, <code>--surf-3</code>, <code>--border</code>, <code>--border-md</code>, <code>--border-dk</code>, <code>--text</code>, <code>--tmuted</code>, <code>--tfaint</code>, <code>--tghost</code>, <code>--status-ok</code>, <code>--status-warn</code>, <code>--status-risk</code>, <code>--green</code>, <code>--yellow</code>, <code>--red</code>, <code>--blue</code>, <code>--f-brand</code>, <code>--f-ui</code>, <code>--f-mono</code>, <code>--clip-sm</code>, <code>--clip-lg</code>, <code>--transition</code>, <code>--spring</code>.
+      <p><strong>KEEP</strong> any app-specific tokens that aren't in the shared file (e.g. <code>--win-chart-*</code>, <code>--alert-*</code>). If the <code>:root</code> block becomes empty, delete the block entirely.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 3</span><span class="step-title">Swap 4 hardcoded stage hex for tokens</span></div>
+    <div class="step-body">
+      Same as TC-01 Step 3 — <code>#63B3ED → var(--stage-discovery)</code>, etc.
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 4</span><span class="step-title">Replace 5 hardcoded glow shadows</span></div>
+    <div class="step-body">
+      Grep for <code>box-shadow:\s*0\s+0\s+\d+px\s+rgba</code>. For each:
+      <pre><span class="rm">box-shadow: 0 0 8px rgba(229,168,58,0.28);</span>
+<span class="add">box-shadow: var(--sh-amber);</span>
+
+<span class="rm">box-shadow: 0 0 6px rgba(52,211,153,0.35);</span>
+<span class="add">box-shadow: var(--sh-ok);</span>
+
+<span class="rm">box-shadow: 0 0 6px rgba(245,158,11,0.35);</span>
+<span class="add">box-shadow: var(--sh-warn);</span>
+
+<span class="rm">box-shadow: 0 0 6px rgba(239,68,68,0.35);</span>
+<span class="add">box-shadow: var(--sh-risk);</span></pre>
+      <p>If the rgba doesn't match any status/amber token, leave it but wrap in a <code>@media (prefers-color-scheme: dark)</code> OR gate it behind <code>:root:not([data-theme="light"])</code> — the goal is NO dark-only glows firing on light theme.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 5</span><span class="step-title">Remap <code>var(--green/yellow/red/blue)</code> to status tokens</span></div>
+    <div class="step-body">
+      File has 21 v1 alias references. Technically they resolve now (shared has aliases), but semantically wrong. Replace all:
+      <pre><span class="rm">var(--green)</span>  → <span class="add">var(--status-ok)</span>
+<span class="rm">var(--yellow)</span> → <span class="add">var(--status-warn)</span>
+<span class="rm">var(--red)</span>    → <span class="add">var(--status-risk)</span>
+<span class="rm">var(--blue)</span>   → <span class="add">var(--stage-discovery)</span>  <span class="c">/* or --info if the use is informational, not stage */</span></pre>
+      <p>Leave <code>var(--green-muted)</code>, <code>var(--yellow-muted)</code>, etc. alone — those are legitimate aliases.</p>
+    </div>
+  </div>
+
+  <div class="test">
+    <div class="lbl">Acceptance tests</div>
+    <pre><span class="cmd">$ grep -c '&lt;title&gt;Conga' win-room/index.html</span>                            <span class="add">1</span>
+<span class="cmd">$ grep -c 'class="conga-mark"' win-room/index.html</span>                         <span class="add">1</span>
+<span class="cmd">$ grep -cE '#63B3ED|#A78BFA|#FB923C|#34D399' win-room/index.html</span>           <span class="add">0</span>
+<span class="cmd">$ grep -cE 'box-shadow:\s*0\s+0\s+[0-9]+px\s+rgba' win-room/index.html</span>     <span class="add">0</span>
+<span class="cmd">$ grep -cE 'var\(--(green|yellow|red|blue)(?!-)' win-room/index.html</span>       <span class="add">0</span>
+<span class="cmd">$ grep -c 'shared/znith-tokens.css' win-room/index.html</span>                    <span class="add">1</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TC-03 QUALIFY-IQ ═══════════════════════════ -->
+
+<div class="card" id="tc03">
+  <div class="card-head">
+    <span class="card-id">TC-03 · P1</span>
+    <span class="card-file">qualify-iq/index.html</span>
+    <span class="card-effort">~18 min · 4 steps</span>
+  </div>
+  <div class="card-headline">Inline :root removal, Conga mark, add light theme, swap stage hex</div>
+  <div class="card-diagnostic">
+    <strong>Current state:</strong>
+    shared_link=1 <span class="pass">✓</span> ·
+    <strong>inline_:root=1 <span class="fail">✗</span></strong> ·
+    title=Conga:1 <span class="pass">✓</span> ·
+    <strong>conga-mark=0 <span class="fail">✗</span></strong> ·
+    <strong>light_blocks=0 <span class="fail">✗ NO LIGHT THEME</span></strong> ·
+    hardcoded_stage_hex=3 <span class="warn">⚠</span>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 1</span><span class="step-title">Insert Conga mark in header</span></div>
+    <div class="step-body">Same pattern as TC-01 Step 2.</div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 2</span><span class="step-title">Remove inline :root shadow</span></div>
+    <div class="step-body">Same deletion list as TC-02 Step 2.</div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 3</span><span class="step-title">Swap 3 hardcoded stage hex</span></div>
+    <div class="step-body">1×<code>#A78BFA</code> → <code>var(--stage-proposal)</code>, 2×<code>#34D399</code> → <code>var(--stage-closed-won)</code>.</div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 4</span><span class="step-title">Walk every screen in light theme — patch any visible defects</span></div>
+    <div class="step-body">
+      File has ZERO <code>[data-theme="light"]</code> blocks. Once the inline <code>:root</code> is gone (Step 2), the shared file's light theme will provide tokens — but any hardcoded colors in the inline <code>&lt;style&gt;</code> block will stay dark-only. Test by adding <code>data-theme="light"</code> to the <code>&lt;html&gt;</code> element and walking every screen.
+      <p>For each defect, prefer fixing the root hardcoded color over adding a light override. Only add <code>[data-theme="light"] .foo { … }</code> if the element genuinely needs different values per theme (e.g. drop shadows).</p>
+    </div>
+  </div>
+
+  <div class="test">
+    <div class="lbl">Acceptance tests</div>
+    <pre><span class="cmd">$ grep -c 'class="conga-mark"' qualify-iq/index.html</span>                       <span class="add">1</span>
+<span class="cmd">$ grep -cE '#A78BFA|#34D399' qualify-iq/index.html</span>                         <span class="add">0</span>
+<span class="cmd">$ grep -c 'shared/znith-tokens.css' qualify-iq/index.html</span>                  <span class="add">1</span>
+<span class="c"># Manual: toggle data-theme="light" on &lt;html&gt;, verify no ghosted text, no dark surfaces bleeding through.</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TC-04 DEMO-BRIEF ═══════════════════════════ -->
+
+<div class="card" id="tc04">
+  <div class="card-head">
+    <span class="card-id">TC-04 · P1</span>
+    <span class="card-file">demo-brief/index.html</span>
+    <span class="card-effort">~18 min · 4 steps</span>
+  </div>
+  <div class="card-headline">Inline :root removal, Conga mark, add light theme, swap stage hex</div>
+  <div class="card-diagnostic">
+    <strong>Current state:</strong>
+    shared_link=1 <span class="pass">✓</span> ·
+    <strong>inline_:root=1 <span class="fail">✗</span></strong> ·
+    title=Conga:1 <span class="pass">✓</span> ·
+    <strong>conga-mark=0 <span class="fail">✗</span></strong> ·
+    <strong>light_blocks=0 <span class="fail">✗ NO LIGHT THEME</span></strong> ·
+    hardcoded_stage_hex=7 <span class="warn">⚠</span>
+  </div>
+
+  <p>Same pattern as TC-03. Steps identical. Stage hex counts: 3×<code>#A78BFA</code>, 2×<code>#FB923C</code>, 2×<code>#34D399</code>.</p>
+
+  <div class="test">
+    <div class="lbl">Acceptance tests</div>
+    <pre><span class="cmd">$ grep -c 'class="conga-mark"' demo-brief/index.html</span>                       <span class="add">1</span>
+<span class="cmd">$ grep -cE '#63B3ED|#A78BFA|#FB923C|#34D399' demo-brief/index.html</span>         <span class="add">0</span>
+<span class="c"># Manual: data-theme="light" walkthrough</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TC-05 SALES-HUB ═══════════════════════════ -->
+
+<div class="card" id="tc05">
+  <div class="card-head">
+    <span class="card-id">TC-05 · P1</span>
+    <span class="card-file">sales-hub/index.html</span>
+    <span class="card-effort">~22 min · 5 steps</span>
+  </div>
+  <div class="card-headline">Two inline :root blocks, Conga mark, add light theme, glow sweep</div>
+  <div class="card-diagnostic">
+    <strong>Current state:</strong>
+    shared_link=1 <span class="pass">✓</span> ·
+    <strong>inline_:root=2 <span class="fail">✗ (two blocks!)</span></strong> ·
+    title=Conga:1 <span class="pass">✓</span> ·
+    <strong>conga-mark=0 <span class="fail">✗</span></strong> ·
+    <strong>light_blocks=0 <span class="fail">✗</span></strong> ·
+    hardcoded_glows=2 <span class="warn">⚠</span>
+  </div>
+
+  <p>This file has <strong>two</strong> inline <code>:root</code> blocks. Inspect both — likely one is a legitimate app-specific token scope, the other is the v3 shadow. Remove color/bg/amber/font duplicates from both; keep app-specific tokens (chart palettes, module accents) if present.</p>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEPS 1–4</span><span class="step-title">Standard sweep</span></div>
+    <div class="step-body">Conga mark (same as TC-01 Step 2), remove inline <code>:root</code> duplicates from BOTH blocks, 2 glow shadows → <code>var(--sh-*)</code> (same as TC-02 Step 4), light-theme walkthrough (same as TC-03 Step 4).</div>
+  </div>
+
+  <div class="test">
+    <div class="lbl">Acceptance tests</div>
+    <pre><span class="cmd">$ grep -c 'class="conga-mark"' sales-hub/index.html</span>                        <span class="add">1</span>
+<span class="cmd">$ grep -cE 'box-shadow:\s*0\s+0\s+[0-9]+px\s+rgba' sales-hub/index.html</span>    <span class="add">0</span>
+<span class="c"># Manual: open DevTools, inspect any amber element, confirm computed color traces to shared/znith-tokens.css, NOT the inline &lt;style&gt;</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TC-06 ACCOUNT-BRIEF-V2 ═══════════════════════════ -->
+
+<div class="card" id="tc06">
+  <div class="card-head">
+    <span class="card-id">TC-06 · P1</span>
+    <span class="card-file">account-brief-v2/index.html</span>
+    <span class="card-effort">~28 min · 5 steps</span>
+  </div>
+  <div class="card-headline">Inline :root, Conga mark, light theme, 15 stage hex, 23 v1 var remaps</div>
+  <div class="card-diagnostic">
+    <strong>Current state:</strong>
+    shared_link=1 <span class="pass">✓</span> ·
+    <strong>inline_:root=1 <span class="fail">✗</span></strong> ·
+    title=Conga:2 <span class="pass">✓</span> ·
+    <strong>conga-mark=0 <span class="fail">✗</span></strong> ·
+    <strong>light_blocks=0 <span class="fail">✗</span></strong> ·
+    hardcoded_stage_hex=15 <span class="fail">✗ (12×#A78BFA, 3×#FB923C)</span> ·
+    broken_v1_vars=23 <span class="warn">⚠</span>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEPS 1–5</span><span class="step-title">Standard sweep + heavy remaps</span></div>
+    <div class="step-body">
+      (1) Conga mark. (2) Remove inline <code>:root</code> duplicates. (3) Replace 15 hardcoded stage hex — <strong>the 12 <code>#A78BFA</code> occurrences are the bulk of the work</strong>; these are likely stage pills or qualify badges used many times. Use find-and-replace. (4) Remap 23 <code>var(--green/yellow/red/blue)</code> to status/stage tokens. (5) Light-theme walkthrough.
+    </div>
+  </div>
+
+  <div class="test">
+    <div class="lbl">Acceptance tests</div>
+    <pre><span class="cmd">$ grep -c 'class="conga-mark"' account-brief-v2/index.html</span>                 <span class="add">1</span>
+<span class="cmd">$ grep -cE '#63B3ED|#A78BFA|#FB923C|#34D399' account-brief-v2/index.html</span>   <span class="add">0</span>
+<span class="cmd">$ grep -cE 'var\(--(green|yellow|red|blue)(?!-)' account-brief-v2/index.html</span> <span class="add">0</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TC-07 VALUE-MAP ═══════════════════════════ -->
+
+<div class="card" id="tc07">
+  <div class="card-head">
+    <span class="card-id">TC-07 · P0</span>
+    <span class="card-file">value-map/index.html</span>
+    <span class="card-effort">~32 min · 6 steps · worst drift</span>
+  </div>
+  <div class="card-headline">Full sweep + 7 hardcoded stage pills + 3 glows + 17 v1 vars + MISSING FOOTER</div>
+  <div class="card-diagnostic">
+    <strong>Current state (worst in the repo):</strong>
+    shared_link=1 <span class="pass">✓</span> ·
+    <strong>inline_:root=1 <span class="fail">✗</span></strong> ·
+    title=Conga:1 <span class="pass">✓</span> ·
+    <strong>conga-mark=0 <span class="fail">✗</span></strong> ·
+    <strong>footer=0 <span class="fail">✗ MISSING ENTIRELY</span></strong> ·
+    <strong>light_blocks=0 <span class="fail">✗</span></strong> ·
+    hardcoded_stage_hex=7 <span class="fail">✗</span> ·
+    hardcoded_glows=3 <span class="fail">✗</span> ·
+    broken_v1_vars=17 <span class="warn">⚠</span>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 1</span><span class="step-title">Add missing Conga mark in header</span></div>
+    <div class="step-body">Same as TC-01 Step 2.</div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEP 2</span><span class="step-title">Add missing /Znith footer — file has none</span></div>
+    <div class="step-body">
+      Immediately before <code>&lt;/body&gt;</code>, add:
+      <pre><span class="add">&lt;footer class="znith-footer"&gt;
+  &lt;a class="znith-wordmark" href="/"&gt;
+    &lt;span class="slash"&gt;/&lt;/span&gt;&lt;span class="z"&gt;Z&lt;/span&gt;&lt;span class="rest"&gt;NITH&lt;/span&gt;
+  &lt;/a&gt;
+  &lt;div class="znith-footer-meta"&gt;
+    &lt;span&gt;Value Map&lt;/span&gt;
+    &lt;span class="znith-footer-pip"&gt;&lt;/span&gt;
+    &lt;span&gt;v4&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;</span></pre>
+      <p>All styling comes from shared tokens — do not add inline CSS.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-num">STEPS 3–6</span><span class="step-title">Standard sweep</span></div>
+    <div class="step-body">Remove inline <code>:root</code> duplicates, swap 7 stage hex, swap 3 glows to <code>var(--sh-*)</code>, remap 17 v1 vars, walk light theme.</div>
+  </div>
+
+  <div class="test">
+    <div class="lbl">Acceptance tests</div>
+    <pre><span class="cmd">$ grep -c 'class="conga-mark"' value-map/index.html</span>                        <span class="add">1</span>
+<span class="cmd">$ grep -c 'class="znith-footer"' value-map/index.html</span>                      <span class="add">1</span>
+<span class="cmd">$ grep -cE '#63B3ED|#A78BFA|#FB923C|#34D399' value-map/index.html</span>          <span class="add">0</span>
+<span class="cmd">$ grep -cE 'box-shadow:\s*0\s+0\s+[0-9]+px\s+rgba' value-map/index.html</span>    <span class="add">0</span>
+<span class="cmd">$ grep -cE 'var\(--(green|yellow|red|blue)(?!-)' value-map/index.html</span>      <span class="add">0</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ TC-08 PROSPECTING-AGENT ═══════════════════════════ -->
+
+<div class="card" id="tc08">
+  <div class="card-head">
+    <span class="card-id">TC-08 · HOLD</span>
+    <span class="card-file">prospecting-agent/index.html</span>
+    <span class="card-effort">SKIP — user directed hold</span>
+  </div>
+  <div class="card-headline">Do NOT refactor — user wants to keep current state</div>
+  <div class="callout warn"><strong>Skip this PR.</strong> User explicitly directed to leave <code>prospecting-agent/</code> alone during this sweep. If a bulk script or grep-replace runs across the repo, exclude this path.</div>
+</div>
+
+<h2><span class="num">APPENDIX A</span>PR workflow</h2>
+
+<div class="section-lead"><strong>One tool = one PR = one fresh Claude Code session.</strong> Do not stack multiple cards in one session. The failure mode on the last sweep was context exhaustion — agent half-remembers work across files, drops steps.</div>
+
+<p>Per PR:</p>
+<ol style="padding-left: 22px; color: var(--tmuted); font-size: 13px;">
+  <li style="margin-bottom: 6px;">Start a fresh Claude Code session. Paste ONLY that tool's card (TC-01 through TC-07).</li>
+  <li style="margin-bottom: 6px;">Let the agent work through steps 1–N.</li>
+  <li style="margin-bottom: 6px;">Before merging, run the Acceptance Tests at the bottom of the card. All must output the expected value.</li>
+  <li style="margin-bottom: 6px;">If any test fails, reject the PR with the failing test line. Do not negotiate — the test is the contract.</li>
+  <li>After merge, manually open the tool at <code>data-theme="dark"</code> and <code>data-theme="light"</code>. Walk every screen.</li>
+</ol>
+
+<h2><span class="num">APPENDIX B</span>Global acceptance sweep</h2>
+
+<p>After all 7 PRs merge, run this across the repo as a final gate before main:</p>
+
+<pre><span class="cmd">$ for tool in dashboard qualify-iq value-map account-brief-v2 sales-hub win-room demo-brief; do
+    echo "=== $tool ===";
+    f=$tool/index.html;
+    echo "  conga-mark:       $(grep -c 'class="conga-mark"' $f)";
+    echo "  znith-footer:     $(grep -c 'class="znith-footer"' $f)";
+    echo "  title-conga:      $(grep -c '&lt;title&gt;Conga' $f)";
+    echo "  shared-link:      $(grep -c 'shared/znith-tokens.css' $f)";
+    echo "  stage-hex:        $(grep -cE '#63B3ED|#A78BFA|#FB923C|#34D399' $f)";
+    echo "  v3-amber:         $(grep -c '#B8860B' $f)";
+    echo "  hardcoded-glows:  $(grep -cE 'box-shadow:\s*0\s+0\s+[0-9]+px\s+rgba' $f)";
+    echo "  v1-var-refs:      $(grep -cE 'var\(--(green|yellow|red|blue)(?!-)' $f)";
+  done</span>
+
+<span class="c"># Expected: every tool should show
+#   conga-mark: 1, znith-footer: 1, title-conga: 1, shared-link: 1
+#   stage-hex: 0, v3-amber: 0, hardcoded-glows: 0, v1-var-refs: 0</span></pre>
+
+<div class="callout"><strong>If the sweep is green, the brand-refresh branch is ready to merge to main.</strong> If anything is red, the failing tool(s) go back through the card process — do not patch one-off in the shared file.</div>
+
+<h2><span class="num">APPENDIX C</span>Why this handoff shape works</h2>
+
+<p><strong>Small scope per session</strong> — one card = 300 KB of HTML, one tool's mental model. Agent doesn't exhaust context.</p>
+<p><strong>Explicit tests</strong> — no ambiguity about "done." A grep count is a pass/fail, not a judgment call.</p>
+<p><strong>Diagnostic up front</strong> — each card shows what's wrong <em>right now</em> with check/fail marks. Agent doesn't have to infer priority.</p>
+<p><strong>No prose-heavy instructions</strong> — universal rules are listed once at the top; each card is edits + tests, nothing more.</p>
+<p><strong>Replay-safe</strong> — if a PR fails tests, the card is idempotent. Re-running produces the same result.</p>
+
+<footer>
+  <span>Consumer Tools · Per-File Task Cards v1</span>
+  <span>7 PRs · ~3 hrs · 8th file on hold</span>
+</footer>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Claude Code worktrees and local session state
+.claude/
+
+# Vercel local config
+.vercel/
+
+# Sensitive pipeline / rep data
+manager-hub/Clari Exports/

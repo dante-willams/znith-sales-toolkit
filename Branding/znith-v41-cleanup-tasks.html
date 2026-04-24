@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<title>Znith v4.1 — Four-Role Palette Cleanup</title>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --f-brand:'Epilogue',sans-serif; --f-ui:'Barlow',sans-serif; --f-mono:'IBM Plex Mono',monospace;
+  --accent:#E5A83A; --info:#7A94B8;
+  --ok:#34D399; --warn:#F59E0B; --risk:#EF4444;
+  --bg:#05070F; --surf:#0F1520; --surf-2:#0A0E1A;
+  --border:rgba(255,255,255,0.08); --border-md:rgba(255,255,255,0.14);
+  --text:rgba(255,255,255,0.92); --tmuted:rgba(255,255,255,0.62); --tfaint:rgba(255,255,255,0.42);
+  --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;line-height:1.65;padding:40px 32px 80px;max-width:1080px;margin:0 auto;}
+.version-chip{display:inline-block;font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:4px 10px;clip-path:var(--clip-sm);margin-bottom:14px;}
+h1{font-family:var(--f-brand);font-size:40px;font-weight:800;letter-spacing:-0.03em;line-height:1.1;margin-bottom:10px;}
+h1 .amber{color:var(--accent);}
+.sub{font-size:15px;color:var(--tmuted);max-width:720px;margin-bottom:32px;}
+h2{font-family:var(--f-brand);font-size:22px;font-weight:700;margin:40px 0 14px;padding-top:24px;border-top:1px solid var(--border);display:flex;align-items:center;gap:14px;}
+h2 .num{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--tfaint);letter-spacing:0.1em;}
+h3{font-family:var(--f-brand);font-size:15px;font-weight:700;margin:20px 0 8px;color:var(--text);}
+p{margin-bottom:12px;color:var(--text);}
+p.meta{color:var(--tmuted);font-size:13px;}
+code{font-family:var(--f-mono);font-size:12px;background:var(--surf);padding:2px 6px;border-radius:3px;color:var(--accent);border:1px solid var(--border);}
+pre{font-family:var(--f-mono);font-size:12px;background:var(--surf-2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:16px 20px;margin:10px 0 14px;overflow-x:auto;line-height:1.6;}
+pre .c{color:var(--tfaint);}
+pre .k{color:var(--info);}
+pre .s{color:var(--accent);}
+pre .add{color:var(--ok);}
+pre .del{color:var(--risk);text-decoration:line-through;}
+table{width:100%;border-collapse:collapse;margin:14px 0 20px;font-size:13px;}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+th{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--tfaint);}
+td.num{font-family:var(--f-mono);text-align:right;}
+.task{background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-lg);padding:20px 24px;margin-bottom:14px;}
+.task-head{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.task-id{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--accent);letter-spacing:0.1em;}
+.task-title{font-family:var(--f-brand);font-size:17px;font-weight:700;flex:1;}
+.pri{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:3px 8px;clip-path:var(--clip-sm);}
+.p0{background:rgba(239,68,68,0.14);color:var(--risk);}
+.p1{background:rgba(245,158,11,0.14);color:var(--warn);}
+.p2{background:rgba(122,148,184,0.14);color:var(--info);}
+.effort{font-family:var(--f-mono);font-size:10px;color:var(--tmuted);letter-spacing:0.06em;text-transform:uppercase;}
+.files{font-family:var(--f-mono);font-size:11px;color:var(--tmuted);margin-bottom:8px;padding:6px 10px;background:var(--surf-2);border-left:2px solid var(--info);}
+.why{margin-bottom:10px;}
+.why strong{color:var(--warn);}
+.ok{color:var(--ok);}
+.risk{color:var(--risk);}
+.warn{color:var(--warn);}
+.info{color:var(--info);}
+ul{margin:0 0 10px 20px;}
+li{margin-bottom:4px;}
+.summary-card{background:var(--surf-2);border:1px solid var(--border);clip-path:var(--clip-lg);padding:20px 24px;margin-bottom:20px;}
+.verdict{font-family:var(--f-brand);font-size:20px;font-weight:700;margin-bottom:8px;}
+.verdict .amber{color:var(--accent);}
+.checklist{display:flex;flex-direction:column;gap:6px;margin:14px 0;}
+.check-item{display:flex;align-items:flex-start;gap:10px;font-size:13px;}
+.check-item .box{width:12px;height:12px;border:1px solid var(--border-md);margin-top:4px;flex-shrink:0;}
+.footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);font-family:var(--f-mono);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--tfaint);display:flex;justify-content:space-between;}
+</style>
+</head>
+<body>
+
+<div class="version-chip">Znith · Cleanup · v4.1</div>
+<h1>Four-Role Palette <span class="amber">Cleanup Tasks</span></h1>
+<p class="sub">Apply the Action / Info / Status / Neutrals palette to the existing brand-refresh branch. This is a shift in <em>how</em> tokens are used, not a rewrite — most changes are centralized in <code>shared/znith-tokens.css</code> plus pattern-based find-and-replace across the 8 tools.</p>
+
+<div class="summary-card">
+<div class="verdict">Difficulty: <span class="amber">Moderate · ~4–6 hours total</span></div>
+<p>You already did the hard work on brand-refresh: shared tokens file, Conga chrome, /Znith footer, theme toggle. v4.1 is a <strong class="ok">purely additive migration</strong> — add 6 new tokens, rewrite the meaning of 2 existing classes, and let backward-compat aliases keep the rest working while you migrate section by section.</p>
+<p><strong>No breaking changes required.</strong> Every v4 amber usage continues to render; you just stop <em>adding</em> amber in new places and gradually pull it out of eyebrows/labels/info callouts over 1–2 sprints.</p>
+</div>
+
+<h2><span class="num">00</span>Scan summary — current amber load</h2>
+<p>Audit of <code>brand-refresh</code> HEAD as of 41cea8b:</p>
+<table>
+<thead><tr><th>Tool</th><th class="num">var(--amber*)</th><th class="num">amber hex</th><th class="num">eyebrow rules</th><th>Severity</th></tr></thead>
+<tbody>
+<tr><td><code>prospecting-agent</code></td><td class="num risk">163</td><td class="num">9</td><td class="num">4</td><td class="risk">Heavy — likely amber as skin</td></tr>
+<tr><td><code>account-brief-v2</code></td><td class="num warn">34</td><td class="num">0</td><td class="num">2</td><td class="warn">Moderate</td></tr>
+<tr><td><code>sales-hub</code></td><td class="num warn">34</td><td class="num">2</td><td class="num">4</td><td class="warn">Moderate</td></tr>
+<tr><td><code>value-map</code></td><td class="num warn">29</td><td class="num">0</td><td class="num">1</td><td class="warn">Moderate</td></tr>
+<tr><td><code>dashboard</code></td><td class="num">26</td><td class="num">5</td><td class="num">2</td><td class="info">Normal — high UI density</td></tr>
+<tr><td><code>win-room</code></td><td class="num">19</td><td class="num">1</td><td class="num">1</td><td class="info">Normal</td></tr>
+<tr><td><code>qualify-iq</code></td><td class="num ok">11</td><td class="num">1</td><td class="num">0</td><td class="ok">Light — already close</td></tr>
+<tr><td><code>demo-brief</code></td><td class="num ok">9</td><td class="num">2</td><td class="num">0</td><td class="ok">Light — already close</td></tr>
+</tbody>
+</table>
+<p class="meta"><strong class="warn">Heat map:</strong> <code>prospecting-agent</code> is the outlier at 163 amber references — budget it as its own task. Everything else is 1–2 focused hours.</p>
+
+<h2><span class="num">01</span>Tokens · Extend the palette</h2>
+<div class="task">
+  <div class="task-head"><span class="task-id">CLN41-01</span><span class="task-title">Add Info role + semantic aliases to shared tokens</span><span class="pri p0">P0</span></div>
+  <div class="effort">Effort: 10 min · Single file · Zero breaking changes</div>
+  <div class="files"><strong>File:</strong> <code>shared/znith-tokens.css</code></div>
+  <div class="why"><strong>Why:</strong> The v4 palette has only one accent role (amber) and amber is being used for eyebrows, stage-play callouts, section labels, and CTAs interchangeably. Adding an <strong>Info</strong> role (muted slate) gives tools a neutral-but-distinct color for non-status informational content, which lets amber reclaim its "Action" meaning.</div>
+<pre><span class="c">/* Append to :root (dark) */</span>
+<span class="add"><span class="k">--info</span>:         <span class="s">#7A94B8</span>;
+<span class="k">--info-deep</span>:    <span class="s">#4E6A8E</span>;
+<span class="k">--info-muted</span>:   <span class="s">rgba(122,148,184,0.14)</span>;
+<span class="k">--info-faint</span>:   <span class="s">rgba(122,148,184,0.06)</span>;
+
+<span class="c">/* Semantic role aliases — keeps old tokens alive, introduces role vocabulary */</span>
+<span class="k">--accent</span>:       <span class="s">var(--amber)</span>;
+<span class="k">--accent-deep</span>:  <span class="s">var(--amber-deep)</span>;
+<span class="k">--accent-glow</span>:  <span class="s">var(--amber-glow)</span>;
+<span class="k">--accent-muted</span>: <span class="s">var(--amber-muted)</span>;
+<span class="k">--accent-faint</span>: <span class="s">var(--amber-faint)</span>;</span>
+
+<span class="c">/* Append to :root[data-theme="light"] */</span>
+<span class="add"><span class="k">--info</span>:         <span class="s">#5A7396</span>;
+<span class="k">--info-deep</span>:    <span class="s">#324A70</span>;
+<span class="k">--info-muted</span>:   <span class="s">rgba(90,115,150,0.12)</span>;
+<span class="k">--info-faint</span>:   <span class="s">rgba(90,115,150,0.05)</span>;</span></pre>
+  <p><strong class="ok">Safe to ship alone.</strong> No existing file changes. Unblocks every other task.</p>
+</div>
+
+<h2><span class="num">02</span>Eyebrows · Demote from amber to neutral</h2>
+<div class="task">
+  <div class="task-head"><span class="task-id">CLN41-02</span><span class="task-title">Make section eyebrows mono-gray, not amber</span><span class="pri p0">P0</span></div>
+  <div class="effort">Effort: 20 min · Global find-replace pattern</div>
+  <div class="files"><strong>Files:</strong> <code>dashboard</code>, <code>win-room</code>, <code>sales-hub</code>, <code>prospecting-agent</code>, <code>account-brief-v2</code>, <code>value-map</code> (skip qualify-iq, demo-brief)</div>
+  <div class="why"><strong>Why:</strong> Every tool has 1–4 rules like <code>.section-eyebrow { color: var(--amber) }</code>. That's amber on labels that repeat 5–10× per screen, which is what makes amber feel like skin instead of signal. Switching eyebrows to mono-gray instantly reclaims amber's meaning.</div>
+<pre><span class="c">/* Find all rules matching this shape */</span>
+<span class="del"><span class="k">.section-eyebrow</span>,
+<span class="k">.eyebrow</span>,
+<span class="k">.side-label</span> {
+  <span class="k">color</span>: <span class="s">var(--amber)</span>;
+}</span>
+
+<span class="c">/* Replace with */</span>
+<span class="add"><span class="k">.section-eyebrow</span>,
+<span class="k">.eyebrow</span>,
+<span class="k">.side-label</span> {
+  <span class="k">font-family</span>: <span class="s">var(--f-mono)</span>;
+  <span class="k">font-size</span>: <span class="s">10px</span>;
+  <span class="k">font-weight</span>: <span class="s">700</span>;
+  <span class="k">letter-spacing</span>: <span class="s">0.14em</span>;
+  <span class="k">text-transform</span>: <span class="s">uppercase</span>;
+  <span class="k">color</span>: <span class="s">var(--tfaint)</span>;
+}</span></pre>
+  <p class="meta">Grep pattern for Claude Code: <code>(eyebrow|eye|section-label|side-label)[\s\S]{0,200}color:\s*var\(--amber</code></p>
+</div>
+
+<h2><span class="num">03</span>Info callouts · Switch from amber to slate</h2>
+<div class="task">
+  <div class="task-head"><span class="task-id">CLN41-03</span><span class="task-title">Value Case, Stage Play, and similar info cards use --info</span><span class="pri p1">P1</span></div>
+  <div class="effort">Effort: 30 min · Per-tool surgical edits</div>
+  <div class="files"><strong>Files:</strong> <code>win-room/index.html</code> (value_case + stage_play cards), <code>account-brief-v2</code>, <code>prospecting-agent</code>, <code>dashboard</code></div>
+  <div class="why"><strong>Why:</strong> Informational callouts (value case, stage play, "why this matters") currently use <code>background: var(--amber-faint)</code> with amber borders — same visual language as the primary CTA. Demote them to the slate Info role.</div>
+<pre><span class="c">/* Before */</span>
+<span class="del"><span class="k">.info-card</span> {
+  <span class="k">background</span>: <span class="s">var(--amber-faint)</span>;
+  <span class="k">border-color</span>: <span class="s">rgba(229,168,58,0.12)</span>;
+}</span>
+
+<span class="c">/* After */</span>
+<span class="add"><span class="k">.info-card</span> {
+  <span class="k">background</span>: <span class="s">var(--info-faint)</span>;
+  <span class="k">border</span>: <span class="s">1px solid var(--info-muted)</span>;
+}
+<span class="k">.info-card .eyebrow</span> {
+  <span class="k">color</span>: <span class="s">var(--info)</span>;
+}</span></pre>
+</div>
+
+<h2><span class="num">04</span>Stakeholder role tags · Use Info</h2>
+<div class="task">
+  <div class="task-head"><span class="task-id">CLN41-04</span><span class="task-title">"Champion / Econ Buyer / Influencer" pills use --info, not amber</span><span class="pri p1">P1</span></div>
+  <div class="effort">Effort: 5 min · Single-rule change propagated</div>
+  <div class="files"><strong>Files:</strong> <code>win-room</code>, <code>qualify-iq</code>, <code>account-brief-v2</code>, <code>prospecting-agent</code></div>
+  <div class="why"><strong>Why:</strong> Role tags are categorical metadata — they describe <em>what kind of person</em>, not a call to action. Amber here competes with real CTAs.</div>
+<pre><span class="del"><span class="k">.stakeholder-role</span> { <span class="k">color</span>: <span class="s">var(--amber)</span>; }</span>
+<span class="add"><span class="k">.stakeholder-role</span> { <span class="k">color</span>: <span class="s">var(--info)</span>; }</span></pre>
+</div>
+
+<h2><span class="num">05</span>CTAs · Keep amber, but audit count</h2>
+<div class="task">
+  <div class="task-head"><span class="task-id">CLN41-05</span><span class="task-title">Per-screen amber budget: max 3 touchpoints</span><span class="pri p1">P1</span></div>
+  <div class="effort">Effort: 15 min/tool × 8 tools = ~2 hrs</div>
+  <div class="files"><strong>Files:</strong> All 8 tools</div>
+  <div class="why"><strong>Why:</strong> The rule: amber is allowed on (a) the primary CTA, (b) one hero KPI or data point, (c) the /Znith footer mark. Everything else that currently uses amber must be downgraded to <code>--info</code>, <code>--tmuted</code>, or <code>var(--text)</code>.</div>
+  <p><strong>Checklist per screen:</strong></p>
+  <ul>
+    <li>Count visible amber elements on load. Target ≤ 3.</li>
+    <li>If &gt; 3, demote eyebrows first (CLN41-02), then info cards (CLN41-03), then role tags (CLN41-04).</li>
+    <li>Secondary buttons use <code>border-color: var(--border-md); color: var(--tmuted)</code> — plain neutral, no amber border.</li>
+  </ul>
+</div>
+
+<h2><span class="num">06</span>Prospecting Agent · Deep audit</h2>
+<div class="task">
+  <div class="task-head"><span class="task-id">CLN41-06</span><span class="task-title">Amber reduction pass — 163 references</span><span class="pri p0">P0</span></div>
+  <div class="effort">Effort: 90–120 min · Dedicated session</div>
+  <div class="files"><strong>File:</strong> <code>prospecting-agent/index.html</code></div>
+  <div class="why"><strong>Why:</strong> 163 var(--amber*) references is ~5× the next-heaviest tool. The file likely uses amber for list hover states, accent borders, small chips, or decorative scan-lines. Plan on one focused sitting to rewrite the surface.</div>
+  <p><strong>Approach:</strong></p>
+  <ul>
+    <li>Open the file, ⌘F for <code>var(--amber</code>, step through every hit.</li>
+    <li>For each: ask "is this an <em>action</em> the user can take?" If no → replace with <code>--info</code>, <code>--tmuted</code>, <code>--border-md</code>, or remove entirely.</li>
+    <li>Borders on non-interactive cards: use <code>var(--border)</code> not amber-muted.</li>
+    <li>Hover states on rows: use <code>var(--surf-2)</code> or <code>var(--border-md)</code>, not amber.</li>
+  </ul>
+</div>
+
+<h2><span class="num">07</span>Hero KPI treatment</h2>
+<div class="task">
+  <div class="task-head"><span class="task-id">CLN41-07</span><span class="task-title">Every tool's primary metric gets the amber-hero treatment</span><span class="pri p2">P2</span></div>
+  <div class="effort">Effort: 10 min/tool × 5 = ~1 hr</div>
+  <div class="files"><strong>Files:</strong> <code>dashboard</code>, <code>win-room</code>, <code>qualify-iq</code>, <code>value-map</code>, <code>sales-hub</code></div>
+  <div class="why"><strong>Why:</strong> If amber is reserved for Action and one hero number, pick the right hero per tool and make it unambiguous. See the <code>.kpi-hero</code> pattern in the v4.1 prototype.</div>
+  <table>
+  <thead><tr><th>Tool</th><th>Hero metric</th></tr></thead>
+  <tbody>
+  <tr><td><code>dashboard</code></td><td>Total ACV in pipeline OR Deals at risk</td></tr>
+  <tr><td><code>win-room</code></td><td>ACV at Stake</td></tr>
+  <tr><td><code>qualify-iq</code></td><td>Overall MEDDPICC score</td></tr>
+  <tr><td><code>value-map</code></td><td>Total Annual Value</td></tr>
+  <tr><td><code>sales-hub</code></td><td>Quota attainment %</td></tr>
+  </tbody>
+  </table>
+</div>
+
+<h2><span class="num">08</span>QA sweep</h2>
+<div class="task">
+  <div class="task-head"><span class="task-id">CLN41-08</span><span class="task-title">Per-tool acceptance checklist</span><span class="pri p2">P2</span></div>
+  <div class="effort">Effort: 5 min/tool × 8 = 40 min</div>
+  <div class="files"><strong>Files:</strong> All 8 tools + both themes</div>
+<div class="checklist">
+  <div class="check-item"><div class="box"></div>≤ 3 amber elements visible on first paint (CTA + hero + footer mark)</div>
+  <div class="check-item"><div class="box"></div>Eyebrows are mono-gray (<code>var(--tfaint)</code>), never amber</div>
+  <div class="check-item"><div class="box"></div>Info callouts (value case, stage play) use slate <code>--info-faint</code> background</div>
+  <div class="check-item"><div class="box"></div>Role/category tags use <code>var(--info)</code></div>
+  <div class="check-item"><div class="box"></div>One clear hero metric uses the amber treatment</div>
+  <div class="check-item"><div class="box"></div>Secondary buttons are plain neutral — no amber border</div>
+  <div class="check-item"><div class="box"></div>Works in both dark and light themes without regression</div>
+  <div class="check-item"><div class="box"></div>No emoji, no lorem, no decorative hex — all color comes from tokens</div>
+</div>
+</div>
+
+<h2><span class="num">09</span>Migration strategy · How hard is this really?</h2>
+<p>You asked directly — here's the honest read:</p>
+
+<h3 class="ok">What makes this easy</h3>
+<ul>
+  <li><strong>You already did the heavy lift.</strong> Shared tokens file, Conga chrome, /Znith footer, theme toggle, Conga Symbol SVG — all landed on brand-refresh. None of that changes.</li>
+  <li><strong>No breaking changes.</strong> All existing <code>var(--amber*)</code> references continue to work. You only replace them where <em>meaning is wrong</em>, one section at a time.</li>
+  <li><strong>Central leverage.</strong> Tasks 01 (add tokens) and 02 (demote eyebrows) together hit ~70% of the surface with one shared token update + one grep-replace. That's an hour of work.</li>
+  <li><strong>Two tools are already close.</strong> <code>qualify-iq</code> (11 refs) and <code>demo-brief</code> (9 refs) likely need zero work beyond the shared-token update.</li>
+</ul>
+
+<h3 class="warn">What makes this a real project, not a patch</h3>
+<ul>
+  <li><strong>Prospecting Agent is 5× heavier than anything else.</strong> 163 amber references means amber is baked into the structure, not sprinkled on top. Budget 2 hours, expect to find ~30 edits.</li>
+  <li><strong>Per-tool taste calls.</strong> "Which metric is the hero?" and "is this button action or navigation?" aren't mechanical find-replace — they need a designer's eye. But they're 10-min decisions, not hours.</li>
+  <li><strong>Theme parity.</strong> Every change has to look right in both dark and light. Existing shared tokens handle this automatically as long as you only use role tokens (<code>--info</code>, <code>--accent</code>, etc.), never raw hex.</li>
+</ul>
+
+<h3 class="info">Recommended rollout</h3>
+<table>
+<thead><tr><th>Sprint</th><th>Tasks</th><th>Effort</th><th>Risk</th></tr></thead>
+<tbody>
+<tr><td>1 · Foundation</td><td>CLN41-01 (add --info) + CLN41-02 (demote eyebrows globally)</td><td>~45 min</td><td class="ok">Near zero — additive</td></tr>
+<tr><td>2 · Demotion</td><td>CLN41-03, 04 (info cards + role tags across 4 tools)</td><td>~45 min</td><td class="ok">Low — visual only</td></tr>
+<tr><td>3 · Deep-clean</td><td>CLN41-06 (prospecting-agent focused session)</td><td>~2 hrs</td><td class="warn">Medium — surgical edits</td></tr>
+<tr><td>4 · Polish</td><td>CLN41-05, 07 (CTA budget + hero KPIs)</td><td>~1 hr</td><td class="ok">Low</td></tr>
+<tr><td>5 · QA</td><td>CLN41-08 (checklist per tool, both themes)</td><td>~45 min</td><td class="ok">Low</td></tr>
+</tbody>
+</table>
+<p><strong>Total: 5 hours of focused work, fits in one day.</strong> Ship sprints 1+2 as a single "foundation" PR and the visual change will already feel dramatic. Sprints 3–5 are polish you can layer over the next couple of days without blocking anything.</p>
+
+<h2><span class="num">10</span>What NOT to do</h2>
+<div class="task">
+  <div class="task-head"><span class="task-id">DONT-01</span><span class="task-title">Do not remove --amber tokens</span><span class="pri p2">P2</span></div>
+  <p>Keep <code>--amber</code>, <code>--amber-deep</code>, <code>--amber-muted</code>, <code>--amber-faint</code>, <code>--amber-glow</code> forever. They're the physical color. <code>--accent</code> is just a semantic alias. Removing them breaks 163 references in one file alone.</p>
+</div>
+<div class="task">
+  <div class="task-head"><span class="task-id">DONT-02</span><span class="task-title">Do not do a big-bang rewrite</span><span class="pri p2">P2</span></div>
+  <p>Ship foundation (sprint 1+2) first, let it bake, then tackle prospecting-agent. Each PR should be visually coherent on its own — reviewer should be able to open the diff and see "eyebrows changed" as one clear intent, not 40 scattered edits.</p>
+</div>
+<div class="task">
+  <div class="task-head"><span class="task-id">DONT-03</span><span class="task-title">Do not touch favicons, logos, or chrome</span><span class="pri p2">P2</span></div>
+  <p>v4.1 is a palette-meaning change, not a brand refresh. Conga Symbol stays. /Znith footer stays. Theme toggle stays. Amber hue stays (the color is right; only its <em>role</em> changes).</p>
+</div>
+
+<div class="footer">
+  <div>Znith · v4.1 · Four-Role Palette · Cleanup</div>
+  <div>Reference: znith-v41-four-role-palette.html</div>
+</div>
+
+</body>
+</html>

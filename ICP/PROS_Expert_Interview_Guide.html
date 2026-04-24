@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROS ICP Expert Interview — Conga Revenue Operations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #111827;
+    background: #fff;
+    padding: 48px 0;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  /* Header */
+  .header {
+    border-bottom: 2px solid #111827;
+    padding-bottom: 24px;
+    margin-bottom: 36px;
+  }
+  .header-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #6B7280;
+    margin-bottom: 8px;
+  }
+  .header-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: #6B7280;
+  }
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #E5E7EB;
+  }
+  .meta-field { flex: 1; }
+  .meta-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #9CA3AF;
+    margin-bottom: 4px;
+  }
+  .meta-input {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #D1D5DB;
+    padding: 4px 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #111827;
+    background: transparent;
+    outline: none;
+  }
+  .meta-input:focus { border-bottom-color: #111827; }
+
+  /* Context box */
+  .context-box {
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-left: 3px solid #374151;
+    padding: 16px 20px;
+    margin-bottom: 36px;
+    font-size: 13px;
+    color: #374151;
+    line-height: 1.7;
+  }
+  .context-box strong { color: #111827; }
+
+  /* Sections */
+  .section {
+    margin-bottom: 40px;
+    page-break-inside: avoid;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #E5E7EB;
+  }
+  .section-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: #fff;
+    background: #111827;
+    padding: 2px 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+  }
+
+  /* Questions */
+  .question {
+    margin-bottom: 24px;
+  }
+  .question-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+  .question-hint {
+    font-size: 11px;
+    color: #9CA3AF;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+  textarea {
+    width: 100%;
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: #111827;
+    resize: vertical;
+    min-height: 72px;
+    outline: none;
+    background: #FAFAFA;
+    transition: border-color 0.15s;
+  }
+  textarea:focus { border-color: #374151; background: #fff; }
+
+  /* Rating row */
+  .rating-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .rating-label { font-size: 13px; font-weight: 600; color: #111827; flex: 1; }
+  .rating-options { display: flex; gap: 6px; }
+  .rating-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+    background: #FAFAFA;
+    font-size: 12px;
+    font-weight: 600;
+    color: #6B7280;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+  }
+  .rating-btn:hover { border-color: #374151; color: #111827; }
+
+  /* Checkbox grid */
+  .check-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #374151;
+  }
+  .check-item input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    accent-color: #111827;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #9CA3AF;
+  }
+  .footer-brand { font-weight: 700; color: #6B7280; letter-spacing: 0.05em; }
+
+  /* Print */
+  @media print {
+    body { padding: 0; font-size: 12px; }
+    .page { padding: 0 20px; }
+    textarea { background: #FAFAFA; min-height: 60px; }
+    .no-print { display: none; }
+    .section { page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-eyebrow">Conga Revenue Operations · FY2026</div>
+    <div class="header-title">PROS ICP Expert Interview</div>
+    <div class="header-sub">Competitive intelligence collection — for internal use only</div>
+    <div class="header-meta">
+      <div class="meta-field">
+        <div class="meta-label">Expert Name</div>
+        <input class="meta-input" type="text" placeholder="Full name" />
+      </div>
+      <div class="meta-field">
+        <div class="meta-label">Role / Team</div>
+        <input class="meta-input" type="text" placeholder="e.g. AE, SE, Partner, CS" />
+      </div>
+      <div class="meta-field">
+        <div class="meta-label">Date</div>
+        <input class="meta-input" type="text" placeholder="MM/DD/YYYY" />
+      </div>
+      <div class="meta-field">
+        <div class="meta-label">Interviewer</div>
+        <input class="meta-input" type="text" placeholder="Your name" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Context -->
+  <div class="context-box">
+    <strong>Purpose:</strong> We're building a data-backed competitive playbook for Conga vs. PROS. We already have win/loss data — what we need from you is the field intelligence that doesn't show up in CRM: how PROS sells, where they're strong, where they're vulnerable, and what reps should watch out for in live deals.<br><br>
+    <strong>This should take ~20 minutes.</strong> There are no wrong answers — direct observations and specific examples are far more useful than general impressions.
+  </div>
+
+  <!-- Section 1 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">PROS's Sales Motion</span>
+    </div>
+
+    <div class="question">
+      <div class="question-label">How does PROS typically enter an account? What's their opening move?</div>
+      <div class="question-hint">Do they lead with pricing, CPQ, revenue management, or AI? Do they go top-down (exec) or bottom-up (ops team)?</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">How long are their implementation timelines compared to Conga's?</div>
+      <div class="question-hint">Based on deals you've seen or competed against. Include time-to-value if you know it.</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Where do they land, and how do they expand?</div>
+      <div class="question-hint">What's the typical first product/use case, and what does their growth path look like inside an account?</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Do they use aggressive trial or POC tactics in competitive evaluations?</div>
+      <div class="question-hint">e.g. free POCs, rapid time-to-demo, AI showcases, etc.</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">Buyer Profile</span>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Who is PROS's typical economic buyer?</div>
+      <div class="question-hint">Title, function, seniority level. Is it always the same persona or does it vary by product?</div>
+      <textarea placeholder="e.g. VP Finance, CFO, VP Sales Ops..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Which internal teams or personas tend to advocate for PROS vs. Conga?</div>
+      <div class="question-hint">Finance, Sales Ops, Legal, IT, RevOps? Who do they build champions with?</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">What business problem is the buyer usually trying to solve when PROS is in the room?</div>
+      <div class="question-hint">Pricing accuracy, revenue leakage, CPQ complexity, something else?</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">Objections & Competitive Traps</span>
+    </div>
+
+    <div class="question">
+      <div class="question-label">What FUD does PROS plant against Conga in competitive deals?</div>
+      <div class="question-hint">Specific claims they make about Conga's product, pricing, implementation, or roadmap.</div>
+      <textarea placeholder="Your answer..." style="min-height:90px;"></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">What are PROS's strongest talking points against Conga? What's hardest to counter?</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">What traps do they set early in the eval to make switching harder?</div>
+      <div class="question-hint">e.g. deep integrations, data dependencies, custom pricing models that lock the customer in</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">What's the best counter-move you've seen work against PROS?</div>
+      <div class="question-hint">Specific plays, questions, or proof points that shifted the deal.</div>
+      <textarea placeholder="Your answer..." style="min-height:90px;"></textarea>
+    </div>
+  </div>
+
+  <!-- Section 4 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">Where PROS Is Weak</span>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Which industries or use cases does PROS consistently lose or avoid?</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Where does their Salesforce integration fall short in practice?</div>
+      <div class="question-hint">Real friction points you've heard from customers or seen in evals — not just marketing.</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">What do unhappy PROS customers most often complain about?</div>
+      <div class="question-hint">Implementation pain, support quality, product gaps, pricing changes, etc.</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Are there known PROS customers who are evaluating alternatives or could be displaced?</div>
+      <div class="question-hint">Company names or account types — even directional is helpful.</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+  </div>
+
+  <!-- Section 5 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <span class="section-title">Pricing & Deal Dynamics</span>
+    </div>
+
+    <div class="question">
+      <div class="question-label">How does PROS price? What's the model?</div>
+      <div class="question-hint">Per user, per transaction, platform fee, usage-based? Any pricing gotchas you've seen?</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Where do their deals typically stall or die?</div>
+      <div class="question-hint">Budget, implementation scope, exec sponsorship, internal IT bandwidth?</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">What's a typical deal size range you've seen them pursue?</div>
+      <textarea placeholder="e.g. $50K–$500K ACV..."></textarea>
+    </div>
+  </div>
+
+  <!-- Section 6 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <span class="section-title">Reference Accounts & Field Intel</span>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Which logos does PROS use most frequently in competitive evaluations?</div>
+      <div class="question-hint">Companies they name-drop or use as references. Industry + name if you know it.</div>
+      <textarea placeholder="Your answer..."></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Are there specific deals — won or lost — that would be useful case studies for Conga reps?</div>
+      <div class="question-hint">You don't need to name accounts. What made the deal go the way it did?</div>
+      <textarea placeholder="Your answer..." style="min-height:90px;"></textarea>
+    </div>
+
+    <div class="question">
+      <div class="question-label">Anything else reps should know that isn't captured above?</div>
+      <div class="question-hint">Rumors, roadmap intel, personnel changes, partner channel activity — anything directionally useful.</div>
+      <textarea placeholder="Your answer..." style="min-height:90px;"></textarea>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span class="footer-brand">CONGA REVENUE OPERATIONS</span>
+    <span>PROS ICP Expert Interview · FY2026 · Confidential</span>
+    <span>rgoepfert@conga.com</span>
+  </div>
+
+</div>
+</body>
+</html>

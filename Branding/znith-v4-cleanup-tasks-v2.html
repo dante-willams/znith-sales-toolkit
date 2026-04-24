@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Znith v4 · Cleanup Handoff v2 (Claude Code)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;600;700;800&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui: 'Barlow', sans-serif;
+  --f-mono: 'IBM Plex Mono', monospace;
+  --amber: #E5A83A;
+  --amber-deep: #B8860B;
+  --amber-muted: rgba(229,168,58,0.12);
+  --bg: #05070F;
+  --surf: #0F1520;
+  --surf-2: #0A0E1A;
+  --border: rgba(255,255,255,0.08);
+  --border-md: rgba(255,255,255,0.14);
+  --text: rgba(255,255,255,0.92);
+  --tmuted: rgba(255,255,255,0.62);
+  --tfaint: rgba(255,255,255,0.42);
+  --tghost: rgba(255,255,255,0.28);
+  --ok: #34D399;
+  --warn: #F59E0B;
+  --risk: #EF4444;
+  --clip-sm: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  --clip-lg: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: var(--f-ui); font-size: 14px; line-height: 1.65;
+  padding: 56px 24px 80px;
+}
+.wrap { max-width: 980px; margin: 0 auto; }
+
+.eye { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--amber); margin-bottom: 10px; font-weight: 700; }
+h1 { font-family: var(--f-brand); font-size: 34px; font-weight: 800; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 14px; }
+h1 span { color: var(--amber); }
+.sub { color: var(--tmuted); max-width: 680px; font-size: 14px; }
+
+.meta { background: var(--surf); border: 1px solid var(--border); clip-path: var(--clip-lg); padding: 18px 22px; margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px 32px; font-size: 12.5px; }
+.meta strong { display: block; font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.14em; color: var(--amber); text-transform: uppercase; margin-bottom: 4px; font-weight: 700; }
+.meta code { font-family: var(--f-mono); font-size: 11.5px; color: var(--amber); background: var(--amber-muted); padding: 1px 5px; border-radius: 2px; }
+
+h2 { font-family: var(--f-brand); font-size: 22px; font-weight: 800; letter-spacing: -0.015em; margin: 52px 0 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 14px; }
+h2 .num { font-family: var(--f-mono); font-size: 13px; color: var(--amber); font-weight: 700; letter-spacing: 0.1em; }
+h3 { font-family: var(--f-brand); font-size: 16px; font-weight: 700; margin: 24px 0 8px; color: var(--text); }
+
+p { margin-bottom: 10px; color: var(--tmuted); }
+p strong { color: var(--text); font-weight: 700; }
+
+.task { background: var(--surf); border: 1px solid var(--border); clip-path: var(--clip-lg); padding: 20px 24px; margin-bottom: 14px; }
+.task-head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+.task-id { font-family: var(--f-mono); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: var(--amber); }
+.task-title { font-family: var(--f-brand); font-size: 17px; font-weight: 700; color: var(--text); flex: 1; }
+.pri { font-family: var(--f-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; padding: 3px 8px; clip-path: var(--clip-sm); }
+.pri.p0 { background: rgba(239,68,68,0.18); color: var(--risk); border: 1px solid rgba(239,68,68,0.35); }
+.pri.p1 { background: rgba(245,158,11,0.15); color: var(--warn); border: 1px solid rgba(245,158,11,0.32); }
+.pri.p2 { background: rgba(99,179,237,0.12); color: #63B3ED; border: 1px solid rgba(99,179,237,0.28); }
+
+.files { font-size: 12px; color: var(--tfaint); margin-bottom: 10px; }
+.files code { font-family: var(--f-mono); font-size: 11.5px; color: var(--text); background: var(--surf-2); padding: 1px 5px; border-radius: 2px; }
+.why { font-size: 13px; margin-bottom: 12px; color: var(--tmuted); }
+.why strong { color: var(--text); }
+
+pre { background: var(--surf-2); border: 1px solid var(--border); clip-path: var(--clip-sm); padding: 14px 16px; overflow-x: auto; font-family: var(--f-mono); font-size: 11.5px; line-height: 1.65; color: var(--tmuted); margin: 10px 0; }
+pre .c { color: var(--tghost); }
+pre .k { color: var(--amber); }
+pre .s { color: #63B3ED; }
+pre .add { color: var(--ok); }
+pre .rm { color: var(--risk); text-decoration: line-through; opacity: 0.7; }
+
+ul.steps { padding-left: 22px; margin: 8px 0; color: var(--tmuted); }
+ul.steps li { margin-bottom: 5px; }
+ul.steps code { font-family: var(--f-mono); font-size: 11.5px; color: var(--amber); background: var(--amber-muted); padding: 0 4px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 10px 0 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+th { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--tfaint); font-weight: 700; }
+td { color: var(--tmuted); }
+td:first-child, th:first-child { padding-left: 14px; }
+td code { font-family: var(--f-mono); font-size: 11px; color: var(--amber); }
+td.y { color: var(--ok); text-align: center; }
+td.n { color: var(--risk); text-align: center; font-weight: 700; }
+td.num { color: var(--warn); font-family: var(--f-mono); font-weight: 700; text-align: center; }
+td.zero { color: var(--tghost); text-align: center; }
+
+.commit { background: var(--surf-2); border-left: 3px solid var(--amber); padding: 14px 18px; margin: 14px 0; font-family: var(--f-mono); font-size: 12px; color: var(--tmuted); }
+.commit strong { color: var(--amber); display: block; margin-bottom: 4px; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+
+.callout { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.25); clip-path: var(--clip-sm); padding: 14px 18px; margin: 16px 0; font-size: 13px; color: var(--tmuted); }
+.callout strong { color: var(--warn); }
+
+footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid var(--border); font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--tghost); text-transform: uppercase; display: flex; justify-content: space-between; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="eye">Znith v4 · Handoff to Claude Code · v2</div>
+<h1>Brand-Refresh <span>Cleanup v2</span></h1>
+<p class="sub">Cross-tool audit of the <code>brand-refresh</code> branch covering all 8 HTML entry points. Nine concrete tasks with exact diffs. Apply in order — earlier tasks remove work from later ones.</p>
+
+<div class="meta">
+  <div>
+    <strong>Branch</strong>
+    <code>brand-refresh</code> @ <code>f61300a</code>
+  </div>
+  <div>
+    <strong>Files Audited</strong>
+    dashboard · win-room · account-brief-v2 · value-map · qualify-iq · demo-brief · prospecting-agent · sales-hub
+  </div>
+  <div>
+    <strong>Status</strong>
+    Shared tokens, Conga mark, Conga titles are live on every tool. Token parity + light-theme completeness are the remaining work.
+  </div>
+  <div>
+    <strong>Time Estimate</strong>
+    ~2 hours across all tasks. Most damage centralized in <code>shared/znith-tokens.css</code>.
+  </div>
+</div>
+
+<h2><span class="num">00</span>Why this drift exists (context for Claude Code)</h2>
+<p>Each tool was built as a standalone page with its own <code>&lt;style&gt;</code> block and color vocabulary <strong>before</strong> the v4 spec existed. The brand-refresh pass added the shared tokens file, the Conga mark, the title rename, and the footer <strong>without</strong> going back to sweep inline style blocks. So every tool now uses v4 <em>chrome</em> (tokens link, header, footer) but carries v3-era <em>guts</em> (inline hex stage colors, <code>var(--green)</code> references that point nowhere, dark-only glow shadows). This cleanup closes that gap.</p>
+
+<p>The other reason: the shared tokens file <em>renamed</em> the status colors (<code>--green</code> → <code>--status-ok</code>) but the v1-compatibility aliases were not added, so every pre-existing <code>var(--green)</code> reference silently broke. Task CLN-01 fixes this with a single edit.</p>
+
+<h2><span class="num">01</span>Drift matrix (what's broken where)</h2>
+
+<table>
+<thead>
+<tr><th>Tool</th><th>Unresolved <code>var(--green/…)</code></th><th>Hardcoded stage hex</th><th>Hardcoded glows</th><th>Light-theme blocks</th><th>Footer</th></tr>
+</thead>
+<tbody>
+<tr><td><code>dashboard.html</code></td><td class="zero">0</td><td class="num">10</td><td class="zero">0</td><td class="y">6 ✓</td><td class="y">✓</td></tr>
+<tr><td><code>win-room/index.html</code></td><td class="num">24</td><td class="num">4</td><td class="num">2</td><td class="y">3 ✓</td><td class="y">✓</td></tr>
+<tr><td><code>account-brief-v2/index.html</code></td><td class="num">23</td><td class="num">15</td><td class="zero">0</td><td class="num">1 thin</td><td class="y">✓</td></tr>
+<tr><td><code>value-map/index.html</code></td><td class="num">17</td><td class="num">6</td><td class="num">2</td><td class="n">0</td><td class="y">✓</td></tr>
+<tr><td><code>prospecting-agent/index.html</code></td><td class="num">29</td><td class="zero">0</td><td class="zero">0</td><td class="num">1 thin</td><td class="n">MISSING</td></tr>
+<tr><td><code>qualify-iq/index.html</code></td><td class="zero">0</td><td class="num">3</td><td class="zero">0</td><td class="num">1 thin</td><td class="y">✓</td></tr>
+<tr><td><code>sales-hub/index.html</code></td><td class="zero">0</td><td class="zero">0</td><td class="num">2</td><td class="num">1 thin</td><td class="y">✓</td></tr>
+<tr><td><code>demo-brief/index.html</code></td><td class="zero">0</td><td class="num">6</td><td class="zero">0</td><td class="num">1 thin</td><td class="y">✓</td></tr>
+</tbody>
+</table>
+
+<div class="callout"><strong>Read as:</strong> "thin" means the tool only has a 1-line <code>[data-theme="light"]</code> override (usually for the topbar) and is missing a real light-mode audit. Tasks CLN-01, CLN-03, CLN-04 are single-file edits to <code>shared/znith-tokens.css</code> that clear most of this matrix in one shot.</div>
+
+<h2><span class="num">02</span>CLN-01 · Add v1 color aliases to shared tokens</h2>
+<div class="task">
+  <div class="task-head">
+    <span class="task-id">CLN-01</span>
+    <span class="task-title">Unblock 93 broken <code>var(--green)</code>-style references</span>
+    <span class="pri p0">P0</span>
+  </div>
+  <div class="files"><strong>Files:</strong> <code>shared/znith-tokens.css</code></div>
+  <div class="why"><strong>Problem:</strong> 4 tools (<code>win-room</code>, <code>account-brief-v2</code>, <code>value-map</code>, <code>prospecting-agent</code>) collectively reference <code>var(--green)</code>, <code>var(--yellow)</code>, <code>var(--red)</code>, <code>var(--blue)</code>, and their <code>-muted</code> variants 93 times. The shared tokens file defines <code>--status-ok</code> etc. but not these aliases, so every reference resolves to <code>unset</code> and renders as default/black.</div>
+  <div class="why"><strong>Fix:</strong> Append aliases to the dark <code>:root</code> block AND the <code>[data-theme="light"]</code> block so both themes resolve. This should already be present — verify and add if missing.</div>
+<pre><span class="c">/* shared/znith-tokens.css — inside :root (dark, default) */</span>
+<span class="k">--green</span>:        <span class="s">var(--status-ok)</span>;
+<span class="k">--yellow</span>:       <span class="s">var(--status-warn)</span>;
+<span class="k">--red</span>:          <span class="s">var(--status-risk)</span>;
+<span class="k">--blue</span>:         <span class="s">#63B3ED</span>;
+<span class="k">--green-muted</span>:  <span class="s">rgba(52,211,153,0.14)</span>;
+<span class="k">--yellow-muted</span>: <span class="s">rgba(245,158,11,0.14)</span>;
+<span class="k">--red-muted</span>:    <span class="s">rgba(239,68,68,0.14)</span>;
+<span class="k">--blue-muted</span>:   <span class="s">rgba(99,179,237,0.14)</span>;
+
+<span class="c">/* shared/znith-tokens.css — inside [data-theme="light"] block */</span>
+<span class="k">--green</span>:        <span class="s">#16A34A</span>;
+<span class="k">--yellow</span>:       <span class="s">#B47814</span>;
+<span class="k">--red</span>:          <span class="s">#C83232</span>;
+<span class="k">--blue</span>:         <span class="s">#2B6FAE</span>;
+<span class="k">--green-muted</span>:  <span class="s">rgba(22,163,74,0.12)</span>;
+<span class="k">--yellow-muted</span>: <span class="s">rgba(180,120,20,0.12)</span>;
+<span class="k">--red-muted</span>:    <span class="s">rgba(200,50,50,0.10)</span>;
+<span class="k">--blue-muted</span>:   <span class="s">rgba(43,111,174,0.10)</span>;</pre>
+  <p><strong>Verify:</strong> Open each of the 4 affected tools in browser devtools, inspect any health pill or status indicator, confirm computed color is populated (not default black text).</p>
+</div>
+
+<h2><span class="num">03</span>CLN-02 · Add shared footer to prospecting-agent</h2>
+<div class="task">
+  <div class="task-head">
+    <span class="task-id">CLN-02</span>
+    <span class="task-title">Only tool missing the /Znith footer</span>
+    <span class="pri p0">P0</span>
+  </div>
+  <div class="files"><strong>Files:</strong> <code>prospecting-agent/index.html</code></div>
+  <div class="why"><strong>Problem:</strong> All 7 other tools have the <code>&lt;footer class="znith-footer"&gt;</code> block at end of <code>&lt;body&gt;</code>. Prospecting Agent does not. Result: no /Znith build credit, no version pip, no 40px spacer for fixed footer.</div>
+  <div class="why"><strong>Fix:</strong> Paste this at end of <code>&lt;body&gt;</code> (immediately before the closing <code>&lt;/body&gt;</code> tag) and ensure <code>body { padding-bottom: 40px; }</code> is set in the local style.</div>
+<pre>&lt;footer class="znith-footer"&gt;
+  &lt;div class="znith-wordmark"&gt;
+    &lt;span class="slash"&gt;/&lt;/span&gt;
+    &lt;span class="z"&gt;Z&lt;/span&gt;
+    &lt;span class="rest"&gt;nith&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="znith-footer-meta"&gt;
+    &lt;span&gt;Prospecting Agent&lt;/span&gt;
+    &lt;div class="znith-footer-pip"&gt;&lt;/div&gt;
+    &lt;span&gt;v4.0&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;</pre>
+  <p><strong>Verify:</strong> Scroll to bottom of Prospecting Agent — amber /Znith wordmark appears in a 34px bar with amber top-border; "Prospecting Agent · v4.0" on the right.</p>
+</div>
+
+<h2><span class="num">04</span>CLN-03 · Add stage color tokens to shared</h2>
+<div class="task">
+  <div class="task-head">
+    <span class="task-id">CLN-03</span>
+    <span class="task-title">Eliminate 44 hardcoded stage hex values across 6 tools</span>
+    <span class="pri p1">P1</span>
+  </div>
+  <div class="files"><strong>Files:</strong> <code>shared/znith-tokens.css</code> + find/replace in <code>dashboard</code>, <code>win-room</code>, <code>account-brief-v2</code>, <code>value-map</code>, <code>qualify-iq</code>, <code>demo-brief</code></div>
+  <div class="why"><strong>Problem:</strong> Stage pill colors are hardcoded inline in every deal-showing tool: <code>#63B3ED</code> (discovery), <code>#A78BFA</code> (proposal), <code>#FB923C</code> (negotiation), <code>#34D399</code> (closed-won). If the palette ever shifts, we're touching 6 files.</div>
+  <div class="why"><strong>Fix:</strong></div>
+  <p><strong>Step 1</strong> — add to <code>shared/znith-tokens.css</code> inside both <code>:root</code> AND <code>[data-theme="light"]</code> (these are stage semantics, not palette):</p>
+<pre><span class="k">--stage-discovery</span>:    <span class="s">#63B3ED</span>;
+<span class="k">--stage-demo</span>:         <span class="s">var(--amber)</span>;
+<span class="k">--stage-proposal</span>:    <span class="s">#A78BFA</span>;
+<span class="k">--stage-negotiation</span>: <span class="s">#FB923C</span>;
+<span class="k">--stage-closed-won</span>:  <span class="s">var(--status-ok)</span>;
+<span class="k">--stage-closed-lost</span>: <span class="s">var(--tfaint)</span>;</pre>
+  <p><strong>Step 2</strong> — find/replace across the 6 files listed above:</p>
+<pre><span class="rm">#63B3ED</span>  →  <span class="add">var(--stage-discovery)</span>
+<span class="rm">#A78BFA</span>  →  <span class="add">var(--stage-proposal)</span>
+<span class="rm">#FB923C</span>  →  <span class="add">var(--stage-negotiation)</span>
+<span class="rm">#34D399</span>  →  <span class="add">var(--stage-closed-won)</span></pre>
+  <p><strong>Exception:</strong> leave the hex values inside <code>rgba(99,179,237,…)</code>, <code>rgba(167,139,250,…)</code>, etc. — those are muted backgrounds. You'll handle those in CLN-05 if they matter. For this task, only replace bare hex codes in <code>color:</code>, <code>background:</code>, <code>border-color:</code>, <code>fill:</code>, and <code>stroke:</code> declarations.</p>
+</div>
+
+<h2><span class="num">05</span>CLN-04 · Theme-paired status shadows</h2>
+<div class="task">
+  <div class="task-head">
+    <span class="task-id">CLN-04</span>
+    <span class="task-title">Move hardcoded green/violet glows into shared theme-paired tokens</span>
+    <span class="pri p1">P1</span>
+  </div>
+  <div class="files"><strong>Files:</strong> <code>shared/znith-tokens.css</code>, then <code>win-room</code>, <code>sales-hub</code>, <code>value-map</code></div>
+  <div class="why"><strong>Problem:</strong> Six <code>box-shadow: 0 0 6px rgba(22,163,74, …)</code>-style glows are baked in. In dark they read as intentional status glows. In light they become ugly colored halos on white.</div>
+  <div class="why"><strong>Fix:</strong></div>
+  <p><strong>Step 1</strong> — confirm these exist in <code>shared/znith-tokens.css</code>. If not, add:</p>
+<pre><span class="c">/* :root (dark) */</span>
+<span class="k">--sh-ok</span>:   <span class="s">0 0 6px rgba(52,211,153,0.35)</span>;
+<span class="k">--sh-warn</span>: <span class="s">0 0 6px rgba(245,158,11,0.35)</span>;
+<span class="k">--sh-risk</span>: <span class="s">0 0 6px rgba(239,68,68,0.35)</span>;
+
+<span class="c">/* [data-theme="light"] */</span>
+<span class="k">--sh-ok</span>:   <span class="s">0 1px 3px rgba(22,163,74,0.2)</span>;
+<span class="k">--sh-warn</span>: <span class="s">0 1px 3px rgba(180,120,20,0.2)</span>;
+<span class="k">--sh-risk</span>: <span class="s">0 1px 3px rgba(200,50,50,0.2)</span>;</pre>
+  <p><strong>Step 2</strong> — replace in the 3 affected tools:</p>
+<pre><span class="rm">box-shadow: 0 0 6px rgba(22,163,74,0.4);</span>
+<span class="add">box-shadow: var(--sh-ok);</span>
+
+<span class="rm">box-shadow: 0 0 5px rgba(139,92,246,0.5);</span>  <span class="c">/* value-map violet */</span>
+<span class="add">box-shadow: var(--sh-ok);</span>  <span class="c">/* or --sh-warn depending on context — inspect each */</span></pre>
+  <p><strong>value-map specific:</strong> the two violet glows are likely decorative (not status). If so, create a scoped <code>--vm-glow</code> in the <code>value-map</code> local <code>:root</code> block with dark + light variants rather than borrowing <code>--sh-ok</code>.</p>
+</div>
+
+<h2><span class="num">06</span>CLN-05 · Light-theme rebuild for value-map</h2>
+<div class="task">
+  <div class="task-head">
+    <span class="task-id">CLN-05</span>
+    <span class="task-title">value-map has zero light-theme rules — toggle produces broken UI</span>
+    <span class="pri p0">P0</span>
+  </div>
+  <div class="files"><strong>Files:</strong> <code>value-map/index.html</code></div>
+  <div class="why"><strong>Problem:</strong> <code>grep "[data-theme=\"light\"]"</code> returns <strong>0 hits</strong> in value-map. The shared tokens handle the palette but any local <code>rgba()</code> overrides, glows, and dark-only backgrounds will persist when the user toggles light. Given value-map is 304 KB of tool logic with charts and custom panels, local overrides definitely exist.</div>
+  <div class="why"><strong>Fix:</strong> Pattern-match what <code>win-room</code> and <code>dashboard</code> do. At minimum:</div>
+  <ul class="steps">
+    <li>Audit every inline <code>rgba(255,255,255,…)</code> — these are dark-mode only. Replace with <code>var(--border)</code>, <code>var(--surf-2)</code>, etc. where semantic, or wrap in a <code>[data-theme="light"]</code> override.</li>
+    <li>Audit every <code>background: #0…</code> or <code>color: rgba(255,255,255,…)</code> — replace with tokens.</li>
+    <li>Add a <code>[data-theme="light"]</code> block at the end of the <code>&lt;style&gt;</code> for topbar <code>rgba(255,255,255,0.94)</code> override and any chart color swaps.</li>
+    <li>Test every screen of value-map in both themes. Chart fills and axis labels are usually the worst offenders.</li>
+  </ul>
+  <p><strong>Reference:</strong> copy the structure from <code>win-room/index.html</code> lines at the bottom of the <code>&lt;style&gt;</code> block — the 3 <code>[data-theme="light"]</code> rules there are the minimum baseline.</p>
+</div>
+
+<h2><span class="num">07</span>CLN-06 · Light-theme audit for 5 "thin" tools</h2>
+<div class="task">
+  <div class="task-head">
+    <span class="task-id">CLN-06</span>
+    <span class="task-title">Most tools only have 1 light-mode override — extend coverage</span>
+    <span class="pri p1">P1</span>
+  </div>
+  <div class="files"><strong>Files:</strong> <code>account-brief-v2</code>, <code>demo-brief</code>, <code>prospecting-agent</code>, <code>qualify-iq</code>, <code>sales-hub</code></div>
+  <div class="why"><strong>Problem:</strong> These 5 tools have only a single <code>[data-theme="light"]</code> rule (typically <code>.topbar { background: rgba(255,255,255,0.94); }</code>). That's not enough — any tool-specific card, modal, toast, drawer, or chart element that uses a local rgba/hex will break on light.</div>
+  <div class="why"><strong>Fix — apply to each tool:</strong></div>
+  <ul class="steps">
+    <li>Toggle theme in browser, walk through every screen/state in the tool.</li>
+    <li>For each visual issue, find the offending CSS rule. Prefer fixing the root cause (replace hex with token). If the rule must be theme-specific, add a <code>[data-theme="light"]</code> override at the bottom of the <code>&lt;style&gt;</code> block.</li>
+    <li>Common offenders: modal backdrops, dropdown menus, code/mono blocks, data-table zebras, tooltip backgrounds, focus rings.</li>
+    <li>Re-check every <code>box-shadow</code> — dark-mode glows almost always need replacement with <code>var(--sh-sm)</code>, <code>var(--sh-md)</code>, <code>var(--sh-lg)</code>, or status variants.</li>
+  </ul>
+  <p><strong>Acceptance:</strong> cycle theme on each tool, every screen renders cleanly with no white-on-white, no black-on-black, no colored halos, no chart axis labels disappearing.</p>
+</div>
+
+<h2><span class="num">08</span>CLN-07 · Root-level <code>font-variant-numeric</code> scoping</h2>
+<div class="task">
+  <div class="task-head">
+    <span class="task-id">CLN-07</span>
+    <span class="task-title">Tabular nums are forced globally — should be per-numeric-element</span>
+    <span class="pri p2">P2</span>
+  </div>
+  <div class="files"><strong>Files:</strong> <code>shared/znith-tokens.css</code></div>
+  <div class="why"><strong>Problem:</strong> The shared tokens file sets <code>font-variant-numeric: tabular-nums</code> on numeric display classes, but also on <code>body</code> in several tool files. When applied to prose, numbers inside paragraphs get unnaturally wide spacing. Confirm the shared rule is scoped correctly.</div>
+  <div class="why"><strong>Fix:</strong> Verify <code>shared/znith-tokens.css</code> only applies <code>tabular-nums</code> to:</div>
+<pre><span class="k">.kpi-value, .kpi-value *,
+.meddpicc-score-val, .drawer-value-chip-val, .drawer-dim-score,
+.meta-val, .score, [data-num]</span> {
+  <span class="k">font-variant-numeric</span>: <span class="s">tabular-nums</span>;
+}</pre>
+  <p>Then grep each tool for <code>body { … font-variant-numeric: tabular-nums … }</code> and remove. Prose body copy should use proportional figures by default.</p>
+</div>
+
+<h2><span class="num">09</span>CLN-08 · KPI number treatment component</h2>
+<div class="task">
+  <div class="task-head">
+    <span class="task-id">CLN-08</span>
+    <span class="task-title">Standardize prefix / num / unit pattern across tools</span>
+    <span class="pri p2">P2</span>
+  </div>
+  <div class="files"><strong>Files:</strong> verify all tools use shared classes from <code>znith-tokens.css</code></div>
+  <div class="why"><strong>Problem:</strong> KPI numbers across tools show inconsistent scale relationships between prefix ($), the number, and the unit (M, K, %). The shared tokens already define the right component — confirm every tool uses it.</div>
+  <div class="why"><strong>Required structure:</strong></div>
+<pre>&lt;div class="kpi-value"&gt;
+  &lt;span class="prefix"&gt;$&lt;/span&gt;
+  &lt;span class="num"&gt;24.8&lt;/span&gt;
+  &lt;span class="unit"&gt;M&lt;/span&gt;
+&lt;/div&gt;</pre>
+  <p>The shared CSS auto-scales prefix and unit to 0.5em at 0.55 opacity relative to <code>.num</code>. Any tool that has inline <code>style="font-size:…"</code> on these spans should be cleaned up. Grep for <code>class="prefix"</code> and <code>class="unit"</code> in each tool and verify parents are <code>.kpi-value</code>.</p>
+</div>
+
+<h2><span class="num">10</span>CLN-09 · Console + link integrity sweep</h2>
+<div class="task">
+  <div class="task-head">
+    <span class="task-id">CLN-09</span>
+    <span class="task-title">Final pass — no 404s, no CSS errors, no stale hrefs</span>
+    <span class="pri p1">P1</span>
+  </div>
+  <div class="files"><strong>Files:</strong> all 8 HTML files</div>
+  <ul class="steps">
+    <li>Open each tool in browser, watch devtools console — should be clean (no 404 for <code>shared/znith-tokens.css</code>, no missing SVG path errors, no "undefined CSS variable" warnings).</li>
+    <li>Click through every nav link (dashboard ↔ each tool). Confirm the <code>href</code> paths are correct from each tool's depth (<code>./shared/</code> for root files, <code>../shared/</code> for nested).</li>
+    <li>Toggle theme on every tool. Cycle multiple times. Confirm no visual lag, no broken states.</li>
+    <li>Load each tool with a real deal open. Walk through all tabs/sections/modals. Confirm all amber accents, status indicators, and data viz render correctly in both themes.</li>
+    <li>Run a quick Lighthouse accessibility pass on dashboard + one sub-tool. Target AA contrast on all text. Amber text on surface should pass at 13px+.</li>
+  </ul>
+</div>
+
+<h2><span class="num">11</span>Commit plan</h2>
+
+<div class="commit"><strong>Commit 1 of 4</strong>feat(tokens): add v1 color aliases, stage tokens, paired status shadows (CLN-01, CLN-03, CLN-04)</div>
+<div class="commit"><strong>Commit 2 of 4</strong>fix(prospecting-agent): add missing /Znith footer + body padding (CLN-02)</div>
+<div class="commit"><strong>Commit 3 of 4</strong>refactor(tools): replace hardcoded stage hex + glows with tokens across 6 tools (CLN-03 + CLN-04 sweep)</div>
+<div class="commit"><strong>Commit 4 of 4</strong>fix(theme): complete light-theme pass on value-map + 5 thin tools (CLN-05, CLN-06, CLN-07, CLN-08, CLN-09)</div>
+
+<p>After each commit, deploy to preview and verify the commit's slice before starting the next. Commit 1 in particular unblocks 93 broken references with a 16-line edit — test it in isolation so you know it's working before you fan out.</p>
+
+<h2><span class="num">12</span>What I did NOT include</h2>
+
+<ul class="steps">
+  <li><strong>account-brief v1</strong> (<code>account-brief/</code>) — intentionally preserved for legacy. Do not touch.</li>
+  <li><strong>Old design docs</strong> in repo root (<code>znith-design-system-v1 copy 2.html</code>) — leave alone, not in the runtime path.</li>
+  <li><strong>Manager hub</strong> — doesn't exist yet, not part of this sweep. Separate build.</li>
+  <li><strong>Back-end / API changes</strong> — out of scope. This is a pure CSS + markup cleanup.</li>
+</ul>
+
+<footer>
+  <span>Znith · Handoff v2</span>
+  <span>Auto-verifiable · ~2h · 9 tasks</span>
+</footer>
+
+</div>
+</body>
+</html>

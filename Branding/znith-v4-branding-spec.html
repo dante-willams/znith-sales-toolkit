@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<title>Znith v4 · Branding Spec</title>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --f-brand:'Epilogue',sans-serif;
+  --f-ui:'Barlow',sans-serif;
+  --f-mono:'IBM Plex Mono',monospace;
+  --amber:#E5A83A;
+  --amber-deep:#B8860B;
+  --amber-glow:rgba(229,168,58,0.22);
+  --amber-muted:rgba(229,168,58,0.12);
+  --amber-faint:rgba(229,168,58,0.06);
+  --bg:#05070F;
+  --surf:#0F1520;
+  --surf-2:#0A0E1A;
+  --border:rgba(255,255,255,0.08);
+  --border-md:rgba(255,255,255,0.14);
+  --text:rgba(255,255,255,0.92);
+  --tmuted:rgba(255,255,255,0.62);
+  --tfaint:rgba(255,255,255,0.42);
+  --tghost:rgba(255,255,255,0.22);
+  --clip-lg:polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm:polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--f-ui);font-size:14px;line-height:1.6;padding-bottom:60px;}
+.wrap{max-width:980px;margin:0 auto;padding:48px 32px;}
+.eyebrow{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--amber);margin-bottom:14px;}
+h1{font-family:var(--f-brand);font-size:48px;font-weight:800;letter-spacing:-0.03em;line-height:1.05;margin-bottom:10px;}
+.sub{font-size:16px;color:var(--tmuted);margin-bottom:40px;max-width:70ch;}
+h2{font-family:var(--f-brand);font-size:24px;font-weight:700;letter-spacing:-0.01em;margin:44px 0 14px;padding-top:32px;border-top:1px solid var(--border);position:relative;}
+h2::before{content:'';position:absolute;top:-1px;left:0;width:48px;height:2px;background:var(--amber);}
+h3{font-family:var(--f-brand);font-size:16px;font-weight:700;margin:22px 0 8px;color:var(--text);}
+p{color:var(--tmuted);margin-bottom:12px;max-width:70ch;}
+p strong{color:var(--text);font-weight:600;}
+code{font-family:var(--f-mono);font-size:12px;background:var(--surf);border:1px solid var(--border);padding:1px 6px;clip-path:var(--clip-sm);color:var(--amber);}
+pre{background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-lg);padding:18px 20px;font-family:var(--f-mono);font-size:12px;line-height:1.7;color:var(--text);overflow-x:auto;margin:14px 0;}
+pre .c{color:var(--tghost);}
+pre .k{color:var(--amber);}
+pre .s{color:#8BC4E5;}
+ul{margin:10px 0 14px 22px;color:var(--tmuted);}
+li{margin-bottom:5px;}
+li strong{color:var(--text);}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px;}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--border);}
+th{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--tfaint);background:var(--surf);}
+td{color:var(--tmuted);}
+td code{font-size:11px;}
+.swatch{display:inline-block;width:16px;height:16px;clip-path:var(--clip-sm);vertical-align:middle;margin-right:8px;border:1px solid var(--border-md);}
+.card{background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-lg);padding:20px 22px;margin:14px 0;}
+.rule{background:linear-gradient(135deg,var(--amber-muted),transparent 60%);border:1px solid rgba(229,168,58,0.28);clip-path:var(--clip-lg);padding:16px 20px;margin:14px 0;}
+.rule strong{color:var(--amber);font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;display:block;margin-bottom:6px;}
+.toc{background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-lg);padding:20px 24px;margin-bottom:32px;}
+.toc-title{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:12px;}
+.toc ol{list-style:none;margin:0;padding:0;columns:2;column-gap:32px;}
+.toc li{font-size:13px;color:var(--tmuted);margin-bottom:6px;}
+.toc li a{color:var(--tmuted);text-decoration:none;}
+.toc li a:hover{color:var(--amber);}
+.toc .num{font-family:var(--f-mono);color:var(--amber);margin-right:8px;font-size:11px;font-weight:700;}
+.token-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0;}
+.token{display:flex;align-items:center;gap:12px;background:var(--surf);border:1px solid var(--border);clip-path:var(--clip-sm);padding:10px 12px;font-size:12px;}
+.token-name{font-family:var(--f-mono);color:var(--text);font-size:11px;}
+.token-val{font-family:var(--f-mono);color:var(--tfaint);font-size:10px;margin-left:auto;}
+.hd{border-bottom:2px solid var(--amber);padding-bottom:20px;margin-bottom:20px;}
+.version-chip{display:inline-flex;gap:10px;align-items:center;font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;}
+.version-chip::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber-glow);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hd">
+  <div class="version-chip">Znith · Design System · v4.0</div>
+  <h1>Znith v4 <span style="color:var(--amber);">Branding Spec</span></h1>
+  <p class="sub">The consolidated design language for Conga Sales Intelligence. This document is the source of truth for tokens, components, chrome, and brand posture across every tool in the suite.</p>
+</div>
+
+<div class="toc">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><span class="num">01</span><a href="#posture">Brand posture</a></li>
+    <li><span class="num">02</span><a href="#identity">Visual identity</a></li>
+    <li><span class="num">03</span><a href="#tokens">Tokens · Dark</a></li>
+    <li><span class="num">04</span><a href="#tokens-light">Tokens · Light</a></li>
+    <li><span class="num">05</span><a href="#type">Typography</a></li>
+    <li><span class="num">06</span><a href="#chrome">Header &amp; footer</a></li>
+    <li><span class="num">07</span><a href="#geometry">Geometry (chamfer)</a></li>
+    <li><span class="num">08</span><a href="#numbers">Number treatment</a></li>
+    <li><span class="num">09</span><a href="#amber">Amber states</a></li>
+    <li><span class="num">10</span><a href="#motion">Motion voice</a></li>
+    <li><span class="num">11</span><a href="#charts">Data visualization</a></li>
+    <li><span class="num">12</span><a href="#states">Empty / loading / error</a></li>
+    <li><span class="num">13</span><a href="#accessibility">Accessibility</a></li>
+    <li><span class="num">14</span><a href="#donts">Do not</a></li>
+  </ol>
+</div>
+
+<h2 id="posture">01 · Brand posture</h2>
+<p><strong>Conga is the brand users see. Znith is the studio that built it.</strong> Every tool in the suite is a Conga product — "Conga Sales Intelligence," "Conga Win Room," "Conga Account Brief." Znith is the invisible design system powering them, credited quietly in the footer as <code>/Znith</code>.</p>
+
+<div class="rule"><strong>Rule</strong>Header = Conga. Footer = /Znith. Amber = internal tool signature. Never mix.</div>
+
+<ul>
+<li><strong>Header</strong> uses the Conga Symbol SVG and the product string <code>Conga [Product Name]</code>. Never the word "Znith."</li>
+<li><strong>Footer</strong> carries the <code>/Znith</code> wordmark as a quiet build credit — the only place the Znith identity is visible in-product.</li>
+<li><strong>Amber</strong> (<code>#E5A83A</code>) is the internal-tool signature. It signals this is a product tool for sales teams, not a customer-facing Conga marketing surface.</li>
+<li><strong>Purple</strong> (Conga brand color) is reserved for Conga-branded moments only — login splash, marketing callouts, "Powered by Conga" credits. Never inside the tool chrome itself.</li>
+</ul>
+
+<h2 id="identity">02 · Visual identity</h2>
+
+<h3>Logo usage</h3>
+<table>
+<thead><tr><th>Surface</th><th>Asset</th><th>Size</th><th>Color</th></tr></thead>
+<tbody>
+<tr><td>Header mark (dark)</td><td><code>Conga_Symbol_White.svg</code></td><td>28–36px</td><td>White</td></tr>
+<tr><td>Header mark (light)</td><td><code>Conga_Symbol_Black.svg</code></td><td>28–36px</td><td>Black</td></tr>
+<tr><td>Footer build credit</td><td>Inline <code>/Znith</code> wordmark</td><td>12px</td><td>Amber + ghost</td></tr>
+<tr><td>Login splash / PDF cover</td><td><code>Conga_Wordmark_White.svg</code></td><td>200–400px</td><td>White</td></tr>
+<tr><td>Favicon</td><td>Conga Symbol</td><td>16, 32px</td><td>Amber or Conga purple</td></tr>
+</tbody>
+</table>
+
+<h3>Product naming</h3>
+<p>All headers follow the pattern <code>Conga [Product Name]</code>:</p>
+<ul>
+<li>Conga Sales Intelligence <em>(the dashboard shell)</em></li>
+<li>Conga Win Room</li>
+<li>Conga Account Brief</li>
+<li>Conga Value Map</li>
+<li>Conga Qualify IQ</li>
+<li>Conga Demo Brief</li>
+<li>Conga Prospecting Agent</li>
+</ul>
+
+<h2 id="tokens">03 · Tokens · Dark (default)</h2>
+<p>v4 corrects the accessibility failures in v3. Old tokens marked <code>DEPRECATED</code> — do not use.</p>
+
+<pre><span class="c">/* v4 — dark theme */</span>
+<span class="k">--amber</span>:         <span class="s">#E5A83A</span>;   <span class="c">/* was #B8860B — brightened for AA */</span>
+<span class="k">--amber-deep</span>:    <span class="s">#B8860B</span>;   <span class="c">/* retained for hover/pressed only */</span>
+<span class="k">--amber-glow</span>:    <span class="s">rgba(229,168,58,0.22)</span>;
+<span class="k">--amber-muted</span>:   <span class="s">rgba(229,168,58,0.12)</span>;
+<span class="k">--amber-faint</span>:   <span class="s">rgba(229,168,58,0.06)</span>;
+
+<span class="k">--bg</span>:            <span class="s">#05070F</span>;
+<span class="k">--surf</span>:          <span class="s">#0F1520</span>;
+<span class="k">--surf-2</span>:        <span class="s">#0A0E1A</span>;
+<span class="k">--surf-3</span>:        <span class="s">#070A13</span>;
+
+<span class="k">--border</span>:        <span class="s">rgba(255,255,255,0.08)</span>;
+<span class="k">--border-md</span>:     <span class="s">rgba(255,255,255,0.14)</span>;
+<span class="k">--border-dk</span>:     <span class="s">rgba(255,255,255,0.22)</span>;
+
+<span class="k">--text</span>:          <span class="s">rgba(255,255,255,0.92)</span>;   <span class="c">/* was 0.88 */</span>
+<span class="k">--tmuted</span>:        <span class="s">rgba(255,255,255,0.62)</span>;   <span class="c">/* was 0.50 */</span>
+<span class="k">--tfaint</span>:        <span class="s">rgba(255,255,255,0.42)</span>;   <span class="c">/* was 0.28 — AA fix */</span>
+<span class="k">--tghost</span>:        <span class="s">rgba(255,255,255,0.22)</span>;   <span class="c">/* NEW — decorative only */</span>
+
+<span class="k">--status-ok</span>:     <span class="s">#34D399</span>;
+<span class="k">--status-warn</span>:   <span class="s">#F59E0B</span>;
+<span class="k">--status-risk</span>:   <span class="s">#EF4444</span>;</pre>
+
+<h2 id="tokens-light">04 · Tokens · Light</h2>
+<p>Light theme is a <strong>parallel design</strong>, not a token flip. Amber retuned, shadows replace glows, solid hairlines replace translucent borders.</p>
+
+<pre><span class="c">/* v4 — light theme (data-theme="light") */</span>
+<span class="k">--amber</span>:         <span class="s">#C98C20</span>;   <span class="c">/* fills — richer on white */</span>
+<span class="k">--amber-text</span>:    <span class="s">#946C00</span>;   <span class="c">/* text/icons — AA pass */</span>
+<span class="k">--amber-deep</span>:    <span class="s">#6E5000</span>;   <span class="c">/* hover/pressed */</span>
+
+<span class="k">--bg</span>:            <span class="s">#F4F2ED</span>;   <span class="c">/* warm paper — NOT pure white */</span>
+<span class="k">--surf</span>:          <span class="s">#FFFFFF</span>;
+<span class="k">--surf-2</span>:        <span class="s">#FAF8F2</span>;
+<span class="k">--surf-3</span>:        <span class="s">#EFEBE0</span>;
+
+<span class="k">--border</span>:        <span class="s">#E3E0D8</span>;   <span class="c">/* solid — translucent fails on light */</span>
+<span class="k">--border-md</span>:     <span class="s">#CFCBBE</span>;
+
+<span class="k">--text</span>:          <span class="s">#1A1914</span>;
+<span class="k">--tmuted</span>:        <span class="s">#5A564C</span>;
+<span class="k">--tfaint</span>:        <span class="s">#7A7466</span>;
+<span class="k">--tghost</span>:        <span class="s">#9A9484</span>;
+
+<span class="k">--sh-sm</span>:         <span class="s">0 1px 2px rgba(26,25,20,0.04), 0 1px 1px rgba(26,25,20,0.03)</span>;
+<span class="k">--sh-md</span>:         <span class="s">0 2px 8px rgba(26,25,20,0.06), 0 1px 3px rgba(26,25,20,0.04)</span>;
+<span class="k">--sh-lg</span>:         <span class="s">0 8px 28px rgba(26,25,20,0.08), 0 2px 8px rgba(26,25,20,0.05)</span>;
+<span class="k">--sh-amber</span>:      <span class="s">0 2px 12px rgba(201,140,32,0.24)</span>;</pre>
+
+<div class="rule"><strong>Rule · Light mode</strong>Shadows replace glows. Dark-theme amber glow does not translate to light — use <code>--sh-amber</code> instead.</div>
+
+<h2 id="type">05 · Typography</h2>
+<table>
+<thead><tr><th>Role</th><th>Font</th><th>Weight</th><th>Size</th><th>Used for</th></tr></thead>
+<tbody>
+<tr><td>Brand / numbers</td><td>Epilogue</td><td>700–800</td><td>32–56px</td><td>Page titles, KPIs, product names</td></tr>
+<tr><td>UI / body</td><td>Barlow</td><td>400–600</td><td>13–14px</td><td>Everything else</td></tr>
+<tr><td>Meta / eyebrow</td><td>IBM Plex Mono</td><td>700</td><td>9–11px</td><td>Section labels, badges, counters</td></tr>
+</tbody>
+</table>
+
+<div class="rule"><strong>Rule · Mono tax</strong>IBM Plex Mono is eyebrows and meta only. Never body text. Never field labels when the field is inline. If every other element has a mono label, the hierarchy collapses.</div>
+
+<h2 id="chrome">06 · Header &amp; footer</h2>
+
+<h3>Header (64px, sticky)</h3>
+<pre><span class="c">&lt;!-- Left: Conga Symbol + product name --&gt;</span>
+&lt;div class="header-logo"&gt;
+  &lt;div class="logo-mark"&gt;
+    &lt;svg viewBox="0 0 1039.041 1080"&gt; <span class="c">&lt;!-- Conga Symbol path --&gt;</span>
+      &lt;path fill="#FFFFFF" d="M760.081,809.993..."/&gt;  <span class="c">&lt;!-- white on dark, #1A1914 on light --&gt;</span>
+    &lt;/svg&gt;
+  &lt;/div&gt;
+  &lt;div class="logo-divider"&gt;&lt;/div&gt;
+  &lt;div class="logo-text"&gt;Conga &lt;span&gt;Sales Intelligence&lt;/span&gt;&lt;/div&gt;
+&lt;/div&gt;</pre>
+
+<h3>Footer (34px, fixed)</h3>
+<pre><span class="c">&lt;!-- /Znith build credit — the only place Znith is visible --&gt;</span>
+&lt;footer class="znith-footer"&gt;
+  &lt;div class="znith-wordmark"&gt;
+    &lt;span class="slash"&gt;/&lt;/span&gt;
+    &lt;span class="z"&gt;Z&lt;/span&gt;
+    &lt;span class="rest"&gt;nith&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="znith-footer-meta"&gt;
+    &lt;span&gt;[Product Name]&lt;/span&gt;
+    &lt;div class="znith-footer-pip"&gt;&lt;/div&gt;
+    &lt;span&gt;v4.0&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/footer&gt;</pre>
+
+<div class="rule"><strong>Rule · Footer</strong>2px amber top-border. Always present. Product name on right. Never add the Znith mark anywhere else in the UI.</div>
+
+<h2 id="geometry">07 · Geometry (chamfer)</h2>
+<p>The defining signature. CSS <code>clip-path</code> polygon cuts the corners instead of <code>border-radius</code>.</p>
+<pre><span class="k">--clip-lg</span>: <span class="s">polygon(10px 0%, ...)</span>;   <span class="c">/* cards, panels, modals */</span>
+<span class="k">--clip-sm</span>: <span class="s">polygon(5px 0%, ...)</span>;    <span class="c">/* buttons, chips, badges */</span>
+<span class="k">--clip-fwd</span>: <span class="s">polygon(0 0, ...)</span>;       <span class="c">/* directional: forward (flow/progress) */</span>
+<span class="k">--clip-lead</span>: <span class="s">polygon(12px 0, ...)</span>;    <span class="c">/* directional: leading-edge (alerts) */</span></pre>
+
+<div class="rule"><strong>Rule · Chamfer</strong>Do <em>not</em> chamfer: form inputs (focus rings get clipped), dropdowns/tooltips (overflow:visible breaks), sticky headers (composite breaks). Use <code>border-radius: 3px</code> on these instead.</div>
+
+<h2 id="numbers">08 · Number treatment</h2>
+<p>Znith is a sales product. Numbers are the product. They get editorial care.</p>
+<ul>
+<li><strong>Always tabular:</strong> <code>font-variant-numeric: tabular-nums;</code> on every number.</li>
+<li><strong>Unit separation:</strong> hero numbers render unit at 40% size and 50% opacity — <code>$<span style="font-family:var(--f-brand);font-weight:800;font-size:24px;">24.8</span><span style="color:var(--tmuted);font-weight:500;">M</span></code></li>
+<li><strong>Delta chips:</strong> dedicated component for ±values — arrow glyph integrated, color by direction (green up, red down).</li>
+<li><strong>Letter-spacing:</strong> hero numbers use <code>-0.04em</code>.</li>
+</ul>
+
+<h2 id="amber">09 · Amber states</h2>
+<p>Two intensities prevent amber fatigue.</p>
+<table>
+<thead><tr><th>State</th><th>Use</th><th>Treatment</th></tr></thead>
+<tbody>
+<tr><td><strong>Default amber</strong></td><td>Static accents, labels, borders</td><td>Solid <code>--amber</code> only</td></tr>
+<tr><td><strong>Charged amber</strong></td><td>Live / acting / changing states</td><td>+ <code>--sh-amber</code> glow (dark) or shadow (light) + tick-mark edge</td></tr>
+</tbody>
+</table>
+
+<div class="rule"><strong>Rule · Charged</strong>Reserve for elements that are <em>actually</em> changing. Live pips, generating indicators, newly-arrived alerts, KPIs closing this week. If every amber element is charged, nothing pops.</div>
+
+<h2 id="motion">10 · Motion voice</h2>
+<table>
+<thead><tr><th>Tier</th><th>Duration</th><th>Easing</th><th>Use</th></tr></thead>
+<tbody>
+<tr><td>Instant</td><td>120ms</td><td><code>ease-out</code></td><td>Hover, focus, button press</td></tr>
+<tr><td>Deliberate</td><td>220ms</td><td><code>cubic-bezier(0.4,0,0.2,1)</code></td><td>Drawer, modal, tab switch</td></tr>
+<tr><td>Event</td><td>400ms</td><td><code>cubic-bezier(0.34,1.56,0.64,1)</code></td><td>Alert arrival, new-item entry</td></tr>
+<tr><td>Ambient</td><td>2.5s loop</td><td><code>ease-in-out</code></td><td>Live pip pulse (one per screen max)</td></tr>
+<tr><td>Boot</td><td>900ms</td><td>once on load</td><td>Mark pulse + footer draw-in + title underline</td></tr>
+</tbody>
+</table>
+
+<h2 id="charts">11 · Data visualization</h2>
+<ul>
+<li><strong>Line charts</strong>: 1.8px amber trace, dotted grid at 25/50/75%, leading dot on live endpoint, mono axis labels in <code>--tghost</code>.</li>
+<li><strong>Bar charts</strong>: solid amber fills, 1px divider at zero, tabular values above bars on hover.</li>
+<li><strong>Score bars (MEDDPICC)</strong>: 8-segment bar graph, bright amber filled + deep amber partial + surface-3 empty.</li>
+<li><strong>Risk bands</strong>: 2σ band in relevant status color at 8% opacity + dashed stroke.</li>
+<li><strong>Never</strong>: 3D, gradient-as-data, donuts &gt;3 segments, stacked bars without legend, emoji in charts.</li>
+</ul>
+
+<h2 id="states">12 · Empty / loading / error</h2>
+
+<h3>Empty</h3>
+<p>Mono eyebrow (<code>NO DATA · YET</code>) + one line of Epilogue + one outline CTA. Dashed <code>--border</code>. No illustrations.</p>
+
+<h3>Loading</h3>
+<p>Amber 2px bar sweeping horizontally across the card bottom (charged-amber motion language). Mono readout <code>SYNCING · 3.2s</code>. No spinners.</p>
+
+<h3>Error</h3>
+<p>Directional chamfer pointing away (<code>--clip-lead</code> reversed), 2px risk-red stripe, mono error code (<code>ERR · 4402</code>), plain-language message, retry button.</p>
+
+<h2 id="accessibility">13 · Accessibility</h2>
+<ul>
+<li><strong>Faint text tier</strong>: <code>--tfaint</code> at 0.42 (was 0.28) passes WCAG AA on surface at 13px+.</li>
+<li><strong>Ghost tier</strong>: <code>--tghost</code> at 0.22 is <em>decorative only</em> — axis labels, deep-background chrome. Never used for text users must read.</li>
+<li><strong>Amber on dark</strong>: <code>#E5A83A</code> on <code>#05070F</code> → contrast 8.4:1. AAA pass.</li>
+<li><strong>Amber on light</strong>: <code>#946C00</code> on white → contrast 5.2:1. AA pass for normal text.</li>
+<li><strong>Focus rings</strong>: 2px solid amber with 2px offset. Never rely on chamfer for focus affordance.</li>
+</ul>
+
+<h2 id="donts">14 · Do not</h2>
+<ul>
+<li>Do not use the word "Znith" in user-facing UI outside the footer wordmark.</li>
+<li>Do not use Conga purple inside tool chrome — reserved for marketing surfaces.</li>
+<li>Do not use <code>border-radius</code> on cards/panels — use <code>clip-path</code>.</li>
+<li>Do not chamfer form inputs, dropdowns, or sticky elements.</li>
+<li>Do not use <code>--tfaint</code> below 13px or <code>--tghost</code> for readable text.</li>
+<li>Do not invent new amber shades. Stay on the two-intensity ladder.</li>
+<li>Do not add illustration or stock photography inside the tool — only uploaded logos/avatars.</li>
+<li>Do not emoji. Use mono glyphs or SVG icons.</li>
+<li>Do not stack more than one ambient pulse per screen.</li>
+<li>Do not use the charged-amber treatment on static elements.</li>
+</ul>
+
+</div>
+</body>
+</html>

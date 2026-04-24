@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pipeline Flow · Znith Reference (Light)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ───────────── TOKENS (Znith v3.1 LIGHT) ───────────── */
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui:    'Barlow', sans-serif;
+  --f-mono:  'IBM Plex Mono', monospace;
+
+  --amber-text:   #946C00;   /* for text/icons — AA pass on white */
+  --amber-fill:   #C98C20;   /* richer, used for fills, strokes */
+  --amber-deep:   #6E5000;   /* hover state, stronger pressed */
+  --amber-bright: #E5A83A;   /* accent, decorative only */
+  --amber-glow:   rgba(201,140,32,0.22);
+  --amber-muted:  rgba(148,108,0,0.10);
+  --amber-wash:   #FBF5E6;   /* soft background tint */
+
+  --canvas: #F4F2ED;
+  --surf:   #FFFFFF;
+  --surf-2: #FAF8F2;
+  --surf-3: #EFEBE0;
+
+  --border:    #E3E0D8;
+  --border-md: #CFCBBE;
+  --border-dk: #B6B0A0;
+
+  --text:   #1A1914;
+  --tmuted: #5A564C;
+  --tfaint: #7A7466;
+  --tghost: #9A9484;
+
+  --status-ok:   #137A4F;
+  --status-warn: #A86608;
+  --status-risk: #B51D1D;
+
+  --clip-lg:  polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm:  polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  --clip-fwd: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+
+  --t-instant: 120ms ease-out;
+  --t-delib:   220ms cubic-bezier(0.4,0,0.2,1);
+
+  --sh-sm: 0 1px 2px rgba(26,25,20,0.04), 0 1px 1px rgba(26,25,20,0.03);
+  --sh-amber: 0 2px 12px rgba(201,140,32,0.24), 0 1px 3px rgba(201,140,32,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--canvas);
+  color: var(--text);
+  font-family: var(--f-ui);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ───────────── DOC SCAFFOLD ───────────── */
+.doc {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 56px 32px 96px;
+}
+.doc-head { margin-bottom: 32px; }
+.doc-eye {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--amber-text); margin-bottom: 10px;
+}
+.doc-h1 {
+  font-family: var(--f-brand); font-size: 32px; font-weight: 800;
+  letter-spacing: -0.025em; margin: 0 0 10px;
+}
+.doc-sub { color: var(--tmuted); font-size: 14px; max-width: 640px; line-height: 1.6; }
+.doc-sub code {
+  font-family: var(--f-mono); font-size: 12px;
+  background: var(--amber-muted); color: var(--amber-text);
+  padding: 1px 6px;
+  clip-path: var(--clip-sm);
+}
+
+.section-eye {
+  font-family: var(--f-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--tfaint);
+  margin: 40px 0 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-eye::before {
+  content: ''; width: 14px; height: 1px; background: var(--amber-fill);
+}
+
+/* ───────────── PIPELINE FLOW COMPONENT ───────────── */
+
+.stage-card {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  padding: 22px;
+  box-shadow: var(--sh-sm);
+}
+
+.card-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px;
+}
+.card-title {
+  font-family: var(--f-brand); font-size: 17px; font-weight: 700;
+  color: var(--text); letter-spacing: -0.01em;
+}
+.card-eye {
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--amber-text);
+}
+
+.stage-flow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.stage-block {
+  position: relative;
+  padding: 14px 14px 14px 18px;
+  background: var(--surf-2);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-fwd); /* directional chamfer — forward motion */
+  display: flex; flex-direction: column; gap: 6px;
+  transition: background var(--t-delib);
+}
+.stage-block::before {
+  content: ''; position: absolute; left: 0; top: 10px; bottom: 10px;
+  width: 2px; background: var(--border-md);
+  transition: background var(--t-delib);
+}
+.stage-block.done { background: rgba(19,122,79,0.04); }
+.stage-block.done::before { background: var(--status-ok); }
+.stage-block.active {
+  background: var(--amber-wash);
+  border-color: rgba(148,108,0,0.28);
+  box-shadow: var(--sh-sm);
+}
+.stage-block.active::before { background: var(--amber-fill); }
+
+.stage-lbl {
+  font-family: var(--f-mono); font-size: 8px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--tfaint);
+}
+.stage-block.done .stage-lbl { color: var(--status-ok); }
+.stage-block.active .stage-lbl { color: var(--amber-text); }
+
+.stage-name {
+  font-family: var(--f-brand); font-size: 13px; font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.005em;
+}
+.stage-val {
+  font-family: var(--f-mono); font-size: 10px;
+  color: var(--tmuted);
+  font-variant-numeric: tabular-nums;
+}
+
+.stage-bar {
+  position: relative; height: 4px;
+  background: var(--surf-3);
+  clip-path: var(--clip-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.stage-bar-fill {
+  position: absolute; inset: 0;
+  width: 62%;
+  background: linear-gradient(90deg, var(--amber-deep), var(--amber-fill));
+}
+.stage-meta {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 10px;
+  font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--tfaint);
+}
+.stage-meta .curr { color: var(--amber-text); }
+
+/* variants */
+.stage-flow.four { grid-template-columns: repeat(4, 1fr); }
+.stage-block.compact { padding: 12px 12px 12px 16px; }
+.stage-block.compact .stage-name { font-size: 12px; }
+
+/* ───────────── SPEC / NOTE STYLES ───────────── */
+.note {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  clip-path: var(--clip-lg);
+  padding: 18px 22px;
+  font-size: 13px; color: var(--tmuted); line-height: 1.65;
+  max-width: 920px;
+  box-shadow: var(--sh-sm);
+}
+.note strong { color: var(--text); font-weight: 700; }
+.note code {
+  font-family: var(--f-mono); font-size: 11.5px;
+  color: var(--amber-text);
+  background: var(--amber-muted);
+  padding: 1px 6px;
+  clip-path: var(--clip-sm);
+}
+.note ul { margin-top: 8px; padding-left: 20px; line-height: 1.85; }
+.note + .note { margin-top: 10px; }
+
+.spec-grid {
+  display: grid; grid-template-columns: 160px 1fr; gap: 6px 18px;
+  font-size: 12.5px;
+}
+.spec-grid dt {
+  color: var(--tfaint); text-transform: uppercase; letter-spacing: 0.1em;
+  font-size: 9.5px; font-family: var(--f-mono); font-weight: 700;
+  padding-top: 5px;
+}
+.spec-grid dd { margin: 0; color: var(--text); }
+
+.legend {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  font-family: var(--f-mono); font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--tmuted);
+  margin-top: 14px;
+}
+.legend .sw { display: inline-flex; align-items: center; gap: 8px; }
+.legend .sw::before {
+  content: ''; width: 10px; height: 10px; border-radius: 2px;
+}
+.legend .sw.done::before   { background: var(--status-ok); }
+.legend .sw.active::before { background: var(--amber-fill); box-shadow: 0 0 0 2px rgba(201,140,32,0.2); }
+.legend .sw.next::before   { background: var(--border-md); }
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+  <div class="doc-head">
+    <div class="doc-eye">Znith v4 · Reference Component · Light</div>
+    <h1 class="doc-h1">Pipeline Flow</h1>
+    <p class="doc-sub">
+      Horizontal stage ladder with three states (done / active / next), a progress bar, and a meta line.
+      Uses the directional chamfer <code>--clip-fwd</code> so each cell visually points forward —
+      intentional reinforcement of pipeline motion.
+    </p>
+  </div>
+
+  <!-- ────────────── Primary variant (5 stages) ────────────── -->
+
+  <div class="section-eye">01 · Primary variant · 5 stages</div>
+
+  <div class="stage-card">
+    <div class="card-head">
+      <div class="card-title">Pipeline flow</div>
+      <div class="card-eye">Q2 / $24.8M total</div>
+    </div>
+
+    <div class="stage-flow">
+      <div class="stage-block done">
+        <div class="stage-lbl">Qualify</div>
+        <div class="stage-name">Qualified</div>
+        <div class="stage-val">$8.2M · 24</div>
+      </div>
+      <div class="stage-block done">
+        <div class="stage-lbl">Demo</div>
+        <div class="stage-name">In demo</div>
+        <div class="stage-val">$6.1M · 14</div>
+      </div>
+      <div class="stage-block active">
+        <div class="stage-lbl">Active</div>
+        <div class="stage-name">Negotiate</div>
+        <div class="stage-val">$5.4M · 8</div>
+      </div>
+      <div class="stage-block">
+        <div class="stage-lbl">Next</div>
+        <div class="stage-name">Legal</div>
+        <div class="stage-val">$3.1M · 5</div>
+      </div>
+      <div class="stage-block">
+        <div class="stage-lbl">Close</div>
+        <div class="stage-name">Commit</div>
+        <div class="stage-val">$2.0M · 3</div>
+      </div>
+    </div>
+
+    <div class="stage-bar">
+      <div class="stage-bar-fill"></div>
+    </div>
+    <div class="stage-meta">
+      <span>Progress · <span class="curr">62%</span></span>
+      <span>42 deals tracked</span>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="sw done">Done</span>
+    <span class="sw active">Active</span>
+    <span class="sw next">Upcoming</span>
+  </div>
+
+  <!-- ────────────── 4-stage variant ────────────── -->
+
+  <div class="section-eye">02 · 4-stage variant (manager hub scale)</div>
+
+  <div class="stage-card">
+    <div class="card-head">
+      <div class="card-title">Team pipeline</div>
+      <div class="card-eye">12 reps · $47.2M</div>
+    </div>
+
+    <div class="stage-flow four">
+      <div class="stage-block done compact">
+        <div class="stage-lbl">Identify</div>
+        <div class="stage-name">Prospecting</div>
+        <div class="stage-val">$12.4M · 48</div>
+      </div>
+      <div class="stage-block done compact">
+        <div class="stage-lbl">Qualify</div>
+        <div class="stage-name">Discovery</div>
+        <div class="stage-val">$18.1M · 32</div>
+      </div>
+      <div class="stage-block active compact">
+        <div class="stage-lbl">Active</div>
+        <div class="stage-name">Proposal</div>
+        <div class="stage-val">$11.2M · 17</div>
+      </div>
+      <div class="stage-block compact">
+        <div class="stage-lbl">Close</div>
+        <div class="stage-name">Commit</div>
+        <div class="stage-val">$5.5M · 9</div>
+      </div>
+    </div>
+
+    <div class="stage-bar">
+      <div class="stage-bar-fill" style="width:74%;"></div>
+    </div>
+    <div class="stage-meta">
+      <span>Progress · <span class="curr">74%</span></span>
+      <span>106 deals tracked</span>
+    </div>
+  </div>
+
+  <!-- ────────────── Spec ────────────── -->
+
+  <div class="section-eye">03 · Spec</div>
+
+  <div class="note">
+    <dl class="spec-grid">
+      <dt>Container</dt>
+      <dd><code>.stage-card</code> — surface panel, <code>--clip-lg</code> chamfer, 22px padding, <code>--sh-sm</code> shadow</dd>
+
+      <dt>Grid</dt>
+      <dd><code>.stage-flow</code> — 5 equal columns, 8px gap. Add <code>.four</code> for 4-column variant.</dd>
+
+      <dt>Cell</dt>
+      <dd><code>.stage-block</code> — directional chamfer via <code>--clip-fwd</code>. Left accent stripe via <code>::before</code>.</dd>
+
+      <dt>States</dt>
+      <dd>
+        <code>.done</code> — green stripe, green label, subtle green wash<br>
+        <code>.active</code> — amber stripe, amber label, <code>--amber-wash</code> background<br>
+        (none) — <code>--border-md</code> stripe, faint label
+      </dd>
+
+      <dt>Cell content</dt>
+      <dd>
+        <code>.stage-lbl</code> — mono 8px eyebrow<br>
+        <code>.stage-name</code> — Epilogue 13px/700 stage name<br>
+        <code>.stage-val</code> — mono 10px "value · count"
+      </dd>
+
+      <dt>Progress bar</dt>
+      <dd><code>.stage-bar</code> + <code>.stage-bar-fill</code> — 4px, amber-deep→amber-fill gradient, inline <code>width:%</code></dd>
+
+      <dt>Meta line</dt>
+      <dd><code>.stage-meta</code> — mono 9px, two-column justify; <code>.curr</code> highlights current %</dd>
+
+      <dt>Light-mode notes</dt>
+      <dd>
+        All amber uses <code>--amber-text</code> for copy (#946C00 — AA pass) and <code>--amber-fill</code> for strokes/fills.<br>
+        No drop-shadow glow on active cells — uses <code>--amber-wash</code> tint + <code>--sh-sm</code> shadow instead.
+      </dd>
+    </dl>
+  </div>
+
+  <!-- ────────────── Notes for manager hub ────────────── -->
+
+  <div class="section-eye">04 · Using this for the manager hub</div>
+
+  <div class="note">
+    <strong>Recommended adaptations when you extend this:</strong>
+    <ul>
+      <li>For <strong>per-rep</strong> rows, stack several <code>.stage-flow</code> blocks with a rep label on the left — compact variant fits neatly.</li>
+      <li>Only one <code>.active</code> cell per row — it's the "where the rep is focused now" signal.</li>
+      <li>Keep cell copy tight: <code>stage-name</code> should be 1–2 words, never wrap. If it might wrap, shorten or add a <code>title</code> attribute.</li>
+      <li>Avoid colour-coding cells per rep — keep <strong>done / active / next</strong> as the only semantic states. Use a small colored dot in the rep label column if you need per-rep identity.</li>
+      <li>On hover, consider a subtle lift (<code>transform: translateY(-1px)</code>) + border darken to <code>--border-dk</code>. Don't change chamfer direction — it disturbs rhythm.</li>
+      <li>For a manager rollup, the progress-bar <code>width</code> should reflect weighted-forecast progress, not just cell count.</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
