@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Znith v2 — Claude Code Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=Barlow:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+/* ── SYSTEM TOKENS ── */
+:root {
+  --f-brand: 'Epilogue', sans-serif;
+  --f-ui:    'Barlow', sans-serif;
+  --f-mono:  'IBM Plex Mono', monospace;
+
+  --amber:       #B8860B;
+  --amber-glow:  rgba(184,134,11,0.22);
+  --amber-muted: rgba(184,134,11,0.12);
+  --amber-faint: rgba(184,134,11,0.08);
+  --amber-bg:    #FDF3DC;
+
+  --navy:    #1A2332;
+  --bg:      #F4F5F6;
+  --surf:    #FFFFFF;
+  --border:  #E2E5E9;
+  --text:    #2D3748;
+  --tmuted:  #4A5568;
+  --tfaint:  #718096;
+
+  --clip-lg: polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px);
+  --clip-sm: polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px);
+  --transition: 220ms cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--f-ui);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ── LAYOUT ── */
+.page { max-width: 1020px; margin: 0 auto; padding: 48px 24px 120px; display: flex; flex-direction: column; gap: 64px; }
+
+/* ── CLIP UTILITIES ── */
+.c-lg { clip-path: var(--clip-lg); }
+.c-sm { clip-path: var(--clip-sm); }
+
+/* ── SECTION ── */
+.section-label { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
+.section-title { font-family: var(--f-brand); font-size: 22px; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; margin-bottom: 4px; }
+.section-sub   { font-size: 13px; color: var(--tmuted); margin-bottom: 24px; max-width: 640px; }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); width: 100%; }
+
+/* ── HERO ── */
+.hero { text-align: center; padding: 40px 0 4px; }
+.hero .eyebrow { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
+.hero h1 { font-family: var(--f-brand); font-size: 40px; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); margin-bottom: 8px; }
+.hero p  { color: var(--tmuted); font-size: 14px; max-width: 560px; margin: 0 auto 16px; }
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--amber); background: var(--amber-bg);
+  border: 1px solid rgba(184,134,11,0.25);
+  padding: 5px 14px; clip-path: var(--clip-sm);
+}
+
+/* ── CODE BLOCK ── */
+.code-block {
+  background: var(--navy); border: 1px solid rgba(255,255,255,0.06);
+  padding: 20px 22px; font-family: var(--f-mono); font-size: 11.5px;
+  line-height: 1.85; color: rgba(255,255,255,0.6);
+  overflow-x: auto; position: relative; clip-path: var(--clip-lg);
+}
+.code-block .c  { color: rgba(255,255,255,0.25); }
+.code-block .k  { color: #B8860B; }
+.code-block .v  { color: #7ec8a0; }
+.code-block .s  { color: #9d87f5; }
+.code-block .h  { color: rgba(255,255,255,0.88); font-weight: 700; }
+.code-block .ph { color: #B8860B; }
+.code-block .pi { color: #9d87f5; font-weight: 700; }
+.code-block .pv { color: #7ec8a0; }
+.code-block .pw { color: rgba(255,255,255,0.88); }
+.copy-btn {
+  position: absolute; top: 12px; right: 12px;
+  background: rgba(184,134,11,0.15); border: 1px solid rgba(184,134,11,0.3);
+  color: #B8860B; font-family: var(--f-mono); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 4px 10px; cursor: pointer; transition: all var(--transition);
+  clip-path: var(--clip-sm);
+}
+.copy-btn:hover { background: rgba(184,134,11,0.3); }
+
+/* ── CALLOUT ── */
+.callout {
+  background: var(--amber-bg); border-left: 3px solid var(--amber);
+  padding: 14px 18px; clip-path: var(--clip-lg);
+}
+.callout-label { font-family: var(--f-mono); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--amber); margin-bottom: 4px; }
+.callout-body  { font-family: var(--f-ui); font-size: 13px; color: var(--text); line-height: 1.6; }
+
+/* ── LIVE PREVIEW ── */
+.preview-shell { background: var(--surf); border: 1px solid var(--border); clip-path: var(--clip-lg); overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.preview-topbar { background: var(--navy); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; }
+.preview-wordmark { font-family: var(--f-brand); font-size: 14px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 5px; }
+.preview-wordmark .slash { font-family: var(--f-mono); color: var(--amber); font-weight: 700; }
+.preview-body  { padding: 20px; display: flex; flex-direction: column; gap: 14px; background: var(--bg); }
+.preview-metrics { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.preview-metric { background: var(--surf); border: 1px solid var(--border); padding: 14px 16px; clip-path: var(--clip-lg); }
+.preview-metric-val { font-family: var(--f-brand); font-size: 22px; font-weight: 800; color: var(--amber); line-height: 1; margin-bottom: 4px; }
+.preview-metric-lbl { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tfaint); }
+.preview-stage { background: var(--surf); border: 1px solid var(--border); border-left: 3px solid var(--amber); clip-path: var(--clip-lg); overflow: hidden; }
+.preview-stage-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.preview-stage-num { width: 24px; height: 24px; background: var(--amber); color: #000; font-family: var(--f-mono); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; clip-path: var(--clip-sm); }
+.preview-stage-title { flex: 1; font-family: var(--f-ui); font-size: 13px; font-weight: 600; color: var(--navy); }
+.preview-badge { font-family: var(--f-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; background: var(--amber-faint); color: var(--amber); border: 1px solid rgba(184,134,11,0.25); clip-path: var(--clip-sm); }
+.preview-stage-body { padding: 14px 16px; background: var(--bg); display: flex; flex-direction: column; gap: 10px; }
+.preview-field-lbl { font-family: var(--f-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tfaint); margin-bottom: 5px; }
+.preview-input { width: 100%; background: var(--surf); border: 1px solid var(--border); padding: 9px 12px; color: var(--text); font-family: var(--f-ui); font-size: 13px; outline: none; clip-path: var(--clip-sm); transition: border-color var(--transition), box-shadow var(--transition); }
+.preview-input.focused { border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-faint); }
+.preview-input::placeholder { color: var(--tfaint); }
+.preview-cta { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: var(--surf); border-top: 1px solid var(--border); }
+.preview-btn { display: inline-flex; align-items: center; gap: 7px; background: var(--amber); color: #000; border: none; padding: 9px 22px; font-family: var(--f-ui); font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 2px 8px var(--amber-glow); clip-path: var(--clip-sm); transition: all var(--transition); }
+.preview-btn-ghost { display: inline-flex; align-items: center; padding: 9px 16px; font-family: var(--f-ui); font-size: 13px; font-weight: 500; color: var(--tmuted); background: transparent; border: 1px solid var(--border); clip-path: var(--clip-sm); cursor: pointer; }
+.kbd-hint { font-family: var(--f-mono); font-size: 9px; color: var(--tfaint); letter-spacing: 0.06em; }
+.preview-footer { background: var(--navy); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 34px; border-top: 2px solid var(--amber); }
+.preview-footer-brand { font-family: var(--f-brand); font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 5px; }
+.preview-footer-info { display: flex; align-items: center; gap: 7px; font-family: var(--f-mono); font-size: 9px; color: rgba(255,255,255,0.38); }
+.preview-footer-pip { width: 4px; height: 4px; border-radius: 50%; background: var(--amber); box-shadow: 0 0 6px var(--amber-glow); animation: glow-pulse 2.5s ease-in-out infinite; }
+
+@keyframes glow-pulse {
+  0%,100% { box-shadow: 0 0 4px rgba(184,134,11,0.4); }
+  50%      { box-shadow: 0 0 10px rgba(184,134,11,0.7); }
+}
+
+/* ── MODULE TABLE ── */
+.module-table { display: flex; flex-direction: column; gap: 6px; }
+.module-row { display: grid; grid-template-columns: 14px 190px 110px 1fr 92px; align-items: center; gap: 12px; background: var(--surf); padding: 11px 16px; clip-path: var(--clip-lg); border: 1px solid var(--border); }
+.module-pip  { width: 10px; height: 10px; border-radius: 50%; }
+.module-name { font-family: var(--f-ui); font-size: 13px; font-weight: 600; color: var(--navy); }
+.module-stage{ font-family: var(--f-mono); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tfaint); }
+.module-use  { font-family: var(--f-ui); font-size: 12px; color: var(--tmuted); }
+.module-hex  { font-family: var(--f-mono); font-size: 10px; padding: 3px 8px; clip-path: var(--clip-sm); text-align: center; }
+
+/* ── CHECKLIST ── */
+.checklist { display: flex; flex-direction: column; gap: 6px; }
+.check-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 14px; background: var(--surf); border: 1px solid var(--border); clip-path: var(--clip-lg); font-size: 13px; }
+.check-icon { font-family: var(--f-mono); font-size: 10px; color: var(--amber); margin-top: 3px; flex-shrink: 0; }
+.check-title { font-weight: 600; color: var(--navy); font-family: var(--f-ui); margin-bottom: 2px; }
+.check-detail{ font-size: 12px; color: var(--tmuted); font-family: var(--f-ui); }
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HERO ── -->
+  <div class="hero">
+    <div class="eyebrow">Znith Design System v2.0 — Claude Code Reference</div>
+    <h1>/Znith</h1>
+    <p>The definitive implementation guide. Attach this file to Claude Code with any tool's HTML and run the update prompt in Section 05.</p>
+    <div class="hero-tag">Amber #B8860B · Navy #1A2332 · Light base · Chamfer system retained</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ── 01: LIVE PREVIEW ── -->
+  <div>
+    <div class="section-label">01</div>
+    <div class="section-title">Target State — This Is What Every Tool Should Look Like</div>
+    <div class="section-sub">Every updated tool must match this exactly. Navy header and footer, mist page background, white cards, amber as the system accent. Chamfer corners on all elements.</div>
+
+    <div class="preview-shell">
+      <div class="preview-topbar">
+        <div class="preview-wordmark"><span class="slash">/</span>Znith</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="preview-badge">Prospecting Agent</div>
+          <div class="preview-badge" style="background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.3);border-color:rgba(255,255,255,0.1);">v2.0</div>
+        </div>
+      </div>
+      <div class="preview-body">
+        <div class="preview-metrics">
+          <div class="preview-metric"><div class="preview-metric-val">34%</div><div class="preview-metric-lbl">Faster Cycle</div></div>
+          <div class="preview-metric"><div class="preview-metric-val">$180K</div><div class="preview-metric-lbl">Est. Value</div></div>
+          <div class="preview-metric"><div class="preview-metric-val">12d</div><div class="preview-metric-lbl">Time Saved</div></div>
+        </div>
+        <div class="preview-stage">
+          <div class="preview-stage-head">
+            <div class="preview-stage-num">2</div>
+            <div class="preview-stage-title">What does the account need to achieve?</div>
+            <div class="preview-badge">Active</div>
+          </div>
+          <div class="preview-stage-body">
+            <div>
+              <div class="preview-field-lbl">Initiative 1</div>
+              <input class="preview-input focused" placeholder="e.g. Accelerate revenue by 30% in FY26">
+            </div>
+            <div>
+              <div class="preview-field-lbl">Initiative 2</div>
+              <input class="preview-input" placeholder="e.g. Reduce contract cycle time by half">
+            </div>
+          </div>
+          <div class="preview-cta">
+            <button class="preview-btn">Build my brief →</button>
+            <button class="preview-btn-ghost">Back</button>
+            <span class="kbd-hint">or press Enter</span>
+          </div>
+        </div>
+      </div>
+      <div class="preview-footer">
+        <div class="preview-footer-brand">
+          <span style="font-family:var(--f-mono);color:var(--amber);font-weight:700;">/</span>
+          <span style="color:var(--amber);">Z</span><span style="color:rgba(255,255,255,0.45);">nith</span>
+        </div>
+        <div class="preview-footer-info">
+          <span>Prospecting Agent</span>
+          <div class="preview-footer-pip"></div>
+          <span>v2.0</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 02: CSS VARIABLES ── -->
+  <div>
+    <div class="section-label">02</div>
+    <div class="section-title">Drop-In CSS Variables</div>
+    <div class="section-sub">Replace the entire existing :root block in each tool with this. Do not merge — replace completely. Then add the Google Fonts link if not already present.</div>
+
+    <div class="code-block" id="cssVars">
+      <button class="copy-btn" onclick="copyBlock('cssVars')">Copy</button>
+<span class="c">/* ── GOOGLE FONTS — add to &lt;head&gt; if not already present ── */</span>
+<span class="c">/* &lt;link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&amp;family=Barlow:wght@300;400;500;600;700&amp;family=IBM+Plex+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"&gt; */</span>
+
+<span class="s">:root</span> {
+  <span class="c">/* ── TYPOGRAPHY (unchanged) ── */</span>
+  <span class="k">--f-brand</span>: <span class="v">'Epilogue', sans-serif</span>;
+  <span class="k">--f-ui</span>:    <span class="v">'Barlow', sans-serif</span>;
+  <span class="k">--f-mono</span>:  <span class="v">'IBM Plex Mono', monospace</span>;
+
+  <span class="c">/* ── AMBER — system color, unchanged ── */</span>
+  <span class="k">--amber</span>:       <span class="v">#B8860B</span>;
+  <span class="k">--amber-glow</span>:  <span class="v">rgba(184,134,11,0.22)</span>;
+  <span class="k">--amber-muted</span>: <span class="v">rgba(184,134,11,0.12)</span>;
+  <span class="k">--amber-faint</span>: <span class="v">rgba(184,134,11,0.08)</span>;
+  <span class="k">--amber-bg</span>:    <span class="v">#FDF3DC</span>;
+
+  <span class="c">/* ── MODULE ACCENT COLORS — apply per tool (see Section 04) ── */</span>
+  <span class="k">--accent</span>:       <span class="v">[MODULE HEX]</span>;
+  <span class="k">--accent-glow</span>:  <span class="v">[MODULE rgba glow]</span>;
+  <span class="k">--accent-muted</span>: <span class="v">[MODULE rgba muted]</span>;
+  <span class="k">--accent-faint</span>: <span class="v">[MODULE rgba faint]</span>;
+
+  <span class="c">/* ── BASE PALETTE — v2 LIGHT ── */</span>
+  <span class="k">--navy</span>:     <span class="v">#1A2332</span>;   <span class="c">/* header, footer, headings */</span>
+  <span class="k">--bg</span>:       <span class="v">#F4F5F6</span>;   <span class="c">/* page background */</span>
+  <span class="k">--surf</span>:     <span class="v">#FFFFFF</span>;   <span class="c">/* card / input surface */</span>
+  <span class="k">--surf-2</span>:   <span class="v">#F4F5F6</span>;   <span class="c">/* stage body / elevated bg */</span>
+  <span class="k">--border</span>:   <span class="v">#E2E5E9</span>;   <span class="c">/* default borders */</span>
+  <span class="k">--border-md</span>:<span class="v">#CBD0D8</span>;   <span class="c">/* hover / active borders */</span>
+  <span class="k">--text</span>:     <span class="v">#2D3748</span>;   <span class="c">/* primary text */</span>
+  <span class="k">--tmuted</span>:   <span class="v">#4A5568</span>;   <span class="c">/* secondary text */</span>
+  <span class="k">--tfaint</span>:   <span class="v">#718096</span>;   <span class="c">/* labels, placeholders */</span>
+
+  <span class="c">/* ── CORNERS — chamfer system, unchanged ── */</span>
+  <span class="k">--clip-lg</span>: <span class="v">polygon(10px 0%,calc(100% - 10px) 0%,100% 10px,100% calc(100% - 10px),calc(100% - 10px) 100%,10px 100%,0% calc(100% - 10px),0% 10px)</span>;
+  <span class="k">--clip-sm</span>: <span class="v">polygon(5px 0%,calc(100% - 5px) 0%,100% 5px,100% calc(100% - 5px),calc(100% - 5px) 100%,5px 100%,0% calc(100% - 5px),0% 5px)</span>;
+
+  <span class="c">/* ── TRANSITIONS ── */</span>
+  <span class="k">--transition</span>: <span class="v">220ms cubic-bezier(0.4,0,0.2,1)</span>;
+  <span class="k">--spring</span>:     <span class="v">400ms cubic-bezier(0.34,1.56,0.64,1)</span>;
+}
+    </div>
+
+    <div style="height:16px;"></div>
+    <div class="callout">
+      <div>
+        <div class="callout-label">For Prospecting Agent only</div>
+        <div class="callout-body">Prospecting Agent uses amber as both the system color and the module accent — set <code style="font-family:var(--f-mono);font-size:12px;">--accent</code> to the same amber values. For all other tools, replace with the module-specific hex from Section 04.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 03: CRITICAL PATTERNS ── -->
+  <div>
+    <div class="section-label">03</div>
+    <div class="section-title">Critical Pattern Changes — v1 → v2</div>
+    <div class="section-sub">These are the specific patterns Claude Code must apply. Each one replaces a v1 pattern. Read these carefully before running the update prompt.</div>
+
+    <div style="display:flex;flex-direction:column;gap:16px;">
+
+      <!-- Header -->
+      <div class="code-block" id="headerPattern">
+        <button class="copy-btn" onclick="copyBlock('headerPattern')">Copy</button>
+<span class="c">/* ── HEADER: was transparent/dark, now navy ── */</span>
+<span class="s">header, .header, [class*="header"]</span> {
+  background: <span class="v">var(--navy)</span>;              <span class="c">/* was: rgba(14,13,11,0.95) or #181714 */</span>
+  border-bottom: <span class="v">1px solid rgba(255,255,255,0.06)</span>;
+  backdrop-filter: <span class="v">none</span>;                 <span class="c">/* remove blur — not needed on solid navy */</span>
+}
+<span class="c">/* Wordmark text inside header stays white/amber — no change needed */</span>
+      </div>
+
+      <!-- Body background -->
+      <div class="code-block" id="bodyPattern">
+        <button class="copy-btn" onclick="copyBlock('bodyPattern')">Copy</button>
+<span class="c">/* ── BODY + PAGE BACKGROUND ── */</span>
+<span class="s">body</span> {
+  background: <span class="v">var(--bg)</span>;     <span class="c">/* was: #060503 or #0e0d0b */</span>
+  color: <span class="v">var(--text)</span>;       <span class="c">/* was: rgba(255,255,255,0.85) */</span>
+}
+      </div>
+
+      <!-- Cards / surfaces -->
+      <div class="code-block" id="surfacePattern">
+        <button class="copy-btn" onclick="copyBlock('surfacePattern')">Copy</button>
+<span class="c">/* ── CARDS, PANELS, MODALS ── */</span>
+<span class="c">/* Replace all dark surface colors */</span>
+<span class="s">.card, .panel, .stage, .modal, [class*="card"], [class*="panel"]</span> {
+  background: <span class="v">var(--surf)</span>;    <span class="c">/* was: #181714 */</span>
+  border: <span class="v">1px solid var(--border)</span>; <span class="c">/* was: rgba(255,255,255,0.07) */</span>
+}
+
+<span class="c">/* Stage body / elevated areas */</span>
+<span class="s">.stage-body, .card-body, [class*="stage-body"]</span> {
+  background: <span class="v">var(--surf-2)</span>;  <span class="c">/* was: #222018 */</span>
+}
+      </div>
+
+      <!-- Text -->
+      <div class="code-block" id="textPattern">
+        <button class="copy-btn" onclick="copyBlock('textPattern')">Copy</button>
+<span class="c">/* ── TEXT COLORS — replace all rgba white values ── */</span>
+<span class="c">/* Primary text */</span>
+color: <span class="v">var(--text)</span>;      <span class="c">/* replaces: color: rgba(255,255,255,0.85) */</span>
+
+<span class="c">/* Secondary / muted text */</span>
+color: <span class="v">var(--tmuted)</span>;    <span class="c">/* replaces: color: rgba(255,255,255,0.45) */</span>
+
+<span class="c">/* Labels, placeholders, faint copy */</span>
+color: <span class="v">var(--tfaint)</span>;    <span class="c">/* replaces: color: rgba(255,255,255,0.20) */</span>
+
+<span class="c">/* Exception: text INSIDE the navy header/footer stays rgba white */</span>
+<span class="c">/* Do not change text colors scoped inside header {} or .znith-footer {} */</span>
+      </div>
+
+      <!-- Active stage -->
+      <div class="code-block" id="stagePattern">
+        <button class="copy-btn" onclick="copyBlock('stagePattern')">Copy</button>
+<span class="c">/* ── ACTIVE STAGE BLOCK — replace glow with border-left accent ── */</span>
+<span class="s">.stage.active, .stage-block.active, [class*="stage"][class*="active"]</span> {
+  background: <span class="v">var(--surf)</span>;
+  border: <span class="v">1px solid var(--border)</span>;
+  border-left: <span class="v">3px solid var(--accent)</span>;   <span class="c">/* accent = module color */</span>
+  box-shadow: <span class="v">none</span>;    <span class="c">/* remove: was 0 0 0 1px amber + glow */</span>
+}
+<span class="c">/* Stage number chip uses --accent, not --amber (unless Prospecting Agent) */</span>
+<span class="s">.stage-num, .step-num</span> { background: <span class="v">var(--accent)</span>; color: <span class="v">#000</span>; }
+      </div>
+
+      <!-- Footer -->
+      <div class="code-block" id="footerPattern">
+        <button class="copy-btn" onclick="copyBlock('footerPattern')">Copy</button>
+<span class="c">/* ── FOOTER — navy with solid amber top border ── */</span>
+<span class="s">.znith-footer, footer</span> {
+  background: <span class="v">var(--navy)</span>;          <span class="c">/* was: var(--surf) #181714 */</span>
+  border-top: <span class="v">2px solid var(--amber)</span>; <span class="c">/* was: 1px solid rgba(184,134,11,0.15) */</span>
+  <span class="c">/* All other footer styles unchanged */</span>
+}
+
+<span class="c">/* Full footer HTML template (replace existing footer): */</span>
+<span class="c">&lt;footer class="znith-footer"&gt;</span>
+<span class="c">  &lt;div class="znith-wordmark"&gt;</span>
+<span class="c">    &lt;span style="font-family:'IBM Plex Mono';color:#B8860B;font-weight:700;"&gt;/&lt;/span&gt;</span>
+<span class="c">    &lt;span style="font-family:'Epilogue';font-weight:800;color:#B8860B;"&gt;Z&lt;/span&gt;</span>
+<span class="c">    &lt;span style="font-family:'Epilogue';font-weight:800;color:rgba(255,255,255,0.45);"&gt;nith&lt;/span&gt;</span>
+<span class="c">  &lt;/div&gt;</span>
+<span class="c">  &lt;div style="display:flex;align-items:center;gap:8px;"&gt;</span>
+<span class="c">    &lt;span style="font-family:'IBM Plex Mono';font-size:10px;color:rgba(255,255,255,0.35);"&gt;[TOOL NAME]&lt;/span&gt;</span>
+<span class="c">    &lt;div style="width:4px;height:4px;border-radius:50%;background:#B8860B;"&gt;&lt;/div&gt;</span>
+<span class="c">    &lt;span style="font-family:'IBM Plex Mono';font-size:10px;color:rgba(255,255,255,0.35);"&gt;[VERSION]&lt;/span&gt;</span>
+<span class="c">  &lt;/div&gt;</span>
+<span class="c">&lt;/footer&gt;</span>
+      </div>
+
+      <!-- Inputs -->
+      <div class="code-block" id="inputPattern">
+        <button class="copy-btn" onclick="copyBlock('inputPattern')">Copy</button>
+<span class="c">/* ── INPUTS ── */</span>
+<span class="s">input, textarea, select</span> {
+  background: <span class="v">var(--surf)</span>;          <span class="c">/* was: var(--surf-2) #222018 */</span>
+  border: <span class="v">1px solid var(--border)</span>;   <span class="c">/* was: none */</span>
+  color: <span class="v">var(--text)</span>;
+}
+<span class="s">input::placeholder, textarea::placeholder</span> {
+  color: <span class="v">var(--tfaint)</span>;  <span class="c">/* was: rgba(255,255,255,0.20) */</span>
+}
+<span class="s">input:focus, textarea:focus</span> {
+  border-color: <span class="v">var(--amber)</span>;
+  box-shadow: <span class="v">0 0 0 3px var(--amber-faint)</span>;
+  outline: <span class="v">none</span>;
+}
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── 04: MODULE ACCENTS ── -->
+  <div>
+    <div class="section-label">04</div>
+    <div class="section-title">Module Accent Quick Reference</div>
+    <div class="section-sub">Substitute these values into the --accent variables in :root for each tool. The accent applies to: stage left-border, stage number chip, active badge, and focus ring only.</div>
+
+    <div class="module-table">
+      <div class="module-row" style="background:var(--amber-bg);border-color:rgba(184,134,11,0.2);">
+        <div class="module-pip" style="background:#B8860B;box-shadow:0 0 6px rgba(184,134,11,0.5);"></div>
+        <div class="module-name">Prospecting Agent</div>
+        <div class="module-stage">Top of Funnel</div>
+        <div class="module-use">--accent same as --amber. No secondary needed.</div>
+        <div class="module-hex" style="background:var(--amber-faint);color:var(--amber);border:1px solid rgba(184,134,11,0.2);">#B8860B</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#0D9488;box-shadow:0 0 6px rgba(13,148,136,0.4);"></div>
+        <div class="module-name">Account Brief</div>
+        <div class="module-stage">Prepare</div>
+        <div class="module-use">Glow: rgba(13,148,136,0.22) · Muted: rgba(13,148,136,0.12) · Faint: rgba(13,148,136,0.08)</div>
+        <div class="module-hex" style="background:rgba(13,148,136,0.08);color:#0D9488;border:1px solid rgba(13,148,136,0.2);">#0D9488</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#8B5CF6;box-shadow:0 0 6px rgba(139,92,246,0.4);"></div>
+        <div class="module-name">Value Map</div>
+        <div class="module-stage">Discover</div>
+        <div class="module-use">Glow: rgba(139,92,246,0.22) · Muted: rgba(139,92,246,0.12) · Faint: rgba(139,92,246,0.08)</div>
+        <div class="module-hex" style="background:rgba(139,92,246,0.08);color:#8B5CF6;border:1px solid rgba(139,92,246,0.2);">#8B5CF6</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#EA580C;box-shadow:0 0 6px rgba(234,88,12,0.4);"></div>
+        <div class="module-name">Demo Brief</div>
+        <div class="module-stage">Qualify</div>
+        <div class="module-use">Glow: rgba(234,88,12,0.22) · Muted: rgba(234,88,12,0.12) · Faint: rgba(234,88,12,0.08)</div>
+        <div class="module-hex" style="background:rgba(234,88,12,0.08);color:#EA580C;border:1px solid rgba(234,88,12,0.2);">#EA580C</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#16A34A;box-shadow:0 0 6px rgba(22,163,74,0.4);"></div>
+        <div class="module-name">Qualify IQ</div>
+        <div class="module-stage">Qualify</div>
+        <div class="module-use">Glow: rgba(22,163,74,0.22) · Muted: rgba(22,163,74,0.12) · Faint: rgba(22,163,74,0.08)</div>
+        <div class="module-hex" style="background:rgba(22,163,74,0.08);color:#16A34A;border:1px solid rgba(22,163,74,0.2);">#16A34A</div>
+      </div>
+      <div class="module-row">
+        <div class="module-pip" style="background:#E11D48;box-shadow:0 0 6px rgba(225,29,72,0.4);"></div>
+        <div class="module-name">Deal Coach</div>
+        <div class="module-stage">Negotiate</div>
+        <div class="module-use">Glow: rgba(225,29,72,0.22) · Muted: rgba(225,29,72,0.12) · Faint: rgba(225,29,72,0.08)</div>
+        <div class="module-hex" style="background:rgba(225,29,72,0.08);color:#E11D48;border:1px solid rgba(225,29,72,0.2);">#E11D48</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 05: THE UPDATE PROMPT ── -->
+  <div>
+    <div class="section-label">05</div>
+    <div class="section-title">The Claude Code Update Prompt</div>
+    <div class="section-sub">Attach the tool's HTML file and this reference doc to Claude Code. Copy this prompt, fill in the three bracketed values at the top, and run it. Do not change anything else in the prompt.</div>
+
+    <div class="code-block" id="updatePrompt">
+      <button class="copy-btn" onclick="copyBlock('updatePrompt')">Copy</button>
+<span class="ph">You are updating an existing Znith sales tool to match the finalized
+Znith Design System v2.0. The reference doc (znith-v2-reference.html)
+is attached — use Section 01 as the visual target and Sections 02–04
+for exact values. Apply ALL changes below to the attached tool HTML.
+Do not change any functionality, API calls, prompt logic, data
+structures, or JavaScript. Visual and CSS updates only.</span>
+
+<span class="pi">─── FILL THESE IN BEFORE RUNNING ────────────────────────────</span>
+Tool name:       <span class="pv">[e.g. Account Brief]</span>
+Module accent:   <span class="pv">[e.g. #0D9488]</span>
+Current version: <span class="pv">[e.g. v3.1]</span>
+<span class="pi">─────────────────────────────────────────────────────────────</span>
+
+<span class="pi">STEP 1 — Replace :root entirely</span>
+Copy the :root block from Section 02 of the reference doc verbatim.
+Set --accent, --accent-glow, --accent-muted, --accent-faint to the
+module values from Section 04. Do not keep any old :root variables.
+
+<span class="pi">STEP 2 — Body and page background</span>
+Set body { background: var(--bg); color: var(--text); }
+Remove any dark background colors from body or the page wrapper.
+
+<span class="pi">STEP 3 — Header</span>
+Set header/nav background to var(--navy).
+Remove backdrop-filter blur.
+Wordmark text colors inside the header are unchanged — amber slash,
+amber Z, rgba(255,255,255,0.5) for "nith".
+
+<span class="pi">STEP 4 — Cards, panels, stage blocks</span>
+Set background: var(--surf) on all cards, panels, and stage blocks.
+Set border: 1px solid var(--border) — replace all rgba white borders.
+Set stage-body / elevated areas to background: var(--surf-2).
+
+<span class="pi">STEP 5 — Text colors</span>
+Replace rgba(255,255,255,0.85) → var(--text)
+Replace rgba(255,255,255,0.45) → var(--tmuted)
+Replace rgba(255,255,255,0.20) → var(--tfaint)
+Exception: do NOT change text colors inside header {} or footer {}.
+Those elements are navy background — keep their rgba white values.
+
+<span class="pi">STEP 6 — Active stage block</span>
+Remove: border glow (box-shadow: 0 0 0 1px ..., 0 4px 20px ...)
+Add:    border-left: 3px solid var(--accent)
+Keep:   border: 1px solid var(--border)
+Stage number chip: background var(--accent), color #000.
+Active badge: background var(--accent-faint), color var(--accent),
+              border: 1px solid var(--accent-muted).
+
+<span class="pi">STEP 7 — Inputs</span>
+Set background: var(--surf) (not surf-2).
+Add border: 1px solid var(--border).
+Placeholder color: var(--tfaint).
+Focus state: border-color var(--amber), box-shadow 0 0 0 3px var(--amber-faint).
+
+<span class="pi">STEP 8 — Primary CTA button</span>
+Background: var(--amber). Color: #000.
+Box-shadow: 0 2px 8px var(--amber-glow).
+No changes to clip-path. No changes to button text or logic.
+
+<span class="pi">STEP 9 — Footer</span>
+Replace footer background with var(--navy).
+Replace border-top with: 2px solid var(--amber).
+Wordmark inside footer: amber slash + amber Z + rgba(255,255,255,0.45) nith.
+Tool name and version text: rgba(255,255,255,0.35).
+Footer pip: background #B8860B, box-shadow 0 0 6px rgba(184,134,11,0.5).
+
+<span class="pi">STEP 10 — Min label size</span>
+Any font-size below 10px on labels, badges, or metadata: raise to 10px minimum.
+IBM Plex Mono labels: 10–11px. Never 9px or below on visible UI text.
+
+<span class="pi">DO NOT change:</span>
+- Any JavaScript, API calls, or prompt strings
+- Input IDs, form field names, or data attributes
+- Any data processing or output rendering logic
+- File structure or external script dependencies
+- Chamfer clip-path values (already correct)
+- Font families (already correct)
+- Amber #B8860B value (already correct)
+
+Return the complete updated single-file HTML. No explanations needed,
+just the file.
+    </div>
+
+    <div style="height:16px;"></div>
+    <div class="callout">
+      <div>
+        <div class="callout-label">How to run this in Claude Code</div>
+        <div class="callout-body">Open Claude Code in the <code style="font-family:var(--f-mono);font-size:12px;">znith-sales-toolkit</code> folder. Type <code style="font-family:var(--f-mono);font-size:12px;">/</code> and paste this prompt. Then drag in the tool's <code style="font-family:var(--f-mono);font-size:12px;">index.html</code> and this reference doc as attachments. Run. Repeat for each tool — only the three bracketed values at the top need to change.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 06: PER-TOOL CHECKLIST ── -->
+  <div>
+    <div class="section-label">06</div>
+    <div class="section-title">Per-Tool Substitution Values</div>
+    <div class="section-sub">The only thing that changes between tool runs is these three values. Everything else in the prompt stays identical.</div>
+
+    <div class="checklist">
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#B8860B;">Prospecting Agent</div>
+          <div class="check-detail">Accent: #B8860B · Glow: rgba(184,134,11,0.22) · Muted: rgba(184,134,11,0.12) · Faint: rgba(184,134,11,0.08) · Version: [check file]</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#0D9488;">Account Brief</div>
+          <div class="check-detail">Accent: #0D9488 · Glow: rgba(13,148,136,0.22) · Muted: rgba(13,148,136,0.12) · Faint: rgba(13,148,136,0.08) · Version: [check file]</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#8B5CF6;">Value Map</div>
+          <div class="check-detail">Accent: #8B5CF6 · Glow: rgba(139,92,246,0.22) · Muted: rgba(139,92,246,0.12) · Faint: rgba(139,92,246,0.08) · Version: [check file]</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#EA580C;">Demo Brief</div>
+          <div class="check-detail">Accent: #EA580C · Glow: rgba(234,88,12,0.22) · Muted: rgba(234,88,12,0.12) · Faint: rgba(234,88,12,0.08) · Version: [check file]</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#16A34A;">Qualify IQ</div>
+          <div class="check-detail">Accent: #16A34A · Glow: rgba(22,163,74,0.22) · Muted: rgba(22,163,74,0.12) · Faint: rgba(22,163,74,0.08) · Version: [check file]</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#E11D48;">Deal Coach</div>
+          <div class="check-detail">Accent: #E11D48 · Glow: rgba(225,29,72,0.22) · Muted: rgba(225,29,72,0.12) · Faint: rgba(225,29,72,0.08) · Version: [check file]</div>
+        </div>
+      </div>
+      <div class="check-row">
+        <div class="check-icon">◆</div>
+        <div>
+          <div class="check-title" style="color:#4A5568;">Win Room / Sales Hub</div>
+          <div class="check-detail">No module accent — use amber as accent throughout. Same values as Prospecting Agent.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function copyBlock(id) {
+  const el = document.getElementById(id);
+  const btn = el.querySelector('.copy-btn');
+  const text = el.innerText.replace(/^Copy\n/, '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    btn.style.background = 'rgba(22,163,74,0.2)';
+    btn.style.borderColor = 'rgba(22,163,74,0.4)';
+    btn.style.color = '#16A34A';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
