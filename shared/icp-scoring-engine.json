@@ -1,7 +1,13 @@
 {
-  "version": "1.2",
+  "version": "1.3",
   "as_of": "2026-04-23",
   "description": "Conga + PROS ICP Scoring Engine — structured weighted scoring data. Edit industry_matrix and signal_taxonomy here; prompts in index.html reference this file.",
+
+  "signal_schema": {
+    "in_flight": "true = signal only discoverable during active deal (discovery call, demo, proposal). false = findable pre-call via web search / tools.",
+    "negative": "true = signal reduces score (competitive risk or displacement barrier). false = positive signal.",
+    "discovery_method": "Where / how to find this signal pre-call (if in_flight=false) or how to surface it in-call (if in_flight=true)."
+  },
 
   "scoring_weights": {
     "description": "Weights must sum to 1.0. Adjust here to shift priority across dimensions.",
@@ -23,115 +29,263 @@
   },
 
   "signal_taxonomy": [
+
     {
       "signal": "Publicly announced transformation initiative",
       "base_score": 10,
       "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Google News, company press releases, LinkedIn posts, company blog — search '[company] transformation initiative'",
       "notes": "Any iteration of 'transformation' — digital, operational, commercial, business"
     },
     {
       "signal": "CRM or ERP migration or consolidation project",
       "base_score": 10,
       "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "LinkedIn job postings ('SAP S/4HANA migration', 'Salesforce implementation'), press releases, trade press",
       "notes": "SAP S/4HANA migration, Salesforce implementation, Oracle consolidation, etc."
     },
     {
       "signal": "Recent FDA product pre-approval",
       "base_score": 10,
       "product_gate": "flag_for_CLM",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "FDA.gov PDUFA dates, BioPharmaDive, FiercePharma, company press releases",
       "notes": "ALWAYS flag this account for CLM regardless of product selected. Pre-approval drives compliance docs, submission workflows, contract complexity."
     },
     {
       "signal": "Recent M&A or funding round",
       "base_score": 9,
       "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Crunchbase, PitchBook, PEHub, company press releases, SEC EDGAR (8-K filings)",
       "notes": "Acquisition, merger, PE backing, Series C+, growth equity. Post-M&A = contract standardization need."
     },
     {
       "signal": "Recent FDA product approval",
       "base_score": 9,
       "product_gate": "flag_for_CLM",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "FDA.gov approval database, company press releases, BioPharmaDive",
       "notes": "Post-approval commercial launch creates contract, document, and distribution complexity."
+    },
+    {
+      "signal": "New operating division or business unit announced",
+      "base_score": 9,
+      "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Press releases, SEC 10-K/8-K ('new operating segment'), investor day presentations, PE portfolio news — mean ACV $57,776 for these deals",
+      "notes": "Existing customers adding a new division generate the highest mean ACV of any deal type. Also relevant for cold prospects restructuring."
     },
     {
       "signal": "Recent hiring spree (10%+ headcount growth in 1 year)",
       "base_score": 8,
       "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "LinkedIn headcount trend (company page → People tab), Crunchbase headcount history",
       "notes": "Rapid headcount growth signals scale pressure on manual processes."
     },
     {
       "signal": "Recent C-suite hire",
       "base_score": 8,
       "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "LinkedIn (filter by start date), press releases, company blog, news search '[company] appoints CEO/CFO/CRO'",
       "notes": "New CEO, CFO, CRO, CLO, CPO, CPTO — new leaders often mandate tooling change in first 90 days."
     },
     {
       "signal": "News citing revenue leakage, contract dispute, missed renewal, or billing error",
       "base_score": 8,
       "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Google News, Glassdoor reviews, LinkedIn posts, SEC risk factor language in 10-K",
       "notes": "Explicit public pain signal. Highest buying urgency indicator."
+    },
+    {
+      "signal": "Existing Conga Composer customer",
+      "base_score": 8,
+      "product_gate": "CLM_CPQ_DocAuto",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Internal Conga CRM — filter existing accounts by Composer product. Primary cross-sell setup for CLM/DocAuto.",
+      "notes": "3,712 of 5,789 won deals trace back to Composer. Existing Composer customers are the most fertile ground for CLM/DocAuto cross-sell. Do not prospect cold for CPQ/DocAuto without checking this first."
+    },
+    {
+      "signal": "Infor M3 or NetSuite ERP confirmed",
+      "base_score": 8,
+      "product_gate": "POM",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "LinkedIn job postings ('Infor M3 experience', 'NetSuite ERP'), BuiltWith, Stackshare, G2 tech stack profiles",
+      "notes": "PROS win rates: Infor M3 = 62.5%, NetSuite = 57.1% — highest ERP win rates for POM, better than SAP S/4HANA (53.6%)."
     },
     {
       "signal": "New relevant VP hire (product-specific)",
       "base_score": 7,
       "product_gate": "product_specific",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "LinkedIn (search by title + company, filter by start date < 6 months). See hiring_signals map per product.",
       "notes": "Use hiring_signals map per product to determine relevance."
     },
     {
       "signal": "News citing growth, new markets, expansion, or rapid scale",
       "base_score": 7,
-      "product_gate": "all"
+      "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Google News, company press releases, LinkedIn company posts, trade press"
     },
     {
       "signal": "Earnings call or 10-K citing digital transformation, margin expansion, customer experience, or operational efficiency",
       "base_score": 7,
       "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "SEC EDGAR (10-K, earnings call transcripts), Seeking Alpha, company IR page, Motley Fool transcripts",
       "notes": "Public company signal; implies strategic budget exists."
+    },
+    {
+      "signal": "High revenue or employee count growth verified (20%+ YoY)",
+      "base_score": 7,
+      "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Crunchbase, LinkedIn headcount trend, D&B Hoovers, company annual report",
+      "notes": "Growth indicator; part of growth_indicators dimension."
     },
     {
       "signal": "Verified Salesforce CRM usage",
       "base_score": 6,
       "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "BuiltWith, HG Insights, LinkedIn job postings ('Salesforce administrator', 'SFDC'), G2 stack profile",
       "notes": "Highest-fit integration path for all Conga products. Confirmed via BuiltWith, HG Insights, or LinkedIn."
     },
     {
       "signal": "Glassdoor reviews mentioning contracts are a mess, quoting is manual, no deal desk, or legal slows everything down",
       "base_score": 6,
       "product_gate": "CLM_CPQ",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Glassdoor.com — search company, read Sales/RevOps/Legal reviews, filter by keywords",
       "notes": "Internal pain signal sourced from employee sentiment."
     },
     {
       "signal": "LinkedIn post from Sales Ops or Legal Ops leader discussing process pain or tooling gaps",
       "base_score": 6,
-      "product_gate": "all"
+      "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "LinkedIn search: '[company name] Sales Operations OR Legal Operations', filter by Posts in past 90 days"
+    },
+    {
+      "signal": "DocuSign or Adobe Sign contract renewal within 6 months",
+      "base_score": 9,
+      "product_gate": "DocAuto",
+      "in_flight": true,
+      "negative": false,
+      "discovery_method": "Ask in first discovery call: 'When does your current eSign or document contract renew?' Cannot be confirmed pre-call.",
+      "notes": "Time-bound displacement window. Highest urgency signal for DocAuto. Score as 9 if renewal < 6 months, 7 if 6–12 months."
+    },
+    {
+      "signal": "Contract volume or document volume disclosed by prospect",
+      "base_score": 8,
+      "product_gate": "CLM_DocAuto",
+      "in_flight": true,
+      "negative": false,
+      "discovery_method": "Ask in discovery: 'How many contracts do you execute per year?' or 'What's your monthly document/eSign volume?' Maps to business_model_thresholds.",
+      "notes": "High propensity: 1,000+ contracts/year (CLM) or 5,000+ docs/month (DocAuto). Medium: 500+ contracts/year."
+    },
+    {
+      "signal": "Quote volume or pricing complexity disclosed by prospect",
+      "base_score": 8,
+      "product_gate": "CPQ_POM",
+      "in_flight": true,
+      "negative": false,
+      "discovery_method": "Ask in discovery: 'How many quotes does your team generate per month?' or 'How many SKUs are in your pricing catalog?' Maps to business_model_thresholds.",
+      "notes": "High propensity: 250+ quotes/month (CPQ) or 10,000+ SKUs/legacy quotes (POM)."
+    },
+    {
+      "signal": "Champion confirmed with active pain and executive access",
+      "base_score": 9,
+      "product_gate": "all",
+      "in_flight": true,
+      "negative": false,
+      "discovery_method": "Validate in discovery/demo: champion can articulate business pain, has access to economic buyer, and is actively selling internally.",
+      "notes": "48% of all losses are No Decision — a confirmed champion is the single biggest deal protection signal."
+    },
+    {
+      "signal": "Multiple revenue streams disclosed (subscription + transactional + services)",
+      "base_score": 9,
+      "product_gate": "RLM",
+      "in_flight": true,
+      "negative": false,
+      "discovery_method": "Ask in discovery: 'How do you bill customers — subscription, usage-based, one-time?' RLM requires genuine billing complexity.",
+      "notes": "Hard prerequisite for RLM. Without multiple revenue streams, do not pursue."
+    },
+    {
+      "signal": "SAP CRM confirmed as primary CRM (not SAP ERP)",
+      "base_score": 6,
+      "product_gate": "POM",
+      "in_flight": false,
+      "negative": true,
+      "discovery_method": "LinkedIn job postings ('SAP CRM', 'SAP Sales Cloud'), BuiltWith — distinguish from SAP ERP/S4HANA which is a positive signal.",
+      "notes": "NEGATIVE SIGNAL. SAP CRM users are locked into SAP's native pricing tooling. PROS win rate with SAP CRM = 25.6% vs. 53.6% for SAP ERP. ERP = positive, CRM = negative for POM."
+    },
+    {
+      "signal": "PDF Butler confirmed in Salesforce AppExchange stack",
+      "base_score": 7,
+      "product_gate": "DocAuto",
+      "in_flight": true,
+      "negative": true,
+      "discovery_method": "Cannot confirm pre-call — ask in discovery: 'What Salesforce AppExchange apps do you use for document generation?' or 'Are you using PDF Butler today?'",
+      "notes": "NEGATIVE SIGNAL. PDF Butler head-to-head win rate = 16%. Hard displacement. Flag immediately if discovered — reassess deal viability."
     },
     {
       "signal": "Job postings in relevant fields per product hiring map",
       "base_score": 5,
       "product_gate": "product_specific",
-      "notes": "See hiring_signals map. Score 5 base; elevate to 7 if multiple openings in same function."
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "LinkedIn Jobs, Indeed, company careers page — filter by job titles in hiring_signals map",
+      "notes": "Score 5 base; elevate to 7 if multiple openings in same function."
     },
     {
       "signal": "Rapid international expansion — new country offices or foreign entity filings",
       "base_score": 5,
-      "product_gate": "all"
+      "product_gate": "all",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Press releases, LinkedIn company posts, D&B foreign entity filings, company website (new office announcements)"
     },
     {
       "signal": "Conference speaker or panelist on contract automation, scaling revenue ops, or CLM strategy",
       "base_score": 5,
-      "product_gate": "CLM_CPQ"
+      "product_gate": "CLM_CPQ",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "Conference agendas (Dreamforce, CLOC, Gartner, Revenue Summit), LinkedIn activity search"
     },
     {
       "signal": "LinkedIn company page shows Legal, Finance, and Sales all listed as large departments",
       "base_score": 5,
       "product_gate": "CLM",
+      "in_flight": false,
+      "negative": false,
+      "discovery_method": "LinkedIn company page → People tab → filter by department",
       "notes": "Signals contract complexity exists across multiple functions."
-    },
-    {
-      "signal": "High revenue or employee count growth verified (20%+ YoY)",
-      "base_score": 7,
-      "product_gate": "all",
-      "notes": "Growth indicator; part of growth_indicators dimension."
     }
   ],
 
@@ -182,8 +336,8 @@
     },
     "Manufacturing - General": {
       "description": "General manufacturing not otherwise classified",
-      "scores": { "CLM": 6, "CPQ": 8, "POM": 8, "DocAuto": 5, "Aime": 5, "RLM": 6 },
-      "notes": "Medium CLM/DocAuto. High CPQ/POM. Check sub-vertical — Pharma/Med Device manufacturing should use HLS scores."
+      "scores": { "CLM": 6, "CPQ": 8, "POM": 7, "DocAuto": 5, "Aime": 5, "RLM": 6 },
+      "notes": "POM score reduced from 8 to 7: new logo win rate 24.8% with 3 active competitors (PriceFx, Vendavo, Zilliant). CPQ/POM strong but competitive. Check sub-vertical — Pharma/Med Device manufacturing should use HLS scores."
     },
     "Manufacturing - Chemical & Industrial": {
       "description": "Chemical manufacturers, industrial goods, electrical & automotive parts",
@@ -193,7 +347,12 @@
     "Wholesale & Distribution": {
       "description": "Distributors, wholesalers, industrial machinery distribution",
       "scores": { "CLM": 5, "CPQ": 8, "POM": 9, "DocAuto": 4, "Aime": 3, "RLM": 5 },
-      "notes": "Rental services = 60% POM win rate. Core distribution motion for POM. Industrial Machinery Distribution is a top CPQ closed-lost sub-vertical = active market."
+      "notes": "Core distribution motion for POM. Industrial Machinery Distribution is a top CPQ closed-lost sub-vertical = active market."
+    },
+    "Rental Services & Equipment": {
+      "description": "Equipment rental, modular space rental, specialty rental — distinct from logistics",
+      "scores": { "CLM": 5, "CPQ": 7, "POM": 9, "DocAuto": 4, "Aime": 3, "RLM": 6 },
+      "notes": "PROS new logo win rate = 60%, mean ACV $371K — highest-performing POM vertical. Previously missing from matrix. Royal Automobile Association (Transport) = $675K RLM deal. Prioritize for POM outreach."
     },
     "Building Materials & Construction": {
       "description": "Building materials manufacturers, construction companies, contractors",
@@ -203,17 +362,17 @@
     "Food & Beverage / Consumer Goods": {
       "description": "Food manufacturers, beverage companies, FMCG/CPG",
       "scores": { "CLM": 4, "CPQ": 7, "POM": 8, "DocAuto": 4, "Aime": 3, "RLM": 5 },
-      "notes": "High POM/CPQ per user guidance. Complex pricing and distribution."
+      "notes": "High POM ACV ($389K) but low win rate (21.6%) — market exists but highly competitive. Score reflects opportunity; rep should validate champion strength before investing heavily."
     },
     "Cargo & Logistics": {
       "description": "Freight, shipping, logistics, supply chain services",
-      "scores": { "CLM": 4, "CPQ": 7, "POM": 8, "DocAuto": 5, "Aime": 3, "RLM": 5 },
-      "notes": "Airlines = 42.4% POM win rate. Some DocAuto for freight/shipping documentation."
+      "scores": { "CLM": 6, "CPQ": 7, "POM": 8, "DocAuto": 5, "Aime": 3, "RLM": 5 },
+      "notes": "CLM score raised from 4 to 6: won deals average $25,392 ACV — 3rd highest across all industries. High-value, hard-to-win vertical; prioritize when warm signal exists. Airlines = 42.4% POM win rate."
     },
     "Telecom": {
       "description": "Telecommunications carriers, equipment providers, internet services",
       "scores": { "CLM": 6, "CPQ": 7, "POM": 6, "DocAuto": 6, "Aime": 5, "RLM": 8 },
-      "notes": "Complex billing (subscription + transactional + usage) = strong RLM fit. CPQ for service bundling."
+      "notes": "Complex billing (subscription + transactional + usage) = strong RLM fit. Mean ACV $26K is 2nd highest but bimodal — most deals are small Composer; CLM wins are rare but large. Prioritize RLM."
     },
     "Energy / Oil & Gas": {
       "description": "Oil and gas producers, energy utilities, renewables",
@@ -233,12 +392,12 @@
     "Education & Nonprofit": {
       "description": "Colleges, universities, nonprofits, charities",
       "scores": { "CLM": 2, "CPQ": 2, "POM": 2, "DocAuto": 5, "Aime": 2, "RLM": 2 },
-      "notes": "DocGen/eSign has Education presence. Otherwise very low fit. Max score 4 in existing ICP."
+      "notes": "DocGen/eSign has Education presence. Otherwise very low fit. Exception: existing CLM champion in Education can close large ($121K mean ACV) — do not auto-disqualify warm deals."
     },
     "Government": {
       "description": "Federal, state, and local government agencies",
       "scores": { "CLM": 3, "CPQ": 2, "POM": 2, "DocAuto": 4, "Aime": 2, "RLM": 2 },
-      "notes": "Highest loss rate in existing ICP. Procurement constraints. Avoid unless existing relationship."
+      "notes": "Highest loss rate in existing ICP. Procurement constraints. Avoid unless existing relationship. 55.7% win rate belies low ACV ceiling ($9,979 mean)."
     }
   },
 
@@ -282,6 +441,12 @@
       "salesforce_likely_shows_as": "Technology or Information Technology",
       "use_scores_from": "IT Services & Consulting",
       "notes": "Do NOT use SaaS / Technology scores. This sub-vertical is the worst closed-lost performer across all products."
+    },
+    {
+      "sub_vertical": "Equipment Rental / Modular Space Rental",
+      "salesforce_likely_shows_as": "Transportation or Services",
+      "use_scores_from": "Rental Services & Equipment",
+      "notes": "PROS 60% new logo win rate. Do not score as Cargo & Logistics or IT Services."
     }
   ],
 
@@ -302,7 +467,8 @@
       "VP Pricing", "Director Pricing", "SVP Pricing",
       "Director Pricing Analytics", "Pricing Analyst", "Pricing Strategist",
       "VP Revenue Management", "Director Revenue Management",
-      "Chief Pricing Officer"
+      "Chief Pricing Officer",
+      "Infor M3 Administrator", "NetSuite Administrator"
     ],
     "DocAuto": [
       "VP Communications", "Director Communications",
@@ -406,15 +572,16 @@
     "Education": { "matrix_key": "Education & Nonprofit" },
     "Nonprofit": { "matrix_key": "Education & Nonprofit" },
     "Government": { "matrix_key": "Government" },
-    "Telecommunications": { "matrix_key": "Telecom" }
+    "Telecommunications": { "matrix_key": "Telecom" },
+    "Rental": { "matrix_key": "Rental Services & Equipment" }
   },
 
   "product_notes": {
-    "CLM":    "Primary motion: Enterprise and Commercial, $50M+ revenue minimum. Pharma/Biotech/MedDevice + Salesforce = highest scores (9–10). Not a new logo product below $50M.",
-    "CPQ":    "Pure enterprise product, $250M+ minimum. Primary motion is expansion from existing Conga CLM or Composer customer. 23.7% Not Qualified rate — requires genuine configurable complexity.",
-    "POM":    "New logo close rate only 29.8%. Vertical-based scoring overrides revenue tier. Oil & Gas 7.1% win rate — avoid. Rental/Distribution 60% win rate — prioritize.",
-    "DocAuto":"Critical: <0.1% new logo win rate from cold prospecting. Best as expansion from existing Conga customer or warm referral. Salesforce + document volume = high score.",
+    "CLM":    "Primary motion: Enterprise and Commercial, $50M+ revenue minimum. Pharma/Biotech/MedDevice + Salesforce = highest scores (9–10). Not a new logo product below $50M. Existing Composer customers are the primary cross-sell source.",
+    "CPQ":    "Pure enterprise product, $250M+ minimum. REQUIRES existing Conga relationship (CLM or Composer) as near-hard gate — only 7 new logo wins in 4 years. 23.7% Not Qualified rate. Do not prospect cold for CPQ.",
+    "POM":    "New logo close rate 29.8%. Vertical-based scoring overrides revenue tier. Oil & Gas 7.1% win rate — avoid. Rental Services 60% win rate — prioritize. EMEA win rate 53.9% vs. 47.1% AMER — apply geo bonus for EMEA deals. SAP CRM (not SAP ERP) is a negative signal (25.6% win rate).",
+    "DocAuto":"Critical: <0.1% new logo win rate from cold prospecting. Best as expansion from existing Conga Composer customer or warm referral. Salesforce + document volume = high score. PDF Butler presence (in-flight) = 16% win rate — reassess viability. DocuSign/Adobe Sign renewal window = highest urgency signal.",
     "Aime":   "87% Enterprise/Strategic. Requires large contract repository. Not greenfield. Best post-M&A or with existing CLM customer.",
-    "RLM":    "Requires multiple revenue stream complexity. Best for SaaS, Telecom, FinServ. Only 12 deals in data — limited statistical base."
+    "RLM":    "Requires multiple revenue stream complexity. Best for SaaS, Telecom, FinServ, Rental. Only 12 deals in data — entirely an expansion motion. Mean ACV $119,951 — largest deals in portfolio when they close."
   }
 }

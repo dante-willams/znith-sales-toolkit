@@ -758,7 +758,12 @@ function buildDealContext(d) {
     ctx += `Overall: ${icp.overall}/10 (${icp.fit_tier || ''})\n`;
     if (icp.top_products?.length) ctx += `Top product fits: ${icp.top_products.join(', ')}\n`;
     if (icp.reasoning) ctx += `Reasoning: ${icp.reasoning}\n`;
-    if (icp.key_signals?.length) ctx += `Key signals: ${icp.key_signals.join(', ')}\n`;
+    if (icp.key_signals?.length) ctx += `Confirmed signals: ${icp.key_signals.join(', ')}\n`;
+    if (icp.negative_signals?.length) ctx += `RISK signals: ${icp.negative_signals.join(', ')} — address these directly in deal strategy\n`;
+    if (icp.discovery_signals?.length) {
+      ctx += `Unconfirmed in-flight signals to surface in discovery:\n`;
+      icp.discovery_signals.forEach(s => ctx += `  - [ ] ${s}\n`);
+    }
     ctx += '\n';
   }
 
@@ -953,6 +958,13 @@ function renderICPFit() {
     `<div style="font-size:10px;color:var(--tfaint);padding:2px 0;">• ${s}</div>`
   ).join('');
 
+  const discoveryItems = (icp.discovery_signals || []).slice(0, 3).map(s =>
+    `<div style="font-size:10px;color:var(--status-warn);padding:2px 0;">? ${s}</div>`
+  ).join('');
+  const negativeItems = (icp.negative_signals || []).slice(0, 2).map(s =>
+    `<div style="font-size:10px;color:var(--status-risk);padding:2px 0;">⚠ ${s}</div>`
+  ).join('');
+
   card.innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
       <div style="font-size:20px;font-weight:700;font-family:var(--f-mono);color:${color};">${icp.overall}</div>
@@ -961,8 +973,10 @@ function renderICPFit() {
         <div style="font-size:10px;color:var(--tfaint);">${(icp.top_products || []).join(' · ')}</div>
       </div>
     </div>
-    ${icp.reasoning ? `<div style="font-size:10px;color:var(--tfaint);line-height:1.5;margin-bottom:4px;">${icp.reasoning}</div>` : ''}
-    ${signals}`;
+    ${icp.reasoning ? `<div style="font-size:10px;color:var(--tfaint);line-height:1.5;margin-bottom:6px;">${icp.reasoning}</div>` : ''}
+    ${signals}
+    ${negativeItems ? `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(248,113,113,0.15);">${negativeItems}</div>` : ''}
+    ${discoveryItems ? `<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(251,191,36,0.15);"><div style="font-size:9px;color:var(--tfaint);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;">Surface in discovery</div>${discoveryItems}</div>` : ''}`;
 }
 
 function renderMEDDPICC() {

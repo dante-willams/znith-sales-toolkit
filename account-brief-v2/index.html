@@ -2355,16 +2355,28 @@ Return ONLY valid JSON starting with {:
       // Build scoring context from engine
       let engineContext = '';
       if (SCORING_ENGINE) {
-        const weights = SCORING_ENGINE.scoring_weights;
         const matrix  = SCORING_ENGINE.industry_matrix;
         const notes   = SCORING_ENGINE.product_notes || {};
-        const signals = (SCORING_ENGINE.signal_taxonomy || []).slice(0, 10).map(s => `- ${s.signal} (base ${s.base_score})`).join('\n');
+        const allSignals = SCORING_ENGINE.signal_taxonomy || [];
 
-        // Industry scores for selected products
+        // Split signals: pre-call (findable via research) vs in-flight (discovery only)
+        const preCallSignals  = allSignals.filter(s => !s.in_flight);
+        const inFlightSignals = allSignals.filter(s => s.in_flight);
+
+        const signalLines = preCallSignals.map(s => {
+          const neg = s.negative ? ' ← NEGATIVE (reduces score)' : '';
+          return `  [${s.negative?'-':'+'}${s.base_score}] ${s.signal}${neg}`;
+        }).join('\n');
+
+        const inFlightLines = inFlightSignals.map(s => {
+          const neg = s.negative ? ' ← NEGATIVE' : '';
+          return `  [${s.negative?'-':'+'}${s.base_score}] ${s.signal}${neg} | ask: ${s.discovery_method||'surface in discovery'}`;
+        }).join('\n');
+
         const productKeys = products.map(p =>
           p === 'Price Optimization' ? 'POM' : p.replace(/\s+/g,'').slice(0,6)
         );
-        const industryRows = Object.entries(matrix).slice(0, 15).map(([ind, val]) => {
+        const industryRows = Object.entries(matrix).map(([ind, val]) => {
           const scores = productKeys.map(k => `${k}:${val.scores[k]??'—'}`).join(' ');
           return `  ${ind}: ${scores}`;
         }).join('\n');
@@ -2375,8 +2387,11 @@ Return ONLY valid JSON starting with {:
 ICP SCORING ENGINE:
 Weights: signals(35%) growth(20%) industry_fit(15%) strategic_alignment(15%) business_model(10%) hiring(5%)
 
-Top buying signals (score these 1-10 based on evidence):
-${signals}
+PRE-CALL SIGNALS — score based on web research and company profile evidence:
+${signalLines}
+
+IN-FLIGHT SIGNALS — cannot be confirmed from web research alone; note as "unconfirmed" unless evidence exists in uploaded docs or notes:
+${inFlightLines}
 
 Industry fit scores for ${productList}:
 ${industryRows}
@@ -2393,7 +2408,7 @@ Products: ${productList}
 Company profile: ${JSON.stringify(state.results.company || {}).slice(0, 1500)}
 ${engineContext}
 
-Score this company's ICP fit. Use the scoring engine above — do not guess from intuition alone.
+Score this company's ICP fit using the engine above. For pre-call signals, score based on evidence in the company profile. For in-flight signals, only score if evidence exists in uploaded documents or notes — otherwise flag as signals to surface in discovery.
 
 Return ONLY valid JSON:
 {
@@ -2412,8 +2427,10 @@ Return ONLY valid JSON:
     "business_model_fit": <0-10>,
     "hiring_trends": <0-10>
   },
-  "reasoning": "<2-3 sentences: why this score, citing specific evidence from the company profile — revenue tier, industry fit, tech stack, signals detected>",
-  "key_signals": ["<signal 1 detected>", "<signal 2 detected>", "<signal 3 detected>"],
+  "reasoning": "<2-3 sentences: why this score, citing specific evidence — revenue tier, industry fit, tech stack, signals detected>",
+  "key_signals": ["<confirmed signal 1>", "<confirmed signal 2>", "<confirmed signal 3>"],
+  "discovery_signals": ["<in-flight signal to surface in discovery call 1>", "<signal 2>"],
+  "negative_signals": ["<negative signal detected, if any>"],
   "fit_tier": "<Strong Fit | Good Fit | Moderate Fit | Poor Fit>"
 }`;
 
@@ -3854,10 +3871,20 @@ function renderDealBrief() {
   const icpReasonEl = document.getElementById('out-icp-reasoning');
   if (icpReasonEl) {
     if (icpData?.reasoning) {
-      const signals = (icpData.key_signals || []).map(s => `<span style="font-size:11px;padding:2px 8px;background:rgba(61,224,200,0.1);border:1px solid rgba(61,224,200,0.2);border-radius:4px;color:var(--accent);">${s}</span>`).join(' ');
+      const confirmedTags = (icpData.key_signals || []).map(s =>
+        `<span style="font-size:11px;padding:2px 8px;background:rgba(61,224,200,0.1);border:1px solid rgba(61,224,200,0.2);border-radius:4px;color:var(--accent);">${s}</span>`
+      ).join(' ');
+      const discoveryTags = (icpData.discovery_signals || []).map(s =>
+        `<span style="font-size:11px;padding:2px 8px;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.25);border-radius:4px;color:var(--stage-negotiation);">? ${s}</span>`
+      ).join(' ');
+      const negativeTags = (icpData.negative_signals || []).map(s =>
+        `<span style="font-size:11px;padding:2px 8px;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.25);border-radius:4px;color:var(--status-risk);">⚠ ${s}</span>`
+      ).join(' ');
       icpReasonEl.innerHTML = `
-        <div style="font-size:12px;color:var(--white-dim);line-height:1.6;margin-bottom:6px;">${icpData.reasoning}</div>
-        ${signals ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:4px;">${signals}</div>` : ''}`;
+        <div style="font-size:12px;color:var(--white-dim);line-height:1.6;margin-bottom:8px;">${icpData.reasoning}</div>
+        ${confirmedTags ? `<div style="margin-bottom:4px;"><div style="font-size:10px;color:var(--white-dim);opacity:0.6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">Confirmed signals</div><div style="display:flex;flex-wrap:wrap;gap:4px;">${confirmedTags}</div></div>` : ''}
+        ${discoveryTags ? `<div style="margin-bottom:4px;"><div style="font-size:10px;color:var(--white-dim);opacity:0.6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">Surface in discovery</div><div style="display:flex;flex-wrap:wrap;gap:4px;">${discoveryTags}</div></div>` : ''}
+        ${negativeTags ? `<div><div style="font-size:10px;color:var(--white-dim);opacity:0.6;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.06em;">Risk signals</div><div style="display:flex;flex-wrap:wrap;gap:4px;">${negativeTags}</div></div>` : ''}`;
       icpReasonEl.closest('.deal-assessment').style.display = '';
     } else {
       icpReasonEl.closest('.deal-assessment').style.display = 'none';

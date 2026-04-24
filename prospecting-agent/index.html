@@ -1127,10 +1127,15 @@
         return `  ${name}:${excl}`;
       }).join('\n');
 
-      // Build signal taxonomy
-      const signalLines = se.signal_taxonomy.map(s =>
-        `  [${s.base_score}] ${s.signal}${s.product_gate === 'flag_for_CLM' ? ' ← ALWAYS flag for CLM' : ''}`
-      ).join('\n');
+      // Build signal taxonomy — pre-call signals only (in_flight=true excluded; not findable pre-call)
+      const signalLines = se.signal_taxonomy
+        .filter(s => !s.in_flight)
+        .map(s => {
+          const neg = s.negative ? ' ← NEGATIVE SIGNAL (reduces score)' : '';
+          const clm = s.product_gate === 'flag_for_CLM' ? ' ← ALWAYS flag for CLM' : '';
+          const how = s.discovery_method ? ` [find via: ${s.discovery_method}]` : '';
+          return `  [${s.negative ? '-' : '+'}${s.base_score}] ${s.signal}${neg}${clm}${how}`;
+        }).join('\n');
 
       // Build hiring signals for this product
       const hiringKeys = [productKey, 'Transformation_CoE'];
