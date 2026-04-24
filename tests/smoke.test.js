@@ -137,10 +137,14 @@ for (const { path, label, contains } of PAGES) {
   });
 }
 
-test('smoke: pages reject wrong password with 401', async () => {
+test('smoke: API rejects wrong password with 401 (page HTML always served)', async () => {
   if (!TOOLKIT_PASSWORD) return; // skip when auth is not configured
-  const res = await fetch(`${SMOKE_URL}/account-brief-v2/`, {
-    headers: { 'x-toolkit-password': 'wrong-password-smoke-test' },
+  // Pages themselves are always served (auth modal is client-side).
+  // Only the /api/claude proxy enforces the password server-side.
+  const res = await fetch(`${SMOKE_URL}/api/claude`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-toolkit-password': 'wrong-password-smoke-test' },
+    body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 16, messages: [{ role: 'user', content: 'hi' }] }),
   });
   assert.equal(res.status, 401, `Expected 401 for wrong password, got ${res.status}`);
 });
