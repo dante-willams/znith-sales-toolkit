@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "test": "node --test tests/utils.test.js tests/proxy.test.js",
+    "test": "node --test tests/utils.test.js tests/proxy.test.js tests/dealStore.test.js tests/deal-nav.test.js",
     "test:smoke": "node --test tests/smoke.test.js",
     "test:watch": "node --test --watch",
+    "test:coverage": "node --experimental-test-coverage --test tests/utils.test.js tests/proxy.test.js tests/dealStore.test.js tests/deal-nav.test.js",
     "lint:stale-fns": "! grep -n 'callClaude(' win-room/index.html | grep -v 'callClaudeWebSearch'"
   },
   "engines": {

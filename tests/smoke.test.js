@@ -115,13 +115,34 @@ test('smoke: Anthropic API key is valid and not rate-limited', async () => {
 
 // ── Page loads ────────────────────────────────────────────────────────────────
 
-test('smoke: prospecting-agent page loads with expected content', async () => {
-  const res = await fetch(`${SMOKE_URL}/prospecting-agent/`, {
-    headers: { ...(TOOLKIT_PASSWORD ? { 'x-toolkit-password': TOOLKIT_PASSWORD } : {}) },
+function pageHeaders() {
+  return TOOLKIT_PASSWORD ? { 'x-toolkit-password': TOOLKIT_PASSWORD } : {};
+}
+
+const PAGES = [
+  { path: '/account-brief-v2/', label: 'account-brief-v2', contains: 'Account Brief' },
+  { path: '/value-map/',        label: 'value-map',        contains: 'Value Map' },
+  { path: '/qualify-iq/',       label: 'qualify-iq',       contains: 'Qualify' },
+  { path: '/demo-brief/',       label: 'demo-brief',       contains: 'Demo' },
+  { path: '/win-room/',         label: 'win-room',         contains: 'Win Room' },
+  { path: '/prospecting-agent/', label: 'prospecting-agent', contains: 'Prospecting' },
+];
+
+for (const { path, label, contains } of PAGES) {
+  test(`smoke: ${label} page loads 200 with expected content`, async () => {
+    const res = await fetch(`${SMOKE_URL}${path}`, { headers: pageHeaders() });
+    assert.equal(res.status, 200, `${label}: expected 200, got ${res.status}`);
+    const html = await res.text();
+    assert.ok(html.includes(contains), `${label}: page should contain "${contains}"`);
   });
-  assert.equal(res.status, 200, `Expected 200, got ${res.status}`);
-  const html = await res.text();
-  assert.ok(html.includes('Prospecting'), 'Page should contain "Prospecting"');
+}
+
+test('smoke: pages reject wrong password with 401', async () => {
+  if (!TOOLKIT_PASSWORD) return; // skip when auth is not configured
+  const res = await fetch(`${SMOKE_URL}/account-brief-v2/`, {
+    headers: { 'x-toolkit-password': 'wrong-password-smoke-test' },
+  });
+  assert.equal(res.status, 401, `Expected 401 for wrong password, got ${res.status}`);
 });
 
 // ── Latency ────────────────────────────────────────────────────────────────────
