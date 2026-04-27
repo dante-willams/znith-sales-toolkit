@@ -1,7 +1,8 @@
 {
-  "version": "1.3",
-  "as_of": "2026-04-23",
+  "version": "1.4",
+  "as_of": "2026-04-26",
   "description": "Conga + PROS ICP Scoring Engine — structured weighted scoring data. Edit industry_matrix and signal_taxonomy here; prompts in index.html reference this file.",
+  "excel_reference": "ICP/ICP_Scoring_Matrix.xlsx is READ-ONLY reference. icp-scoring-engine.json is the single source of truth. Do not edit the Excel to change scoring — edit this file.",
 
   "signal_schema": {
     "in_flight": "true = signal only discoverable during active deal (discovery call, demo, proposal). false = findable pre-call via web search / tools.",
@@ -16,7 +17,43 @@
     "industry_fit":        0.15,
     "strategic_alignment": 0.15,
     "business_model_fit":  0.10,
-    "hiring_trends":       0.05
+    "hiring_trends":       0.05,
+    "hiring_flex_rule": "When 3 or more distinct hiring signals fire simultaneously in the same function (e.g., VP Pricing + Director Pricing Analytics + Pricing Strategist all posted within 60 days), multiply the hiring_trends dimension score by 1.5 before applying the 5% weight — capped at 10. Note: hiring signals also feed the signals dimension independently; this flex accounts for the concentrated urgency signal of a function buildout."
+  },
+
+  "signal_scoring": {
+    "description": "Rules for how the signals dimension (35%) is calculated from signal_taxonomy matches.",
+    "method": "top_3_weighted_average",
+    "method_detail": "Score the top 3 signals detected for the account (after applying recency decay). Average their decayed scores and normalize to 0–10. Do NOT use only the single highest signal — accounts with 6 strong signals at score 8 should outscore accounts with one score-10 event and nothing else.",
+    "minimum_signals_for_full_score": 3,
+    "single_signal_cap": 7.5,
+    "single_signal_cap_note": "If only 1 signal is detected (even a score-10), cap the signals dimension at 7.5/10. 2 signals cap at 8.5/10. 3+ signals are uncapped.",
+    "negative_signal_rule": "Negative signals (negative:true in signal_taxonomy) subtract their base_score from the running signal total before normalization. Cannot push signals dimension below 0.",
+    "tiebreak_within_signals": "If two signals have identical decayed scores, prefer the one with the lower in_flight value (i.e., confirmed pre-call signals beat unconfirmed in-flight signals of equal score)."
+  },
+
+  "growth_indicators_scoring": {
+    "description": "Explicit scoring rubric for the growth_indicators dimension (20%). Normalizes raw component scores to 0–10.",
+    "components": {
+      "salesforce_crm_verified":      { "points": 3, "note": "Highest-fit integration path. Confirmed via BuiltWith, HG Insights, or job postings." },
+      "revenue_headcount_growth_20pct": { "points": 3, "note": "20%+ YoY revenue or headcount growth verified via Crunchbase, LinkedIn, or annual report." },
+      "pe_backed_or_funded":          { "points": 2, "note": "PE ownership, Series C+, or growth equity. Post-investment pressure to scale and systematize." },
+      "public_company_earnings_signal": { "points": 2, "note": "10-K or earnings call explicitly cites operational pain (digital transformation, margin expansion, efficiency) relevant to Conga products." }
+    },
+    "scoring_table": [
+      { "raw_points": 0,    "dimension_score": 2,  "label": "No growth signals — baseline score for any operating company" },
+      { "raw_points": 1,    "dimension_score": 3 },
+      { "raw_points": 2,    "dimension_score": 5 },
+      { "raw_points": 3,    "dimension_score": 6 },
+      { "raw_points": 4,    "dimension_score": 7 },
+      { "raw_points": 5,    "dimension_score": 8 },
+      { "raw_points": 6,    "dimension_score": 8.5 },
+      { "raw_points": 7,    "dimension_score": 9,  "label": "Three components confirmed" },
+      { "raw_points": 8,    "dimension_score": 9.5 },
+      { "raw_points": 9,    "dimension_score": 10, "label": "All four components confirmed — rare, maximum score" },
+      { "raw_points": 10,   "dimension_score": 10 }
+    ],
+    "floor_rule": "Score 2 minimum even with zero evidence — an operational company has inherent baseline growth potential. Score 0 only if company is confirmed in wind-down or bankruptcy."
   },
 
   "recency_decay": {
@@ -491,42 +528,139 @@
   },
 
   "business_model_thresholds": {
-    "description": "Volume thresholds that indicate high fit for each product. Use these to score the business_model_fit dimension.",
+    "description": "Volume thresholds for scoring the business_model_fit dimension (10%). All thresholds derived from high-ACV win cohort analysis unless noted. Score low (2–3) when volume is unknown but industry/size suggests low fit.",
     "CLM": {
       "high_propensity":   "1,000+ contracts executed per year",
-      "medium_propensity": "500+ contracts executed per year",
-      "score_high": 9,
-      "score_medium": 6
+      "medium_propensity": "500–999 contracts executed per year",
+      "low_propensity":    "Under 500 contracts per year, or contract process is fully manual with no digitization intent",
+      "score_high":   9,
+      "score_medium": 6,
+      "score_low":    3,
+      "score_unknown": 4,
+      "rationale": "Derived from CLM high-ACV win cohort ($35K+ deals). Companies executing 1,000+ contracts/year consistently appear in the top quartile of deal size and close rate. 500–999 is the qualifying zone where ROI is positive but not compelling."
     },
     "CPQ": {
-      "high_propensity":   "250+ quotes generated per month",
-      "medium_propensity": "100+ quotes generated per month",
-      "score_high": 9,
-      "score_medium": 6
+      "high_propensity":   "250+ quotes generated per month with configurable product/pricing complexity",
+      "medium_propensity": "100–249 quotes per month, or simpler configuration needs",
+      "low_propensity":    "Under 100 quotes per month, or catalog is simple/flat-rate",
+      "score_high":   9,
+      "score_medium": 6,
+      "score_low":    2,
+      "score_unknown": 4,
+      "rationale": "CPQ requires genuine configurability — not just quoting volume. 250+/month threshold derived from CPQ qualified win cohort. Below 100/month, ROI rarely justifies implementation cost."
     },
     "DocAuto": {
-      "high_propensity":   "5,000+ documents or eSignatures per month",
-      "score_high": 9,
-      "notes": "Salesforce CRM is a hard requirement for high score. Without Salesforce, cap at 6."
+      "high_propensity":   "5,000+ documents or eSignatures per month AND Salesforce CRM confirmed",
+      "medium_propensity": "1,000–4,999 documents/month OR Salesforce confirmed but volume unknown",
+      "low_propensity":    "Under 1,000 docs/month, or no Salesforce, or primarily paper-based",
+      "score_high":   9,
+      "score_medium": 6,
+      "score_low":    2,
+      "score_unknown": 3,
+      "rationale": "Salesforce is a hard integration requirement for full DocAuto value — without it, cap at 6. 5,000+/month threshold from DocGen high-volume win cohort. Without Salesforce the ROI case weakens substantially."
     },
     "POM": {
-      "high_propensity":   "10,000+ legacy quotes for historical pricing context; or 10,000+ SKUs",
-      "score_high": 9
+      "high_propensity":   "10,000+ legacy quotes for historical pricing data OR 10,000+ active SKUs in pricing catalog",
+      "medium_propensity": "2,000–9,999 legacy quotes or SKUs; complex pricing tiers or channel pricing",
+      "low_propensity":    "Flat or simple pricing, under 2,000 SKUs, or no pricing sophistication",
+      "score_high":   9,
+      "score_medium": 6,
+      "score_low":    2,
+      "score_unknown": 4,
+      "rationale": "PROS AI pricing engine requires historical data to train on. 10,000+ legacy quotes provides sufficient signal density. SKU complexity (10,000+) is an alternative qualifier — pricing optimization ROI scales with catalog size."
     },
     "Aime": {
-      "high_propensity":   "Large existing contract repository (10,000+ contracts); existing CLM or CLM in evaluation",
-      "score_high": 9,
-      "notes": "Not a greenfield product — requires existing contract volume."
+      "high_propensity":   "Existing contract repository of 10,000+ contracts AND existing CLM in active use",
+      "medium_propensity": "5,000–9,999 contracts OR CLM in evaluation (not yet live)",
+      "low_propensity":    "Under 5,000 contracts or no CLM — see hard_gates",
+      "score_high":   9,
+      "score_medium": 6,
+      "score_low":    1,
+      "score_unknown": 2,
+      "rationale": "Aime ingests and analyzes existing contract repositories. Without a large repository, the AI has nothing to work with. This threshold is a near-hard gate — see hard_gates section."
     },
     "RLM": {
-      "high_propensity":   "Multiple revenue streams: subscription + transactional + professional services billing",
-      "score_high": 9
+      "high_propensity":   "Confirmed multiple revenue streams: at least two of subscription, transactional, usage-based, or professional services billing — managed separately today",
+      "medium_propensity": "One complex revenue stream with known billing pain, or in transition to subscription/usage model",
+      "low_propensity":    "Single revenue stream, simple billing, or B2C",
+      "score_high":   9,
+      "score_medium": 5,
+      "score_low":    1,
+      "score_unknown": 3,
+      "rationale": "RLM only 12 deals in data — entirely an expansion/upsell motion. Revenue complexity is a hard prerequisite, not just a fit signal. Simple billers rarely justify RLM implementation."
+    }
+  },
+
+  "disqualification_rules": {
+    "score_floor": {
+      "threshold": 4.5,
+      "action": "suppress",
+      "description": "Accounts with a combined_score below 4.5 should be suppressed from prospecting output entirely. A company can score well on Signals + Growth but still be a poor fit if industry_fit is a 3 and business_model is a 2. The floor prevents noise from polluting the ranked list.",
+      "override": "A rep may manually include a suppressed account by selecting it — the floor is a default, not a hard block."
+    },
+    "industry_exclude": {
+      "action": "hard_exclude",
+      "description": "Any account where getIndustryScore() returns 'EXCLUDE' for the selected product is removed before scoring — not suppressed, removed. This is not overridable."
+    }
+  },
+
+  "tiebreak_rule": {
+    "description": "When two or more accounts have identical combined_score (to one decimal place), apply these tiebreakers in order.",
+    "priority": [
+      { "rank": 1, "field": "revenue",   "order": "descending", "note": "Higher revenue = larger potential deal" },
+      { "rank": 2, "field": "employees", "order": "descending", "note": "Employee count as proxy for complexity and contract volume" },
+      { "rank": 3, "field": "name",      "order": "ascending",  "note": "Alphabetical as final deterministic tiebreaker" }
+    ]
+  },
+
+  "hard_gates": {
+    "description": "Prerequisites that must be met for a product to be recommended. These are not fit signals — they are disqualifiers if absent. Gates apply even if the account scores well on all other dimensions.",
+    "Aime": {
+      "gate": "Existing CLM in active use OR large contract repository (10,000+ contracts) in evaluation",
+      "action": "If gate not met: set Aime recommended_product score to 0 and add note 'Aime requires existing CLM or large contract repository — not a cold-prospect product'",
+      "rationale": "Aime has no standalone value without a contract corpus to analyze. Selling it as a standalone is a setup for churn."
+    },
+    "CPQ": {
+      "gate": "Existing Conga relationship (CLM active or Composer active) OR confirmed configurable quoting complexity (250+ quotes/month)",
+      "action": "If gate not met: downgrade CPQ score by 3 points and flag 'CPQ cold-prospect risk — only 7 new logo wins in 4 years without existing Conga relationship'",
+      "rationale": "CPQ is overwhelmingly an expansion product. Cold CPQ prospecting has a near-zero historical win rate."
+    },
+    "DocAuto": {
+      "gate": "Salesforce CRM confirmed OR existing Conga Composer customer",
+      "action": "If gate not met: cap DocAuto business_model_fit score at 4 regardless of volume",
+      "rationale": "DocAuto's core value proposition is Salesforce-native document generation. Without Salesforce, the integration story collapses."
     }
   },
 
   "strategic_alignment_initiatives": {
-    "description": "If a company's announced strategy matches any of these, score strategic_alignment as Y (1.0 multiplier). If unclear, score as ? (0.5 multiplier). If none, N (0 multiplier).",
-    "initiatives": [
+    "description": "Score the strategic_alignment dimension (15%) using the 4-tier rubric below. The old Y/N/? binary is replaced — it created a cliff where a company mid-ERP-migration scored the same as one that mentioned 'digital goals' once.",
+    "scoring_rubric": [
+      {
+        "tier": 1,
+        "score": 10,
+        "label": "Multiple confirmed, actively in progress",
+        "criteria": "Two or more matching initiatives confirmed via press release, earnings call, 10-K, or job postings — and demonstrably underway (hires being made, timeline announced, vendor selected). Example: announced SAP S/4HANA migration AND hired VP of RevOps in past 6 months."
+      },
+      {
+        "tier": 2,
+        "score": 7,
+        "label": "Single confirmed, actively underway",
+        "criteria": "One matching initiative with clear evidence it is in progress — not just mentioned, but actively being executed. Example: press release announcing digital transformation program with named executive sponsor and Q-year target."
+      },
+      {
+        "tier": 3,
+        "score": 4,
+        "label": "Mentioned or emerging, not confirmed in flight",
+        "criteria": "A matching initiative was referenced in public material but shows no evidence of active execution. Example: CEO mentioned 'operational efficiency goals' in an interview with no follow-through signals. Also use this tier for initiatives that match but are more than 18 months old."
+      },
+      {
+        "tier": 4,
+        "score": 0,
+        "label": "No strategic alignment signals",
+        "criteria": "No matching initiatives found in any public source. Use this tier deliberately — do not default to tier 3 simply because nothing was found."
+      }
+    ],
+    "qualifying_initiatives": [
       "Digital transformation program",
       "ERP or CRM migration / consolidation",
       "Merger or acquisition integration",

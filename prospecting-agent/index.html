@@ -1141,27 +1141,64 @@
       const hiringKeys = [productKey, 'Transformation_CoE'];
       const hiringLines = hiringKeys.flatMap(k => se.hiring_signals[k] || []).join(', ');
 
-      // Business model threshold
+      // Business model thresholds
       const bmt = se.business_model_thresholds[productKey];
-      const bmtLine = bmt ? `High propensity: ${bmt.high_propensity}` : '';
+      const bmtLines = bmt ? [
+        `  High:    ${bmt.high_propensity} → score ${bmt.score_high}/10`,
+        `  Medium:  ${bmt.medium_propensity||'—'} → score ${bmt.score_medium||'—'}/10`,
+        `  Low:     ${bmt.low_propensity||'—'} → score ${bmt.score_low||2}/10`,
+        `  Unknown: score ${bmt.score_unknown||3}/10 (do not leave business model unscored)`,
+        bmt.rationale ? `  Rationale: ${bmt.rationale}` : ''
+      ].filter(Boolean).join('\n') : '  No threshold defined for this product.';
+
+      // Strategic alignment tiers
+      const saTiers = (se.strategic_alignment_initiatives?.scoring_rubric || []).map(t =>
+        `  Tier ${t.tier} — Score ${t.score}: ${t.label}\n    → ${t.criteria}`
+      ).join('\n');
+
+      // Hard gates for this product
+      const gate = se.hard_gates?.[productKey];
+      const gateLines = gate
+        ? `HARD GATE FOR ${productKey}: ${gate.gate}\n  If not met: ${gate.action}`
+        : '';
+
+      // Growth indicators scoring table (compact)
+      const gi = se.growth_indicators_scoring;
+      const growthComponents = gi ? Object.entries(gi.components).map(([k,v]) =>
+        `  +${v.points} pts: ${k.replace(/_/g,' ')} — ${v.note}`
+      ).join('\n') : '';
+      const growthTable = gi ? gi.scoring_table.map(r =>
+        `  ${r.raw_points} pts → score ${r.dimension_score}${r.label ? ' ('+r.label+')' : ''}`
+      ).join('\n') : '';
+
+      // Disqualification floor
+      const floor = se.disqualification_rules?.score_floor?.threshold || 4.5;
+
+      // Tiebreak rule
+      const tiebreak = (se.tiebreak_rule?.priority || []).map(t =>
+        `  ${t.rank}. ${t.field} ${t.order}`
+      ).join('\n');
 
       return `
-=== STRUCTURED ICP SCORING ENGINE (Product: ${product}) ===
+=== STRUCTURED ICP SCORING ENGINE v${se.version} (Product: ${product}) ===
 
-SCORING WEIGHTS (must sum to 1.0):
-  Signals (recency-weighted):  ${se.scoring_weights.signals * 100}%
-  Growth indicators:           ${se.scoring_weights.growth_indicators * 100}%
-  Industry fit:                ${se.scoring_weights.industry_fit * 100}%
-  Strategic alignment (Y/N/?): ${se.scoring_weights.strategic_alignment * 100}%
-  Business model fit:          ${se.scoring_weights.business_model_fit * 100}%
-  Hiring trends:               ${se.scoring_weights.hiring_trends * 100}%
+SCORING WEIGHTS:
+  Signals (top-3 composite, recency-weighted): ${se.scoring_weights.signals * 100}%
+  Growth indicators:                           ${se.scoring_weights.growth_indicators * 100}%
+  Industry fit:                                ${se.scoring_weights.industry_fit * 100}%
+  Strategic alignment (4-tier):                ${se.scoring_weights.strategic_alignment * 100}%
+  Business model fit:                          ${se.scoring_weights.business_model_fit * 100}%
+  Hiring trends:                               ${se.scoring_weights.hiring_trends * 100}%
 
-RECENCY DECAY (apply to signal base scores):
-  <3 months ago:   ×1.00 (full score)
-  3–6 months ago:  ×0.85
-  6–12 months ago: ×0.60
-  12–24 months:    ×0.30
-  >24 months:      ×0.00 (ignore)
+SIGNAL SCORING RULES (critical — read carefully):
+  • Score the TOP 3 signals detected. Average their decayed scores → signals dimension score.
+  • Do NOT use only the single highest signal. 6 signals at score 8 > 1 signal at score 10.
+  • If only 1 signal detected: cap signals dimension at 7.5. If 2: cap at 8.5. 3+: uncapped.
+  • Negative signals (marked ←NEGATIVE) subtract from running total before averaging.
+  • Hiring flex: if 3+ hiring roles in same function posted within 60 days, multiply hiring score ×1.5 (cap at 10).
+
+RECENCY DECAY (multiply signal base_score by):
+  <3 months: ×1.00 | 3–6 months: ×0.85 | 6–12 months: ×0.60 | 12–24 months: ×0.30 | >24 months: ×0.00
 
 INDUSTRY SCORES FOR ${product.toUpperCase()}:
 ${industryLines}
@@ -1172,36 +1209,47 @@ SUB-VERTICAL OVERRIDE RULES:
   - "Biotech / Life Sciences R&D" → use HLS - Pharma & Biotech scores
   - "IT Services & Consulting" → use IT Services & Consulting scores (NOT SaaS/Technology)
   - "Investment Banking" → CLM=9, DocAuto=9 override
+  - "Equipment Rental / Modular Space" → use Rental Services & Equipment scores
 
-HEALTHCARE LABEL SUB-CLASSIFICATION (MANDATORY — applies to EVERY healthcare account):
-Salesforce often reports "Healthcare and Life Sciences" as a single bucket. You MUST identify the true sub-type:
-  → Hospital / health system / health network / IDN / academic medical center → "Hospital Systems" → EXCLUDED for ALL products
+HEALTHCARE LABEL SUB-CLASSIFICATION (MANDATORY):
+NEVER return "Healthcare and Life Sciences" as a final industry label. Always resolve to sub-type:
+  → Hospital / health system / IDN / academic medical center → "Hospital Systems" → EXCLUDED for ALL products
   → Pharma / biotech / biopharma / pharmaceutical mfr → "HLS - Pharma & Biotech"
   → Medical device / diagnostics / medtech → "HLS - Medical Device"
   → Health insurance / managed care / payer → "HLS - Payers & Health Insurance"
   → Healthcare SaaS / health IT / digital health platform → "HLS - Healthcare Services & SaaS"
-  → Cannot determine sub-type → default to "Hospital Systems" → EXCLUDED
-NEVER return "Healthcare and Life Sciences" as a final industry label — always resolve to a sub-type.
+  → Cannot determine → "Hospital Systems" → EXCLUDED
 
-SIGNAL TAXONOMY (base scores — multiply by recency decay):
+SIGNAL TAXONOMY (pre-call signals only; in-flight signals excluded):
 ${signalLines}
 
-HIRING SIGNALS FOR ${product} (score hiring_trends dimension higher if found):
+HIRING SIGNALS FOR ${product}:
   ${hiringLines}
 
-BUSINESS MODEL FIT:
-  ${bmtLine}
+GROWTH INDICATORS SCORING (normalize raw points using table):
+Components (accumulate points, then look up dimension score):
+${growthComponents}
+Score table:
+${growthTable}
+  Floor: minimum score 2 even with zero evidence. Score 0 only if company is in confirmed wind-down.
 
-STRATEGIC ALIGNMENT — score this Y / N / ? per account:
-  Y (×1.0): Company has announced initiative matching: digital transformation, ERP/CRM migration, M&A integration, compliance mandate, pricing modernization, contract standardization, RevOps buildout, CoE establishment, subscription model shift, international expansion, operational efficiency program
-  ? (×0.5): Initiative mentioned but unclear or early-stage
-  N (×0.0): No strategic alignment signal found
+BUSINESS MODEL FIT FOR ${product}:
+${bmtLines}
+
+${gateLines ? 'HARD GATE — CHECK BEFORE SCORING:\n' + gateLines + '\n' : ''}
+STRATEGIC ALIGNMENT (4-tier rubric — replaces old Y/N/?):
+${saTiers}
 
 SCORING FORMULA:
-  combined_score = (signal_score×0.35) + (growth_score×0.20) + (industry_score×0.15) + (strategic_score×0.15) + (biz_model_score×0.10) + (hiring_score×0.05)
-  Where strategic_score: Y=10, ?=5, N=0
+  combined_score = (signal×0.35) + (growth×0.20) + (industry×0.15) + (strategic×0.15) + (biz_model×0.10) + (hiring×0.05)
 
-IMPORTANT: If an industry is marked EXCLUDE for this product, set combined_score=0 and flag the account.
+DISQUALIFICATION FLOOR:
+  If combined_score < ${floor} → suppress account (set icp_score=0, suppressed=true). Still include at bottom of list.
+
+TIE-BREAKING (when scores are equal to 1 decimal):
+${tiebreak}
+
+IMPORTANT: If industry is EXCLUDE for this product → set combined_score=0, industry_excluded=true.
 === END SCORING ENGINE ===`;
     }
 
@@ -2754,31 +2802,40 @@ Return ONLY the JSON array.`;
 
 For each company, research and score ALL of the following dimensions:
 
-1. SIGNALS (35% weight) — Find and score the strongest buying signal present. Apply recency decay:
-   - <3 months ago: ×1.0 | 3–6 months: ×0.85 | 6–12 months: ×0.60 | 12–24 months: ×0.30 | >24 months: ×0.0
-   - Signal score = signal_taxonomy base_score × recency_multiplier
-   - FDA pre-approval/approval: ALWAYS add a clm_flag=true regardless of selected product
-   - Report the top 3 signals detected with their recency
+1. SIGNALS (35% weight) — Score using TOP-3 COMPOSITE method:
+   - Find all confirmed signals for this account. Apply recency decay to each: <3mo ×1.0, 3–6mo ×0.85, 6–12mo ×0.60, 12–24mo ×0.30, >24mo ×0.0
+   - Take the TOP 3 highest decayed scores. Average them → signals dimension score (0–10).
+   - Do NOT use only the single highest signal. 6 signals at score 8 outscores 1 signal at score 10.
+   - If only 1 signal found: cap signals dimension at 7.5. If 2 signals: cap at 8.5. 3+: uncapped.
+   - Negative signals subtract from running total before averaging.
+   - FDA pre-approval/approval: ALWAYS set clm_flag=true regardless of selected product.
+   - Report the top 3 signals with their recency in buying_signals field.
 
-2. GROWTH INDICATORS (20% weight) — Score 1–10:
-   - Verified Salesforce usage: +3 points
-   - Revenue or headcount growth ≥20% YoY: +3 points
-   - PE-backed or recently funded: +2 points
-   - No growth signals: score 3 or below
+2. GROWTH INDICATORS (20% weight) — Accumulate points then normalize using score table:
+   - Verified Salesforce CRM: +3 pts | Revenue/headcount growth ≥20% YoY: +3 pts
+   - PE-backed or recently funded (Series C+): +2 pts | Public company earnings signal: +2 pts
+   - Score table: 0pts→2, 1pt→3, 2pts→5, 3pts→6, 4pts→7, 5pts→8, 6pts→8.5, 7pts→9, 8pts→9.5, 9+pts→10
+   - Minimum score 2 even with zero evidence (floor rule).
 
-3. INDUSTRY FIT (15% weight) — Use the industry matrix score for ${p2ProductFocus} from the scoring engine. Apply sub-vertical overrides.
+3. INDUSTRY FIT (15% weight) — Use the industry matrix score for ${p2ProductFocus}. Apply sub-vertical overrides.
 
-4. STRATEGIC ALIGNMENT (15% weight) — Score Y / ? / N:
-   - Y (score 10): Company has publicly announced initiative matching any in the scoring engine's strategic_alignment_initiatives list
-   - ? (score 5): Initiative mentioned but unclear
-   - N (score 0): No alignment signal found
+4. STRATEGIC ALIGNMENT (15% weight) — Use 4-TIER rubric (not Y/N/?):
+   - Score 10: Multiple confirmed initiatives, actively in progress (hires made, timeline announced)
+   - Score 7: Single confirmed initiative, actively underway with evidence
+   - Score 4: Initiative mentioned but not confirmed in flight (press mention, no follow-through)
+   - Score 0: No strategic alignment signals found
 
-5. BUSINESS MODEL FIT (10% weight) — Use the business_model_thresholds for ${p2ProductFocus}. Score 1–10.
+5. BUSINESS MODEL FIT (10% weight) — Use the business_model_thresholds for ${p2ProductFocus}:
+   High threshold met → score_high | Medium threshold met → score_medium | Low → score_low | Unknown → score_unknown
+   Do not leave this dimension unscored — always assign one of the four values.
 
-6. HIRING TRENDS (5% weight) — Check for job postings or recent hires matching the hiring_signals map for ${p2ProductFocus} and Transformation_CoE. Score 1–10 (10 = multiple relevant open roles).
+6. HIRING TRENDS (5% weight) — Check job postings/recent hires matching hiring_signals for ${p2ProductFocus} and Transformation_CoE.
+   - 3+ roles in the same function within 60 days: multiply dimension score ×1.5 (cap at 10).
 
 FINAL combined_score formula:
-  combined_score = (signal_score×0.35) + (growth_score×0.20) + (industry_score×0.15) + (strategic_score×0.15) + (biz_model_score×0.10) + (hiring_score×0.05)
+  combined_score = (signal×0.35) + (growth×0.20) + (industry×0.15) + (strategic×0.15) + (biz_model×0.10) + (hiring×0.05)
+
+SCORING FLOOR: If combined_score < 4.5 → set suppressed=true. Include at bottom of list with score shown.
 
 If account shows strong fit for a DIFFERENT product than ${p2ProductFocus}, list in cross_sell_products.
 
@@ -2810,6 +2867,7 @@ Return a JSON array of the FINAL TOP 20 (sorted by combined_score descending):
   "tech_stack": ["<known tech>"],
   "outreach_angle": "<one-line recommended opening for outreach>",
   "company_type": "<Prospect|Customer>",
+  "suppressed": <true if combined_score < 4.5, otherwise false>,
   "cross_sell_products": ["<product>"],
   "cross_sell_reason": "<one line or empty string>",
   "est_acv_range": "<e.g. $15,000–$45,000 based on industry + segment + product>",
@@ -2820,7 +2878,7 @@ Return a JSON array of the FINAL TOP 20 (sorted by combined_score descending):
     "signals":             { "score": <1-10>, "rationale": "<strongest signal found + recency>" },
     "growth_indicators":   { "score": <1-10>, "rationale": "<Salesforce confirmed? Revenue growth? PE-backed?>" },
     "industry_fit":        { "score": <1-10>, "rationale": "<matrix score for this industry + product>" },
-    "strategic_alignment": { "score": <0|5|10>, "rationale": "<matched initiative or none>" },
+    "strategic_alignment": { "score": <0|4|7|10>, "rationale": "<tier used and matched initiative or none>" },
     "business_model_fit":  { "score": <1-10>, "rationale": "<volume thresholds met?>" },
     "hiring_trends":       { "score": <1-10>, "rationale": "<relevant open roles or recent hires found>" }
   }
@@ -2834,6 +2892,16 @@ Return ONLY the JSON array.`;
           finalResults = finalResults.map(a => {
             if (isExcluded(a.industry || '', selectedProduct)) {
               return { ...a, combined_score: 0, icp_score: 0, industry_excluded: true };
+            }
+            return a;
+          });
+
+          // Client-side score floor enforcement — suppress accounts below 4.5
+          const scoreFloor = SCORING_ENGINE?.disqualification_rules?.score_floor?.threshold ?? 4.5;
+          finalResults = finalResults.map(a => {
+            const score = a.combined_score || a.icp_score || 0;
+            if (!a.industry_excluded && score > 0 && score < scoreFloor) {
+              return { ...a, suppressed: true };
             }
             return a;
           });
