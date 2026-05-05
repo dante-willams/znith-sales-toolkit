@@ -1257,7 +1257,7 @@ IMPORTANT: If industry is EXCLUDE for this product → set combined_score=0, ind
     (async () => {
       try {
         const [icpRes, seRes] = await Promise.all([
-          fetch('./icp-data.json'),
+          fetch('../shared/icp-data.json'),
           fetch('../shared/icp-scoring-engine.json')
         ]);
         const data = await icpRes.json();
