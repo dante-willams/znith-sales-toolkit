@@ -1222,7 +1222,7 @@ Counter: Substance over marketing. "Every vendor is claiming AI leadership right
   try {
     const res  = await fetch('../shared/icp-data.json');
     const data = await res.json();
-    KNOWLEDGE_BRAIN += '\n\n' + data.narrative;
+    KNOWLEDGE_BRAIN += '\n\n' + data.base;
   } catch (e) {
     console.error('Failed to load shared ICP data:', e);
   }

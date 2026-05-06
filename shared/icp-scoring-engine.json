@@ -323,7 +323,7 @@
     {
       "signal": "LinkedIn company page shows Legal, Finance, and Sales all listed as large departments",
       "base_score": 5,
-      "product_gate": "CLM",
+      "product_gate": "CLM_CPQ",
       "in_flight": false,
       "negative": false,
       "discovery_method": "LinkedIn company page → People tab → filter by department",
@@ -501,7 +501,7 @@
   ],
 
   "hiring_signals": {
-    "description": "Job titles that indicate buying intent by product. Match against LinkedIn job postings and recent hires.",
+    "_description": "Job titles that indicate buying intent by product. Match against LinkedIn job postings and recent hires.",
     "CLM": [
       "General Counsel", "Chief Legal Officer", "VP Legal", "SVP Legal",
       "Contract Manager", "Contract Administrator", "Paralegal",
