@@ -64,15 +64,14 @@
   function toBullets(text, max) {
     max = max || 3;
     if (!text) return ['No information available'];
-    var sentences = text.split(/(?<=[.!?])\s+|;\s*/).filter(function (s) {
+    // Split on sentence endings followed by space, or semicolons
+    // Avoid lookbehind (not supported in all browsers) — match the punctuation directly
+    var sentences = text.split(/[.!?]\s+|;\s*/).filter(function (s) {
       return s.trim().length > 10;
     });
-    if (sentences.length === 0) {
-      // Fallback: return the raw text as a single bullet
-      return [text.trim()];
-    }
+    if (sentences.length === 0) return [text.trim()];
     return sentences.slice(0, max).map(function (s) {
-      return s.trim().replace(/\.$/, '');
+      return s.trim().replace(/[.!?]$/, '');
     });
   }
 
