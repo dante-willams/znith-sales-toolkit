@@ -3332,7 +3332,7 @@ RESEARCH: ${state.research.slice(0, 2000)}`;
       await generateValueMapPPT(deal);
     } catch (e) {
       console.error('PPT export error:', e);
-      toast('PPT export error — check console');
+      toast('PPT error: ' + (e && e.message ? e.message.slice(0, 60) : String(e).slice(0, 60)));
     }
   }
 
