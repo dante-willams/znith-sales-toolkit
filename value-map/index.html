@@ -2026,6 +2026,7 @@ RATIONALE: [2-3 sentences explaining why these three represent the highest inter
 
 [VM_START]
 [I1_START]
+INITIATIVE_TITLE: [3-6 word label for this initiative — used as column header]
 PBO:
 CHALLENGE:
 CHALLENGE_METRIC:
@@ -2039,6 +2040,7 @@ PROOF:
 AUDIENCE_NOTE:
 [I1_END]
 [I2_START]
+INITIATIVE_TITLE: [3-6 word label for this initiative — used as column header]
 PBO:
 CHALLENGE:
 CHALLENGE_METRIC:
@@ -2052,6 +2054,7 @@ PROOF:
 AUDIENCE_NOTE:
 [I2_END]
 [I3_START]
+INITIATIVE_TITLE: [3-6 word label for this initiative — used as column header]
 PBO:
 CHALLENGE:
 CHALLENGE_METRIC:
@@ -2177,6 +2180,7 @@ List every source cited. Format: TITLE | URL (or title only if no URL)
     const initiatives = [1,2,3].map(n => {
       const block = extract(`I${n}`, raw);
       // New format fields
+      const initiativeTitle    = getField(block, 'INITIATIVE_TITLE');
       const pbo                = getField(block, 'PBO');
       const challenge          = getField(block, 'CHALLENGE');
       const challengeMetric    = getField(block, 'CHALLENGE_METRIC');
@@ -2197,6 +2201,7 @@ List every source cited. Format: TITLE | URL (or title only if no URL)
       // Synthesize PBO from old fields if missing
       const pboFinal = pbo || [objective, strategy].filter(Boolean).join(' ') || initiative || '';
       return {
+        initiativeTitle,
         pbo: pboFinal,
         challenge, challengeMetric, targetMetric, stakeholder,
         requiredCapability,
@@ -2616,7 +2621,7 @@ List every source cited. Format: TITLE | URL (or title only if no URL)
           ${vm.initiatives.map((ini, i) => `
             <div class="vm-col-header">
               <div class="vm-col-header-num" style="color:${iColors[i]}">${iLabels[i]}</div>
-              <div class="vm-col-header-title">${escHtml(ini.initiative || '—')}</div>
+              <div class="vm-col-header-title">${escHtml(ini.initiativeTitle || ini.initiative || (ini.pbo ? ini.pbo.split(' ').slice(0,7).join(' ') + '…' : '—'))}</div>
             </div>`).join('')}
         </div>
 
