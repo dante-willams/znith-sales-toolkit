@@ -1195,15 +1195,133 @@
 
   /* ── PDF PRINT ── */
   @media print {
-    header, footer, .phase-eyebrow, .phase-title, .phase-subtitle,
-    .export-toolbar, .btn-row, #toast, .section-divider,
-    .chat-sidebar, .chat-tab { display: none !important; }
-    body { background: #ffffff !important; color: #111 !important; }
-    main { padding: 0 !important; max-width: 100% !important; }
-    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    .vm-wrap { font-size: 11px; }
-    .vm-masthead { border-radius: 0 !important; clip-path: none !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+    body > * { display: none !important; }
+    #vm-print-view { display: block !important; }
+    #vm-print-view .pv-page-break { page-break-before: always; }
+    #vm-print-view .pv-avoid-break { page-break-inside: avoid; }
   }
+  #vm-print-view {
+    display: none;
+    font-family: 'Arial', 'Helvetica Neue', sans-serif;
+    color: #1A1040;
+    background: #ffffff;
+    font-size: 10pt;
+    line-height: 1.5;
+  }
+  #vm-print-view .pv-cover {
+    background: #0D004D;
+    color: #ffffff;
+    padding: 48px 56px 40px;
+    margin-bottom: 0;
+  }
+  #vm-print-view .pv-cover-eyebrow {
+    font-size: 7pt; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: #846BF8; margin-bottom: 14px;
+  }
+  #vm-print-view .pv-cover-company {
+    font-size: 28pt; font-weight: 800; color: #ffffff; margin-bottom: 6px; line-height: 1.1;
+  }
+  #vm-print-view .pv-cover-meta {
+    font-size: 8pt; color: #ADA3F0; margin-top: 10px;
+  }
+  #vm-print-view .pv-overview {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    background: #1A0A6B; padding: 0;
+  }
+  #vm-print-view .pv-ov-cell {
+    padding: 16px 20px; border-right: 1px solid #2D1A80;
+  }
+  #vm-print-view .pv-ov-cell:last-child { border-right: none; }
+  #vm-print-view .pv-ov-num {
+    font-size: 7pt; font-weight: 700; color: #846BF8;
+    text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;
+  }
+  #vm-print-view .pv-ov-title {
+    font-size: 9pt; font-weight: 700; color: #ffffff; line-height: 1.3;
+  }
+  #vm-print-view .pv-section { padding: 36px 56px; }
+  #vm-print-view .pv-ini-badge {
+    display: inline-block; font-size: 6.5pt; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #846BF8; margin-bottom: 8px;
+  }
+  #vm-print-view .pv-pbo {
+    font-size: 17pt; font-weight: 800; color: #0D004D;
+    line-height: 1.2; margin-bottom: 6px;
+  }
+  #vm-print-view .pv-source {
+    font-size: 7.5pt; color: #846BF8; font-style: italic; margin-bottom: 24px;
+  }
+  #vm-print-view .pv-divider {
+    height: 1px; background: #E2E8F0; margin: 20px 0;
+  }
+  #vm-print-view .pv-field-label {
+    font-size: 6.5pt; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #846BF8; margin-bottom: 4px;
+  }
+  #vm-print-view .pv-field-value {
+    font-size: 9.5pt; color: #1A1040; line-height: 1.5; margin-bottom: 16px;
+  }
+  #vm-print-view .pv-metrics {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;
+  }
+  #vm-print-view .pv-metric-cell {
+    padding: 12px 14px; border-radius: 4px;
+  }
+  #vm-print-view .pv-metric-cell.current {
+    background: #FEE2E2;
+  }
+  #vm-print-view .pv-metric-cell.target {
+    background: #D1FAE5;
+  }
+  #vm-print-view .pv-metric-label {
+    font-size: 6.5pt; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 4px;
+  }
+  #vm-print-view .pv-metric-cell.current .pv-metric-label { color: #DC2626; }
+  #vm-print-view .pv-metric-cell.target .pv-metric-label { color: #047857; }
+  #vm-print-view .pv-metric-val {
+    font-size: 10pt; font-weight: 700; line-height: 1.3;
+  }
+  #vm-print-view .pv-metric-cell.current .pv-metric-val { color: #DC2626; }
+  #vm-print-view .pv-metric-cell.target .pv-metric-val { color: #047857; }
+  #vm-print-view .pv-value-bar {
+    background: #0D004D; color: #ffffff;
+    padding: 14px 20px; border-radius: 4px; margin-bottom: 12px;
+  }
+  #vm-print-view .pv-value-bar-label {
+    font-size: 6.5pt; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #846BF8; margin-bottom: 4px;
+  }
+  #vm-print-view .pv-value-bar-text {
+    font-size: 11pt; font-weight: 700; color: #ffffff; line-height: 1.3;
+  }
+  #vm-print-view .pv-proof {
+    background: #F4F6FB; border-left: 3px solid #846BF8;
+    padding: 12px 16px; border-radius: 0 4px 4px 0;
+    font-size: 8.5pt; color: #1A1040; font-style: italic; line-height: 1.5;
+  }
+  #vm-print-view .pv-two-col {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 4px;
+  }
+  #vm-print-view .pv-footer {
+    padding: 14px 56px; border-top: 1px solid #E2E8F0;
+    font-size: 7pt; color: #ADA3F0; display: flex;
+    justify-content: space-between; align-items: center;
+  }
+  #vm-print-view .pv-footer-brand { font-weight: 700; color: #846BF8; }
+  #vm-print-view .pv-sources { padding: 36px 56px; }
+  #vm-print-view .pv-src-row {
+    display: flex; gap: 14px; padding: 8px 0;
+    border-bottom: 1px solid #F0F0F8; align-items: baseline;
+  }
+  #vm-print-view .pv-src-num {
+    font-size: 7pt; font-weight: 700; color: #846BF8;
+    flex-shrink: 0; width: 20px;
+  }
+  #vm-print-view .pv-src-title { font-size: 8.5pt; font-weight: 600; color: #1A1040; }
+  #vm-print-view .pv-src-url { font-size: 7pt; color: #ADA3F0; }
 
   /* Responsive */
   @media (max-width: 640px) {
@@ -3081,9 +3199,120 @@ RESEARCH: ${state.research.slice(0, 2000)}`;
 
   // ── PDF DOWNLOAD ──
   function downloadPDF() {
-    if (!state.valueMap) return;
+    if (!state.valueMap) { toast('No Value Map to export'); return; }
+    const vm = state.valueMap;
+    const x = s => (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const date = new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+
+    const field = (label, value) => value
+      ? `<div class="pv-field-label">${x(label)}</div><div class="pv-field-value">${x(value)}</div>`
+      : '';
+
+    const iniHtml = (ini, idx, total) => {
+      const pbo   = ini.pbo   || ini.initiative || ini.objective || '—';
+      const src   = ini.pboSource || ini.strategy || '';
+      const stake = ini.stakeholder || '';
+      const chal  = ini.challenge || '—';
+      const curM  = ini.challengeMetric || ini.currentState || '';
+      const tarM  = ini.targetMetric   || ini.targetState  || '';
+      const cap   = ini.capabilityLabel || ini.congaCapability || ini.requiredCapability || '—';
+      const reqC  = ini.requiredCapability && ini.requiredCapability !== cap ? ini.requiredCapability : '';
+      const diff  = ini.differentiatedValue || ini.howCongaHelps || '—';
+      const val   = ini.value || '—';
+      const proof = ini.proof || '';
+      const audn  = ini.audienceNote || '';
+
+      const metricsHtml = (curM || tarM) ? `
+        <div class="pv-metrics pv-avoid-break">
+          <div class="pv-metric-cell current">
+            <div class="pv-metric-label">Current State</div>
+            <div class="pv-metric-val">${x(curM||'—')}</div>
+          </div>
+          <div class="pv-metric-cell target">
+            <div class="pv-metric-label">Target State</div>
+            <div class="pv-metric-val">${x(tarM||'—')}</div>
+          </div>
+        </div>` : '';
+
+      return `
+        <div class="${idx > 0 ? 'pv-page-break' : ''}">
+          <div class="pv-section">
+            <div class="pv-ini-badge">Initiative ${idx+1} of ${total}${stake ? '  ·  ' + x(stake) : ''}</div>
+            <div class="pv-pbo">${x(pbo)}</div>
+            ${src ? `<div class="pv-source">Source: ${x(src)}</div>` : ''}
+            <div class="pv-divider"></div>
+            <div class="pv-field-label">Challenge</div>
+            <div class="pv-field-value">${x(chal)}</div>
+            ${metricsHtml}
+            <div class="pv-divider"></div>
+            <div class="pv-two-col">
+              <div>
+                <div class="pv-field-label">Capability</div>
+                <div class="pv-field-value">${x(cap)}</div>
+                ${reqC ? `<div class="pv-field-label" style="margin-top:4px">Required Capability</div><div class="pv-field-value">${x(reqC)}</div>` : ''}
+              </div>
+              <div>
+                <div class="pv-field-label">Differentiated Value</div>
+                <div class="pv-field-value">${x(diff)}</div>
+              </div>
+            </div>
+            <div class="pv-value-bar pv-avoid-break">
+              <div class="pv-value-bar-label">Value / ROI</div>
+              <div class="pv-value-bar-text">${x(val)}</div>
+            </div>
+            ${proof ? `<div class="pv-proof">${x(proof)}</div>` : ''}
+            ${audn ? `<div style="margin-top:14px;font-size:7.5pt;color:#846BF8;font-style:italic;border-top:1px solid #E2E8F0;padding-top:10px"><strong>Rep note:</strong> ${x(audn)}</div>` : ''}
+          </div>
+          <div class="pv-footer">
+            <span><span class="pv-footer-brand">Conga</span> Value Map  ·  ${x(state.company||'Customer')}</span>
+            <span>${x(date)}  ·  Confidential</span>
+          </div>
+        </div>`;
+    };
+
+    const sourcesHtml = vm.sources && vm.sources.length
+      ? `<div class="pv-page-break">
+           <div class="pv-sources">
+             <div class="pv-field-label" style="margin-bottom:12px;font-size:8pt">Research Sources</div>
+             ${vm.sources.map((s,i) => `
+               <div class="pv-src-row">
+                 <div class="pv-src-num">${String(i+1).padStart(2,'0')}</div>
+                 <div>
+                   <div class="pv-src-title">${x(s.title||'—')}</div>
+                   ${s.url ? `<div class="pv-src-url">${x(s.url)}</div>` : ''}
+                 </div>
+               </div>`).join('')}
+           </div>
+           <div class="pv-footer">
+             <span><span class="pv-footer-brand">Conga</span> Value Map  ·  ${x(state.company||'Customer')}</span>
+             <span>${x(date)}  ·  Confidential</span>
+           </div>
+         </div>`
+      : '';
+
+    const overviewCells = vm.initiatives.map((ini,i) => {
+      const pbo = ini.pbo || ini.initiative || ini.objective || '—';
+      return `<div class="pv-ov-cell">
+        <div class="pv-ov-num">Initiative ${i+1}</div>
+        <div class="pv-ov-title">${x(pbo)}</div>
+      </div>`;
+    }).join('');
+
+    const html = `
+      <div class="pv-cover">
+        <div class="pv-cover-eyebrow">Conga Value Map</div>
+        <div class="pv-cover-company">${x(state.company||'Customer')}</div>
+        ${state.industry ? `<div style="font-size:10pt;color:#ADA3F0;margin-top:4px">${x(state.industry)}</div>` : ''}
+        <div class="pv-cover-meta">Prepared ${x(date)}  ·  Confidential  ·  Internal Use Only</div>
+      </div>
+      <div class="pv-overview">${overviewCells}</div>
+      ${vm.initiatives.map((ini,i) => iniHtml(ini, i, vm.initiatives.length)).join('')}
+      ${sourcesHtml}
+    `;
+
+    document.getElementById('vm-print-view').innerHTML = html;
     toast('Opening print dialog...');
-    setTimeout(() => window.print(), 400);
+    setTimeout(() => window.print(), 300);
   }
 
   // ── PPT EXPORT ──
@@ -3234,17 +3463,16 @@ RESEARCH: ${state.research.slice(0, 2000)}`;
       const x = s => (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 
       const C = {
-        navy:    '0A1628', navyMid:'1A2035',
-        purple:  '7C3AED', purpleLt:'EDE9FE',
-        offWhite:'F7F8FC', white:'FFFFFF',
-        gray:    '8896B0', darkTxt:'1F2937',
+        navy:'0D004D', navyMid:'1A0A6B',
+        purple:'846BF8', purpleLt:'EDE9FE',
+        offWhite:'F4F6FB', white:'FFFFFF',
+        gray:'ADA3F0', darkTxt:'1A1040',
         redBg:'FEE2E2', redTx:'DC2626',
         grnBg:'D1FAE5', grnTx:'047857',
-        ini:['7C3AED','6D28D9','5B21B6'],
+        ini:['0D004D','1A0A6B','2D1A80'],
       };
 
-      // Minimal cell margin — just enough for legibility, no stacking gaps
-      const MAR = 80;
+      const MAR = 100;
 
       const run = (t, o={}) =>
         `<w:r><w:rPr>${o.b?'<w:b/>':''}${o.i?'<w:i/>':''}` +
@@ -3255,188 +3483,174 @@ RESEARCH: ${state.research.slice(0, 2000)}`;
 
       const p = (t, o={}) =>
         `<w:p><w:pPr>` +
-        `<w:spacing w:before="0" w:after="${o.after||0}"/>` +
+        `<w:spacing w:before="${o.before||0}" w:after="${o.after||0}"/>` +
         `${o.align?`<w:jc w:val="${o.align}"/>`:''}` +
         `${o.border?`<w:pBdr>${o.border}</w:pBdr>`:''}` +
-        `</w:pPr>${run(t,o)}</w:p>`;
+        `${o.ind?`<w:ind w:left="${o.ind}"/>`:''}` +
+        `</w:pPr>${t?run(t,o):''}</w:p>`;
 
-      // Cell: fixed small margin everywhere — no variation
       const tc = (html, o={}) =>
         `<w:tc><w:tcPr>` +
         `${o.w?`<w:tcW w:w="${o.w}" w:type="dxa"/>`:''}` +
         `${o.bg?`<w:shd w:val="clear" w:color="auto" w:fill="${o.bg}"/>`:''}` +
         `<w:tcMar>` +
-        `<w:top w:w="${MAR}" w:type="dxa"/>` +
-        `<w:bottom w:w="${MAR}" w:type="dxa"/>` +
-        `<w:left w:w="${MAR+40}" w:type="dxa"/>` +
-        `<w:right w:w="${MAR+40}" w:type="dxa"/>` +
+        `<w:top w:w="${o.mt||MAR}" w:type="dxa"/>` +
+        `<w:bottom w:w="${o.mb||MAR}" w:type="dxa"/>` +
+        `<w:left w:w="${MAR+60}" w:type="dxa"/>` +
+        `<w:right w:w="${MAR+60}" w:type="dxa"/>` +
         `</w:tcMar>` +
         `${o.va?`<w:vAlign w:val="${o.va}"/>`:''}` +
         `</w:tcPr>${html}</w:tc>`;
 
       const tr = (...cells) => `<w:tr><w:trPr><w:cantSplit/></w:trPr>${cells.join('')}</w:tr>`;
 
-      const tbl = (rows, o={}) => {
-        const lb = o.lb
-          ? `<w:left w:val="single" w:sz="18" w:color="${C.purple}" w:space="0"/>`
-          : `<w:left w:val="none"/>`;
-        return `<w:tbl><w:tblPr><w:tblW w:w="9360" w:type="dxa"/>` +
-          `<w:tblBorders><w:top w:val="none"/>${lb}` +
-          `<w:right w:val="none"/><w:bottom w:val="none"/>` +
-          `<w:insideH w:val="none"/><w:insideV w:val="none"/>` +
-          `</w:tblBorders></w:tblPr>${rows}</w:tbl>`;
-      };
+      const tbl = (rows) =>
+        `<w:tbl><w:tblPr><w:tblW w:w="9360" w:type="dxa"/>` +
+        `<w:tblBorders><w:top w:val="none"/><w:left w:val="none"/>` +
+        `<w:right w:val="none"/><w:bottom w:val="none"/>` +
+        `<w:insideH w:val="none"/><w:insideV w:val="none"/>` +
+        `</w:tblBorders></w:tblPr>${rows}</w:tbl>`;
 
       const pageBreak = () =>
         `<w:p><w:pPr><w:spacing w:before="0" w:after="0"/></w:pPr>` +
         `<w:r><w:rPr><w:sz w:val="2"/></w:rPr><w:br w:type="page"/></w:r></w:p>`;
 
-      // Section header: full-width, light purple bg, left accent bar
-      const secHdr = (title) =>
-        tbl(tr(tc(p(title,{sz:9,col:C.navy,b:true}),{bg:C.purpleLt,w:9360})),{lb:true});
-
-      // Label + value (no trailing gap — cell margin provides breathing room)
-      const fld = (lbl, val, o={}) =>
-        p(lbl.toUpperCase(),{sz:7,col:C.purple,b:true,after:12}) +
-        p(val||'—',{sz:10,col:o.col||C.darkTxt,b:o.b||false});
+      const fld = (lbl, val, o={}) => val
+        ? p(lbl.toUpperCase(),{sz:7,col:C.purple,b:true,after:14}) +
+          p(val,{sz:10,col:o.col||C.darkTxt,b:o.b||false,i:o.i||false})
+        : '';
 
       const TW=9360, HW=4680, TW3=3120;
       let body = '';
 
-      // ══════════════════════════════════════════
-      // PAGE 1: Cover + Initiative 1
-      // ══════════════════════════════════════════
-
-      // Cover header
+      // ── COVER ──
       body += tbl(tr(tc(
-        p('CONGA VALUE MAP',{sz:8,col:C.purple,b:true,after:50}) +
-        p(state.company,{sz:26,col:C.white,b:true,after:40}) +
-        p(state.industry||'',{sz:9,col:C.gray,i:true,after:30}) +
+        p('CONGA  ·  VALUE MAP',{sz:7,col:C.purple,b:true,after:60}) +
+        p(state.company||'',{sz:28,col:C.white,b:true,after:30}) +
+        (state.industry ? p(state.industry,{sz:9,col:C.gray,i:true,after:20}) : '') +
         p(`Prepared ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}  ·  Confidential`,{sz:8,col:C.gray}),
-        {bg:C.navy,w:TW}
+        {bg:C.navy,w:TW,mt:240,mb:240}
       )));
 
-      // 3-col initiative summary strip
-      body += tbl(tr(...vm.initiatives.map((ini,i)=>tc(
-        p(`Initiative ${i+1}`,{sz:7,col:C.purple,b:true,after:10}) +
-        p(ini.initiative||'',{sz:9,col:C.white,b:true,after:8}) +
-        p(ini.stakeholder||'—',{sz:8,col:C.gray}),
-        {bg:C.navyMid,w:TW3}
-      ))));
+      // Initiative overview strip
+      body += tbl(tr(...vm.initiatives.map((ini,i) => {
+        const pbo = ini.pbo || ini.initiative || ini.objective || '—';
+        const stake = ini.stakeholder || '';
+        return tc(
+          p(`Initiative ${i+1}`,{sz:7,col:C.purple,b:true,after:12}) +
+          p(pbo,{sz:9,col:C.white,b:true,after:stake?10:0}) +
+          (stake ? p(stake,{sz:8,col:C.gray,i:true}) : ''),
+          {bg:C.navyMid,w:TW3,mt:120,mb:120}
+        );
+      })));
 
-      // Initiative 1 inline (no page break)
-      const renderInitiative = (ini, i) => {
+      // ── PER-INITIATIVE PAGES ──
+      const renderInitiative = (ini, idx) => {
+        const pbo  = ini.pbo  || ini.initiative || ini.objective || '—';
+        const src  = ini.pboSource || ini.strategy || '';
+        const stake= ini.stakeholder || '';
+        const chal = ini.challenge || '—';
+        const curM = ini.challengeMetric || ini.currentState || '';
+        const tarM = ini.targetMetric   || ini.targetState  || '';
+        const cap  = ini.capabilityLabel || ini.congaCapability || ini.requiredCapability || '—';
+        const reqC = ini.requiredCapability && ini.requiredCapability !== cap ? ini.requiredCapability : '';
+        const diff = ini.differentiatedValue || ini.howCongaHelps || '—';
+        const val  = ini.value || '—';
+        const proof= ini.proof || '';
+
         let s = '';
-        // Header bar
+
+        // Initiative header bar
         s += tbl(tr(tc(
-          p(`INITIATIVE ${i+1} OF ${vm.initiatives.length}`,{sz:7,col:C.purple,b:true,after:24}) +
-          p(ini.initiative||'',{sz:14,col:C.white,b:true,after:22}) +
-          p(`Stakeholder: ${ini.stakeholder||'—'}`,{sz:8,col:C.gray,i:true}),
-          {bg:C.ini[i],w:TW}
+          p(`INITIATIVE ${idx+1} OF ${vm.initiatives.length}${stake ? '  ·  ' + stake : ''}`,{sz:7,col:C.purple,b:true,after:20}) +
+          p(pbo,{sz:15,col:C.white,b:true,after:src?16:0}) +
+          (src ? p(`Source: ${src}`,{sz:8,col:C.gray,i:true}) : ''),
+          {bg:C.ini[idx],w:TW,mt:160,mb:160}
         )));
-        // Their World
-        s += secHdr('THEIR WORLD — Objectives, Strategies & Initiatives');
-        s += tbl(tr(
-          tc(fld('Objective',ini.objective),{bg:C.offWhite,w:HW}),
-          tc(fld('Strategy', ini.strategy), {bg:C.offWhite,w:HW})
-        ));
+
         // Challenge
-        s += secHdr('CHALLENGE & IMPACT — Current vs. Target State');
-        s += tbl(tr(tc(fld('Challenge',ini.challenge),{bg:C.offWhite,w:TW})));
+        s += tbl(tr(tc(fld('Challenge',chal),{bg:C.offWhite,w:TW,mt:120,mb:120})));
+
+        // Metrics
+        if (curM || tarM) {
+          s += tbl(tr(
+            tc(p('CURRENT STATE',{sz:7,col:C.redTx,b:true,after:12})+p(curM||'—',{sz:11,col:C.redTx,b:true}),{bg:C.redBg,w:HW,mt:100,mb:100}),
+            tc(p('TARGET STATE', {sz:7,col:C.grnTx,b:true,after:12})+p(tarM||'—',{sz:11,col:C.grnTx,b:true}),{bg:C.grnBg,w:HW,mt:100,mb:100})
+          ));
+        }
+
+        // Capability + Differentiated Value (2 col)
         s += tbl(tr(
-          tc(p('🔴  CURRENT STATE',{sz:7,col:C.redTx,b:true,after:12})+p(ini.challengeMetric||'—',{sz:10,col:C.redTx,b:true}),{bg:C.redBg,w:HW}),
-          tc(p('🟢  TARGET STATE', {sz:7,col:C.grnTx,b:true,after:12})+p(ini.targetMetric ||'—',{sz:10,col:C.grnTx,b:true}),{bg:C.grnBg,w:HW})
+          tc(
+            p('CAPABILITY',{sz:7,col:C.purple,b:true,after:14})+
+            p(cap,{sz:10,col:C.darkTxt,b:true,after:reqC?8:0})+
+            (reqC ? p(reqC,{sz:9,col:C.darkTxt,i:true}) : ''),
+            {bg:C.offWhite,w:HW,mt:100,mb:100}
+          ),
+          tc(fld('Differentiated Value',diff),{bg:C.offWhite,w:HW,mt:100,mb:100})
         ));
-        // Conga Role
-        s += secHdr("CONGA'S ROLE — Capabilities, Value & Proof");
-        s += tbl(tr(
-          tc(fld('Required Capability',ini.requiredCapability),{bg:C.offWhite,w:HW}),
-          tc(fld('Conga Product(s)',   ini.congaCapability),   {bg:C.offWhite,w:HW})
-        ));
-        s += tbl(tr(tc(fld('How Conga Helps',ini.howCongaHelps),{bg:C.offWhite,w:TW})));
+
+        // Value bar
         s += tbl(tr(tc(
-          p('⚡  VALUE / ROI',{sz:7,col:C.purple,b:true,after:12}) +
-          p(ini.value||'—',{sz:12,col:C.white,b:true}),
-          {bg:C.navy,w:TW}
+          p('VALUE  /  ROI',{sz:7,col:C.purple,b:true,after:16})+p(val,{sz:13,col:C.white,b:true}),
+          {bg:C.navy,w:TW,mt:140,mb:140}
         )));
-        s += tbl(tr(tc(
-          p('📌  PROOF POINT',{sz:7,col:C.gray,b:true,after:12}) +
-          p(ini.proof||'—',{sz:9,col:C.darkTxt,i:true}),
-          {bg:C.offWhite,w:TW}
-        )));
+
+        // Proof
+        if (proof) {
+          s += tbl(tr(tc(fld('Proof Point',proof,{i:true}),{bg:C.offWhite,w:TW,mt:100,mb:100})));
+        }
+
         return s;
       };
 
-      // Page 1: cover + initiative 1
       body += renderInitiative(vm.initiatives[0], 0);
-
-      // Pages 2 and 3: one initiative each
       for (let i = 1; i < vm.initiatives.length; i++) {
         body += pageBreak();
         body += renderInitiative(vm.initiatives[i], i);
       }
 
-      // ══════════════════════════════════════════
-      // FINAL PAGE: MSP + Sources
-      // ══════════════════════════════════════════
+      // ── MSP PAGE ──
       body += pageBreak();
-
-      // MSP header
       body += tbl(tr(tc(
-        p('MUTUAL SUCCESS PLAN',{sz:8,col:C.purple,b:true,after:30}) +
-        p('Discovery to Close',{sz:14,col:C.white,b:true}),
-        {bg:C.navy,w:TW}
+        p('MUTUAL SUCCESS PLAN',{sz:7,col:C.purple,b:true,after:20})+p('Discovery to Close',{sz:15,col:C.white,b:true}),
+        {bg:C.navy,w:TW,mt:160,mb:160}
       )));
-
-      const mColors = ['7C3AED','6D28D9','5B21B6','4C1D95'];
-      vm.milestones.forEach((m,mi) => {
+      const mColors = [C.purple,'6D28D9','5B21B6','4C1D95'];
+      (vm.milestones||[]).forEach((m,mi) => {
         body += tbl(tr(
-          tc(
-            p(m.time||'',{sz:7,col:C.gray,after:10}) +
-            p(m.phase||'',{sz:10,col:mColors[mi],b:true}),
-            {bg:C.navyMid,w:1960,va:'center'}
-          ),
-          tc(
-            p('ACTIVITIES',{sz:7,col:C.gray,b:true,after:10}) +
-            p(m.activities||'—',{sz:9,col:C.darkTxt,after:16}) +
-            p('OWNER',{sz:7,col:C.gray,b:true,after:10}) +
-            p(m.owner||'—',{sz:9,col:C.darkTxt}),
-            {bg:C.offWhite,w:4400}
-          ),
-          tc(
-            p('DONE WHEN',{sz:7,col:C.grnTx,b:true,after:10}) +
-            p(m.success||'—',{sz:9,col:C.grnTx}),
-            {bg:C.grnBg,w:3000}
-          )
+          tc(p(m.time||'',{sz:7,col:C.gray,after:10})+p(m.phase||'',{sz:10,col:mColors[mi%4],b:true}),{bg:C.navyMid,w:1800,va:'center',mt:100,mb:100}),
+          tc(p('ACTIVITIES',{sz:7,col:C.gray,b:true,after:10})+p(m.activities||'—',{sz:9,col:C.darkTxt,after:14})+p('OWNER',{sz:7,col:C.gray,b:true,after:10})+p(m.owner||'—',{sz:9,col:C.darkTxt}),{bg:C.offWhite,w:4560,mt:100,mb:100}),
+          tc(p('DONE WHEN',{sz:7,col:C.grnTx,b:true,after:10})+p(m.success||'—',{sz:9,col:C.grnTx}),{bg:C.grnBg,w:3000,mt:100,mb:100})
         ));
       });
 
-      // Sources
+      // ── SOURCES ──
       if (vm.sources && vm.sources.length > 0) {
-        body += secHdr('SOURCES & RESEARCH REFERENCES');
+        body += p('',{after:160});
+        body += tbl(tr(tc(p('RESEARCH SOURCES',{sz:7,col:C.purple,b:true}),{bg:C.purpleLt,w:TW,mt:80,mb:80})));
         vm.sources.forEach((s,si) => {
           body += tbl(tr(
-            tc(p(`${String(si+1).padStart(2,'0')}`,{sz:8,col:C.purple,b:true}),{bg:C.offWhite,w:380}),
-            tc(
-              p(s.title||'—',{sz:9,col:C.darkTxt,b:true,after:8}) +
-              (s.url?p(s.url,{sz:7,col:C.purple,i:true}):''),
-              {bg:si%2===0?C.offWhite:C.white,w:8980}
-            )
+            tc(p(String(si+1).padStart(2,'0'),{sz:8,col:C.purple,b:true}),{bg:C.offWhite,w:380,mt:80,mb:80}),
+            tc(p(s.title||'—',{sz:9,col:C.darkTxt,b:true,after:8})+(s.url?p(s.url,{sz:7,col:C.purple,i:true}):''),{bg:si%2===0?C.offWhite:C.white,w:8980,mt:80,mb:80})
           ));
         });
       }
 
-      // Confidentiality footer
+      // Footer
+      body += p('',{after:120});
       body += p(
-        `CONFIDENTIAL — Internal Use Only  ·  Conga Sales  ·  ${x(state.company)}  ·  ${new Date().toLocaleDateString()}`,
-        {sz:7,col:C.gray,i:true,align:'center',
-         border:'<w:top w:val="single" w:sz="2" w:color="CCCCCC" w:space="6"/>'}
+        `CONFIDENTIAL — Internal Use Only  ·  Conga Sales  ·  ${x(state.company||'')}  ·  ${new Date().toLocaleDateString()}`,
+        {sz:7,col:C.gray,i:true,align:'center',border:'<w:top w:val="single" w:sz="2" w:color="C8C8E0" w:space="8"/>'}
       );
 
-      // ══════════════════════════════════════════
-      // ASSEMBLE DOCX
-      // ══════════════════════════════════════════
-      const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>${body}<w:sectPr><w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="900" w:right="1080" w:bottom="900" w:left="1080" w:header="0" w:footer="0" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+      // ── ASSEMBLE DOCX ──
+      const docXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>`+
+        `<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">`+
+        `<w:body>${body}`+
+        `<w:sectPr><w:pgSz w:w="12240" w:h="15840"/>`+
+        `<w:pgMar w:top="900" w:right="1080" w:bottom="900" w:left="1080" w:header="0" w:footer="0" w:gutter="0"/>`+
+        `</w:sectPr></w:body></w:document>`;
       const ctXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>`;
       const rrXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>`;
       const wrXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`;
@@ -3452,12 +3666,11 @@ RESEARCH: ${state.research.slice(0, 2000)}`;
       const buffer = await zip.generateAsync({type:'base64',mimeType:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
       const a = document.createElement('a');
       a.href = 'data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,' + buffer;
-      a.download = `Conga Value Map — ${state.company}.docx`;
+      a.download = `Conga Value Map — ${state.company||'Export'}.docx`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       toast('✓ Word doc downloaded');
-
     } catch(e) {
       console.error('Word export error:', e);
       toast('Word export error — check console');
@@ -3831,6 +4044,9 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   </div>
 </footer>
 </div><!-- /.app-shell -->
+
+<!-- PDF print view — hidden in browser, shown only during window.print() -->
+<div id="vm-print-view"></div>
 
 </body>
 </html>
