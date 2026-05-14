@@ -493,10 +493,9 @@
    *
    * @param {object} deal - Deal object from the value-map data model.
    */
-  function generateValueMapPPT(deal) {
+  async function generateValueMapPPT(deal) {
     if (typeof PptxGenJS === 'undefined') {
-      alert('PowerPoint library not loaded. Please refresh and try again.');
-      return;
+      throw new Error('PptxGenJS not loaded');
     }
 
     // ── Extract deal data ──────────────────────────────────────────────────
@@ -546,7 +545,7 @@
     // ── Trigger download ───────────────────────────────────────────────────
     var safeCompany = companyName.replace(/[^a-z0-9]/gi, '_');
     var fileName = 'Conga_Value_Map_' + safeCompany + '_' + new Date().getFullYear() + '.pptx';
-    pres.writeFile({ fileName: fileName });
+    return pres.writeFile({ fileName: fileName });
   }
 
   // ── Expose to global scope for value-map/index.html ─────────────────────
