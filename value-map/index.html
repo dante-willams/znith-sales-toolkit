@@ -1219,7 +1219,35 @@
   .znith-wordmark{display:flex;align-items:center;gap:1px;font-family:var(--f-brand);font-size:12px;font-weight:800;line-height:1;}
   .znith-footer-meta{display:flex;align-items:center;gap:8px;}
   .znith-footer-pip{width:4px;height:4px;border-radius:50%;background:var(--violet);box-shadow:0 0 6px var(--violet-glow);}
+  /* ── New intake/value-map UX elements ── */
+  .advanced-toggle { cursor:pointer; font-size:13px; color:var(--tmuted); margin:8px 0 4px; padding:6px 0; }
+  .advanced-toggle:hover { color:var(--text); }
+  .also-considered-section { margin-top:32px; border-top:1px solid var(--border); padding-top:20px; }
+  .also-considered-header { cursor:pointer; display:flex; align-items:baseline; gap:12px; margin-bottom:12px; }
+  .also-considered-title { font-size:14px; font-weight:700; color:var(--text); }
+  .also-considered-hint { font-size:12px; color:var(--tmuted); }
+  .alt-card { background:var(--surf); border:1px solid var(--border); border-radius:4px; padding:16px; margin-bottom:12px; }
+  .alt-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px; }
+  .alt-title { font-size:14px; font-weight:700; color:var(--text); }
+  .alt-badges { display:flex; gap:6px; flex-shrink:0; }
+  .alt-badge { font-size:10px; font-weight:700; padding:2px 8px; border-radius:2px; text-transform:uppercase; }
+  .alt-badge.priority-high { background:rgba(52,211,153,0.15); color:#34D399; }
+  .alt-badge.priority-medium { background:rgba(251,191,36,0.15); color:#FBBF24; }
+  .alt-badge.priority-low { background:rgba(156,163,175,0.15); color:#9CA3AF; }
+  .alt-badge.fit-high { background:rgba(139,92,246,0.15); color:var(--violet); }
+  .alt-badge.fit-medium { background:rgba(59,130,246,0.15); color:#60A5FA; }
+  .alt-badge.fit-low, .alt-badge.fit-none { background:rgba(156,163,175,0.1); color:var(--tmuted); }
+  .alt-statement { font-size:13px; color:var(--tmuted); margin-bottom:6px; }
+  .alt-why-not { font-size:11px; color:var(--tmuted); font-style:italic; margin-bottom:10px; }
+  .alt-swap { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .alt-swap-label { font-size:11px; font-weight:700; color:var(--tmuted); text-transform:uppercase; letter-spacing:0.05em; }
+  .btn-swap { font-size:11px; padding:4px 10px; background:transparent; border:1px solid var(--border); border-radius:3px; color:var(--tmuted); cursor:pointer; }
+  .btn-swap:hover { border-color:var(--violet); color:var(--violet); }
+  .selection-rationale { background:var(--surf-2); border:1px solid var(--border); border-radius:4px; padding:14px 16px; margin-bottom:24px; font-size:13px; color:var(--tmuted); font-style:italic; }
+  .selection-rationale-label { font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--violet); margin-bottom:6px; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@4/dist/pptxgen.bundle.js"></script>
+<script src="ppt-export.js"></script>
 </head>
 <body>
 <div class="app-shell">
@@ -1288,36 +1316,28 @@
         <div class="tag" data-val="Operations / COO">Operations / COO</div>
       </div>
 
-    <div class="two-col">
-      <div class="card">
-        <div class="card-label">
-          <span class="card-label-icon">📊</span> Deal Stage
-          <span style="font-weight:400;color:var(--tmuted);text-transform:none;letter-spacing:0">(optional — shapes MSP timeline and output framing)</span>
-        </div>
-        <div class="card-hint">Your Salesforce deal stage. Drives how metrics, proof points, and next steps are framed.</div>
-        <div class="stage-pills" id="stagePills">
-          <div class="stage-pill" data-val="Qualification">Qualification</div>
-          <div class="stage-pill" data-val="Discovery">Discovery</div>
-          <div class="stage-pill" data-val="Validation">Validation</div>
-          <div class="stage-pill" data-val="Negotiation">Negotiation</div>
-          <div class="stage-pill" data-val="Closed Won">Closed Won</div>
-        </div>
+    <div class="card" id="audienceTypeCard">
+      <div class="card-label"><span class="card-label-icon">🎯</span> Meeting Type</div>
+      <div class="card-hint">Auto-detected from account brief — adjust if needed. Shapes financial vs. operational framing.</div>
+      <div class="tag-container" id="audienceTags">
+        <div class="tag" data-val="economic_buyer">Economic Buyer</div>
+        <div class="tag selected" data-val="mixed">Mixed / Unknown</div>
+        <div class="tag" data-val="champion">Champion</div>
       </div>
+    </div>
 
-      <div class="card">
-        <div class="card-label">
-          <span class="card-label-icon">⚡</span> Conga Products in Scope
-          <span style="font-weight:400;color:var(--tmuted);text-transform:none;letter-spacing:0">(optional)</span>
-        </div>
-        <div class="card-hint">Select products being considered. Focuses capabilities and proof points on what's relevant.</div>
-        <div class="tag-container" id="productTags">
-          <div class="tag" data-val="CLM">CLM</div>
-          <div class="tag" data-val="CPQ">CPQ</div>
-          <div class="tag" data-val="DocGen / Composer">DocGen</div>
-          <div class="tag" data-val="RLM">RLM</div>
-          <div class="tag" data-val="Price Optimization">Price Optimization</div>
-          <div class="tag" data-val="AI / AiMe">AI</div>
-        </div>
+    <div class="card">
+      <div class="card-label">
+        <span class="card-label-icon">📊</span> Deal Stage
+        <span style="font-weight:400;color:var(--tmuted);text-transform:none;letter-spacing:0">(optional — shapes MSP timeline and output framing)</span>
+      </div>
+      <div class="card-hint">Your Salesforce deal stage. Drives how metrics, proof points, and next steps are framed.</div>
+      <div class="stage-pills" id="stagePills">
+        <div class="stage-pill" data-val="Qualification">Qualification</div>
+        <div class="stage-pill" data-val="Discovery">Discovery</div>
+        <div class="stage-pill" data-val="Validation">Validation</div>
+        <div class="stage-pill" data-val="Negotiation">Negotiation</div>
+        <div class="stage-pill" data-val="Closed Won">Closed Won</div>
       </div>
     </div>
     </div>
@@ -1353,10 +1373,31 @@
       <textarea id="discoveryNotes" placeholder="e.g. 'VP Sales mentioned contracts take 3 weeks on average, legal is a bottleneck. They lose ~15% of deals due to pricing delays. Currently on Word templates + email approvals...'"></textarea>
     </div>
 
-    <div class="card">
-      <div class="card-label"><span class="card-label-icon">🎯</span> Current Tools / Situation <span style="font-weight:400;color:var(--tmuted);text-transform:none;letter-spacing:0">(optional)</span></div>
-      <div class="card-hint">What are they using today? Any known Salesforce usage, ERP, or CLM tools?</div>
-      <input type="text" id="currentTools" placeholder="e.g. Salesforce CRM, manual Word contracts, DocuSign for e-sig only" />
+    <div class="advanced-toggle" onclick="toggleAdvanced()" id="advancedToggle">
+      ▸ Advanced options (products, current tools)
+    </div>
+    <div id="advancedSection" style="display:none">
+      <div class="card">
+        <div class="card-label">
+          <span class="card-label-icon">⚡</span> Conga Products in Scope
+          <span style="font-weight:400;color:var(--tmuted);text-transform:none;letter-spacing:0">(optional)</span>
+        </div>
+        <div class="card-hint">Select products being considered. Focuses capabilities and proof points on what's relevant.</div>
+        <div class="tag-container" id="productTags">
+          <div class="tag" data-val="CLM">CLM</div>
+          <div class="tag" data-val="CPQ">CPQ</div>
+          <div class="tag" data-val="DocGen / Composer">DocGen</div>
+          <div class="tag" data-val="RLM">RLM</div>
+          <div class="tag" data-val="Price Optimization">Price Optimization</div>
+          <div class="tag" data-val="AI / AiMe">AI</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label"><span class="card-label-icon">🎯</span> Current Tools / Situation <span style="font-weight:400;color:var(--tmuted);text-transform:none;letter-spacing:0">(optional)</span></div>
+        <div class="card-hint">What are they using today? Any known Salesforce usage, ERP, or CLM tools?</div>
+        <input type="text" id="currentTools" placeholder="e.g. Salesforce CRM, manual Word contracts, DocuSign for e-sig only" />
+      </div>
     </div>
 
     <div id="intake-error" class="error-box">Please enter a Company Name to continue.</div>
@@ -1423,6 +1464,10 @@
         <button class="btn-export btn-copy" onclick="copyFullMap()">
           <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
           Copy Text
+        </button>
+        <button class="btn-export" onclick="exportPPT()" style="background:var(--violet);color:#fff;border-color:var(--violet);">
+          <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          PowerPoint
         </button>
         <button class="btn-export btn-edit" onclick="showEditTab()">
           <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -1491,7 +1536,8 @@
   let state = {
     company: '', industry: '', stakeholders: [], notes: '', tools: '',
     stage: '', products: [], dealDocs: [], docContext: null,
-    research: '', sources: [], valueMap: null, accountBriefResearch: null
+    research: '', sources: [], valueMap: null, accountBriefResearch: null,
+    audienceType: 'mixed'
   };
   let previousPhase = 1;
 
@@ -1535,6 +1581,23 @@
     tag.addEventListener('click', () => tag.classList.toggle('selected'));
   });
 
+  // ── AUDIENCE TAGS (mutually exclusive) ──
+  document.querySelectorAll('#audienceTags .tag').forEach(tag => {
+    tag.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('#audienceTags .tag').forEach(t => t.classList.remove('selected'));
+      tag.classList.add('selected');
+      state.audienceType = tag.dataset.val;
+    }, true);
+  });
+
+  function toggleAdvanced() {
+    const s = document.getElementById('advancedSection');
+    const t = document.getElementById('advancedToggle');
+    s.style.display = s.style.display === 'none' ? 'block' : 'none';
+    t.textContent = s.style.display === 'none' ? '▸ Advanced options (products, current tools)' : '▾ Advanced options (products, current tools)';
+  }
+
   // ── STAGE PILLS (single select) ──
   document.querySelectorAll('.stage-pill').forEach(pill => {
     pill.addEventListener('click', () => {
@@ -1566,6 +1629,28 @@
 
   // ── PHASE 1 → START RESEARCH ──
   async function startResearch() {
+    // Pre-fill from deal context if available
+    try {
+      if (window._dealId && typeof dealStore !== 'undefined') {
+        const deal = dealStore.get(window._dealId);
+        if (deal?.context) {
+          const cnEl = document.getElementById('companyName');
+          if (cnEl && !cnEl.value.trim() && deal.context.account_name) {
+            cnEl.value = deal.context.account_name;
+          }
+          const dnEl = document.getElementById('discoveryNotes');
+          if (dnEl && !dnEl.value.trim() && deal.context.notes) {
+            dnEl.value = deal.context.notes;
+          }
+          if (deal.context.stage) {
+            document.querySelectorAll('.stage-pill').forEach(p => {
+              if (p.dataset.val === deal.context.stage) p.classList.add('selected');
+            });
+          }
+        }
+      }
+    } catch (e) { /* non-fatal */ }
+
     const company = document.getElementById('companyName').value.trim();
     if (!company) {
       document.getElementById('intake-error').style.display = 'block';
@@ -1576,10 +1661,29 @@
     state.company = sanitizeCompanyName(company);
     state.industry = '';
     state.notes = document.getElementById('discoveryNotes').value.trim();
-    state.tools = document.getElementById('currentTools').value.trim();
+    state.tools = document.getElementById('currentTools')?.value.trim() || '';
     state.stakeholders = [...document.querySelectorAll('.tag#stakeholderTags .tag.selected, #stakeholderTags .tag.selected')].map(t => t.dataset.val);
     state.stage = document.querySelector('.stage-pill.selected')?.dataset.val || '';
     state.products = [...document.querySelectorAll('#productTags .tag.selected')].map(t => t.dataset.val);
+    state.audienceType = document.querySelector('#audienceTags .tag.selected')?.dataset.val || 'mixed';
+
+    // Auto-detect audience type from account brief stakeholders if available
+    try {
+      const abStakeholders = state.accountBriefResearch?.stakeholders;
+      if (Array.isArray(abStakeholders) && abStakeholders.length > 0) {
+        const titles = abStakeholders.map(s => (s.title || '').toLowerCase());
+        const isCSuite = (t) => /\b(ceo|cfo|cro|clo|coo|cio|cto|cmo|gc|chief)\b/i.test(t) || /general counsel/i.test(t);
+        const isVPDir = (t) => /\b(vp|vice president|director|head of)\b/i.test(t);
+        let detected;
+        if (titles.some(isCSuite)) detected = 'economic_buyer';
+        else if (titles.every(t => isVPDir(t))) detected = 'champion';
+        else detected = 'mixed';
+        state.audienceType = detected;
+        document.querySelectorAll('#audienceTags .tag').forEach(t => {
+          t.classList.toggle('selected', t.dataset.val === detected);
+        });
+      }
+    } catch (e) { /* non-fatal */ }
 
     document.getElementById('researchCompanyName').textContent = company;
     setPhase(2);
@@ -1664,14 +1768,8 @@
 
     try {
       const prompt = buildSynthesisPrompt();
-      const synthesisSystem = `You are a senior Conga solutions consultant with deep expertise in CLM, CPQ, DocGen, RLM, and AI. You build Value Maps for enterprise deals. You output ONLY the structured tagged format requested — no commentary, no preamble, no explanation outside the tags. Every field must be specific, credible, and directly tied to the account's strategic context. Use real metrics where available; use plausible industry benchmarks when not. Your output will be rendered directly into a client-facing deliverable.
-
-SOURCE CONFIDENCE TAGGING — add inline after key claims in text fields (challenge, howCongaHelps, pain metrics, proof):
-- [VERIFIED] — directly stated in uploaded docs, transcripts, or RFPs
-- [REP_STATED] — came from rep notes or verbal input only
-- [INFERRED] — your synthesis or hypothesis; no direct source
-IMPORTANT: Every substantive claim in text fields (challenge, howCongaHelps, pain metrics, proof) MUST end with a source tag — no exceptions. If you cannot verify a claim from the source material, tag it [INFERRED]. Do not skip tagging any claim. Do not tag chip fields (congaCapability, value, proof point labels).`;
-      const response = await callClaude(prompt, false, synthesisSystem);
+      const synthesisSystem = `You are a senior enterprise value strategist trained in Force Management's Command of the Message framework and MEDDPICC. You build Value Maps that are rigorous, outside-in, and grounded in the customer's stated strategic reality. You follow a 4-stage methodology: (1) surface what the customer genuinely cares about from their own public statements, (2) score which priorities intersect with Conga's demonstrated capability, (3) select the top 3 for the value map, (4) generate the full value map with Conga positioned as capability-enabler in the customer's language. Source confidence tags: [VERIFIED] = direct source citation found, [REP_STATED] = from rep's discovery notes, [INFERRED] = reasoned synthesis. Output ONLY the structured tagged format — no commentary, no preamble.`;
+      const response = await callClaude(prompt, false, synthesisSystem, 'claude-sonnet-4-6');
       state.valueMap = parseValueMap(response);
 
       renderValueMap();
@@ -1696,141 +1794,200 @@ CURRENT TOOLS: ${state.tools || 'Unknown'}
 ${state.docContext ? '\nDEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary : state.dealDocs.length ? '\nDEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') : ''}${(() => { const ab = state.accountBriefResearch; if (!ab) return ''; let s = '\nACCOUNT BRIEF INTELLIGENCE:\n'; const co = ab.company_profile; if (co?.summary) s += `Company: ${co.summary}\n`; const pov = ab.exec_pov; if (pov?.pitch) s += `Conga POV: ${Array.isArray(pov.pitch)?pov.pitch.join(' '):pov.pitch}\n`; if (pov?.productPOV?.length) s += `Product Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`; if (pov?.valueLevers?.length) s += `Value Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`; const cs = ab.call_strategy; if (cs?.landmines?.length) s += `Watch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`; return s; })()}
 
 Using web search, find and synthesize:
-0. The company's industry and sub-sector (output this first as: INDUSTRY: [your answer])
-1. The company's top 3 stated strategic priorities (from earnings calls, annual reports, press releases, investor presentations, CEO interviews)
-2. Recent news about revenue growth, operational challenges, M&A, digital transformation, or contract/commercial operations (last 18 months)
-3. Known pain points or transformation initiatives related to: revenue operations, contract management, sales processes, pricing complexity, or legal/compliance
-4. Company size indicators: revenue, employee count, deal volume if available
-5. Industry-specific CLM/CPQ benchmarks: typical contract cycle times, pricing error rates, quote turnaround times, revenue leakage percentages
+0. The company's industry and sub-sector (output first as: INDUSTRY: [your answer])
+1. The company's top 5-6 stated strategic priorities (from earnings calls, annual reports, press releases, investor presentations, CEO/CFO interviews). For each: what was said, who said it, and where (source URL).
+2. Recent news: revenue growth initiatives, operational transformation, M&A activity, digital modernization (last 18 months)
+3. Pain signals: any public mention of contract delays, pricing complexity, quote bottlenecks, revenue leakage, legal/compliance burden, document process issues
+4. Company size: revenue, employee count, deal/contract/quote volume if available
+5. Industry benchmarks for: contract cycle times, pricing error rates, quote turnaround, revenue leakage — cite sources
+6. Key executive statements that reveal what success looks like to them (direct quotes preferred)
 
-For each finding, cite the source with URL if found via web search.
-
-Format your response as a structured intelligence brief with clear sections. Be specific and data-driven. If exact data isn't available for this company, use credible industry benchmarks clearly labeled as such.`;
+For each finding, cite the source with URL. Be specific and data-driven. Label industry benchmarks clearly as such.`;
   }
 
   function buildSynthesisPrompt() {
     const stakeholderList = state.stakeholders.length > 0 ? state.stakeholders.join(', ') : 'Mixed stakeholders';
     const stageContext = state.stage ? `DEAL STAGE: ${state.stage}` : 'DEAL STAGE: Unknown (assume Discovery)';
     const productContext = state.products.length > 0
-      ? `PRODUCTS IN SCOPE: ${state.products.join(', ')} — focus capabilities and proof points on these products only`
-      : 'PRODUCTS IN SCOPE: Full Conga suite — CLM, CPQ, DocGen, RLM, AI';
+      ? `PRODUCTS IN SCOPE: ${state.products.join(', ')}`
+      : 'PRODUCTS IN SCOPE: Full Conga suite — CLM, CPQ, DocGen, RLM, AI (infer best fit from initiatives)';
 
-    // Stage-specific instructions
+    const audienceInstructions = {
+      'economic_buyer': `AUDIENCE: ECONOMIC BUYER
+Frame everything in financial and strategic language. Lead with cost of inaction, revenue impact, and strategic risk. VALUE fields should express ROI in $ or %. PROOF points should reference peer-company outcomes at similar revenue scale. AUDIENCE_NOTE fields should help the rep speak to budget authority and organizational priority.`,
+      'champion': `AUDIENCE: CHAMPION (internal mobilizer, needs to sell upward)
+Frame everything as operational pain and internal business case ammunition. Help the champion articulate the problem to their CFO/CRO. VALUE fields should include both operational metrics AND financial translation. PROOF points should emphasize speed-to-value and low disruption. AUDIENCE_NOTE fields should give the rep language the champion can use in their internal pitch.`,
+      'mixed': `AUDIENCE: MIXED (economic buyer and champion both present)
+Lead with the strategic business outcome (for the EB), then ground it in operational reality (for the champion). VALUE fields should include both financial and operational metrics. AUDIENCE_NOTE fields should give the rep guidance on who to direct each point to.`
+    };
+    const audienceGuide = audienceInstructions[state.audienceType] || audienceInstructions['mixed'];
+
     const stageInstructions = {
-      'Qualification':
-        'STAGE GUIDANCE: This is early-stage. Frame initiatives as research-based hypotheses to validate. Use industry benchmarks for metrics (clearly labeled). MSP should focus on earning a discovery conversation. Language should be exploratory: "likely," "typically," "based on industry patterns."',
-      'Discovery':
-        'STAGE GUIDANCE: Frame initiatives as educated hypotheses grounded in research. Mix company-specific research with industry benchmarks. MSP should focus on confirming pain and building the business case. Language should invite validation: "suggests," "indicates," "based on what we\'ve found."',
-      'Validation':
-        'STAGE GUIDANCE: This deal is in technical validation. Assume pain is confirmed — use direct, specific language. Metrics should reflect what a rep would know after discovery calls. MSP should focus on technical proof, demo success criteria, and stakeholder alignment. Tone is confident and specific.',
-      'Negotiation':
-        'STAGE GUIDANCE: This deal is in negotiation. Assume business case is approved and technical fit is confirmed. Frame everything as confirmed facts, not hypotheses. Metrics should be precise. Proof points should reference deals similar to this one in size and industry. MSP should focus exclusively on closing mechanics: resolving objections, procurement, contract execution. Tone is direct and outcome-focused.',
-      'Closed Won':
-        'STAGE GUIDANCE: This deal is closed. Frame this as a success summary and expansion/renewal planning document. Highlight the value already agreed upon. MSP should focus on implementation milestones, adoption goals, and expansion opportunities. Tone is forward-looking and celebratory.'
+      'Qualification': 'STAGE GUIDANCE: Early-stage. Frame PBOs as research-based hypotheses to validate. Use industry benchmarks for metrics (clearly labeled). Language: exploratory — "suggests," "typically," "based on public signals."',
+      'Discovery': 'STAGE GUIDANCE: Frame PBOs as educated hypotheses grounded in research. Mix company-specific research with industry benchmarks. Language invites validation: "indicates," "based on what we\'ve found," "worth confirming."',
+      'Validation': 'STAGE GUIDANCE: Pain is confirmed. Use direct, specific language. Metrics should reflect confirmed discovery. Tone is confident and specific.',
+      'Negotiation': 'STAGE GUIDANCE: Business case approved, technical fit confirmed. Frame everything as confirmed facts. Metrics are precise. Tone is direct and outcome-focused.',
+      'Closed Won': 'STAGE GUIDANCE: Deal is closed. Frame as success summary and expansion planning. Tone is forward-looking.'
     };
     const stageGuide = stageInstructions[state.stage] || stageInstructions['Discovery'];
-    // Full research context — Tier 4, no token pressure
-    const researchSnippet = state.research.slice(0, 4000);
-    return `Build a strategic Value Map for a Conga enterprise deal. Be specific, credible, and account-specific throughout. Use real metrics from the research where available; use plausible industry benchmarks when not. Never be generic.
 
-FIELD GUIDANCE:
-- OBJECTIVE: 1 sentence — the account's business goal for this initiative
-- STRATEGY: 1 sentence — how they plan to achieve it
-- INITIATIVE: Short phrase naming the initiative (e.g. "Accelerate Revenue Operations")
-- CHALLENGE: 1 sentence describing the specific operational pain blocking their goal
-- CHALLENGE_METRIC: A real or benchmark number quantifying the current pain (e.g. "42-day avg contract cycle")
-- TARGET_METRIC: The outcome they want to reach (e.g. "<14 days within 6 months")
-- STAKEHOLDER: Job title of the primary champion for this initiative
-- REQUIRED_CAPABILITY: What the customer needs to solve this (vendor-agnostic)
-- CONGA_CAPABILITY: The specific Conga product/feature that delivers it
-- HOW_CONGA_HELPS: 1–2 sentences — exactly how Conga solves the challenge
-- VALUE: Quantified business impact — include a % or $ figure
-- PROOF: A real customer name, published stat, or analyst benchmark (not generic)
+    const researchSnippet = state.research.slice(0, 4000);
+    const accountBriefContext = (() => {
+      const ab = state.accountBriefResearch;
+      if (!ab) return '';
+      let s = 'ACCOUNT BRIEF INTELLIGENCE:\n';
+      if (ab.company_profile?.summary) s += `Company: ${ab.company_profile.summary}\n`;
+      if (ab.exec_pov?.pitch) s += `Strategic POV: ${Array.isArray(ab.exec_pov.pitch) ? ab.exec_pov.pitch.join(' ') : ab.exec_pov.pitch}\n`;
+      if (ab.exec_pov?.valueLevers?.length) s += `Value Levers:\n${ab.exec_pov.valueLevers.map(v => `- ${typeof v === 'string' ? v : v.lever || JSON.stringify(v)}`).join('\n')}\n`;
+      if (ab.stakeholders?.length) s += `Stakeholders: ${ab.stakeholders.map(s => `${s.name} (${s.title})`).join(', ')}\n`;
+      return s + '\n';
+    })();
+    const dealDocsContext = state.docContext
+      ? `DEAL INTELLIGENCE (${state.docContext.doc_count} docs):\n${state.docContext.summary}\n`
+      : state.dealDocs.length
+      ? `DEAL DOCUMENTS:\n${state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n')}\n`
+      : '';
+
+    return `You are a senior enterprise value strategist trained in Force Management's Command of the Message and MEDDPICC. Build a strategic Value Map for this Conga enterprise deal using a disciplined outside-in approach: start from what the customer genuinely cares about, then identify where Conga creates the most material impact.
 
 COMPANY: ${state.company} | INDUSTRY: ${state.industry}
-STAKEHOLDERS: ${stakeholderList}
-NOTES: ${(state.notes || 'None').slice(0, 2000)}
-${state.docContext ? 'DEAL INTELLIGENCE SUMMARY (' + state.docContext.doc_count + ' docs):\n' + state.docContext.summary + '\n' : state.dealDocs.length ? 'DEAL DOCUMENTS:\n' + state.dealDocs.map(d => `--- ${d.name} ---\n${d.extracted_text}`).join('\n\n') + '\n' : ''}${(() => { const ab = state.accountBriefResearch; if (!ab) return ''; let s = 'ACCOUNT BRIEF INTELLIGENCE:\n'; const co = ab.company_profile; if (co?.summary) s += `Company: ${co.summary}\n`; const pov = ab.exec_pov; if (pov?.pitch) s += `Conga POV: ${Array.isArray(pov.pitch)?pov.pitch.join(' '):pov.pitch}\n`; if (pov?.productPOV?.length) s += `Product Challenges:\n${pov.productPOV.map(p=>`- ${p.product}: ${p.challenge}`).join('\n')}\n`; if (pov?.valueLevers?.length) s += `Value Levers:\n${pov.valueLevers.map(v=>`- ${typeof v==='string'?v:v.lever||JSON.stringify(v)}`).join('\n')}\n`; const cs = ab.call_strategy; if (cs?.landmines?.length) s += `Watch-outs:\n${cs.landmines.map(l=>`- ${typeof l==='string'?l:l.landmine||JSON.stringify(l)}`).join('\n')}\n`; return s + '\n'; })()}TOOLS: ${state.tools || 'Unknown'}
+STAKEHOLDERS IN MEETING: ${stakeholderList}
+DISCOVERY NOTES: ${(state.notes || 'None').slice(0, 2000)}
+${dealDocsContext}${accountBriefContext}TOOLS/CURRENT STATE: ${state.tools || 'Unknown'}
 ${stageContext}
 ${productContext}
-RESEARCH: ${researchSnippet}
+RESEARCH FINDINGS: ${researchSnippet}
+
+${audienceGuide}
 
 ${stageGuide}
 
-CONGA: CLM=contracts, CPQ=quoting, DocGen=docs, RLM=revenue lifecycle, AI=intelligence
+CONGA CAPABILITY MAP (for scoring only):
+- CLM: contract authoring, negotiation, approval routing, execution, repository, AI clause analysis
+- CPQ: guided selling, product configuration, pricing rules, approval workflows, quote generation
+- DocGen/Composer: document automation, eSign, batch generation, Salesforce-native
+- RLM: subscription + usage + transactional revenue management, billing, renewals
+- AI/Aime: contract intelligence, obligation extraction, risk scoring, renewal alerts
+- Price Optimization: B2B dynamic pricing, margin optimization, channel pricing
 
-Output exactly this format:
+FIELD DEFINITIONS (Force Management vocabulary):
+- PBO: Positive Business Outcome — what the customer wants to achieve, in their language, sourced from their own communications
+- CHALLENGE: The specific operational pain blocking their PBO (be precise, cite if possible)
+- CHALLENGE_METRIC: Current state number — source from their public statements if possible; use labeled benchmarks if not
+- TARGET_METRIC: The outcome they're targeting
+- STAKEHOLDER: The primary owner of this initiative (EB = economic decision maker; Champion = internal mobilizer)
+- REQUIRED_CAPABILITY: What they need to achieve the PBO — vendor-agnostic, capability language only
+- CAPABILITY_LABEL: An industry/situation-specific label for the capability (e.g. "Intelligent Contract Repository" or "Healthcare Revenue Automation") — NOT a product name
+- DIFFERENTIATED_VALUE: Why Conga specifically — what makes Conga's approach different from alternatives or the status quo
+- VALUE: Quantified business impact with source ($, %, time)
+- PROOF: Specific anonymized proof point — vertical + specific outcome + timeline. Never generic.
+- AUDIENCE_NOTE: Internal rep coaching note — what to emphasize for this specific audience type
+
+OUTPUT FORMAT — follow exactly:
+
+[DISCOVERY_START]
+Identify 5-6 customer Positive Business Outcomes from the research. These must be grounded in what the customer has publicly stated they care about.
+
+[PBO_1]
+PBO_TITLE: [short initiative name]
+PBO_STATEMENT: [What they want to achieve — use their language, cite the source]
+PBO_SOURCE: [Where this came from: "Q3 2025 Earnings Call — CEO", "Annual Report 2024", "LinkedIn post — VP Sales Ops", etc.]
+CUSTOMER_PRIORITY: HIGH|MEDIUM|LOW
+CONGA_FIT: HIGH|MEDIUM|LOW|NONE
+FIT_RATIONALE: [1 sentence — which Conga capability applies and why, or why Conga has no fit]
+[/PBO_1]
+
+[PBO_2]
+...repeat for all 5-6 PBOs...
+[DISCOVERY_END]
+
+[SELECTION_RATIONALE]
+SELECTED_PBOS: [list the PBO numbers selected, e.g. PBO_1, PBO_3, PBO_5]
+RATIONALE: [2-3 sentences explaining why these three represent the highest intersection of customer priority and Conga impact for this audience]
+[/SELECTION_RATIONALE]
 
 [VM_START]
 [I1_START]
-OBJECTIVE: 
-STRATEGY: 
-INITIATIVE: 
-CHALLENGE: 
-CHALLENGE_METRIC: 
-TARGET_METRIC: 
-STAKEHOLDER: 
-REQUIRED_CAPABILITY: 
-CONGA_CAPABILITY: 
-HOW_CONGA_HELPS: 
-VALUE: 
-PROOF: 
+PBO:
+CHALLENGE:
+CHALLENGE_METRIC:
+TARGET_METRIC:
+STAKEHOLDER:
+REQUIRED_CAPABILITY:
+CAPABILITY_LABEL:
+DIFFERENTIATED_VALUE:
+VALUE:
+PROOF:
+AUDIENCE_NOTE:
 [I1_END]
 [I2_START]
-OBJECTIVE: 
-STRATEGY: 
-INITIATIVE: 
-CHALLENGE: 
-CHALLENGE_METRIC: 
-TARGET_METRIC: 
-STAKEHOLDER: 
-REQUIRED_CAPABILITY: 
-CONGA_CAPABILITY: 
-HOW_CONGA_HELPS: 
-VALUE: 
-PROOF: 
+PBO:
+CHALLENGE:
+CHALLENGE_METRIC:
+TARGET_METRIC:
+STAKEHOLDER:
+REQUIRED_CAPABILITY:
+CAPABILITY_LABEL:
+DIFFERENTIATED_VALUE:
+VALUE:
+PROOF:
+AUDIENCE_NOTE:
 [I2_END]
 [I3_START]
-OBJECTIVE: 
-STRATEGY: 
-INITIATIVE: 
-CHALLENGE: 
-CHALLENGE_METRIC: 
-TARGET_METRIC: 
-STAKEHOLDER: 
-REQUIRED_CAPABILITY: 
-CONGA_CAPABILITY: 
-HOW_CONGA_HELPS: 
-VALUE: 
-PROOF: 
+PBO:
+CHALLENGE:
+CHALLENGE_METRIC:
+TARGET_METRIC:
+STAKEHOLDER:
+REQUIRED_CAPABILITY:
+CAPABILITY_LABEL:
+DIFFERENTIATED_VALUE:
+VALUE:
+PROOF:
+AUDIENCE_NOTE:
 [I3_END]
+[VM_END]
+
+[ALTERNATIVES_START]
+List the 2-3 PBOs that were considered but not selected. Brief — just enough for the rep to understand the option and decide if they want to swap.
+
+[ALT_1]
+PBO_TITLE:
+PBO_STATEMENT: [one sentence]
+CUSTOMER_PRIORITY: HIGH|MEDIUM|LOW
+CONGA_FIT: HIGH|MEDIUM|LOW
+WHY_NOT_SELECTED: [one sentence]
+[/ALT_1]
+[ALT_2]
+...
+[ALTERNATIVES_END]
+
 [MSP_START]
-MILESTONE_1_PHASE: Discovery Complete
-MILESTONE_1_TIME: Week 1-2
-MILESTONE_1_ACTIVITIES: 3 short bullets
-MILESTONE_1_OWNER: AE
-MILESTONE_1_SUCCESS: Pain confirmed, champion identified
-MILESTONE_2_PHASE: Business Case Approved
-MILESTONE_2_TIME: Week 3-4
-MILESTONE_2_ACTIVITIES: 3 short bullets
-MILESTONE_2_OWNER: AE + Champion
-MILESTONE_2_SUCCESS: ROI approved by economic buyer
-MILESTONE_3_PHASE: Technical Validation
-MILESTONE_3_TIME: Week 5-7
-MILESTONE_3_ACTIVITIES: 3 short bullets
-MILESTONE_3_OWNER: IT + AE
-MILESTONE_3_SUCCESS: Integration confirmed, demo accepted
-MILESTONE_4_PHASE: Contract & Close
-MILESTONE_4_TIME: Week 8-10
-MILESTONE_4_ACTIVITIES: 3 short bullets
-MILESTONE_4_OWNER: AE + Legal
-MILESTONE_4_SUCCESS: Contract signed, kickoff scheduled
+MILESTONE_1_PHASE:
+MILESTONE_1_TIME:
+MILESTONE_1_ACTIVITIES:
+MILESTONE_1_OWNER:
+MILESTONE_1_SUCCESS:
+MILESTONE_2_PHASE:
+MILESTONE_2_TIME:
+MILESTONE_2_ACTIVITIES:
+MILESTONE_2_OWNER:
+MILESTONE_2_SUCCESS:
+MILESTONE_3_PHASE:
+MILESTONE_3_TIME:
+MILESTONE_3_ACTIVITIES:
+MILESTONE_3_OWNER:
+MILESTONE_3_SUCCESS:
+MILESTONE_4_PHASE:
+MILESTONE_4_TIME:
+MILESTONE_4_ACTIVITIES:
+MILESTONE_4_OWNER:
+MILESTONE_4_SUCCESS:
 [MSP_END]
+
 [SOURCES_START]
-List every web source actually found or used during research. One per line, format: TITLE | URL
-Include company websites, news articles, press releases, earnings calls, analyst reports, and industry benchmarks cited. If no URL is available write the title only.
-[SOURCES_END]
-[VM_END]`;
+List every source cited. Format: TITLE | URL (or title only if no URL)
+[SOURCES_END]`;
   }
 
   // ── CLAUDE API CALL ──
@@ -1842,9 +1999,9 @@ Include company websites, news articles, press releases, earnings calls, analyst
     };
   }
 
-  async function callClaude(prompt, useWebSearch, systemMessage = null) {
+  async function callClaude(prompt, useWebSearch, systemMessage = null, modelOverride = null) {
     const body = {
-      model: "claude-haiku-4-5-20251001",
+      model: modelOverride || "claude-haiku-4-5-20251001",
       max_tokens: useWebSearch ? 4000 : 6000,
       messages: [{ role: "user", content: prompt }],
       metadata: { tool: 'value-map' }
@@ -1901,21 +2058,80 @@ Include company websites, news articles, press releases, earnings calls, analyst
 
     const initiatives = [1,2,3].map(n => {
       const block = extract(`I${n}`, raw);
+      // New format fields
+      const pbo                = getField(block, 'PBO');
+      const challenge          = getField(block, 'CHALLENGE');
+      const challengeMetric    = getField(block, 'CHALLENGE_METRIC');
+      const targetMetric       = getField(block, 'TARGET_METRIC');
+      const stakeholder        = getField(block, 'STAKEHOLDER');
+      const requiredCapability = getField(block, 'REQUIRED_CAPABILITY');
+      const capabilityLabel    = getField(block, 'CAPABILITY_LABEL');
+      const differentiatedValue= getField(block, 'DIFFERENTIATED_VALUE');
+      const value              = getField(block, 'VALUE');
+      const proof              = getField(block, 'PROOF');
+      const audienceNote       = getField(block, 'AUDIENCE_NOTE');
+      // Backward compat — old field names
+      const objective          = getField(block, 'OBJECTIVE');
+      const strategy           = getField(block, 'STRATEGY');
+      const initiative         = getField(block, 'INITIATIVE');
+      const congaCapability    = getField(block, 'CONGA_CAPABILITY');
+      const howCongaHelps      = getField(block, 'HOW_CONGA_HELPS');
+      // Synthesize PBO from old fields if missing
+      const pboFinal = pbo || [objective, strategy].filter(Boolean).join(' ') || initiative || '';
       return {
-        objective:          getField(block, 'OBJECTIVE'),
-        strategy:           getField(block, 'STRATEGY'),
-        initiative:         getField(block, 'INITIATIVE'),
-        challenge:          getField(block, 'CHALLENGE'),
-        challengeMetric:    getField(block, 'CHALLENGE_METRIC'),
-        targetMetric:       getField(block, 'TARGET_METRIC'),
-        stakeholder:        getField(block, 'STAKEHOLDER'),
-        requiredCapability: getField(block, 'REQUIRED_CAPABILITY'),
-        congaCapability:    getField(block, 'CONGA_CAPABILITY'),
-        howCongaHelps:      getField(block, 'HOW_CONGA_HELPS'),
-        value:              getField(block, 'VALUE'),
-        proof:              getField(block, 'PROOF'),
+        pbo: pboFinal,
+        challenge, challengeMetric, targetMetric, stakeholder,
+        requiredCapability,
+        capabilityLabel: capabilityLabel || congaCapability || '',
+        differentiatedValue: differentiatedValue || howCongaHelps || '',
+        value, proof,
+        audienceNote,
+        // Preserve old fields for backward compat / editor
+        objective, strategy, initiative, congaCapability, howCongaHelps
       };
     });
+
+    // Discovery PBOs
+    const discoveryBlock = extract('DISCOVERY', raw);
+    const discovery = [];
+    if (discoveryBlock) {
+      const pboMatches = discoveryBlock.matchAll(/\[PBO_(\d+)\]([\s\S]*?)\[\/PBO_\1\]/g);
+      for (const m of pboMatches) {
+        const b = m[2];
+        discovery.push({
+          title:            getField(b, 'PBO_TITLE'),
+          statement:        getField(b, 'PBO_STATEMENT'),
+          source:           getField(b, 'PBO_SOURCE'),
+          customerPriority: getField(b, 'CUSTOMER_PRIORITY'),
+          congaFit:         getField(b, 'CONGA_FIT'),
+          fitRationale:     getField(b, 'FIT_RATIONALE')
+        });
+      }
+    }
+
+    // Selection rationale
+    const selRationaleBlock = (() => {
+      const m = raw.match(/\[SELECTION_RATIONALE\]([\s\S]*?)\[\/SELECTION_RATIONALE\]/);
+      return m ? m[1].trim() : '';
+    })();
+    const selectionRationale = selRationaleBlock ? (getField(selRationaleBlock, 'RATIONALE') || selRationaleBlock) : '';
+
+    // Alternatives
+    const altsBlock = extract('ALTERNATIVES', raw);
+    const alternatives = [];
+    if (altsBlock) {
+      const altMatches = altsBlock.matchAll(/\[ALT_(\d+)\]([\s\S]*?)\[\/ALT_\1\]/g);
+      for (const m of altMatches) {
+        const b = m[2];
+        alternatives.push({
+          title:            getField(b, 'PBO_TITLE'),
+          statement:        getField(b, 'PBO_STATEMENT'),
+          customerPriority: getField(b, 'CUSTOMER_PRIORITY'),
+          congaFit:         getField(b, 'CONGA_FIT'),
+          whyNotSelected:   getField(b, 'WHY_NOT_SELECTED')
+        });
+      }
+    }
 
     const msp = extract('MSP', raw);
     const milestones = [1,2,3,4].map(n => ({
@@ -1932,7 +2148,7 @@ Include company websites, news articles, press releases, earnings calls, analyst
       return { title: title || l, url: url || '' };
     }).filter(s => s.title && s.title.length > 2);
 
-    return { initiatives, milestones, sources, raw };
+    return { initiatives, alternatives, selectionRationale, discovery, milestones, sources, raw };
   }
 
   function renderWithBadges(html) {
@@ -1950,8 +2166,19 @@ Include company websites, news articles, press releases, earnings calls, analyst
     const iColors = ['#8B5CF6','#a78bfa','#c4b5fd'];
     const iLabels = ['Initiative 1','Initiative 2','Initiative 3'];
 
-    // Rows in the Value Map matrix
-    const rows = [
+    // Rows in the Value Map matrix (new format with backward-compat fallbacks)
+    const hasNewFormat = vm.initiatives.some(i => i.pbo || i.differentiatedValue || i.capabilityLabel);
+    const rows = hasNewFormat ? [
+      { key: 'pbo',                label: 'Positive Business Outcome', icon: '🎯', desc: 'What the customer wants to achieve' },
+      { key: 'challenge',          label: 'Challenge',           icon: '⚠️', desc: 'Top pain blocking progress' },
+      { key: 'challengeMetric',    label: 'Current State',       icon: '🔴', desc: 'Where they are today' },
+      { key: 'targetMetric',       label: 'Target State',        icon: '🟢', desc: 'Where they need to be' },
+      { key: 'requiredCapability', label: 'Required Capability', icon: '🔧', desc: 'What\'s needed to close the gap' },
+      { key: 'capabilityLabel',    label: 'Conga Capability',    icon: '⚡', desc: 'Situation-specific capability label' },
+      { key: 'differentiatedValue',label: 'Differentiated Value',icon: '✅', desc: 'Why Conga specifically' },
+      { key: 'value',              label: 'Value / ROI',         icon: '💰', desc: 'Quantified business outcome' },
+      { key: 'proof',              label: 'Proof Point',         icon: '📌', desc: 'Similar customer win' },
+    ] : [
       { key: 'objective',          label: 'Objective',           icon: '🎯', desc: 'Business goal being pursued' },
       { key: 'strategy',           label: 'Strategy',            icon: '🗺️', desc: 'Approach to achieve the goal' },
       { key: 'initiative',         label: 'Initiative',          icon: '🚀', desc: 'Specific program underway' },
@@ -2284,10 +2511,18 @@ Include company websites, news articles, press releases, earnings calls, analyst
             </div>`).join('')}
         </div>
 
+        <!-- SELECTION RATIONALE -->
+        ${vm.selectionRationale ? `
+        <div class="selection-rationale">
+          <div class="selection-rationale-label">Why these three?</div>
+          ${escHtml(vm.selectionRationale)}
+        </div>` : ''}
+
         <!-- THEIR WORLD label -->
-        <div class="vm-section-label">Their World — Objectives, Strategies & Initiatives</div>
-        ${['objective','strategy'].map(key => {
+        <div class="vm-section-label">${hasNewFormat ? 'Customer Priorities — Positive Business Outcomes' : 'Their World — Objectives, Strategies & Initiatives'}</div>
+        ${(hasNewFormat ? ['pbo'] : ['objective','strategy']).map(key => {
           const row = rows.find(r => r.key === key);
+          if (!row) return '';
           return `<div class="vm-row">
             <div class="vm-row-label"><span class="row-icon">${row.icon}</span><div><div class="row-label-text">${row.label}</div><div class="row-label-desc">${row.desc}</div></div></div>
             ${vm.initiatives.map((ini,i) => `<div class="vm-cell" style="border-left:2px solid ${iColors[i]}18"><span class="vm-cell-text">${escHtml(ini[key]||'—')}</span></div>`).join('')}
@@ -2313,22 +2548,35 @@ Include company websites, news articles, press releases, earnings calls, analyst
 
         <!-- CONGA ROLE label -->
         <div class="vm-section-label">Conga's Role — Capabilities, Value & Proof</div>
-        ${['requiredCapability','congaCapability','howCongaHelps','value','proof'].map(key => {
+        ${(hasNewFormat
+          ? ['requiredCapability','capabilityLabel','differentiatedValue','value','proof']
+          : ['requiredCapability','congaCapability','howCongaHelps','value','proof']
+        ).map(key => {
           const row = rows.find(r => r.key === key);
-          return `<div class="vm-row ${['value','howCongaHelps','proof'].includes(key) ? 'vm-row-highlight' : ''}">
+          if (!row) return '';
+          const highlightKeys = hasNewFormat ? ['value','differentiatedValue','proof'] : ['value','howCongaHelps','proof'];
+          return `<div class="vm-row ${highlightKeys.includes(key) ? 'vm-row-highlight' : ''}">
             <div class="vm-row-label"><span class="row-icon">${row.icon}</span><div><div class="row-label-text">${row.label}</div><div class="row-label-desc">${row.desc}</div></div></div>
             ${vm.initiatives.map((ini,i) => {
               const val = ini[key]||'—';
               let inner = '';
               if (key==='congaCapability') inner = `<div class="prod-tags-wrap">${val.split(/[,/·\s]+/).map(p=>p.trim()).filter(Boolean).map(p=>`<span class="prod-tag">${escHtml(p)}</span>`).join('')}</div>`;
+              else if (key==='capabilityLabel') inner = `<span class="vm-cell-text highlight-text">${escHtml(val)}</span>`;
               else if (key==='value') inner = `<span class="value-chip">${escHtml(val)}</span>`;
               else if (key==='proof') inner = `<span class="proof-chip">${escHtml(val)}</span>`;
-              else if (key==='howCongaHelps') inner = `<span class="vm-cell-text highlight-text">${renderWithBadges(escHtml(val))}</span>`;
+              else if (key==='howCongaHelps' || key==='differentiatedValue') inner = `<span class="vm-cell-text highlight-text">${renderWithBadges(escHtml(val))}</span>`;
               else inner = `<span class="vm-cell-text">${renderWithBadges(escHtml(val))}</span>`;
               return `<div class="vm-cell vm-cell-highlight" style="border-left:2px solid ${iColors[i]}18">${inner}</div>`;
             }).join('')}
           </div>`;
         }).join('')}
+
+        <!-- REP COACHING (audience note) — visible to rep only, not exported -->
+        ${hasNewFormat && vm.initiatives.some(i => i.audienceNote) ? `
+        <div class="vm-row rep-coaching-row" data-no-export="true">
+          <div class="vm-row-label"><span class="row-icon">🎓</span><div><div class="row-label-text">Rep Coaching</div><div class="row-label-desc">Audience-specific guidance (not exported)</div></div></div>
+          ${vm.initiatives.map((ini,i) => `<div class="vm-cell" style="border-left:2px solid ${iColors[i]}18"><span class="vm-cell-text" style="font-style:italic;font-size:11.5px">${escHtml(ini.audienceNote||'—')}</span></div>`).join('')}
+        </div>` : ''}
 
         <!-- MSP -->
         <div class="vm-msp">
@@ -2336,10 +2584,128 @@ Include company websites, news articles, press releases, earnings calls, analyst
           <div class="msp-grid">${mspHtml}</div>
         </div>
 
+        ${renderAlternatives(vm.alternatives)}
         ${sourcesHtml}
       </div>`;
 
     document.getElementById('valuemap-output').innerHTML = html;
+  }
+
+  function renderAlternatives(alternatives) {
+    if (!alternatives || alternatives.length === 0) return '';
+    return `
+      <div class="also-considered-section">
+        <div class="also-considered-header" onclick="toggleAlsoConsidered()">
+          <span class="also-considered-title">▸ Also Considered (${alternatives.length})</span>
+          <span class="also-considered-hint">Initiatives Claude evaluated but didn't select — click to review or swap</span>
+        </div>
+        <div id="alsoConsideredBody" style="display:none">
+          ${alternatives.map((alt, i) => `
+            <div class="alt-card">
+              <div class="alt-card-header">
+                <div class="alt-title">${escHtml(alt.title || '—')}</div>
+                <div class="alt-badges">
+                  <span class="alt-badge priority-${(alt.customerPriority||'').toLowerCase()}">Customer Priority: ${escHtml(alt.customerPriority||'—')}</span>
+                  <span class="alt-badge fit-${(alt.congaFit||'').toLowerCase()}">Conga Fit: ${escHtml(alt.congaFit||'—')}</span>
+                </div>
+              </div>
+              <div class="alt-statement">${escHtml(alt.statement || '')}</div>
+              <div class="alt-why-not">Not selected: ${escHtml(alt.whyNotSelected || '')}</div>
+              <div class="alt-swap">
+                <span class="alt-swap-label">Swap with:</span>
+                <button class="btn-swap" onclick="swapInitiative(${i}, 0)">Initiative 01</button>
+                <button class="btn-swap" onclick="swapInitiative(${i}, 1)">Initiative 02</button>
+                <button class="btn-swap" onclick="swapInitiative(${i}, 2)">Initiative 03</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function toggleAlsoConsidered() {
+    const body = document.getElementById('alsoConsideredBody');
+    const header = document.querySelector('.also-considered-title');
+    if (!body || !header) return;
+    if (body.style.display === 'none') {
+      body.style.display = 'block';
+      header.textContent = '▾ Also Considered';
+    } else {
+      body.style.display = 'none';
+      header.textContent = '▸ Also Considered';
+    }
+  }
+
+  async function swapInitiative(altIndex, slotIndex) {
+    const alt = state.valueMap?.alternatives?.[altIndex];
+    if (!alt) return;
+
+    const confirmed = confirm(`Replace Initiative 0${slotIndex + 1} with "${alt.title}"?\n\nThis will regenerate only that initiative slot.`);
+    if (!confirmed) return;
+
+    const swapPrompt = `You previously generated a value map for ${state.company}. The rep wants to replace Initiative 0${slotIndex + 1} with a different initiative.
+
+INITIATIVE TO GENERATE: "${alt.title}"
+PBO STATEMENT: ${alt.statement}
+
+Using the same research context and company information, generate the full initiative details for this PBO in the same format as before. Return ONLY this:
+
+[I${slotIndex + 1}_START]
+PBO:
+CHALLENGE:
+CHALLENGE_METRIC:
+TARGET_METRIC:
+STAKEHOLDER:
+REQUIRED_CAPABILITY:
+CAPABILITY_LABEL:
+DIFFERENTIATED_VALUE:
+VALUE:
+PROOF:
+AUDIENCE_NOTE:
+[I${slotIndex + 1}_END]
+
+Context:
+COMPANY: ${state.company} | INDUSTRY: ${state.industry}
+AUDIENCE TYPE: ${state.audienceType}
+DEAL STAGE: ${state.stage}
+RESEARCH: ${state.research.slice(0, 2000)}`;
+
+    toast('Regenerating initiative...');
+    try {
+      const raw = await callClaude(swapPrompt, false, `You are a senior enterprise value strategist. Generate only the requested initiative in the exact tagged format. No preamble.`, 'claude-sonnet-4-6');
+      const newInit = parseInitiativeBlock(raw, slotIndex + 1);
+      if (newInit) {
+        state.valueMap.initiatives[slotIndex] = newInit;
+        state.valueMap.alternatives.splice(altIndex, 1);
+        try { if (window._dealId && typeof dealStore !== 'undefined') dealStore.patch(window._dealId, 'value_map', state.valueMap); } catch(e) {}
+        renderValueMap();
+        toast('Initiative updated ✓');
+      } else {
+        toast('Regen failed — try again');
+      }
+    } catch (e) {
+      toast('Regen failed — try again');
+    }
+  }
+
+  function parseInitiativeBlock(raw, num) {
+    const block = raw.match(new RegExp(`\\[I${num}_START\\]([\\s\\S]*?)\\[I${num}_END\\]`))?.[1];
+    if (!block) return null;
+    const get = (field) => block.match(new RegExp(`${field}:\\s*(.+)`))?.[1]?.trim() || '';
+    return {
+      pbo: get('PBO'),
+      challenge: get('CHALLENGE'),
+      challengeMetric: get('CHALLENGE_METRIC'),
+      targetMetric: get('TARGET_METRIC'),
+      stakeholder: get('STAKEHOLDER'),
+      requiredCapability: get('REQUIRED_CAPABILITY'),
+      capabilityLabel: get('CAPABILITY_LABEL'),
+      differentiatedValue: get('DIFFERENTIATED_VALUE'),
+      value: get('VALUE'),
+      proof: get('PROOF'),
+      audienceNote: get('AUDIENCE_NOTE')
+    };
   }
 
   // ── COPY FULL MAP ──
@@ -2718,6 +3084,27 @@ Include company websites, news articles, press releases, earnings calls, analyst
     if (!state.valueMap) return;
     toast('Opening print dialog...');
     setTimeout(() => window.print(), 400);
+  }
+
+  // ── PPT EXPORT ──
+  async function exportPPT() {
+    if (!state.valueMap) { toast('No Value Map to export'); return; }
+    if (typeof generateValueMapPPT !== 'function') { toast('PPT library not loaded — check network'); return; }
+    toast('Building PowerPoint...');
+    try {
+      const deal = {
+        context: {
+          account_name: state.company || 'Customer',
+          stage: state.stage || '',
+          rep_name: '',
+        },
+        value_map: state.valueMap,
+      };
+      await generateValueMapPPT(deal);
+    } catch (e) {
+      console.error('PPT export error:', e);
+      toast('PPT export error — check console');
+    }
   }
 
   // ── EDIT TAB ──
