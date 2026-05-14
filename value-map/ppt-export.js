@@ -23,8 +23,8 @@
     '</svg>';
 
   // Encode to base64 data URIs (ASCII-safe SVGs — btoa works without escape)
-  var CONGA_WORDMARK_WHITE = 'image/svg+xml;base64,' + btoa(_WORDMARK_SVG);
-  var CONGA_C_SYMBOL = 'image/svg+xml;base64,' + btoa(_SYMBOL_SVG);
+  var CONGA_WORDMARK_WHITE = 'data:image/svg+xml;base64,' + btoa(_WORDMARK_SVG);
+  var CONGA_C_SYMBOL = 'data:image/svg+xml;base64,' + btoa(_SYMBOL_SVG);
 
   // ─── Brand color tokens ────────────────────────────────────────────────────
   // NEVER use "#" prefix in pptxgenjs color strings.
@@ -510,7 +510,7 @@
     var rawInitiatives = (vm && vm.initiatives) ? vm.initiatives.slice(0, 3) : [];
     var initiatives = rawInitiatives.map(function (i) {
       return {
-        title:           i.initiative || (i.pbo ? i.pbo.split(' ').slice(0, 5).join(' ') : 'Initiative'),
+        title:           i.initiativeTitle || i.initiative || (i.pbo ? i.pbo.split(' ').slice(0, 6).join(' ') + '…' : 'Initiative'),
         pbo:             i.pbo || [i.objective, i.strategy].filter(Boolean).join(' — ') || '',
         challenge:       i.challenge || '',
         currentState:    i.challengeMetric || i.challenge_metric || '',
